@@ -1,0 +1,11 @@
+# Flutter-related
+**/Flutter/ephemeral/
+**/Pods/
+
+# Xcode-related
+**/dgph
+**/xcuserdata/
+
+# Files with environment variables.
+Runner/GoogleService-Info.plist
+/Runner/GoogleService-Info.plist
