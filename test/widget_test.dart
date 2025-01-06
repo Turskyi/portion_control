@@ -17,9 +17,9 @@ void main() {
     // Verify that placeholders for body weight and food weight are visible.
     expect(
       find.byType(Placeholder),
-      // 2 for the input rows and 2 for button/recommendation sections.
+      // 1 for the input rows and 1 for recommendation section.
       findsNWidgets(
-        4,
+        2,
       ),
     );
 
@@ -36,9 +36,9 @@ void main() {
     // extend this when it's implemented).
     // For now, there is no functionality, so this will simply pass if the
     // widget exists.
-    expect(find.byType(Placeholder), findsNWidgets(4));
+    expect(find.byType(Placeholder), findsNWidgets(2));
 
     // Check the visibility of the recommendation section placeholder.
-    expect(find.byType(Placeholder), findsNWidgets(4));
+    expect(find.byType(Placeholder), findsNWidgets(2));
   });
 }
