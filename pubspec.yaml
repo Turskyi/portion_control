@@ -28,9 +28,11 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  bloc: ^8.1.4
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.6
+  meta: any
 
 dev_dependencies:
   # The "flutter_lints" package below contains a set of recommended lints to
