@@ -2,16 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  final TextEditingController _bodyWeightEditingController =
-      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +37,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Text Field for Body Weight
+                  // Text Field for Body Weight.
                   InputRow(
                     label: 'Body Weight',
                     unit: 'kg',
@@ -58,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Text Field for Food Weight Placeholder
+                  // Text Field for Food Weight Placeholder.
                   const Row(
                     children: <Widget>[
                       Expanded(
@@ -103,12 +95,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _bodyWeightEditingController.dispose();
-    super.dispose();
   }
 }
 
