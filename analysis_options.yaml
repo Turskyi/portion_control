@@ -16,6 +16,8 @@ analyzer:
   exclude:
     - "**.g.dart"
     - "**.config.dart"
+    - "**/*.freezed.dart"
+    - "**/generated_migrations/**"
 
 linter:
   # The lint rules applied to this project can be customized in the

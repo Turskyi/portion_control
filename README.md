@@ -54,6 +54,12 @@ Install dependencies:
 flutter pub get
 ```
 
+### Create generated files:
+
+```
+dart run build_runner build --delete-conflicting-outputs
+```
+
 ### Running the App
 
 To run the app, use the following command in your terminal:
@@ -96,9 +102,14 @@ The app uses `Material3` components and a color scheme seeded with
 `Colors.deepPurple` to create a clean and vibrant user interface.
 
 ```dart
-ThemeData(
-  colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-  useMaterial3: true,
+ThemeData
+(
+colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)
+,
+useMaterial3
+:
+true
+,
 )
 ```
 
@@ -117,14 +128,17 @@ Example tests provided in the `test/widget_test.dart` file verify the layout,
 presence of text elements, and interaction with the placeholder buttons.
 
 ```dart
-testWidgets('HomePage has correct layout and placeholders', (WidgetTester tester) async {
-  // Build our app and trigger a frame.
-  await tester.pumpWidget(const PortionControlApp());
+testWidgets
+('HomePage has correct layout and placeholders
+'
+, (WidgetTester tester) async {
+// Build our app and trigger a frame.
+await tester.pumpWidget(const PortionControlApp());
 
-  // Verify the presence of the title, text fields, and placeholders.
-  expect(find.text('PortionControl'), findsOneWidget);
-  expect(find.text('Enter Your Details'), findsOneWidget);
-  expect(find.byType(Placeholder), findsNWidgets(4));
+// Verify the presence of the title, text fields, and placeholders.
+expect(find.text('PortionControl'), findsOneWidget);
+expect(find.text('Enter Your Details'), findsOneWidget);
+expect(find.byType(Placeholder), findsNWidgets(4));
 });
 ```
 

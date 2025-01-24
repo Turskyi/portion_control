@@ -8,8 +8,10 @@ class CopyCompiledJs extends Builder {
 
   @override
   Future<void> build(BuildStep buildStep) async {
-    final AssetId inputId =
-        AssetId(buildStep.inputId.package, 'web/worker.dart.js');
+    final AssetId inputId = AssetId(
+      buildStep.inputId.package,
+      'web/worker.dart.js',
+    );
     final List<int> input = await buildStep.readAsBytes(inputId);
     await buildStep.writeAsBytes(buildStep.allowedOutputs.single, input);
   }

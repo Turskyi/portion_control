@@ -12,6 +12,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<SubmitBodyWeight>((SubmitBodyWeight event, Emitter<HomeState> emit) {
       if (state.bodyWeight.isNotEmpty) {
+
         emit(BodyWeightSubmittedState(bodyWeight: state.bodyWeight));
       }
     });
