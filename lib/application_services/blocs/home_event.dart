@@ -14,3 +14,7 @@ class UpdateBodyWeight extends HomeEvent {
 class SubmitBodyWeight extends HomeEvent {
   const SubmitBodyWeight();
 }
+
+class LoadBodyWeightEntries extends HomeEvent {
+  const LoadBodyWeightEntries();
+}

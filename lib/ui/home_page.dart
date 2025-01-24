@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/infrastructure/database/database.dart';
+import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
 import 'package:portion_control/ui/input_row.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,7 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<HomeBloc>(
-      create: (_) => HomeBloc(),
+      create: (_) => HomeBloc(BodyWeightRepository(AppDatabase())),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('PortionControl'),
