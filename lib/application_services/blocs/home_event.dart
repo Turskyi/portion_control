@@ -19,6 +19,10 @@ class SubmitBodyWeight extends HomeEvent {
   const SubmitBodyWeight();
 }
 
+class EditBodyWeight extends HomeEvent {
+  const EditBodyWeight();
+}
+
 class SubmitFoodWeight extends HomeEvent {
   const SubmitFoodWeight();
 }
