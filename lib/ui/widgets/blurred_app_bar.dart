@@ -11,7 +11,7 @@ class BlurredAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
   });
 
-  final Widget title;
+  final String title;
   final List<Widget> actions;
   final Widget? leading;
 
@@ -20,7 +20,7 @@ class BlurredAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       leading: leading,
-      title: title,
+      title: Text(title),
       actions: actions,
       flexibleSpace: ClipRect(
         child: BackdropFilter(

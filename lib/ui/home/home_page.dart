@@ -12,32 +12,20 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GradientBackgroundScaffold(
-      appBar: const BlurredAppBar(
-        title: Text('PortionControl'),
-      ),
+      appBar: const BlurredAppBar(title: 'PortionControl'),
       body: BlocConsumer<HomeBloc, HomeState>(
-        listener: (BuildContext context, HomeState state) {
-          if (state is BodyWeightSubmittedState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Body weight submitted: ${state.bodyWeight} kg',
-                ),
-              ),
-            );
-          }
-        },
+        listener: _homeStateListener,
         builder: (BuildContext context, HomeState state) {
           return SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(16.0, 100.0, 16.0, 80.0),
             child: Column(
+              spacing: 16,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Text(
                   'Enter Your Details',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 16),
 
                 // Text Field for Body Weight.
                 InputRow(
@@ -48,17 +36,21 @@ class HomePage extends StatelessWidget {
                     context.read<HomeBloc>().add(UpdateBodyWeight(value));
                   },
                 ),
-                const SizedBox(height: 16),
 
                 const SubmitEditBodyWeightButton(),
-                const SizedBox(height: 32),
+
+                // Line Chart of Body Weight trends Placeholder.
+                const Placeholder(
+                  fallbackHeight: 100,
+                  fallbackWidth: double.infinity,
+                ),
+
+                const SizedBox(height: 16),
                 // Text Field for Food Weight Placeholder.
                 const Row(
                   children: <Widget>[
                     Expanded(
-                      child: Placeholder(
-                        fallbackHeight: 50,
-                      ),
+                      child: Placeholder(fallbackHeight: 50),
                     ),
                     SizedBox(width: 8),
                     SizedBox(
@@ -67,7 +59,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 16),
 
                 // Submit Food Weight Button.
                 ElevatedButton(
@@ -83,7 +75,6 @@ class HomePage extends StatelessWidget {
                   ),
                   child: const Text('Submit Food Weight'),
                 ),
-                const SizedBox(height: 16),
 
                 // Recommendation Section Placeholder
                 const Placeholder(
@@ -94,6 +85,18 @@ class HomePage extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+void _homeStateListener(BuildContext context, HomeState state) {
+  if (state is BodyWeightSubmittedState) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Body weight submitted: ${state.bodyWeight} kg',
+        ),
       ),
     );
   }
