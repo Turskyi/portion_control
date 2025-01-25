@@ -3,7 +3,7 @@ import 'package:portion_control/domain/models/body_weight.dart';
 abstract interface class IBodyWeightRepository {
   const IBodyWeightRepository();
 
-  Future<int> addBodyWeightEntry({
+  Future<int> addOrUpdateBodyWeightEntry({
     required double weight,
     required DateTime date,
   });

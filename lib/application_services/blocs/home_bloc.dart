@@ -14,6 +14,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<LoadBodyWeightEntries>(_loadBodyWeightEntries);
     on<UpdateBodyWeight>(_updateBodyWeightState);
     on<SubmitBodyWeight>(_submitBodyWeight);
+    on<EditBodyWeight>(_setBodyWeightToEditMode);
   }
 
   final IBodyWeightRepository _repository;
@@ -76,7 +77,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       if (bodyWeight != null) {
         try {
           // Insert into the database.
-          await _repository.addBodyWeightEntry(
+          await _repository.addOrUpdateBodyWeightEntry(
             weight: bodyWeight,
             date: DateTime.now(),
           );
@@ -109,5 +110,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
     }
+  }
+
+  FutureOr<void> _setBodyWeightToEditMode(
+    _,
+    Emitter<HomeState> emit,
+  ) {
+    emit(BodyWeightUpdatedState(bodyWeight: state.bodyWeight));
   }
 }

@@ -12,11 +12,11 @@ class BodyWeightRepository implements IBodyWeightRepository {
 
   /// Insert a new body weight entry.
   @override
-  Future<int> addBodyWeightEntry({
+  Future<int> addOrUpdateBodyWeightEntry({
     required double weight,
     required DateTime date,
   }) {
-    return _database.insertBodyWeight(weight, date);
+    return _database.insertOnConflictUpdateBodyWeight(weight, date);
   }
 
   /// Retrieve all body weight entries, sorted by date.

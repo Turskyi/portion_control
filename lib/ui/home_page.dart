@@ -44,27 +44,40 @@ class HomePage extends StatelessWidget {
                   state: state,
                   label: 'Body Weight',
                   unit: 'kg',
-                  initialValue:
-                      state is BodyWeightSubmittedState ? state.bodyWeight : '',
+                  initialValue: state.bodyWeight,
                   onChanged: (String value) {
                     context.read<HomeBloc>().add(UpdateBodyWeight(value));
                   },
                 ),
                 const SizedBox(height: 16),
-                // Submit Body Weight Button
-                ResponsiveButton(
-                  label: state is BodyWeightSubmittedState
-                      ? 'Edit Body Weight'
-                      : 'Submit Body Weight',
-                  onPressed: state.bodyWeight.isEmpty
-                      ? null
-                      : state is BodyWeightSubmittedState
-                          ? () => context
-                              .read<HomeBloc>()
-                              .add(const EditBodyWeight())
-                          : () => context
-                              .read<HomeBloc>()
-                              .add(const SubmitBodyWeight()),
+                // Submit/Edit Body Weight Button with animation.
+                AnimatedSwitcher(
+                  // Animation duration.
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (
+                    Widget child,
+                    Animation<double> animation,
+                  ) {
+                    // Define the transition effect.
+                    return ScaleTransition(scale: animation, child: child);
+                  },
+                  child: ResponsiveButton(
+                    // Assign a unique key to differentiate widgets during
+                    // transitions.
+                    key: ValueKey<bool>(state is BodyWeightSubmittedState),
+                    label: state is BodyWeightSubmittedState
+                        ? 'Edit Body Weight'
+                        : 'Submit Body Weight',
+                    onPressed: state.bodyWeight.isEmpty
+                        ? null
+                        : state is BodyWeightSubmittedState
+                            ? () => context
+                                .read<HomeBloc>()
+                                .add(const EditBodyWeight())
+                            : () => context
+                                .read<HomeBloc>()
+                                .add(const SubmitBodyWeight()),
+                  ),
                 ),
                 const SizedBox(height: 32),
                 // Text Field for Food Weight Placeholder.

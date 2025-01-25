@@ -16,8 +16,8 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   /// Insert a new body weight entry.
-  Future<int> insertBodyWeight(double weight, DateTime date) {
-    return into(bodyWeightEntries).insert(
+  Future<int> insertOnConflictUpdateBodyWeight(double weight, DateTime date) {
+    return into(bodyWeightEntries).insertOnConflictUpdate(
       BodyWeightEntriesCompanion(
         weight: Value<double>(weight),
         date: Value<DateTime>(date),
@@ -29,9 +29,7 @@ class AppDatabase extends _$AppDatabase {
   Future<List<BodyWeightEntry>> getAllEntries() {
     return (select(bodyWeightEntries)
           ..orderBy(<OrderClauseGenerator<$BodyWeightEntriesTable>>[
-            ($BodyWeightEntriesTable t) {
-              return OrderingTerm(expression: t.date, mode: OrderingMode.desc);
-            },
+            ($BodyWeightEntriesTable t) => OrderingTerm(expression: t.date),
           ]))
         .get();
   }
