@@ -5,7 +5,7 @@ import 'package:portion_control/infrastructure/database/database.dart';
 import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/app.dart';
-import 'package:portion_control/ui/home_page.dart';
+import 'package:portion_control/ui/home/home_page.dart';
 
 /// The [main] is the ultimate detail — the lowest-level policy.
 /// It is the initial entry point of the system.

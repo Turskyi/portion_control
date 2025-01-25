@@ -47,6 +47,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(
           BodyWeightSubmittedState(
             bodyWeight: lastBodyWeight,
+            bodyWeightEntries: bodyWeightEntries,
           ),
         );
       }
@@ -55,6 +56,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         BodyWeightError(
           errorMessage: e.toString(),
           bodyWeight: state.bodyWeight,
+          bodyWeightEntries: state.bodyWeightEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -65,7 +67,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     UpdateBodyWeight event,
     Emitter<HomeState> emit,
   ) {
-    emit(BodyWeightUpdatedState(bodyWeight: event.bodyWeight));
+    emit(
+      BodyWeightUpdatedState(
+        bodyWeight: event.bodyWeight,
+        bodyWeightEntries: state.bodyWeightEntries,
+      ),
+    );
   }
 
   FutureOr<void> _submitBodyWeight(
@@ -87,16 +94,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             BodyWeightError(
               errorMessage: 'Failed to submit body weight: ${e.toString()}',
               bodyWeight: state.bodyWeight,
+              bodyWeightEntries: state.bodyWeightEntries,
               foodWeight: state.foodWeight,
             ),
           );
         }
-        emit(BodyWeightSubmittedState(bodyWeight: state.bodyWeight));
+        emit(
+          BodyWeightSubmittedState(
+            bodyWeight: state.bodyWeight,
+            bodyWeightEntries: state.bodyWeightEntries,
+          ),
+        );
       } else {
         emit(
           BodyWeightError(
             errorMessage: 'Invalid body weight',
             bodyWeight: state.bodyWeight,
+            bodyWeightEntries: state.bodyWeightEntries,
             foodWeight: state.foodWeight,
           ),
         );
@@ -106,6 +120,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         BodyWeightError(
           errorMessage: 'Body weight cannot be empty',
           bodyWeight: state.bodyWeight,
+          bodyWeightEntries: state.bodyWeightEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -116,6 +131,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _,
     Emitter<HomeState> emit,
   ) {
-    emit(BodyWeightUpdatedState(bodyWeight: state.bodyWeight));
+    emit(
+      BodyWeightUpdatedState(
+        bodyWeight: state.bodyWeight,
+        bodyWeightEntries: state.bodyWeightEntries,
+      ),
+    );
   }
 }

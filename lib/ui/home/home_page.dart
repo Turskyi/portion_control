@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
-import 'package:portion_control/ui/input_row.dart';
+import 'package:portion_control/ui/home/input_row.dart';
+import 'package:portion_control/ui/home/submit_edit_body_weight_button.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
-import 'package:portion_control/ui/widgets/responsive_button.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -41,7 +41,6 @@ class HomePage extends StatelessWidget {
 
                 // Text Field for Body Weight.
                 InputRow(
-                  state: state,
                   label: 'Body Weight',
                   unit: 'kg',
                   initialValue: state.bodyWeight,
@@ -50,35 +49,8 @@ class HomePage extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 16),
-                // Submit/Edit Body Weight Button with animation.
-                AnimatedSwitcher(
-                  // Animation duration.
-                  duration: const Duration(milliseconds: 300),
-                  transitionBuilder: (
-                    Widget child,
-                    Animation<double> animation,
-                  ) {
-                    // Define the transition effect.
-                    return ScaleTransition(scale: animation, child: child);
-                  },
-                  child: ResponsiveButton(
-                    // Assign a unique key to differentiate widgets during
-                    // transitions.
-                    key: ValueKey<bool>(state is BodyWeightSubmittedState),
-                    label: state is BodyWeightSubmittedState
-                        ? 'Edit Body Weight'
-                        : 'Submit Body Weight',
-                    onPressed: state.bodyWeight.isEmpty
-                        ? null
-                        : state is BodyWeightSubmittedState
-                            ? () => context
-                                .read<HomeBloc>()
-                                .add(const EditBodyWeight())
-                            : () => context
-                                .read<HomeBloc>()
-                                .add(const SubmitBodyWeight()),
-                  ),
-                ),
+
+                const SubmitEditBodyWeightButton(),
                 const SizedBox(height: 32),
                 // Text Field for Food Weight Placeholder.
                 const Row(
@@ -97,7 +69,7 @@ class HomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 32),
 
-                // Submit Food Weight Button
+                // Submit Food Weight Button.
                 ElevatedButton(
                   onPressed: state.foodWeight.isEmpty
                       ? null

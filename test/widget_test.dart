@@ -7,7 +7,7 @@ import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/app.dart';
-import 'package:portion_control/ui/home_page.dart';
+import 'package:portion_control/ui/home/home_page.dart';
 
 class MockBodyWeightRepository extends Mock implements BodyWeightRepository {}
 
