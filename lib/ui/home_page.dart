@@ -42,17 +42,33 @@ class HomePage extends StatelessWidget {
 
                   // Text Field for Body Weight.
                   InputRow(
+                    state: state,
                     label: 'Body Weight',
                     unit: 'kg',
                     initialValue: state is BodyWeightSubmittedState
-                        ? state.bodyWeight.toString()
+                        ? state.bodyWeight
                         : '',
                     onChanged: (String value) {
                       context.read<HomeBloc>().add(UpdateBodyWeight(value));
                     },
                   ),
                   const SizedBox(height: 16),
-
+                  // Submit Body Weight Button
+                  ElevatedButton(
+                    onPressed: state.bodyWeight.isEmpty ||
+                            state is BodyWeightSubmittedState
+                        ? null
+                        : () {
+                            context
+                                .read<HomeBloc>()
+                                .add(const SubmitBodyWeight());
+                          },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: const Text('Submit Body Weight'),
+                  ),
+                  const SizedBox(height: 32),
                   // Text Field for Food Weight Placeholder.
                   const Row(
                     children: <Widget>[
@@ -70,19 +86,19 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 32),
 
-                  // Submit Button
+                  // Submit Food Weight Button
                   ElevatedButton(
-                    onPressed: state.bodyWeight.isEmpty
+                    onPressed: state.foodWeight.isEmpty
                         ? null
                         : () {
                             context
                                 .read<HomeBloc>()
-                                .add(const SubmitBodyWeight());
+                                .add(const SubmitFoodWeight());
                           },
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 50),
                     ),
-                    child: const Text('Submit'),
+                    child: const Text('Submit Food Weight'),
                   ),
                   const SizedBox(height: 16),
 

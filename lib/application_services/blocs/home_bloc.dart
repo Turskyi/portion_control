@@ -2,16 +2,17 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/repositories/i_body_weight_repository.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc(this._repository) : super(const HomeInitial()) {
+  HomeBloc(this._repository) : super(const BodyWeightLoading()) {
+    on<LoadBodyWeightEntries>(_loadBodyWeightEntries);
     on<UpdateBodyWeight>(_updateBodyWeightState);
     on<SubmitBodyWeight>(_submitBodyWeight);
-    on<LoadBodyWeightEntries>(_loadBodyWeightEntries);
   }
 
   final IBodyWeightRepository _repository;
@@ -42,6 +43,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             BodyWeightError(
               errorMessage: 'Failed to submit body weight: ${e.toString()}',
               bodyWeight: state.bodyWeight,
+              foodWeight: state.foodWeight,
             ),
           );
         }
@@ -51,6 +53,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           BodyWeightError(
             errorMessage: 'Invalid body weight',
             bodyWeight: state.bodyWeight,
+            foodWeight: state.foodWeight,
           ),
         );
       }
@@ -59,6 +62,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         BodyWeightError(
           errorMessage: 'Body weight cannot be empty',
           bodyWeight: state.bodyWeight,
+          foodWeight: state.foodWeight,
         ),
       );
     }
@@ -69,13 +73,38 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     try {
-      emit(BodyWeightLoading(bodyWeight: state.bodyWeight));
-      //TODO: emit loaded state.
+      final List<BodyWeight> bodyWeightEntries =
+          await _repository.getAllBodyWeightEntries();
+      String lastBodyWeight = state.bodyWeight;
+      if (bodyWeightEntries.isNotEmpty) {
+        final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
+        final DateTime lastSavedBodyWeightDate = lastSavedBodyWeightEntry.date;
+        final DateTime today = DateTime.now();
+
+        lastBodyWeight = lastSavedBodyWeightDate.difference(today).inDays == 0
+            ? '${lastSavedBodyWeightEntry.weight}'
+            : '';
+      }
+      if (lastBodyWeight.isEmpty) {
+        emit(
+          BodyWeightLoaded(
+            bodyWeight: lastBodyWeight,
+            bodyWeightEntries: bodyWeightEntries,
+          ),
+        );
+      } else {
+        emit(
+          BodyWeightSubmittedState(
+            bodyWeight: lastBodyWeight,
+          ),
+        );
+      }
     } catch (e) {
       emit(
         BodyWeightError(
           errorMessage: e.toString(),
           bodyWeight: state.bodyWeight,
+          foodWeight: state.foodWeight,
         ),
       );
     }

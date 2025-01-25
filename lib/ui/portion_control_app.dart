@@ -9,7 +9,7 @@ class PortionControlApp extends StatelessWidget {
     return MaterialApp(
       title: 'PortionControl',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFE99CBF)),
         useMaterial3: true,
       ),
       home: const HomePage(),

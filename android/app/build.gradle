@@ -8,7 +8,11 @@ plugins {
 android {
     namespace = "com.turskyi.portion_control"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //TODO: change back to dynamic "flutter.ndkVersion" version, when the
+    // error "Your project is configured with Android NDK 26.1.10909125, but
+    // the following plugin(s) depend on a different Android NDK version..." is
+    // gone.
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8

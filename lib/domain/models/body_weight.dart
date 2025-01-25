@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class BodyWeight {
   const BodyWeight({
     required this.id,
@@ -12,4 +14,13 @@ class BodyWeight {
 
   /// Date when the weight was recorded.
   final DateTime date;
+
+  @override
+  String toString() {
+    if (kDebugMode) {
+      return 'BodyWeight{id: $id, weight: $weight, date: $date}';
+    } else {
+      return super.toString();
+    }
+  }
 }
