@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/ui/home/body_weight_line_chart.dart';
 import 'package:portion_control/ui/home/input_row.dart';
 import 'package:portion_control/ui/home/submit_edit_body_weight_button.dart';
@@ -42,10 +43,12 @@ class HomePage extends StatelessWidget {
                 ),
 
                 const SubmitEditBodyWeightButton(),
-                if (state.bodyWeightEntries.length > 2)
+                if (state.bodyWeightEntries.length > 1)
                   // Line Chart of Body Weight trends.
                   BodyWeightLineChart(
-                    bodyWeightEntries: state.bodyWeightEntries,
+                    bodyWeightEntries: state.bodyWeightEntries
+                        .takeLast(DateTime.daysPerWeek * 2)
+                        .toList(),
                   ),
 
                 const SizedBox(height: 16),

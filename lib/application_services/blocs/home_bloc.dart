@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:portion_control/application_services/extensions/date_time_extension.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/repositories/i_body_weight_repository.dart';
+import 'package:portion_control/extensions/date_time_extension.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
