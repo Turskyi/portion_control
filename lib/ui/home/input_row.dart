@@ -46,59 +46,81 @@ class InputRow extends StatelessWidget {
                   );
                 },
                 child: bodyWeight != null
-                    ? Row(
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              // Key ensures the AnimatedSwitcher detects a new
-                              // widget.
-                              key: const ValueKey<bool>(true),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: themeData.colorScheme.onTertiary,
-                                ),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 14,
-                              ),
-                              child: Text(
-                                bodyWeight,
-                                style: TextStyle(
-                                  fontSize: bodyLargeFontSize,
-                                ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12.0, 0, 4, 1),
+                            child: Text(
+                              label,
+                              style: TextStyle(
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.fontSize,
                               ),
                             ),
                           ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                  // Key ensures the AnimatedSwitcher detects a
+                                  // new widget.
+                                  key: const ValueKey<bool>(true),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: themeData.colorScheme.onTertiary,
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 14,
+                                  ),
+                                  child: Text(
+                                    bodyWeight,
+                                    style: TextStyle(
+                                      fontSize: bodyLargeFontSize,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       )
-                    : TextFormField(
-                        // Different key for animation.
-                        key: const ValueKey<bool>(false),
-                        initialValue: initialValue,
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          labelText: label,
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 14.0),
+                        child: TextFormField(
+                          // Different key for animation.
+                          key: const ValueKey<bool>(false),
+                          initialValue: initialValue,
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: label,
+                          ),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9.]'),
+                            ),
+                            // Prevent multiple dots.
+                            TextInputFormatter.withFunction((
+                              TextEditingValue oldValue,
+                              TextEditingValue newValue,
+                            ) {
+                              if (newValue.text.contains('.') &&
+                                  newValue.text.split('.').length > 2) {
+                                return oldValue;
+                              }
+                              return newValue;
+                            }),
+                          ],
+                          onChanged: onChanged,
                         ),
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                          // Prevent multiple dots.
-                          TextInputFormatter.withFunction((
-                            TextEditingValue oldValue,
-                            TextEditingValue newValue,
-                          ) {
-                            if (newValue.text.contains('.') &&
-                                newValue.text.split('.').length > 2) {
-                              return oldValue;
-                            }
-                            return newValue;
-                          }),
-                        ],
-                        onChanged: onChanged,
                       ),
               ),
             ),

@@ -27,9 +27,12 @@ class HomePage extends StatelessWidget {
               spacing: 16,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
+                Text(
                   'Enter Your Details',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
 
                 // Text Field for Body Weight.
@@ -52,39 +55,40 @@ class HomePage extends StatelessWidget {
                   ),
 
                 const SizedBox(height: 16),
-                // Text Field for Food Weight Placeholder.
-                const Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Placeholder(fallbackHeight: 50),
-                    ),
-                    SizedBox(width: 8),
-                    SizedBox(
-                      width: 40,
-                      child: Text('g'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // Submit Food Weight Button.
-                ElevatedButton(
-                  onPressed: state.foodWeight.isEmpty
-                      ? null
-                      : () => context
-                          .read<HomeBloc>()
-                          .add(const SubmitFoodWeight()),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
+                if (state.bodyWeightEntries.isNotEmpty)
+                  // Text Field for Food Weight Placeholder.
+                  const Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Placeholder(fallbackHeight: 50),
+                      ),
+                      SizedBox(width: 8),
+                      SizedBox(
+                        width: 40,
+                        child: Text('g'),
+                      ),
+                    ],
                   ),
-                  child: const Text('Submit Food Weight'),
-                ),
 
-                // Recommendation Section Placeholder
-                const Placeholder(
-                  fallbackHeight: 100,
-                  fallbackWidth: double.infinity,
-                ),
+                if (state.bodyWeightEntries.isNotEmpty)
+                  // Submit Food Weight Button.
+                  ElevatedButton(
+                    onPressed: state.foodWeight.isEmpty
+                        ? null
+                        : () => context
+                            .read<HomeBloc>()
+                            .add(const SubmitFoodWeight()),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: const Text('Submit Food Weight'),
+                  ),
+                if (state.bodyWeightEntries.isNotEmpty)
+                  // Recommendation Section Placeholder
+                  const Placeholder(
+                    fallbackHeight: 100,
+                    fallbackWidth: double.infinity,
+                  ),
               ],
             ),
           );
