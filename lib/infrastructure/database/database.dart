@@ -15,14 +15,41 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-  /// Insert a new body weight entry.
-  Future<int> insertOnConflictUpdateBodyWeight(double weight, DateTime date) {
-    return into(bodyWeightEntries).insertOnConflictUpdate(
-      BodyWeightEntriesCompanion(
-        weight: Value<double>(weight),
-        date: Value<DateTime>(date),
-      ),
-    );
+  /// Insert or update a body weight entry for the same date.
+  /// Returns the `rowid` of the inserted row.
+  Future<int> insertOrUpdateBodyWeight(double weight, DateTime date) async {
+    // Normalize the date to ensure only the day is considered.
+    final DateTime normalizedDate = DateTime(date.year, date.month, date.day);
+
+    // Check if an entry for the same date already exists.
+    final BodyWeightEntry? existingEntry = await (select(bodyWeightEntries)
+          ..where(
+            ($BodyWeightEntriesTable entry) =>
+                entry.date.equals(normalizedDate),
+          ))
+        .getSingleOrNull();
+
+    if (existingEntry != null) {
+      // If an entry exists, update it.
+      return (update(bodyWeightEntries)
+            ..where(
+              ($BodyWeightEntriesTable entry) =>
+                  entry.date.equals(normalizedDate),
+            ))
+          .write(
+        BodyWeightEntriesCompanion(
+          weight: Value<double>(weight),
+        ),
+      );
+    } else {
+      // If no entry exists, insert a new one.
+      return into(bodyWeightEntries).insert(
+        BodyWeightEntriesCompanion(
+          weight: Value<double>(weight),
+          date: Value<DateTime>(normalizedDate),
+        ),
+      );
+    }
   }
 
   /// Retrieve all entries, sorted by date.

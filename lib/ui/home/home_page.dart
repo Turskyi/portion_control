@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/ui/home/body_weight_line_chart.dart';
 import 'package:portion_control/ui/home/input_row.dart';
 import 'package:portion_control/ui/home/submit_edit_body_weight_button.dart';
-import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 
 class HomePage extends StatelessWidget {
@@ -12,12 +12,16 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GradientBackgroundScaffold(
-      appBar: const BlurredAppBar(title: 'PortionControl'),
       body: BlocConsumer<HomeBloc, HomeState>(
         listener: _homeStateListener,
         builder: (BuildContext context, HomeState state) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16.0, 100.0, 16.0, 80.0),
+            padding: EdgeInsets.fromLTRB(
+              16.0,
+              MediaQuery.of(context).padding.top + 18,
+              16.0,
+              80.0,
+            ),
             child: Column(
               spacing: 16,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,12 +42,11 @@ class HomePage extends StatelessWidget {
                 ),
 
                 const SubmitEditBodyWeightButton(),
-
-                // Line Chart of Body Weight trends Placeholder.
-                const Placeholder(
-                  fallbackHeight: 100,
-                  fallbackWidth: double.infinity,
-                ),
+                if (state.bodyWeightEntries.length > 2)
+                  // Line Chart of Body Weight trends.
+                  BodyWeightLineChart(
+                    bodyWeightEntries: state.bodyWeightEntries,
+                  ),
 
                 const SizedBox(height: 16),
                 // Text Field for Food Weight Placeholder.
@@ -65,11 +68,9 @@ class HomePage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: state.foodWeight.isEmpty
                       ? null
-                      : () {
-                          context
-                              .read<HomeBloc>()
-                              .add(const SubmitFoodWeight());
-                        },
+                      : () => context
+                          .read<HomeBloc>()
+                          .add(const SubmitFoodWeight()),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
                   ),

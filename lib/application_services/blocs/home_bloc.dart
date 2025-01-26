@@ -84,10 +84,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       if (bodyWeight != null) {
         try {
           // Insert into the database.
-          await _repository.addOrUpdateBodyWeightEntry(
+          await _repository
+              .addOrUpdateBodyWeightEntry(
             weight: bodyWeight,
             date: DateTime.now(),
-          );
+          )
+              .whenComplete(() async {
+            final List<BodyWeight> updatedBodyWeightEntries =
+                await _repository.getAllBodyWeightEntries();
+            final BodyWeight lastSavedBodyWeightEntry =
+                updatedBodyWeightEntries.last;
+            emit(
+              BodyWeightSubmittedState(
+                bodyWeight: '${lastSavedBodyWeightEntry.weight}',
+                bodyWeightEntries: updatedBodyWeightEntries,
+              ),
+            );
+          });
         } catch (e) {
           // Handle errors (e.g. database issues).
           emit(
@@ -99,12 +112,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ),
           );
         }
-        emit(
-          BodyWeightSubmittedState(
-            bodyWeight: state.bodyWeight,
-            bodyWeightEntries: state.bodyWeightEntries,
-          ),
-        );
       } else {
         emit(
           BodyWeightError(

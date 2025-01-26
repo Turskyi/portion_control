@@ -16,7 +16,7 @@ class BodyWeightRepository implements IBodyWeightRepository {
     required double weight,
     required DateTime date,
   }) {
-    return _database.insertOnConflictUpdateBodyWeight(weight, date);
+    return _database.insertOrUpdateBodyWeight(weight, date);
   }
 
   /// Retrieve all body weight entries, sorted by date.
