@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/infrastructure/database/database.dart';
 import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
+import 'package:portion_control/infrastructure/repositories/user_details_repository.dart';
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/app.dart';
 import 'package:portion_control/ui/home/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The [main] is the ultimate detail — the lowest-level policy.
 /// It is the initial entry point of the system.
@@ -19,12 +21,19 @@ import 'package:portion_control/ui/home/home_page.dart';
 /// When [main] is released, it has utterly no effect on any of the other
 /// components in the system. They don’t know about [main], and they don’t care
 /// when it changes.
-void main() {
+Future<void> main() async {
+  // Ensure that the Flutter engine is initialized, to avoid errors with
+  // `SharedPreferences` dependencies initialization.
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
   final Map<String, WidgetBuilder> routeMap = <String, WidgetBuilder>{
     AppRoute.home.path: (_) => BlocProvider<HomeBloc>(
           create: (_) => HomeBloc(
+            UserDetailsRepository(prefs),
             BodyWeightRepository(AppDatabase()),
-          )..add(const LoadBodyWeightEntries()),
+          )..add(const LoadEntries()),
           child: const HomePage(),
         ),
   };

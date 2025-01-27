@@ -5,8 +5,14 @@ sealed class HomeEvent {
   const HomeEvent();
 }
 
-class LoadBodyWeightEntries extends HomeEvent {
-  const LoadBodyWeightEntries();
+class LoadEntries extends HomeEvent {
+  const LoadEntries();
+}
+
+class UpdateHeight extends HomeEvent {
+  const UpdateHeight(this.height);
+
+  final String height;
 }
 
 class UpdateBodyWeight extends HomeEvent {
@@ -15,8 +21,16 @@ class UpdateBodyWeight extends HomeEvent {
   final String bodyWeight;
 }
 
+class SubmitHeight extends HomeEvent {
+  const SubmitHeight();
+}
+
 class SubmitBodyWeight extends HomeEvent {
   const SubmitBodyWeight();
+}
+
+class EditHeight extends HomeEvent {
+  const EditHeight();
 }
 
 class EditBodyWeight extends HomeEvent {

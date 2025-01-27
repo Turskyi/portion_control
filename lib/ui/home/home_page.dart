@@ -5,6 +5,7 @@ import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/ui/home/body_weight_line_chart.dart';
 import 'package:portion_control/ui/home/input_row.dart';
 import 'package:portion_control/ui/home/submit_edit_body_weight_button.dart';
+import 'package:portion_control/ui/home/submit_edit_height_button.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 
 class HomePage extends StatelessWidget {
@@ -28,35 +29,61 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Enter Your Details',
+                  state is BodyWeightSubmittedState
+                      ? 'Your Details'
+                      : 'Enter Your Details',
                   style: TextStyle(
                     fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
 
-                // Text Field for Body Weight.
+                // Height Input
                 InputRow(
-                  label: 'Body Weight',
-                  unit: 'kg',
-                  initialValue: state.bodyWeight,
+                  label: 'Height',
+                  unit: 'cm',
+                  initialValue: state.height,
+                  value: state is HeightSubmittedState ? state.height : null,
                   onChanged: (String value) {
-                    context.read<HomeBloc>().add(UpdateBodyWeight(value));
+                    context.read<HomeBloc>().add(UpdateHeight(value));
                   },
                 ),
+                const SubmitEditHeightButton(),
+                if (state is HeightSubmittedState)
+                  // Body Weight Input
+                  InputRow(
+                    label: 'Body Weight',
+                    unit: 'kg',
+                    initialValue: state.bodyWeight,
+                    value: state is BodyWeightSubmittedState
+                        ? state.bodyWeight
+                        : null,
+                    onChanged: (String value) {
+                      context.read<HomeBloc>().add(UpdateBodyWeight(value));
+                    },
+                  ),
+                if (state is HeightSubmittedState)
+                  const SubmitEditBodyWeightButton(),
 
-                const SubmitEditBodyWeightButton(),
                 if (state.bodyWeightEntries.length > 1)
-                  // Line Chart of Body Weight trends.
+                  // Line Chart of Body Weight trends
                   BodyWeightLineChart(
                     bodyWeightEntries: state.bodyWeightEntries
                         .takeLast(DateTime.daysPerWeek * 2)
                         .toList(),
                   ),
+                const SizedBox(height: 16),
+                if (state is BodyWeightSubmittedState)
+                  // Recommendations for healthy weight range Section.
+                  const Placeholder(
+                    fallbackHeight: 100,
+                    fallbackWidth: double.infinity,
+                  ),
 
                 const SizedBox(height: 16),
+
                 if (state.bodyWeightEntries.isNotEmpty)
-                  // Text Field for Food Weight Placeholder.
+                  // Food Weight Input Placeholder
                   const Row(
                     children: <Widget>[
                       Expanded(
@@ -71,7 +98,6 @@ class HomePage extends StatelessWidget {
                   ),
 
                 if (state.bodyWeightEntries.isNotEmpty)
-                  // Submit Food Weight Button.
                   ElevatedButton(
                     onPressed: state.foodWeight.isEmpty
                         ? null
@@ -83,8 +109,9 @@ class HomePage extends StatelessWidget {
                     ),
                     child: const Text('Submit Food Weight'),
                   ),
-                if (state.bodyWeightEntries.isNotEmpty)
-                  // Recommendation Section Placeholder
+                if (state.bodyWeightEntries.isNotEmpty &&
+                    state.height.isNotEmpty)
+                  // Recommendation for food consumption Section Placeholder
                   const Placeholder(
                     fallbackHeight: 100,
                     fallbackWidth: double.infinity,
