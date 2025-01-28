@@ -30,7 +30,7 @@ class SubmitEditBodyWeightButton extends StatelessWidget {
             label: state is BodyWeightSubmittedState
                 ? 'Edit Body Weight'
                 : 'Submit Body Weight',
-            onPressed: state.bodyWeight.isEmpty
+            onPressed: state.bodyWeight == 0
                 ? null
                 : state is BodyWeightSubmittedState
                     ? () => context.read<HomeBloc>().add(const EditBodyWeight())

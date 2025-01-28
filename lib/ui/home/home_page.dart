@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/ui/home/body_weight_line_chart.dart';
+import 'package:portion_control/ui/home/healthy_weight_recommendations.dart';
 import 'package:portion_control/ui/home/input_row.dart';
 import 'package:portion_control/ui/home/submit_edit_body_weight_button.dart';
 import 'package:portion_control/ui/home/submit_edit_height_button.dart';
@@ -26,7 +27,6 @@ class HomePage extends StatelessWidget {
             ),
             child: Column(
               spacing: 16,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   state is BodyWeightSubmittedState
@@ -42,8 +42,9 @@ class HomePage extends StatelessWidget {
                 InputRow(
                   label: 'Height',
                   unit: 'cm',
-                  initialValue: state.height,
-                  value: state is HeightSubmittedState ? state.height : null,
+                  initialValue: '${state.height}',
+                  value:
+                      state is HeightSubmittedState ? '${state.height}' : null,
                   onChanged: (String value) {
                     context.read<HomeBloc>().add(UpdateHeight(value));
                   },
@@ -54,9 +55,9 @@ class HomePage extends StatelessWidget {
                   InputRow(
                     label: 'Body Weight',
                     unit: 'kg',
-                    initialValue: state.bodyWeight,
+                    initialValue: '${state.bodyWeight}',
                     value: state is BodyWeightSubmittedState
-                        ? state.bodyWeight
+                        ? '${state.bodyWeight}'
                         : null,
                     onChanged: (String value) {
                       context.read<HomeBloc>().add(UpdateBodyWeight(value));
@@ -72,12 +73,11 @@ class HomePage extends StatelessWidget {
                         .takeLast(DateTime.daysPerWeek * 2)
                         .toList(),
                   ),
-                const SizedBox(height: 16),
+
                 if (state is BodyWeightSubmittedState)
-                  // Recommendations for healthy weight range Section.
-                  const Placeholder(
-                    fallbackHeight: 100,
-                    fallbackWidth: double.infinity,
+                  HealthyWeightRecommendations(
+                    height: state.height,
+                    weight: state.bodyWeight,
                   ),
 
                 const SizedBox(height: 16),
@@ -109,8 +109,7 @@ class HomePage extends StatelessWidget {
                     ),
                     child: const Text('Submit Food Weight'),
                   ),
-                if (state.bodyWeightEntries.isNotEmpty &&
-                    state.height.isNotEmpty)
+                if (state.bodyWeightEntries.isNotEmpty && state.height > 0)
                   // Recommendation for food consumption Section Placeholder
                   const Placeholder(
                     fallbackHeight: 100,

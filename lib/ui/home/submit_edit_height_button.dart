@@ -29,7 +29,7 @@ class SubmitEditHeightButton extends StatelessWidget {
             key: ValueKey<bool>(state is HeightSubmittedState),
             label:
                 state is HeightSubmittedState ? 'Edit Height' : 'Submit Height',
-            onPressed: state.height.isEmpty
+            onPressed: state.height == 0
                 ? null
                 : state is HeightSubmittedState
                     ? () => context.read<HomeBloc>().add(const EditHeight())

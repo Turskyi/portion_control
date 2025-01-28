@@ -9,16 +9,16 @@ sealed class HomeState {
     required this.bodyWeightEntries,
   });
 
-  final String height;
-  final String bodyWeight;
+  final double height;
+  final double bodyWeight;
   final String foodWeight;
   final List<BodyWeight> bodyWeightEntries;
 }
 
 class HomeLoading extends HomeState {
   const HomeLoading({
-    super.height = '',
-    super.bodyWeight = '',
+    super.height = 0,
+    super.bodyWeight = 0,
     super.foodWeight = '',
     super.bodyWeightEntries = const <BodyWeight>[],
   });

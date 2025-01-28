@@ -31,9 +31,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadEntries event,
     Emitter<HomeState> emit,
   ) async {
-    final String userHeight = '${_userDetailsRepository.getHeight() ?? ''}';
-    String lastBodyWeight = state.bodyWeight;
-    if (userHeight.isNotEmpty) {
+    final double userHeight = _userDetailsRepository.getHeight() ?? 0;
+    double lastBodyWeight = state.bodyWeight;
+    if (userHeight > 0) {
       try {
         final List<BodyWeight> bodyWeightEntries =
             await _bodyWeightRepository.getAllBodyWeightEntries();
@@ -44,10 +44,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           final DateTime today = DateTime.now();
 
           lastBodyWeight = lastSavedBodyWeightDate.isSameDate(today)
-              ? '${lastSavedBodyWeightEntry.weight}'
-              : '';
+              ? lastSavedBodyWeightEntry.weight
+              : 0;
         }
-        if (lastBodyWeight.isEmpty) {
+        if (lastBodyWeight == 0) {
           emit(
             HeightSubmittedState(
               height: userHeight,
@@ -90,64 +90,78 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     UpdateHeight event,
     Emitter<HomeState> emit,
   ) {
-    emit(
-      HeightUpdatedState(
-        height: event.height,
-        bodyWeight: state.bodyWeight,
-        bodyWeightEntries: state.bodyWeightEntries,
-      ),
-    );
+    final double? height = double.tryParse(event.height);
+    if (height != null) {
+      emit(
+        HeightUpdatedState(
+          height: height,
+          bodyWeight: state.bodyWeight,
+          bodyWeightEntries: state.bodyWeightEntries,
+        ),
+      );
+    } else {
+      emit(
+        HeightError(
+          errorMessage: 'Invalid height',
+          bodyWeight: state.bodyWeight,
+          height: state.height,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodWeight: state.foodWeight,
+        ),
+      );
+    }
   }
 
   FutureOr<void> _updateBodyWeightState(
     UpdateBodyWeight event,
     Emitter<HomeState> emit,
   ) {
-    emit(
-      BodyWeightUpdatedState(
-        bodyWeight: event.bodyWeight,
-        height: state.height,
-        bodyWeightEntries: state.bodyWeightEntries,
-      ),
-    );
+    final double? bodyWeight = double.tryParse(event.bodyWeight);
+    if (bodyWeight != null) {
+      emit(
+        BodyWeightUpdatedState(
+          bodyWeight: bodyWeight,
+          height: state.height,
+          bodyWeightEntries: state.bodyWeightEntries,
+        ),
+      );
+    } else {
+      emit(
+        BodyWeightError(
+          errorMessage: 'Invalid body weight',
+          bodyWeight: state.bodyWeight,
+          height: state.height,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodWeight: state.foodWeight,
+        ),
+      );
+    }
   }
 
   FutureOr<void> _submitHeight(
     _,
     Emitter<HomeState> emit,
   ) async {
-    if (state.height.isNotEmpty) {
-      final double? height = double.tryParse(state.height);
-      if (height != null) {
-        try {
-          // Insert into the data store.
-          final bool isHeightSaved = await _userDetailsRepository.saveHeight(
-            height,
+    if (state.height > 0) {
+      final double height = state.height;
+
+      try {
+        // Insert into the data store.
+        final bool isHeightSaved = await _userDetailsRepository.saveHeight(
+          height,
+        );
+        if (isHeightSaved) {
+          emit(
+            HeightSubmittedState(
+              bodyWeight: state.bodyWeight,
+              height: state.height,
+              bodyWeightEntries: state.bodyWeightEntries,
+            ),
           );
-          if (isHeightSaved) {
-            emit(
-              HeightSubmittedState(
-                bodyWeight: state.bodyWeight,
-                height: state.height,
-                bodyWeightEntries: state.bodyWeightEntries,
-              ),
-            );
-          } else {
-            emit(
-              HeightError(
-                errorMessage: 'Failed to submit height',
-                bodyWeight: state.bodyWeight,
-                height: state.height,
-                bodyWeightEntries: state.bodyWeightEntries,
-                foodWeight: state.foodWeight,
-              ),
-            );
-          }
-        } catch (e) {
-          // Handle errors (e.g. data store issues).
+        } else {
           emit(
             HeightError(
-              errorMessage: 'Failed to submit height: $e',
+              errorMessage: 'Failed to submit height',
               bodyWeight: state.bodyWeight,
               height: state.height,
               bodyWeightEntries: state.bodyWeightEntries,
@@ -155,10 +169,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ),
           );
         }
-      } else {
+      } catch (e) {
+        // Handle errors (e.g. data store issues).
         emit(
           HeightError(
-            errorMessage: 'Invalid height',
+            errorMessage: 'Failed to submit height: $e',
             bodyWeight: state.bodyWeight,
             height: state.height,
             bodyWeightEntries: state.bodyWeightEntries,
@@ -183,45 +198,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _,
     Emitter<HomeState> emit,
   ) async {
-    if (state.bodyWeight.isNotEmpty) {
-      final double? bodyWeight = double.tryParse(state.bodyWeight);
-      if (bodyWeight != null) {
-        try {
-          // Insert into the database.
-          await _bodyWeightRepository
-              .addOrUpdateBodyWeightEntry(
-            weight: bodyWeight,
-            date: DateTime.now(),
-          )
-              .whenComplete(() async {
-            final List<BodyWeight> updatedBodyWeightEntries =
-                await _bodyWeightRepository.getAllBodyWeightEntries();
-            final BodyWeight lastSavedBodyWeightEntry =
-                updatedBodyWeightEntries.last;
-            emit(
-              BodyWeightSubmittedState(
-                bodyWeight: '${lastSavedBodyWeightEntry.weight}',
-                height: state.height,
-                bodyWeightEntries: updatedBodyWeightEntries,
-              ),
-            );
-          });
-        } catch (e) {
-          // Handle errors (e.g. database issues).
+    if (state.bodyWeight > 0) {
+      final double bodyWeight = state.bodyWeight;
+
+      try {
+        // Insert into the database.
+        await _bodyWeightRepository
+            .addOrUpdateBodyWeightEntry(
+          weight: bodyWeight,
+          date: DateTime.now(),
+        )
+            .whenComplete(() async {
+          final List<BodyWeight> updatedBodyWeightEntries =
+              await _bodyWeightRepository.getAllBodyWeightEntries();
+          final BodyWeight lastSavedBodyWeightEntry =
+              updatedBodyWeightEntries.last;
           emit(
-            BodyWeightError(
-              errorMessage: 'Failed to submit body weight: ${e.toString()}',
-              bodyWeight: state.bodyWeight,
+            BodyWeightSubmittedState(
+              bodyWeight: lastSavedBodyWeightEntry.weight,
               height: state.height,
-              bodyWeightEntries: state.bodyWeightEntries,
-              foodWeight: state.foodWeight,
+              bodyWeightEntries: updatedBodyWeightEntries,
             ),
           );
-        }
-      } else {
+        });
+      } catch (e) {
+        // Handle errors (e.g. database issues).
         emit(
           BodyWeightError(
-            errorMessage: 'Invalid body weight',
+            errorMessage: 'Failed to submit body weight: ${e.toString()}',
             bodyWeight: state.bodyWeight,
             height: state.height,
             bodyWeightEntries: state.bodyWeightEntries,
