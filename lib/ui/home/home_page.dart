@@ -26,6 +26,7 @@ class HomePage extends StatelessWidget {
               80.0,
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 16,
               children: <Widget>[
                 Text(
@@ -42,7 +43,7 @@ class HomePage extends StatelessWidget {
                 InputRow(
                   label: 'Height',
                   unit: 'cm',
-                  initialValue: '${state.height}',
+                  initialValue: '${state.height > 0 ? state.height : ''}',
                   value:
                       state is HeightSubmittedState ? '${state.height}' : null,
                   onChanged: (String value) {
@@ -55,7 +56,8 @@ class HomePage extends StatelessWidget {
                   InputRow(
                     label: 'Body Weight',
                     unit: 'kg',
-                    initialValue: '${state.bodyWeight}',
+                    initialValue:
+                        '${state.bodyWeight > 0 ? state.bodyWeight : ''}',
                     value: state is BodyWeightSubmittedState
                         ? '${state.bodyWeight}'
                         : null,

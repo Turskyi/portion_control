@@ -23,35 +23,40 @@ class HealthyWeightRecommendations extends StatelessWidget {
     final double minHealthyWeight = 18.5 * (heightInMeters * heightInMeters);
     final double maxHealthyWeight = 24.9 * (heightInMeters * heightInMeters);
 
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              'Your Body Mass Index (BMI): ${bmi.toStringAsFixed(1)}',
-              style: Theme.of(context).textTheme.titleMedium,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Card(
+          elevation: 4,
+          margin: const EdgeInsets.symmetric(vertical: 16),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Your Body Mass Index (BMI): ${bmi.toStringAsFixed(1)}',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Healthy Weight Range: '
+                  '${minHealthyWeight.toStringAsFixed(1)}–'
+                  '${maxHealthyWeight.toStringAsFixed(1)} kg',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _getBmiMessage(bmi),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: _getBmiMessageColor(bmi, context),
+                      ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Healthy Weight Range: '
-              '${minHealthyWeight.toStringAsFixed(1)}–'
-              '${maxHealthyWeight.toStringAsFixed(1)} kg',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _getBmiMessage(bmi),
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: _getBmiMessageColor(bmi, context),
-                  ),
-            ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
