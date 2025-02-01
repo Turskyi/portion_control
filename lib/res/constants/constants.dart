@@ -7,3 +7,8 @@ const String imagePath = 'assets/images/';
 
 /// Blur intensity constant.
 const double blurSigma = 12.0;
+
+// in centimeters
+final double minHeight = 100.0;
+// in centimeters
+final double maxHeight = 250.0;

@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
+import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/repositories/i_body_weight_repository.dart';
 import 'package:portion_control/domain/repositories/i_user_details_repository.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
+import 'package:portion_control/res/constants/constants.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -16,9 +20,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     this._bodyWeightRepository,
   ) : super(const HomeLoading()) {
     on<LoadEntries>(_loadEntries);
-    on<UpdateHeight>(_updateHeightState);
-    on<SubmitHeight>(_submitHeight);
-    on<EditHeight>(_setHeightToEditMode);
+    on<UpdateHeight>(_updateHeight);
+    on<UpdateDateOfBirth>(_updateDateOfBirth);
+    on<UpdateGender>(_updateGender);
+    on<SubmitDetails>(_submitDetails);
+    on<EditDetails>(_setHeightToEditMode);
     on<UpdateBodyWeight>(_updateBodyWeightState);
     on<SubmitBodyWeight>(_submitBodyWeight);
     on<EditBodyWeight>(_setBodyWeightToEditMode);
@@ -31,12 +37,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadEntries event,
     Emitter<HomeState> emit,
   ) async {
-    final double userHeight = _userDetailsRepository.getHeight() ?? 0;
-    double lastBodyWeight = state.bodyWeight;
-    if (userHeight > 0) {
+    final UserDetails userDetails = _userDetailsRepository.getUserDetails();
+    double lastBodyWeight = 0;
+    if (userDetails.isNotEmpty) {
       try {
         final List<BodyWeight> bodyWeightEntries =
             await _bodyWeightRepository.getAllBodyWeightEntries();
+
         if (bodyWeightEntries.isNotEmpty) {
           final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
           final DateTime lastSavedBodyWeightDate =
@@ -49,8 +56,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
         if (lastBodyWeight == 0) {
           emit(
-            HeightSubmittedState(
-              height: userHeight,
+            DetailsSubmittedState(
+              userDetails: userDetails,
               bodyWeight: lastBodyWeight,
               bodyWeightEntries: bodyWeightEntries,
             ),
@@ -58,7 +65,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         } else {
           emit(
             BodyWeightSubmittedState(
-              height: userHeight,
+              userDetails: userDetails,
               bodyWeight: lastBodyWeight,
               bodyWeightEntries: bodyWeightEntries,
             ),
@@ -66,9 +73,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
       } catch (e) {
         emit(
-          BodyWeightError(
+          LoadingError(
             errorMessage: '$e',
-            height: userHeight,
+            userDetails: state.userDetails,
             bodyWeight: lastBodyWeight,
             bodyWeightEntries: state.bodyWeightEntries,
             foodWeight: state.foodWeight,
@@ -78,7 +85,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(
         HomeLoaded(
-          height: userHeight,
+          userDetails: state.userDetails,
           bodyWeight: lastBodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
         ),
@@ -86,7 +93,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _updateHeightState(
+  FutureOr<void> _updateDateOfBirth(
+    UpdateDateOfBirth event,
+    Emitter<HomeState> emit,
+  ) {
+    final DateTime dateOfBirth = event.dateOfBirth;
+    //Let's not allow minors to mess with their health.
+    if (dateOfBirth.isOlderThanMinimumAge) {
+      emit(
+        DateOfBirthUpdatedState(
+          userDetails: state.userDetails.copyWith(dateOfBirth: dateOfBirth),
+          bodyWeight: state.bodyWeight,
+          bodyWeightEntries: state.bodyWeightEntries,
+        ),
+      );
+    } else {
+      emit(
+        DateOfBirthError(
+          errorMessage: 'Invalid date of birth',
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodWeight: state.foodWeight,
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _updateHeight(
     UpdateHeight event,
     Emitter<HomeState> emit,
   ) {
@@ -94,7 +128,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (height != null) {
       emit(
         HeightUpdatedState(
-          height: height,
+          userDetails: state.userDetails.copyWith(height: height),
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
         ),
@@ -104,12 +138,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         HeightError(
           errorMessage: 'Invalid height',
           bodyWeight: state.bodyWeight,
-          height: state.height,
+          userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodWeight: state.foodWeight,
         ),
       );
     }
+  }
+
+  FutureOr<void> _updateGender(
+    UpdateGender event,
+    Emitter<HomeState> emit,
+  ) {
+    final Gender gender = event.gender;
+    emit(
+      HeightUpdatedState(
+        userDetails: state.userDetails.copyWith(gender: gender),
+        bodyWeight: state.bodyWeight,
+        bodyWeightEntries: state.bodyWeightEntries,
+      ),
+    );
   }
 
   FutureOr<void> _updateBodyWeightState(
@@ -121,7 +169,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(
         BodyWeightUpdatedState(
           bodyWeight: bodyWeight,
-          height: state.height,
+          userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
         ),
       );
@@ -130,7 +178,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         BodyWeightError(
           errorMessage: 'Invalid body weight',
           bodyWeight: state.bodyWeight,
-          height: state.height,
+          userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodWeight: state.foodWeight,
         ),
@@ -138,32 +186,50 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _submitHeight(
+  FutureOr<void> _submitDetails(
     _,
     Emitter<HomeState> emit,
   ) async {
-    if (state.height > 0) {
+    if (state.isNotEmptyDetails) {
       final double height = state.height;
+      final DateTime? dateOfBirth = state.dateOfBirth;
+      final Gender gender = state.gender;
+
+      if (height < minHeight || height > maxHeight) {
+        emit(
+          HeightError(
+            errorMessage:
+                'Height must be between $minHeight cm and $maxHeight cm.',
+            bodyWeight: state.bodyWeight,
+            userDetails: state.userDetails,
+            bodyWeightEntries: state.bodyWeightEntries,
+            foodWeight: state.foodWeight,
+          ),
+        );
+        return; // Exit early if height validation fails
+      }
 
       try {
         // Insert into the data store.
-        final bool isHeightSaved = await _userDetailsRepository.saveHeight(
-          height,
+        final bool isDetailsSaved =
+            await _userDetailsRepository.saveUserDetails(
+          UserDetails(height: height, dateOfBirth: dateOfBirth, gender: gender),
         );
-        if (isHeightSaved) {
+
+        if (isDetailsSaved) {
           emit(
-            HeightSubmittedState(
+            DetailsSubmittedState(
               bodyWeight: state.bodyWeight,
-              height: state.height,
+              userDetails: state.userDetails,
               bodyWeightEntries: state.bodyWeightEntries,
             ),
           );
         } else {
           emit(
             HeightError(
-              errorMessage: 'Failed to submit height',
+              errorMessage: 'Failed to submit user details',
               bodyWeight: state.bodyWeight,
-              height: state.height,
+              userDetails: state.userDetails,
               bodyWeightEntries: state.bodyWeightEntries,
               foodWeight: state.foodWeight,
             ),
@@ -173,9 +239,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         // Handle errors (e.g. data store issues).
         emit(
           HeightError(
-            errorMessage: 'Failed to submit height: $e',
+            errorMessage: 'Failed to submit details: $e',
             bodyWeight: state.bodyWeight,
-            height: state.height,
+            userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodWeight: state.foodWeight,
           ),
@@ -184,9 +250,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(
         HeightError(
-          errorMessage: 'Height cannot be empty',
+          errorMessage: 'Details cannot be empty',
           bodyWeight: state.bodyWeight,
-          height: state.height,
+          userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodWeight: state.foodWeight,
         ),
@@ -216,7 +282,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           emit(
             BodyWeightSubmittedState(
               bodyWeight: lastSavedBodyWeightEntry.weight,
-              height: state.height,
+              userDetails: state.userDetails,
               bodyWeightEntries: updatedBodyWeightEntries,
             ),
           );
@@ -227,7 +293,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           BodyWeightError(
             errorMessage: 'Failed to submit body weight: ${e.toString()}',
             bodyWeight: state.bodyWeight,
-            height: state.height,
+            userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodWeight: state.foodWeight,
           ),
@@ -238,7 +304,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         BodyWeightError(
           errorMessage: 'Body weight cannot be empty',
           bodyWeight: state.bodyWeight,
-          height: state.height,
+          userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodWeight: state.foodWeight,
         ),
@@ -253,7 +319,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(
       HeightUpdatedState(
         bodyWeight: state.bodyWeight,
-        height: state.height,
+        userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,
       ),
     );
@@ -266,7 +332,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(
       BodyWeightUpdatedState(
         bodyWeight: state.bodyWeight,
-        height: state.height,
+        userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,
       ),
     );

@@ -4,8 +4,8 @@ import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/ui/widgets/responsive_button.dart';
 
 /// Submit/Edit Height Button with animation.
-class SubmitEditHeightButton extends StatelessWidget {
-  const SubmitEditHeightButton({
+class SubmitEditDetailsButton extends StatelessWidget {
+  const SubmitEditDetailsButton({
     super.key,
   });
 
@@ -26,14 +26,15 @@ class SubmitEditHeightButton extends StatelessWidget {
           return ResponsiveButton(
             // Assign a unique key to differentiate widgets during
             // transitions.
-            key: ValueKey<bool>(state is HeightSubmittedState),
-            label:
-                state is HeightSubmittedState ? 'Edit Height' : 'Submit Height',
-            onPressed: state.height == 0
+            key: ValueKey<bool>(state is DetailsSubmittedState),
+            label: state is DetailsSubmittedState
+                ? 'Edit Details'
+                : 'Submit Details',
+            onPressed: state.height == 0 || state.dateOfBirth == null
                 ? null
-                : state is HeightSubmittedState
-                    ? () => context.read<HomeBloc>().add(const EditHeight())
-                    : () => context.read<HomeBloc>().add(const SubmitHeight()),
+                : state is DetailsSubmittedState
+                    ? () => context.read<HomeBloc>().add(const EditDetails())
+                    : () => context.read<HomeBloc>().add(const SubmitDetails()),
           );
         },
       ),

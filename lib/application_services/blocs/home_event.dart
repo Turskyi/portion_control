@@ -15,22 +15,34 @@ class UpdateHeight extends HomeEvent {
   final String height;
 }
 
+class UpdateDateOfBirth extends HomeEvent {
+  const UpdateDateOfBirth(this.dateOfBirth);
+
+  final DateTime dateOfBirth;
+}
+
+class UpdateGender extends HomeEvent {
+  const UpdateGender(this.gender);
+
+  final Gender gender;
+}
+
 class UpdateBodyWeight extends HomeEvent {
   const UpdateBodyWeight(this.bodyWeight);
 
   final String bodyWeight;
 }
 
-class SubmitHeight extends HomeEvent {
-  const SubmitHeight();
+class SubmitDetails extends HomeEvent {
+  const SubmitDetails();
 }
 
 class SubmitBodyWeight extends HomeEvent {
   const SubmitBodyWeight();
 }
 
-class EditHeight extends HomeEvent {
-  const EditHeight();
+class EditDetails extends HomeEvent {
+  const EditDetails();
 }
 
 class EditBodyWeight extends HomeEvent {

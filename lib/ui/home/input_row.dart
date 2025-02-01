@@ -4,18 +4,26 @@ import 'package:flutter/services.dart';
 class InputRow extends StatelessWidget {
   const InputRow({
     required this.label,
-    required this.unit,
-    required this.onChanged,
-    required this.initialValue,
     required this.value,
+    this.initialValue,
+    this.unit = '',
+    this.isRequired = false,
+    this.readOnly = false,
+    this.controller,
+    this.onChanged,
+    this.onTap,
     super.key,
   });
 
   final String label;
   final String unit;
-  final String initialValue;
+  final String? initialValue;
   final String? value;
-  final ValueChanged<String> onChanged;
+  final bool isRequired;
+  final bool readOnly;
+  final TextEditingController? controller;
+  final GestureTapCallback? onTap;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +69,7 @@ class InputRow extends StatelessWidget {
                             child: Container(
                               // Key ensures the AnimatedSwitcher detects a
                               // new widget.
-                              key: const ValueKey<bool>(true),
+                              key: ValueKey<String>('$value'),
                               decoration: BoxDecoration(
                                 border: Border.all(
                                   color: themeData.colorScheme.onTertiary,
@@ -74,9 +82,7 @@ class InputRow extends StatelessWidget {
                               ),
                               child: Text(
                                 value ?? '',
-                                style: TextStyle(
-                                  fontSize: bodyLargeFontSize,
-                                ),
+                                style: TextStyle(fontSize: bodyLargeFontSize),
                               ),
                             ),
                           ),
@@ -88,7 +94,9 @@ class InputRow extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 14.0),
                     child: TextFormField(
                       // Different key for animation.
-                      key: const ValueKey<bool>(false),
+                      key: ValueKey<String>('$value'),
+                      readOnly: readOnly,
+                      controller: controller,
                       initialValue: initialValue,
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
@@ -114,6 +122,15 @@ class InputRow extends StatelessWidget {
                         }),
                       ],
                       onChanged: onChanged,
+                      onTap: onTap,
+                      validator: isRequired
+                          ? (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'This field is required';
+                              }
+                              return null;
+                            }
+                          : null,
                     ),
                   ),
           ),
