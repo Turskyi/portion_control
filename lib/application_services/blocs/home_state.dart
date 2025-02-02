@@ -152,12 +152,14 @@ class GenderError extends HomeState {
   final String errorMessage;
 }
 
-class BodyWeightError extends HeightError {
+class BodyWeightError extends DetailsSubmittedState {
   const BodyWeightError({
     required super.userDetails,
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodWeight,
-    required super.errorMessage,
+    required this.errorMessage,
   });
+
+  final String errorMessage;
 }
