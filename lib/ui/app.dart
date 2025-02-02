@@ -19,7 +19,7 @@ class App extends StatelessWidget {
           // Background gradient center.
           background: const Color(0xFFFFF0F5),
           // Background gradient edge.
-          secondary: const Color(0xFFE9A6BE),
+          secondary: const Color(0xFFD47A9B),
         ),
       ),
       initialRoute: AppRoute.home.path,
