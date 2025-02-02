@@ -39,6 +39,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     final UserDetails userDetails = _userDetailsRepository.getUserDetails();
     double lastBodyWeight = 0;
+
     if (userDetails.isNotEmpty) {
       try {
         final List<BodyWeight> bodyWeightEntries =

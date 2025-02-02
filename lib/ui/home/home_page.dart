@@ -24,6 +24,8 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _dateOfBirthTextEditingController =
       TextEditingController();
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return GradientBackgroundScaffold(
@@ -38,6 +40,7 @@ class _HomePageState extends State<HomePage> {
           final TextTheme textTheme = themeData.textTheme;
           final TextStyle? titleMedium = textTheme.titleMedium;
           return SingleChildScrollView(
+            controller: _scrollController,
             padding: EdgeInsets.fromLTRB(
               16.0,
               MediaQuery.of(context).padding.top + 18,
@@ -188,6 +191,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _dateOfBirthTextEditingController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -199,6 +203,19 @@ class _HomePageState extends State<HomePage> {
             'Body weight submitted: ${state.bodyWeight} kg',
           ),
         ),
+      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+    }
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeOut,
       );
     }
   }

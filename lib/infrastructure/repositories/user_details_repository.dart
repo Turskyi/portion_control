@@ -52,6 +52,7 @@ class UserDetailsRepository implements IUserDetailsRepository {
     final double? height = getHeight();
     final DateTime? dateOfBirth = getDateOfBirth();
     final String? gender = getGender();
+
     return UserDetails(
       height: height ?? 0,
       dateOfBirth: dateOfBirth,
@@ -68,6 +69,7 @@ class UserDetailsRepository implements IUserDetailsRepository {
     final DateTime? dateOfBirth = userDetails.dateOfBirth;
     final bool dateOfBirthSaved =
         dateOfBirth == null ? false : await saveDateOfBirth(dateOfBirth);
+
     return heightSaved && ageSaved && genderSaved && dateOfBirthSaved;
   }
 

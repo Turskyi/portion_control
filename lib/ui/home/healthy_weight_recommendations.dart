@@ -26,33 +26,35 @@ class HealthyWeightRecommendations extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Card(
-          elevation: 4,
-          margin: const EdgeInsets.symmetric(vertical: 16),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Your Body Mass Index (BMI): ${bmi.toStringAsFixed(1)}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Healthy Weight Range: '
-                  '${minHealthyWeight.toStringAsFixed(1)}–'
-                  '${maxHealthyWeight.toStringAsFixed(1)} kg',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _getBmiMessage(bmi),
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: _getBmiMessageColor(bmi, context),
-                      ),
-                ),
-              ],
+        Flexible(
+          child: Card(
+            elevation: 4,
+            margin: const EdgeInsets.symmetric(vertical: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Your Body Mass Index (BMI): ${bmi.toStringAsFixed(1)}',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Healthy Weight Range: '
+                    '${minHealthyWeight.toStringAsFixed(1)} – '
+                    '${maxHealthyWeight.toStringAsFixed(1)} kg',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _getBmiMessage(bmi),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: _getBmiMessageColor(bmi, context),
+                        ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -62,13 +64,16 @@ class HealthyWeightRecommendations extends StatelessWidget {
 
   String _getBmiMessage(double bmi) {
     if (bmi < 18.5) {
-      return 'You are underweight. 🥦💪 \nTime to bulk up!';
+      return 'You are underweight. 🥦💪 \n'
+          'You may need to eat more to maintain health.';
     } else if (bmi >= 18.5 && bmi <= 24.9) {
       return 'You are in the healthy weight range. 🎉💚 \nKeep it up!';
     } else if (bmi >= 25.0 && bmi <= 29.9) {
-      return 'You are overweight. 🍔⚠️\nConsider a balanced diet.';
+      return 'You are above the recommended weight range. 🍔⚠️\n'
+          'Small lifestyle adjustments can support long-term well-being.';
     } else {
-      return 'You are in the obese range. 🍩🚨\nFocus on health!';
+      return 'You are in the obese range. 🍩🚨\n'
+          'Managing portions could help stabilize your weight.';
     }
   }
 
