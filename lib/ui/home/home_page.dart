@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
           final Gender gender = state.gender;
           final double height = state.height;
           final double bodyWeight = state.bodyWeight;
+          final double foodWeight = state.foodWeight;
           final ThemeData themeData = Theme.of(context);
           final TextTheme textTheme = themeData.textTheme;
           final TextStyle? titleMedium = textTheme.titleMedium;
@@ -136,31 +137,26 @@ class _HomePageState extends State<HomePage> {
                     height: state.height,
                     weight: state.bodyWeight,
                   ),
-                const SizedBox(height: 16),
                 if (state is BodyWeightSubmittedState && state.foodWeight == 0)
-                  // TODO: replace placeholder with the Text, concisely
-                  //  explaining how are we going to calculate
-                  //  "portion control". Be concise. Inform that we do not care
-                  // what user eat, but we need to know how his food of choice
-                  // impacts his body weight. For that reason the first day
-                  // user does not have a "portion control", if user will enter
-                  // every single gram of what he consumes in the input bellow
-                  // the next day we will see a trend where the weight goes and
-                  // if it will go up, we will fix that amount and, af
-                  const Placeholder(fallbackHeight: 50),
+                  const Text(
+                    'No portion control today.\n'
+                    'Log everything you eat '
+                    'to track how it affects your weight.',
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
                 if (state is BodyWeightSubmittedState)
-                  // Food Weight Input Placeholder
-                  const Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Placeholder(fallbackHeight: 50),
-                      ),
-                      SizedBox(width: 8),
-                      SizedBox(
-                        width: 40,
-                        child: Text('g'),
-                      ),
-                    ],
+                  // Food Weight Input
+                  InputRow(
+                    label: 'Enter food weight',
+                    unit: 'g',
+                    initialValue: '${foodWeight > 0 ? foodWeight : ''}',
+                    value: state is FoodWeightSubmittedState
+                        ? '$foodWeight'
+                        : null,
+                    onChanged: (String value) {
+                      context.read<HomeBloc>().add(UpdateFoodWeight(value));
+                    },
                   ),
                 if (state.bodyWeightEntries.isNotEmpty)
                   ElevatedButton(
@@ -197,13 +193,6 @@ class _HomePageState extends State<HomePage> {
 
   void _homeStateListener(BuildContext context, HomeState state) {
     if (state is BodyWeightSubmittedState) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Body weight submitted: ${state.bodyWeight} kg',
-          ),
-        ),
-      );
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });

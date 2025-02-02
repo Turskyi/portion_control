@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
+import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
+import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/user_details_repository.dart';
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/app.dart';
@@ -12,27 +14,38 @@ import 'package:portion_control/ui/home/home_page.dart';
 
 class MockBodyWeightRepository extends Mock implements BodyWeightRepository {}
 
+class MockFoodWeightRepository extends Mock implements FoodWeightRepository {}
+
 class MockUserDetailsRepository extends Mock implements UserDetailsRepository {}
 
 void main() {
   testWidgets('HomePage has correct layout and placeholders',
       (WidgetTester tester) async {
     // Create a mock instance of BodyWeightRepository.
-    final MockBodyWeightRepository mockRepository = MockBodyWeightRepository();
+    final MockBodyWeightRepository mockBodyWeightRepository =
+        MockBodyWeightRepository();
+    final MockFoodWeightRepository mockFoodWeightRepository =
+        MockFoodWeightRepository();
     final MockUserDetailsRepository mockUserDetailsRepository =
         MockUserDetailsRepository();
 
     // Stub the `loadBodyWeightEntries` call to return an empty list or desired
     // data.
-    when(() => mockRepository.getAllBodyWeightEntries())
+    when(() => mockBodyWeightRepository.getAllBodyWeightEntries())
         .thenAnswer((_) async => <BodyWeight>[]);
+
+    // Stub the `loadFoodWeightEntries` call to return an empty list or desired
+    // data.
+    when(() => mockFoodWeightRepository.getAllFoodWeightEntries())
+        .thenAnswer((_) async => <FoodWeight>[]);
 
     // Define routeMap with the mock repository
     final Map<String, WidgetBuilder> routeMap = <String, WidgetBuilder>{
       AppRoute.home.path: (_) => BlocProvider<HomeBloc>(
             create: (_) => HomeBloc(
               mockUserDetailsRepository,
-              mockRepository,
+              mockBodyWeightRepository,
+              mockFoodWeightRepository,
             )..add(const LoadEntries()),
             child: const HomePage(),
           ),

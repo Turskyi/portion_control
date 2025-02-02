@@ -33,6 +33,12 @@ class UpdateBodyWeight extends HomeEvent {
   final String bodyWeight;
 }
 
+class UpdateFoodWeight extends HomeEvent {
+  const UpdateFoodWeight(this.foodWeight);
+
+  final String foodWeight;
+}
+
 class SubmitDetails extends HomeEvent {
   const SubmitDetails();
 }
@@ -51,4 +57,8 @@ class EditBodyWeight extends HomeEvent {
 
 class SubmitFoodWeight extends HomeEvent {
   const SubmitFoodWeight();
+}
+
+class EditFoodWeight extends HomeEvent {
+  const EditFoodWeight();
 }

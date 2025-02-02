@@ -7,6 +7,7 @@ import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/repositories/i_body_weight_repository.dart';
+import 'package:portion_control/domain/repositories/i_food_weight_repository.dart';
 import 'package:portion_control/domain/repositories/i_user_details_repository.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/res/constants/constants.dart';
@@ -18,6 +19,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(
     this._userDetailsRepository,
     this._bodyWeightRepository,
+    this._foodWeightRepository,
   ) : super(const HomeLoading()) {
     on<LoadEntries>(_loadEntries);
     on<UpdateHeight>(_updateHeight);
@@ -26,12 +28,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SubmitDetails>(_submitDetails);
     on<EditDetails>(_setHeightToEditMode);
     on<UpdateBodyWeight>(_updateBodyWeightState);
+    on<UpdateFoodWeight>(_updateFoodWeightState);
     on<SubmitBodyWeight>(_submitBodyWeight);
+    on<SubmitFoodWeight>(_submitFoodWeight);
     on<EditBodyWeight>(_setBodyWeightToEditMode);
+    on<EditFoodWeight>(_setFoodWeightToEditMode);
   }
 
   final IUserDetailsRepository _userDetailsRepository;
   final IBodyWeightRepository _bodyWeightRepository;
+  final IFoodWeightRepository _foodWeightRepository;
 
   FutureOr<void> _loadEntries(
     LoadEntries event,
@@ -61,6 +67,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               userDetails: userDetails,
               bodyWeight: lastBodyWeight,
               bodyWeightEntries: bodyWeightEntries,
+              foodWeight: state.foodWeight,
             ),
           );
         } else {
@@ -69,6 +76,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               userDetails: userDetails,
               bodyWeight: lastBodyWeight,
               bodyWeightEntries: bodyWeightEntries,
+              foodWeight: state.foodWeight,
             ),
           );
         }
@@ -89,6 +97,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeight: lastBodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodWeight: state.foodWeight,
         ),
       );
     }
@@ -106,6 +115,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails.copyWith(dateOfBirth: dateOfBirth),
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodWeight: state.foodWeight,
         ),
       );
     } else {
@@ -132,6 +142,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails.copyWith(height: height),
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodWeight: state.foodWeight,
         ),
       );
     } else {
@@ -157,6 +168,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         userDetails: state.userDetails.copyWith(gender: gender),
         bodyWeight: state.bodyWeight,
         bodyWeightEntries: state.bodyWeightEntries,
+        foodWeight: state.foodWeight,
       ),
     );
   }
@@ -172,12 +184,40 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodWeight: state.foodWeight,
         ),
       );
     } else {
       emit(
         BodyWeightError(
           errorMessage: 'Invalid body weight',
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodWeight: state.foodWeight,
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _updateFoodWeightState(
+    UpdateFoodWeight event,
+    Emitter<HomeState> emit,
+  ) {
+    final double? foodWeight = double.tryParse(event.foodWeight);
+    if (foodWeight != null) {
+      emit(
+        FoodWeightUpdatedState(
+          foodWeight: foodWeight,
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+        ),
+      );
+    } else {
+      emit(
+        FoodWeightError(
+          errorMessage: 'Invalid food weight',
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -207,7 +247,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             foodWeight: state.foodWeight,
           ),
         );
-        return; // Exit early if height validation fails
+        // Exit early if height validation fails.
+        return;
       }
 
       try {
@@ -313,6 +354,56 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
+  FutureOr<void> _submitFoodWeight(
+    _,
+    Emitter<HomeState> emit,
+  ) async {
+    if (state.foodWeight > 0) {
+      final double foodWeight = state.foodWeight;
+
+      try {
+        // Insert into the database.
+        await _foodWeightRepository
+            .addOrUpdateFoodWeightEntry(
+          weight: foodWeight,
+          date: DateTime.now(),
+        )
+            .whenComplete(() async {
+          // TODO: get food weight entries for today and update all of them.
+          emit(
+            FoodWeightSubmittedState(
+              bodyWeight: state.bodyWeight,
+              userDetails: state.userDetails,
+              bodyWeightEntries: state.bodyWeightEntries,
+              foodWeight: foodWeight,
+            ),
+          );
+        });
+      } catch (e) {
+        // Handle errors (e.g. database issues).
+        emit(
+          FoodWeightError(
+            errorMessage: 'Failed to submit food weight: $e',
+            bodyWeight: state.bodyWeight,
+            userDetails: state.userDetails,
+            bodyWeightEntries: state.bodyWeightEntries,
+            foodWeight: state.foodWeight,
+          ),
+        );
+      }
+    } else {
+      emit(
+        FoodWeightError(
+          errorMessage: 'Food weight cannot be empty',
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodWeight: state.foodWeight,
+        ),
+      );
+    }
+  }
+
   FutureOr<void> _setHeightToEditMode(
     _,
     Emitter<HomeState> emit,
@@ -332,6 +423,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) {
     emit(
       BodyWeightUpdatedState(
+        bodyWeight: state.bodyWeight,
+        userDetails: state.userDetails,
+        bodyWeightEntries: state.bodyWeightEntries,
+      ),
+    );
+  }
+
+  FutureOr<void> _setFoodWeightToEditMode(
+    _,
+    Emitter<HomeState> emit,
+  ) {
+    emit(
+      FoodWeightUpdatedState(
+        foodWeight: state.foodWeight,
         bodyWeight: state.bodyWeight,
         userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,

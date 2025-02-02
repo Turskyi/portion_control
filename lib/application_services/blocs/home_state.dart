@@ -106,6 +106,24 @@ class BodyWeightSubmittedState extends DetailsSubmittedState {
   });
 }
 
+class FoodWeightUpdatedState extends BodyWeightSubmittedState {
+  const FoodWeightUpdatedState({
+    required super.userDetails,
+    required super.bodyWeight,
+    required super.bodyWeightEntries,
+    required super.foodWeight,
+  });
+}
+
+class FoodWeightSubmittedState extends DetailsSubmittedState {
+  const FoodWeightSubmittedState({
+    required super.userDetails,
+    required super.bodyWeight,
+    required super.bodyWeightEntries,
+    required super.foodWeight,
+  });
+}
+
 class LoadingError extends HeightError {
   const LoadingError({
     required super.userDetails,
@@ -154,6 +172,18 @@ class GenderError extends HomeState {
 
 class BodyWeightError extends DetailsSubmittedState {
   const BodyWeightError({
+    required super.userDetails,
+    required super.bodyWeight,
+    required super.bodyWeightEntries,
+    required super.foodWeight,
+    required this.errorMessage,
+  });
+
+  final String errorMessage;
+}
+
+class FoodWeightError extends BodyWeightSubmittedState {
+  const FoodWeightError({
     required super.userDetails,
     required super.bodyWeight,
     required super.bodyWeightEntries,
