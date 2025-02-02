@@ -6,6 +6,7 @@ import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/res/constants/date_constants.dart';
 import 'package:portion_control/ui/home/body_weight_line_chart.dart';
+import 'package:portion_control/ui/home/gender_selection_widget.dart';
 import 'package:portion_control/ui/home/healthy_weight_recommendations.dart';
 import 'package:portion_control/ui/home/input_row.dart';
 import 'package:portion_control/ui/home/submit_edit_body_weight_button.dart';
@@ -35,8 +36,6 @@ class _HomePageState extends State<HomePage> {
           final double bodyWeight = state.bodyWeight;
           final ThemeData themeData = Theme.of(context);
           final TextTheme textTheme = themeData.textTheme;
-          final double? bodyLargeFontSize = textTheme.bodyLarge?.fontSize;
-          final Color dividerColor = themeData.dividerColor;
           final TextStyle? titleMedium = textTheme.titleMedium;
           return SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(
@@ -58,190 +57,29 @@ class _HomePageState extends State<HomePage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: AnimatedSwitcher(
-                        // Animation duration.
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) {
-                          // Use a fade and slide transition.
-                          return FadeTransition(
-                            opacity: animation,
-                            child: SlideTransition(
-                              position: Tween<Offset>(
-                                // Slide in from below.
-                                begin: const Offset(0.0, 0.1),
-                                end: Offset.zero,
-                              ).animate(animation),
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: state is DetailsSubmittedState
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                      12.0,
-                                      0,
-                                      4,
-                                      1,
-                                    ),
-                                    child: Text(
-                                      'Gender',
-                                      style: TextStyle(
-                                        fontSize: textTheme.bodySmall?.fontSize,
-                                      ),
-                                    ),
-                                  ),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Container(
-                                          // Key ensures the AnimatedSwitcher
-                                          // detects a new widget.
-                                          key: ValueKey<String>('$bodyWeight'),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: themeData
-                                                  .colorScheme.onTertiary,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                            vertical: 14,
-                                          ),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Text(
-                                                gender.emoji,
-                                                // Display the emoji here
-                                                style: TextStyle(
-                                                  fontSize: textTheme
-                                                      .titleMedium?.fontSize,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                gender.displayName,
-                                                style: TextStyle(
-                                                  fontSize: bodyLargeFontSize,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.only(top: 17.0),
-                                child: DropdownButtonFormField<Gender>(
-                                  key: ValueKey<String>('$bodyWeight'),
-                                  value: state.gender,
-                                  decoration: InputDecoration(
-                                    labelText: 'Gender',
-                                    filled: true,
-                                    fillColor: themeData.colorScheme.secondary
-                                        .withOpacity(0.1),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide:
-                                          BorderSide(color: dividerColor),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide:
-                                          BorderSide(color: dividerColor),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide(
-                                        color: themeData.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                  items: Gender.values
-                                      .map(
-                                        (Gender gender) =>
-                                            DropdownMenuItem<Gender>(
-                                          value: gender,
-                                          child: Row(
-                                            children: <Widget>[
-                                              Text(
-                                                gender.emoji,
-                                                // Display the emoji here
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      titleMedium?.fontSize,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                gender.displayName,
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      titleMedium?.fontSize,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: textTheme
-                                                      .bodyLarge?.color,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                  onChanged: (Gender? value) {
-                                    if (value != null) {
-                                      context
-                                          .read<HomeBloc>()
-                                          .add(UpdateGender(value));
-                                    }
-                                  },
-                                ),
-                              ),
-                      ),
-                    ),
-                  ],
+                GenderSelectionWidget(
+                  bodyWeight: bodyWeight,
+                  gender: gender,
+                  isDetailsSubmitted: state is DetailsSubmittedState,
                 ),
                 Row(
                   children: <Widget>[
-                    Expanded(
-                      child: InputRow(
-                        label: 'Date of Birth',
-                        controller: _dateOfBirthTextEditingController
-                          ..text = dateOfBirth,
-                        readOnly: true,
-                        value:
-                            state is DetailsSubmittedState ? dateOfBirth : null,
-                        onTap: () async {
-                          final DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: dateOfBirth.isNotEmpty
-                                ? state.dateOfBirth
-                                : DateTime(1987, 1, 13),
-                            firstDate: maxAllowedBirthDate,
-                            lastDate: minAllowedBirthDate,
-                          );
-
-                          if (context.mounted && pickedDate != null) {
-                            _dateOfBirthTextEditingController.text =
-                                pickedDate.toIso8601Date() ?? '';
-                            context
-                                .read<HomeBloc>()
-                                .add(UpdateDateOfBirth(pickedDate));
-                          }
-                        },
+                    if (gender.isMaleOrFemale)
+                      Expanded(
+                        child: InputRow(
+                          label: 'Date of Birth',
+                          controller: _dateOfBirthTextEditingController
+                            ..text = dateOfBirth,
+                          readOnly: true,
+                          value: state is DetailsSubmittedState
+                              ? dateOfBirth
+                              : null,
+                          onTap: () => _pickDate(
+                            dateOfBirthText: dateOfBirth,
+                            dateOfBirthDateTime: state.dateOfBirth,
+                          ),
+                        ),
                       ),
-                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: InputRow(
@@ -352,16 +190,35 @@ class _HomePageState extends State<HomePage> {
     _dateOfBirthTextEditingController.dispose();
     super.dispose();
   }
-}
 
-void _homeStateListener(BuildContext context, HomeState state) {
-  if (state is BodyWeightSubmittedState) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Body weight submitted: ${state.bodyWeight} kg',
+  void _homeStateListener(BuildContext context, HomeState state) {
+    if (state is BodyWeightSubmittedState) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Body weight submitted: ${state.bodyWeight} kg',
+          ),
         ),
-      ),
+      );
+    }
+  }
+
+  Future<void> _pickDate({
+    required String dateOfBirthText,
+    required DateTime? dateOfBirthDateTime,
+  }) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: dateOfBirthText.isNotEmpty
+          ? dateOfBirthDateTime
+          : DateTime(1987, 1, 13),
+      firstDate: maxAllowedBirthDate,
+      lastDate: minAllowedBirthDate,
     );
+
+    if (mounted && pickedDate != null) {
+      _dateOfBirthTextEditingController.text = pickedDate.toIso8601Date() ?? '';
+      context.read<HomeBloc>().add(UpdateDateOfBirth(pickedDate));
+    }
   }
 }

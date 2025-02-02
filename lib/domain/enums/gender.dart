@@ -9,6 +9,9 @@ enum Gender {
   final String displayName;
   final String emoji;
 
+  /// Getter to check if [Gender] is [male] or [female].
+  bool get isMaleOrFemale => this == Gender.male || this == Gender.female;
+
   // Convert a string to a Gender enum
   static Gender fromString(String value) {
     switch (value.toLowerCase()) {
