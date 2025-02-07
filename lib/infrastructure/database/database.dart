@@ -3,10 +3,11 @@ import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:portion_control/infrastructure/database/tables/body_weight_entries.dart';
+import 'package:portion_control/infrastructure/database/tables/food_entries.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: <Type>[BodyWeightEntries])
+@DriftDatabase(tables: <Type>[BodyWeightEntries, FoodEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? e]) : super(e ?? _openConnection());
 
@@ -52,12 +53,49 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
-  /// Retrieve all entries, sorted by date.
-  Future<List<BodyWeightEntry>> getAllEntries() {
+  /// Retrieve all body weight entries, sorted by date.
+  Future<List<BodyWeightEntry>> getAllBodyWeightEntries() {
     return (select(bodyWeightEntries)
           ..orderBy(<OrderClauseGenerator<$BodyWeightEntriesTable>>[
             ($BodyWeightEntriesTable t) => OrderingTerm(expression: t.date),
           ]))
+        .get();
+  }
+
+  Future<int> insertFoodEntry(FoodEntriesCompanion entry) {
+    return into(foodEntries).insert(entry);
+  }
+
+  /// Updates the [weight] of a food entry identified by [id].
+  ///
+  /// Returns the number of rows affected (should be `1` if the entry exists,
+  /// `0` if no matching entry was found).
+  Future<int> updateFoodEntry({required int id, required double weight}) {
+    return (update(foodEntries)
+          ..where(($FoodEntriesTable tbl) => tbl.id.equals(id)))
+        .write(
+      FoodEntriesCompanion(
+        weight: Value<double>(weight),
+      ),
+    );
+  }
+
+  Future<int> deleteFoodEntry(int id) {
+    return (delete(foodEntries)
+          ..where(($FoodEntriesTable tbl) => tbl.id.equals(id)))
+        .go();
+  }
+
+  Future<List<FoodEntry>> getFoodEntriesByDate(DateTime date) {
+    final DateTime startOfDay = DateTime(date.year, date.month, date.day);
+    final DateTime endOfDay = startOfDay.add(const Duration(days: 1));
+
+    return (select(foodEntries)
+          ..where(
+            ($FoodEntriesTable tbl) =>
+                tbl.date.isBiggerOrEqualValue(startOfDay) &
+                tbl.date.isSmallerThanValue(endOfDay),
+          ))
         .get();
   }
 

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/domain/enums/gender.dart';
+import 'package:portion_control/domain/models/body_weight.dart';
+import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/res/constants/date_constants.dart';
 import 'package:portion_control/ui/home/body_weight_line_chart.dart';
+import 'package:portion_control/ui/home/food_weight_entry_row.dart';
 import 'package:portion_control/ui/home/gender_selection_widget.dart';
 import 'package:portion_control/ui/home/healthy_weight_recommendations.dart';
 import 'package:portion_control/ui/home/input_row.dart';
@@ -36,10 +39,13 @@ class _HomePageState extends State<HomePage> {
           final Gender gender = state.gender;
           final double height = state.height;
           final double bodyWeight = state.bodyWeight;
-          final double foodWeight = state.foodWeight;
+          final List<FoodWeight> foodEntries = state.foodEntries;
+
+          final List<BodyWeight> bodyWeightEntries = state.bodyWeightEntries;
           final ThemeData themeData = Theme.of(context);
           final TextTheme textTheme = themeData.textTheme;
           final TextStyle? titleMedium = textTheme.titleMedium;
+
           return SingleChildScrollView(
             controller: _scrollController,
             padding: EdgeInsets.fromLTRB(
@@ -137,45 +143,78 @@ class _HomePageState extends State<HomePage> {
                     height: state.height,
                     weight: state.bodyWeight,
                   ),
-                if (state is BodyWeightSubmittedState && state.foodWeight == 0)
+                if (foodEntries.isEmpty && bodyWeightEntries.isNotEmpty)
                   const Text(
                     'No portion control today.\n'
                     'Log everything you eat '
                     'to track how it affects your weight.',
                     style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
+                    // textAlign: TextAlign.center,
                   ),
-                if (state is BodyWeightSubmittedState)
-                  // Food Weight Input
-                  InputRow(
-                    label: 'Enter food weight',
-                    unit: 'g',
-                    initialValue: '${foodWeight > 0 ? foodWeight : ''}',
-                    value: state is FoodWeightSubmittedState
-                        ? '$foodWeight'
-                        : null,
-                    onChanged: (String value) {
-                      context.read<HomeBloc>().add(UpdateFoodWeight(value));
-                    },
-                  ),
-                if (state.bodyWeightEntries.isNotEmpty)
-                  ElevatedButton(
-                    onPressed: state.foodWeight == 0
-                        ? null
-                        : () => context
-                            .read<HomeBloc>()
-                            .add(const SubmitFoodWeight()),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
+                if (bodyWeightEntries.isNotEmpty) ...<Widget>[
+                  if (foodEntries.isNotEmpty &&
+                      bodyWeightEntries.length > 1 &&
+                      bodyWeightEntries.last.weight >
+                          bodyWeightEntries[bodyWeightEntries.length - 2]
+                              .weight)
+                    Text(
+                      'Portion Control for today: ${state.portionControl} g',
+                      style: textTheme.titleMedium,
                     ),
-                    child: const Text('Submit Food Weight'),
+                  Column(
+                    spacing: 16,
+                    children: <Widget>[
+                      // Existing food entries
+                      ...foodEntries.map((FoodWeight entry) {
+                        return FoodWeightEntryRow(
+                          value: '${entry.weight}',
+                          time: entry.time,
+                          isEditable: (state is FoodWeightUpdateState &&
+                                  state.foodEntryId == entry.id)
+                              ? true
+                              : false,
+                          onEdit: () {
+                            context
+                                .read<HomeBloc>()
+                                .add(EditFoodEntry(entry.id));
+                          },
+                          onDelete: () {
+                            context
+                                .read<HomeBloc>()
+                                .add(DeleteFoodEntry(entry.id));
+                          },
+                          onSave: (String value) {
+                            context.read<HomeBloc>().add(
+                                  UpdateFoodWeight(
+                                    foodEntryId: entry.id,
+                                    foodWeight: value,
+                                  ),
+                                );
+                          },
+                        );
+                      }),
+                      // Input field for new entry
+                      FoodWeightEntryRow(
+                        time: '',
+                        isEditable: true,
+                        onSave: (String value) {
+                          context.read<HomeBloc>().add(AddFoodEntry(value));
+                        },
+                      ),
+                    ],
                   ),
-                if (state.bodyWeightEntries.isNotEmpty && state.height > 0)
-                  // Recommendation for food consumption Section Placeholder
-                  const Placeholder(
-                    fallbackHeight: 100,
-                    fallbackWidth: double.infinity,
+                  Text(
+                    'Total consumed today: ${state.totalConsumed} g',
+                    style: textTheme.titleMedium,
                   ),
+                  if (state.totalConsumed < state.portionControl)
+                    Text(
+                      'You can eat '
+                      '${state.portionControl - state.totalConsumed} g more '
+                      'today',
+                      style: textTheme.bodyMedium,
+                    ),
+                ],
               ],
             ),
           );

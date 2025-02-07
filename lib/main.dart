@@ -35,7 +35,7 @@ Future<void> main() async {
           create: (_) => HomeBloc(
             UserDetailsRepository(prefs),
             BodyWeightRepository(appDatabase),
-            const FoodWeightRepository(),
+            FoodWeightRepository(appDatabase),
           )..add(const LoadEntries()),
           child: const HomePage(),
         ),

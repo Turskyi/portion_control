@@ -36,7 +36,7 @@ void main() {
 
     // Stub the `loadFoodWeightEntries` call to return an empty list or desired
     // data.
-    when(() => mockFoodWeightRepository.getAllFoodWeightEntries())
+    when(() => mockFoodWeightRepository.getTodayFoodEntries())
         .thenAnswer((_) async => <FoodWeight>[]);
 
     // Define routeMap with the mock repository

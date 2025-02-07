@@ -34,9 +34,13 @@ class UpdateBodyWeight extends HomeEvent {
 }
 
 class UpdateFoodWeight extends HomeEvent {
-  const UpdateFoodWeight(this.foodWeight);
+  const UpdateFoodWeight({
+    required this.foodEntryId,
+    required this.foodWeight,
+  });
 
   final String foodWeight;
+  final int foodEntryId;
 }
 
 class SubmitDetails extends HomeEvent {
@@ -55,10 +59,20 @@ class EditBodyWeight extends HomeEvent {
   const EditBodyWeight();
 }
 
-class SubmitFoodWeight extends HomeEvent {
-  const SubmitFoodWeight();
+class AddFoodEntry extends HomeEvent {
+  const AddFoodEntry(this.foodWeight);
+
+  final String foodWeight;
 }
 
-class EditFoodWeight extends HomeEvent {
-  const EditFoodWeight();
+class EditFoodEntry extends HomeEvent {
+  const EditFoodEntry(this.foodEntryId);
+
+  final int foodEntryId;
+}
+
+class DeleteFoodEntry extends HomeEvent {
+  const DeleteFoodEntry(this.foodEntryId);
+
+  final int foodEntryId;
 }

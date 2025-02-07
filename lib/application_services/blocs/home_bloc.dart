@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
+import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/repositories/i_body_weight_repository.dart';
 import 'package:portion_control/domain/repositories/i_food_weight_repository.dart';
@@ -30,9 +31,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<UpdateBodyWeight>(_updateBodyWeightState);
     on<UpdateFoodWeight>(_updateFoodWeightState);
     on<SubmitBodyWeight>(_submitBodyWeight);
-    on<SubmitFoodWeight>(_submitFoodWeight);
+    on<AddFoodEntry>(_submitFoodWeight);
     on<EditBodyWeight>(_setBodyWeightToEditMode);
-    on<EditFoodWeight>(_setFoodWeightToEditMode);
+    on<EditFoodEntry>(_setFoodWeightToEditMode);
+    on<DeleteFoodEntry>(_deleteFoodEntry);
   }
 
   final IUserDetailsRepository _userDetailsRepository;
@@ -67,18 +69,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               userDetails: userDetails,
               bodyWeight: lastBodyWeight,
               bodyWeightEntries: bodyWeightEntries,
+              foodEntries: state.foodEntries,
               foodWeight: state.foodWeight,
             ),
           );
-        } else {
-          emit(
-            BodyWeightSubmittedState(
-              userDetails: userDetails,
-              bodyWeight: lastBodyWeight,
-              bodyWeightEntries: bodyWeightEntries,
-              foodWeight: state.foodWeight,
-            ),
-          );
+        } else if (lastBodyWeight > 0) {
+          final List<FoodWeight> foodWeightEntries =
+              await _foodWeightRepository.getTodayFoodEntries();
+          if (foodWeightEntries.isNotEmpty) {
+            emit(
+              FoodWeightSubmittedState(
+                userDetails: userDetails,
+                bodyWeight: lastBodyWeight,
+                bodyWeightEntries: bodyWeightEntries,
+                foodEntries: foodWeightEntries,
+                foodWeight: state.foodWeight,
+              ),
+            );
+          } else {
+            emit(
+              BodyWeightSubmittedState(
+                userDetails: userDetails,
+                bodyWeight: lastBodyWeight,
+                bodyWeightEntries: bodyWeightEntries,
+                foodEntries: foodWeightEntries,
+                foodWeight: state.foodWeight,
+              ),
+            );
+          }
         }
       } catch (e) {
         emit(
@@ -87,7 +105,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             userDetails: state.userDetails,
             bodyWeight: lastBodyWeight,
             bodyWeightEntries: state.bodyWeightEntries,
+            foodEntries: state.foodEntries,
             foodWeight: state.foodWeight,
+            portionControl: state.portionControl,
           ),
         );
       }
@@ -97,7 +117,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeight: lastBodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
+          portionControl: state.portionControl,
         ),
       );
     }
@@ -115,6 +137,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails.copyWith(dateOfBirth: dateOfBirth),
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -125,6 +148,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -142,6 +166,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails.copyWith(height: height),
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -152,6 +177,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -168,6 +194,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         userDetails: state.userDetails.copyWith(gender: gender),
         bodyWeight: state.bodyWeight,
         bodyWeightEntries: state.bodyWeightEntries,
+        foodEntries: state.foodEntries,
         foodWeight: state.foodWeight,
       ),
     );
@@ -184,6 +211,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -194,6 +222,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -206,12 +235,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) {
     final double? foodWeight = double.tryParse(event.foodWeight);
     if (foodWeight != null) {
+      final int foodEntryId = event.foodEntryId;
+      _foodWeightRepository.updateFoodWeightEntry(
+        foodEntryId: foodEntryId,
+        foodEntryValue: foodWeight,
+      );
       emit(
         FoodWeightUpdatedState(
+          foodEntryId: event.foodEntryId,
           foodWeight: foodWeight,
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
         ),
       );
     } else {
@@ -221,6 +257,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -244,6 +281,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
+            foodEntries: state.foodEntries,
             foodWeight: state.foodWeight,
           ),
         );
@@ -264,6 +302,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               bodyWeight: state.bodyWeight,
               userDetails: state.userDetails,
               bodyWeightEntries: state.bodyWeightEntries,
+              foodEntries: state.foodEntries,
             ),
           );
         } else {
@@ -273,6 +312,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               bodyWeight: state.bodyWeight,
               userDetails: state.userDetails,
               bodyWeightEntries: state.bodyWeightEntries,
+              foodEntries: state.foodEntries,
               foodWeight: state.foodWeight,
             ),
           );
@@ -285,6 +325,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
+            foodEntries: state.foodEntries,
             foodWeight: state.foodWeight,
           ),
         );
@@ -296,6 +337,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -326,6 +368,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               bodyWeight: lastSavedBodyWeightEntry.weight,
               userDetails: state.userDetails,
               bodyWeightEntries: updatedBodyWeightEntries,
+              foodEntries: state.foodEntries,
             ),
           );
         });
@@ -337,6 +380,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
+            foodEntries: state.foodEntries,
             foodWeight: state.foodWeight,
           ),
         );
@@ -348,33 +392,35 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
     }
   }
 
-  FutureOr<void> _submitFoodWeight(
-    _,
+  FutureOr<void> _submitFoodWeight(AddFoodEntry event,
     Emitter<HomeState> emit,
   ) async {
-    if (state.foodWeight > 0) {
-      final double foodWeight = state.foodWeight;
-
+    final double? foodWeight = double.tryParse(event.foodWeight);
+    if (foodWeight != null) {
       try {
         // Insert into the database.
         await _foodWeightRepository
-            .addOrUpdateFoodWeightEntry(
+            .addFoodWeightEntry(
           weight: foodWeight,
           date: DateTime.now(),
         )
             .whenComplete(() async {
-          // TODO: get food weight entries for today and update all of them.
+          final List<FoodWeight> updatedFoodWeightEntries =
+              await _foodWeightRepository.getTodayFoodEntries();
+
           emit(
             FoodWeightSubmittedState(
               bodyWeight: state.bodyWeight,
               userDetails: state.userDetails,
               bodyWeightEntries: state.bodyWeightEntries,
+              foodEntries: updatedFoodWeightEntries,
               foodWeight: foodWeight,
             ),
           );
@@ -387,6 +433,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
+            foodEntries: state.foodEntries,
             foodWeight: state.foodWeight,
           ),
         );
@@ -394,10 +441,47 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(
         FoodWeightError(
-          errorMessage: 'Food weight cannot be empty',
+          errorMessage: 'Food weight is invalid',
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
+          foodWeight: state.foodWeight,
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _deleteFoodEntry(
+    DeleteFoodEntry event,
+    Emitter<HomeState> emit,
+  ) async {
+    try {
+      await _foodWeightRepository
+          .deleteFoodWeightEntry(event.foodEntryId)
+          .whenComplete(() async {
+        final List<FoodWeight> updatedFoodWeightEntries =
+            await _foodWeightRepository.getTodayFoodEntries();
+
+        emit(
+          FoodWeightSubmittedState(
+            bodyWeight: state.bodyWeight,
+            userDetails: state.userDetails,
+            bodyWeightEntries: state.bodyWeightEntries,
+            foodEntries: updatedFoodWeightEntries,
+            foodWeight: state.foodWeight,
+          ),
+        );
+      });
+    } catch (e) {
+      // Handle errors (e.g. database issues).
+      emit(
+        FoodWeightError(
+          errorMessage: 'Failed to delete food entry: $e',
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
           foodWeight: state.foodWeight,
         ),
       );
@@ -413,6 +497,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         bodyWeight: state.bodyWeight,
         userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,
+        foodEntries: state.foodEntries,
       ),
     );
   }
@@ -426,20 +511,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         bodyWeight: state.bodyWeight,
         userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,
+        foodEntries: state.foodEntries,
       ),
     );
   }
 
-  FutureOr<void> _setFoodWeightToEditMode(
-    _,
+  FutureOr<void> _setFoodWeightToEditMode(EditFoodEntry event,
     Emitter<HomeState> emit,
   ) {
     emit(
-      FoodWeightUpdatedState(
+      FoodWeightUpdateState(
+        foodEntryId: event.foodEntryId,
         foodWeight: state.foodWeight,
         bodyWeight: state.bodyWeight,
         userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,
+        foodEntries: state.foodEntries,
       ),
     );
   }

@@ -23,7 +23,7 @@ class BodyWeightRepository implements IBodyWeightRepository {
   @override
   Future<List<BodyWeight>> getAllBodyWeightEntries() async {
     final List<BodyWeightEntry> bodyWeightEntries =
-        await _database.getAllEntries();
+        await _database.getAllBodyWeightEntries();
     return bodyWeightEntries
         .map((BodyWeightEntry entry) => entry.toDomain())
         .toList();
