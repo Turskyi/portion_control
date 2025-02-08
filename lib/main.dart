@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/infrastructure/database/database.dart';
 import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/user_details_repository.dart';
 import 'package:portion_control/router/app_route.dart';
-import 'package:portion_control/ui/app.dart';
 import 'package:portion_control/ui/home/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

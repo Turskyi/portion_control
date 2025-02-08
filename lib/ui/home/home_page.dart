@@ -6,11 +6,11 @@ import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
 import 'package:portion_control/ui/home/widgets/food_weight_entry_row.dart';
 import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.dart';
-import 'package:portion_control/ui/home/widgets/input_row.dart';
 import 'package:portion_control/ui/home/widgets/portion_control_message.dart';
 import 'package:portion_control/ui/home/widgets/submit_edit_body_weight_button.dart';
 import 'package:portion_control/ui/home/widgets/user_details_widget.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
+import 'package:portion_control/ui/widgets/input_row.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

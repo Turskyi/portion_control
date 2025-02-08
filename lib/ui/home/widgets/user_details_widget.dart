@@ -6,8 +6,8 @@ import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/res/constants/date_constants.dart'
     as date_constants;
 import 'package:portion_control/ui/home/widgets/gender_selection_widget.dart';
-import 'package:portion_control/ui/home/widgets/input_row.dart';
 import 'package:portion_control/ui/home/widgets/submit_edit_details_button.dart';
+import 'package:portion_control/ui/widgets/input_row.dart';
 
 class UserDetailsWidget extends StatefulWidget {
   const UserDetailsWidget({super.key});

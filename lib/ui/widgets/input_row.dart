@@ -58,8 +58,7 @@ class InputRow extends StatelessWidget {
                         child: Text(
                           label,
                           style: TextStyle(
-                            fontSize:
-                                Theme.of(context).textTheme.bodySmall?.fontSize,
+                            fontSize: themeData.textTheme.bodySmall?.fontSize,
                           ),
                         ),
                       ),
