@@ -60,6 +60,12 @@ sealed class HomeState {
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi > constants.maxHealthyBmi;
   }
+
+  bool get isWeightBelowHealthy {
+    final double heightInMeters = height / 100;
+    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
+    return bmi < constants.minHealthyBmi;
+  }
 }
 
 class HomeLoading extends HomeState {

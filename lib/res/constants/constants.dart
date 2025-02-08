@@ -14,3 +14,5 @@ final double minHeight = 100.0;
 final double maxHeight = 250.0;
 
 const double maxHealthyBmi = 24.9;
+
+const double minHealthyBmi = 18.5;

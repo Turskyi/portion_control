@@ -11,6 +11,7 @@ import 'package:portion_control/ui/home/widgets/food_weight_entry_row.dart';
 import 'package:portion_control/ui/home/widgets/gender_selection_widget.dart';
 import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.dart';
 import 'package:portion_control/ui/home/widgets/input_row.dart';
+import 'package:portion_control/ui/home/widgets/portion_control_message.dart';
 import 'package:portion_control/ui/home/widgets/submit_edit_body_weight_button.dart';
 import 'package:portion_control/ui/home/widgets/submit_edit_details_button.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
@@ -141,25 +142,7 @@ class _HomePageState extends State<HomePage> {
                     height: state.height,
                     weight: state.bodyWeight,
                   ),
-                if (state.hasNoPortionControl)
-                  const Text(
-                    'No portion control today.\n'
-                    'Log everything you eat '
-                    'to track how it affects your weight.',
-                    style: TextStyle(fontSize: 16),
-                    // textAlign: TextAlign.center,
-                  )
-                else if (state.isWeightIncreasing && state.isWeightAboveHealthy)
-                  Text(
-                    'Portion Control for today: ${state.portionControl} g',
-                    style: textTheme.titleMedium,
-                  )
-                else if (state.isWeightDecreasing && state.isWeightAboveHealthy)
-                  Text(
-                    'Your weight is decreasing! You can eat freely without '
-                    'strict Portion Control.',
-                    style: textTheme.titleMedium,
-                  ),
+                const PortionControlMessage(),
                 if (state is BodyWeightSubmittedState) ...<Widget>[
                   Column(
                     spacing: 16,
