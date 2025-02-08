@@ -143,8 +143,7 @@ class _HomePageState extends State<HomePage> {
                     height: state.height,
                     weight: state.bodyWeight,
                   ),
-                if (bodyWeightEntries.length == 1 &&
-                    bodyWeightEntries.first.date.isToday)
+                if (state.hasNoPortionControl)
                   const Text(
                     'No portion control today.\n'
                     'Log everything you eat '
@@ -152,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 16),
                     // textAlign: TextAlign.center,
                   ),
-                if (bodyWeightEntries.isNotEmpty) ...<Widget>[
+                if (state is BodyWeightSubmittedState) ...<Widget>[
                   if (foodEntries.isNotEmpty &&
                       bodyWeightEntries.length > 1 &&
                       bodyWeightEntries.last.weight >

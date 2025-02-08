@@ -38,6 +38,9 @@ sealed class HomeState {
         0,
         (double sum, FoodWeight entry) => sum + entry.weight,
       );
+
+  bool get hasNoPortionControl =>
+      bodyWeightEntries.length == 1 && bodyWeightEntries.first.date.isToday;
 }
 
 class HomeLoading extends HomeState {
