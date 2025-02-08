@@ -13,4 +13,9 @@ extension DateTimeExtension on DateTime {
   String? toIso8601Date() {
     return toIso8601String().split('T').firstOrNull;
   }
+
+  bool get isToday {
+    final DateTime now = DateTime.now();
+    return year == now.year && month == now.month && day == now.day;
+  }
 }

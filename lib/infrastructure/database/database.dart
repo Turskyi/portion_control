@@ -99,6 +99,20 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
+  Future<int> getTodayBodyWeightEntriesCount() async {
+    final DateTime today = DateTime.now();
+    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
+
+    final SimpleSelectStatement<$BodyWeightEntriesTable, BodyWeightEntry>
+        query = select(bodyWeightEntries)
+          ..where(
+            ($BodyWeightEntriesTable tbl) =>
+                tbl.date.isBiggerOrEqualValue(startOfDay),
+          );
+
+    return query.get().then((List<BodyWeightEntry> entries) => entries.length);
+  }
+
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'portion_control_db',

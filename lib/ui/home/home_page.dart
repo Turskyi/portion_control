@@ -7,13 +7,13 @@ import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/res/constants/date_constants.dart';
-import 'package:portion_control/ui/home/body_weight_line_chart.dart';
-import 'package:portion_control/ui/home/food_weight_entry_row.dart';
-import 'package:portion_control/ui/home/gender_selection_widget.dart';
-import 'package:portion_control/ui/home/healthy_weight_recommendations.dart';
-import 'package:portion_control/ui/home/input_row.dart';
-import 'package:portion_control/ui/home/submit_edit_body_weight_button.dart';
-import 'package:portion_control/ui/home/submit_edit_details_button.dart';
+import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
+import 'package:portion_control/ui/home/widgets/food_weight_entry_row.dart';
+import 'package:portion_control/ui/home/widgets/gender_selection_widget.dart';
+import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.dart';
+import 'package:portion_control/ui/home/widgets/input_row.dart';
+import 'package:portion_control/ui/home/widgets/submit_edit_body_weight_button.dart';
+import 'package:portion_control/ui/home/widgets/submit_edit_details_button.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 
 class HomePage extends StatefulWidget {
@@ -143,7 +143,8 @@ class _HomePageState extends State<HomePage> {
                     height: state.height,
                     weight: state.bodyWeight,
                   ),
-                if (foodEntries.isEmpty && bodyWeightEntries.isNotEmpty)
+                if (bodyWeightEntries.length == 1 &&
+                    bodyWeightEntries.first.date.isToday)
                   const Text(
                     'No portion control today.\n'
                     'Log everything you eat '
