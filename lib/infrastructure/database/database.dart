@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/foundation.dart';
@@ -111,6 +113,25 @@ class AppDatabase extends _$AppDatabase {
           );
 
     return query.get().then((List<BodyWeightEntry> entries) => entries.length);
+  }
+
+  Future<double> getTotalConsumedYesterday() async {
+    final DateTime now = DateTime.now();
+    final DateTime yesterdayStart = DateTime(now.year, now.month, now.day - 1);
+    final DateTime yesterdayEnd = yesterdayStart.add(const Duration(days: 1));
+
+    final List<FoodEntry> result = await (select(foodEntries)
+          ..where(
+            ($FoodEntriesTable tbl) =>
+                tbl.date.isBiggerOrEqualValue(yesterdayStart) &
+                tbl.date.isSmallerThanValue(yesterdayEnd),
+          ))
+        .get();
+
+    return result.fold<double>(
+      0.0,
+      (double sum, FoodEntry entry) => sum + entry.weight,
+    );
   }
 
   static QueryExecutor _openConnection() {

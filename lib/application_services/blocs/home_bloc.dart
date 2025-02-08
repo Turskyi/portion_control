@@ -46,7 +46,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final UserDetails userDetails = _userDetailsRepository.getUserDetails();
-    double lastBodyWeight = 0;
+    double todayBodyWeight = 0;
 
     if (userDetails.isNotEmpty) {
       try {
@@ -59,41 +59,44 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               lastSavedBodyWeightEntry.date;
           final DateTime today = DateTime.now();
 
-          lastBodyWeight = lastSavedBodyWeightDate.isSameDate(today)
+          todayBodyWeight = lastSavedBodyWeightDate.isSameDate(today)
               ? lastSavedBodyWeightEntry.weight
               : 0;
         }
-        if (lastBodyWeight == 0) {
+        if (todayBodyWeight == 0) {
           emit(
             DetailsSubmittedState(
               userDetails: userDetails,
-              bodyWeight: lastBodyWeight,
+              bodyWeight: todayBodyWeight,
               bodyWeightEntries: bodyWeightEntries,
               foodEntries: state.foodEntries,
-              foodWeight: state.foodWeight,
+              yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             ),
           );
-        } else if (lastBodyWeight > 0) {
-          final List<FoodWeight> foodWeightEntries =
+        } else if (todayBodyWeight > 0) {
+          final List<FoodWeight> todayFoodWeightEntries =
               await _foodWeightRepository.getTodayFoodEntries();
-          if (foodWeightEntries.isNotEmpty) {
+          final double totalConsumedYesterday =
+              await _foodWeightRepository.getTotalConsumedYesterday();
+
+          if (todayFoodWeightEntries.isNotEmpty) {
             emit(
               FoodWeightSubmittedState(
                 userDetails: userDetails,
-                bodyWeight: lastBodyWeight,
+                bodyWeight: todayBodyWeight,
                 bodyWeightEntries: bodyWeightEntries,
-                foodEntries: foodWeightEntries,
-                foodWeight: state.foodWeight,
+                foodEntries: todayFoodWeightEntries,
+                yesterdayConsumedTotal: totalConsumedYesterday,
               ),
             );
           } else {
             emit(
               BodyWeightSubmittedState(
                 userDetails: userDetails,
-                bodyWeight: lastBodyWeight,
+                bodyWeight: todayBodyWeight,
                 bodyWeightEntries: bodyWeightEntries,
-                foodEntries: foodWeightEntries,
-                foodWeight: state.foodWeight,
+                foodEntries: todayFoodWeightEntries,
+                yesterdayConsumedTotal: totalConsumedYesterday,
               ),
             );
           }
@@ -103,10 +106,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           LoadingError(
             errorMessage: '$e',
             userDetails: state.userDetails,
-            bodyWeight: lastBodyWeight,
+            bodyWeight: todayBodyWeight,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
-            foodWeight: state.foodWeight,
+            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             portionControl: state.portionControl,
           ),
         );
@@ -115,10 +118,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(
         HomeLoaded(
           userDetails: state.userDetails,
-          bodyWeight: lastBodyWeight,
+          bodyWeight: todayBodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           portionControl: state.portionControl,
         ),
       );
@@ -138,7 +141,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     } else {
@@ -149,7 +152,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     }
@@ -167,7 +170,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     } else {
@@ -178,7 +181,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     }
@@ -195,7 +198,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         bodyWeight: state.bodyWeight,
         bodyWeightEntries: state.bodyWeightEntries,
         foodEntries: state.foodEntries,
-        foodWeight: state.foodWeight,
+        yesterdayConsumedTotal: state.yesterdayConsumedTotal,
       ),
     );
   }
@@ -212,7 +215,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     } else {
@@ -223,7 +226,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     }
@@ -243,7 +246,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(
         FoodWeightUpdatedState(
           foodEntryId: event.foodEntryId,
-          foodWeight: foodWeight,
+          yesterdayConsumedTotal: foodWeight,
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -258,7 +261,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     }
@@ -282,7 +285,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
-            foodWeight: state.foodWeight,
+            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           ),
         );
         // Exit early if height validation fails.
@@ -313,7 +316,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               userDetails: state.userDetails,
               bodyWeightEntries: state.bodyWeightEntries,
               foodEntries: state.foodEntries,
-              foodWeight: state.foodWeight,
+              yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             ),
           );
         }
@@ -326,7 +329,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
-            foodWeight: state.foodWeight,
+            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           ),
         );
       }
@@ -338,7 +341,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     }
@@ -381,7 +384,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
-            foodWeight: state.foodWeight,
+            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           ),
         );
       }
@@ -393,13 +396,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     }
   }
 
-  FutureOr<void> _submitFoodWeight(AddFoodEntry event,
+  FutureOr<void> _submitFoodWeight(
+    AddFoodEntry event,
     Emitter<HomeState> emit,
   ) async {
     final double? foodWeight = double.tryParse(event.foodWeight);
@@ -421,7 +425,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               userDetails: state.userDetails,
               bodyWeightEntries: state.bodyWeightEntries,
               foodEntries: updatedFoodWeightEntries,
-              foodWeight: foodWeight,
+              yesterdayConsumedTotal: foodWeight,
             ),
           );
         });
@@ -434,7 +438,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
-            foodWeight: state.foodWeight,
+            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           ),
         );
       }
@@ -446,7 +450,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     }
@@ -469,7 +473,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: updatedFoodWeightEntries,
-            foodWeight: state.foodWeight,
+            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           ),
         );
       });
@@ -482,7 +486,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          foodWeight: state.foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         ),
       );
     }
@@ -516,13 +520,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  FutureOr<void> _setFoodWeightToEditMode(EditFoodEntry event,
+  FutureOr<void> _setFoodWeightToEditMode(
+    EditFoodEntry event,
     Emitter<HomeState> emit,
   ) {
     emit(
       FoodWeightUpdateState(
         foodEntryId: event.foodEntryId,
-        foodWeight: state.foodWeight,
+        yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         bodyWeight: state.bodyWeight,
         userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,

@@ -26,4 +26,6 @@ abstract interface class IFoodWeightRepository {
     required int foodEntryId,
     required double foodEntryValue,
   });
+
+  Future<double> getTotalConsumedYesterday();
 }

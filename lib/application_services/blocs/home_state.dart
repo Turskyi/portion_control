@@ -5,7 +5,7 @@ sealed class HomeState {
   const HomeState({
     required this.userDetails,
     required this.bodyWeight,
-    required this.foodWeight,
+    required this.yesterdayConsumedTotal,
     required this.bodyWeightEntries,
     required this.foodEntries,
     required this.portionControl,
@@ -13,7 +13,7 @@ sealed class HomeState {
 
   final UserDetails userDetails;
   final double bodyWeight;
-  final double foodWeight;
+  final double yesterdayConsumedTotal;
   final List<BodyWeight> bodyWeightEntries;
   final List<FoodWeight> foodEntries;
   final double portionControl;
@@ -34,13 +34,26 @@ sealed class HomeState {
 
   int get age => userDetails.age;
 
-  double get totalConsumed => foodEntries.fold(
+  double get totalConsumedToday => foodEntries.fold(
         0,
         (double sum, FoodWeight entry) => sum + entry.weight,
       );
 
   bool get hasNoPortionControl =>
-      bodyWeightEntries.length == 1 && bodyWeightEntries.first.date.isToday;
+      (bodyWeightEntries.length == 1 && bodyWeightEntries.first.date.isToday) ||
+      (bodyWeightEntries.length > 1 && yesterdayConsumedTotal == 0);
+
+  bool get isWeightIncreasing =>
+      yesterdayConsumedTotal > 0 &&
+      bodyWeightEntries.length > 1 &&
+      bodyWeightEntries.last.weight >
+          bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+
+  bool get isWeightDecreasing =>
+      yesterdayConsumedTotal > 0 &&
+      bodyWeightEntries.length > 1 &&
+      bodyWeightEntries.last.weight <
+          bodyWeightEntries[bodyWeightEntries.length - 2].weight;
 }
 
 class HomeLoading extends HomeState {
@@ -50,7 +63,7 @@ class HomeLoading extends HomeState {
       gender: Gender.preferNotToSay,
     ),
     super.bodyWeight = 0,
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
     super.bodyWeightEntries = const <BodyWeight>[],
     super.foodEntries = const <FoodWeight>[],
     super.portionControl = 0.0,
@@ -63,7 +76,7 @@ class HomeLoaded extends HomeState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    required super.foodWeight,
+    required super.yesterdayConsumedTotal,
     required super.portionControl,
   });
 }
@@ -74,7 +87,7 @@ class HeightUpdatedState extends HomeLoaded {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
   });
 }
@@ -85,7 +98,7 @@ class DateOfBirthUpdatedState extends HomeLoaded {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
   });
 }
@@ -96,7 +109,7 @@ class GenderUpdatedState extends HomeLoaded {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
   });
 }
@@ -107,7 +120,7 @@ class DetailsSubmittedState extends HomeLoaded {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
   });
 }
@@ -118,7 +131,7 @@ class BodyWeightUpdatedState extends DetailsSubmittedState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
   });
 }
 
@@ -128,7 +141,7 @@ class BodyWeightSubmittedState extends DetailsSubmittedState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
   });
 }
 
@@ -139,7 +152,7 @@ class FoodWeightUpdateState extends BodyWeightSubmittedState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    required super.foodWeight,
+    required super.yesterdayConsumedTotal,
   });
 
   final int foodEntryId;
@@ -151,7 +164,7 @@ class FoodWeightSubmittedState extends BodyWeightSubmittedState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    required super.foodWeight,
+    required super.yesterdayConsumedTotal,
     this.foodEntryId,
   });
 
@@ -165,7 +178,7 @@ class FoodWeightUpdatedState extends BodyWeightSubmittedState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    required super.foodWeight,
+    required super.yesterdayConsumedTotal,
   });
 
   final int foodEntryId;
@@ -177,7 +190,7 @@ class LoadingError extends HomeState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    required super.foodWeight,
+    required super.yesterdayConsumedTotal,
     required super.portionControl,
     required this.errorMessage,
   });
@@ -192,7 +205,7 @@ class HeightError extends HomeState {
     required super.bodyWeightEntries,
     required this.errorMessage,
     super.foodEntries = const <FoodWeight>[],
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
   });
 
@@ -206,7 +219,7 @@ class DateOfBirthError extends HomeState {
     required super.bodyWeightEntries,
     required this.errorMessage,
     super.foodEntries = const <FoodWeight>[],
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
   });
 
@@ -220,7 +233,7 @@ class GenderError extends HomeState {
     required super.bodyWeightEntries,
     required this.errorMessage,
     super.foodEntries = const <FoodWeight>[],
-    super.foodWeight = 0,
+    super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
   });
 
@@ -233,7 +246,7 @@ class BodyWeightError extends DetailsSubmittedState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    required super.foodWeight,
+    required super.yesterdayConsumedTotal,
     required this.errorMessage,
   });
 
@@ -246,7 +259,7 @@ class FoodWeightError extends BodyWeightSubmittedState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    required super.foodWeight,
+    required super.yesterdayConsumedTotal,
     required this.errorMessage,
   });
 

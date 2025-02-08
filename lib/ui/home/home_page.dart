@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/domain/enums/gender.dart';
-import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/extensions/list_extension.dart';
@@ -41,7 +40,6 @@ class _HomePageState extends State<HomePage> {
           final double bodyWeight = state.bodyWeight;
           final List<FoodWeight> foodEntries = state.foodEntries;
 
-          final List<BodyWeight> bodyWeightEntries = state.bodyWeightEntries;
           final ThemeData themeData = Theme.of(context);
           final TextTheme textTheme = themeData.textTheme;
           final TextStyle? titleMedium = textTheme.titleMedium;
@@ -49,9 +47,9 @@ class _HomePageState extends State<HomePage> {
           return SingleChildScrollView(
             controller: _scrollController,
             padding: EdgeInsets.fromLTRB(
-              16.0,
+              12.0,
               MediaQuery.of(context).padding.top + 18,
-              16.0,
+              12.0,
               80.0,
             ),
             child: Column(
@@ -152,19 +150,23 @@ class _HomePageState extends State<HomePage> {
                     // textAlign: TextAlign.center,
                   ),
                 if (state is BodyWeightSubmittedState) ...<Widget>[
-                  if (foodEntries.isNotEmpty &&
-                      bodyWeightEntries.length > 1 &&
-                      bodyWeightEntries.last.weight >
-                          bodyWeightEntries[bodyWeightEntries.length - 2]
-                              .weight)
+// Show portion control only if body weight is increasing and we have enough
+// data.
+                  if (state.isWeightIncreasing)
                     Text(
                       'Portion Control for today: ${state.portionControl} g',
+                      style: textTheme.titleMedium,
+                    )
+                  else if (state.isWeightDecreasing)
+                    Text(
+                      'Your weight is decreasing! You can eat freely without '
+                      'strict Portion Control.',
                       style: textTheme.titleMedium,
                     ),
                   Column(
                     spacing: 16,
                     children: <Widget>[
-                      // Existing food entries
+                      // Existing food entries.
                       ...foodEntries.map((FoodWeight entry) {
                         return FoodWeightEntryRow(
                           value: '${entry.weight}',
@@ -193,9 +195,8 @@ class _HomePageState extends State<HomePage> {
                           },
                         );
                       }),
-                      // Input field for new entry
+                      // Input field for new food entry
                       FoodWeightEntryRow(
-                        time: '',
                         isEditable: true,
                         onSave: (String value) {
                           context.read<HomeBloc>().add(AddFoodEntry(value));
@@ -204,14 +205,14 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   Text(
-                    'Total consumed today: ${state.totalConsumed} g',
+                    'Total consumed today: ${state.totalConsumedToday} g',
                     style: textTheme.titleMedium,
                   ),
-                  if (state.totalConsumed < state.portionControl)
+                  if (state.totalConsumedToday < state.portionControl)
                     Text(
                       'You can eat '
-                      '${state.portionControl - state.totalConsumed} g more '
-                      'today',
+                      '${state.portionControl - state.totalConsumedToday} g '
+                      'more today',
                       style: textTheme.bodyMedium,
                     ),
                 ],

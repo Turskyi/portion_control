@@ -58,4 +58,9 @@ class FoodWeightRepository implements IFoodWeightRepository {
   }) {
     return _database.updateFoodEntry(id: foodEntryId, weight: foodEntryValue);
   }
+
+  @override
+  Future<double> getTotalConsumedYesterday() async {
+    return _database.getTotalConsumedYesterday();
+  }
 }
