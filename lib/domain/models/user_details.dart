@@ -26,6 +26,7 @@ class UserDetails {
     );
   }
 
+  // Height in centimeters.
   final double height;
   final DateTime? dateOfBirth;
   final Gender gender;

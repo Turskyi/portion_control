@@ -54,6 +54,12 @@ sealed class HomeState {
       bodyWeightEntries.length > 1 &&
       bodyWeightEntries.last.weight <
           bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+
+  bool get isWeightAboveHealthy {
+    final double heightInMeters = height / 100;
+    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
+    return bmi > constants.maxHealthyBmi;
+  }
 }
 
 class HomeLoading extends HomeState {
@@ -141,7 +147,7 @@ class BodyWeightSubmittedState extends DetailsSubmittedState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
-    super.yesterdayConsumedTotal = 0,
+    required super.yesterdayConsumedTotal,
   });
 }
 

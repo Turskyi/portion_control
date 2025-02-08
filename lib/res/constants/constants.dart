@@ -12,3 +12,5 @@ const double blurSigma = 12.0;
 final double minHeight = 100.0;
 // in centimeters
 final double maxHeight = 250.0;
+
+const double maxHealthyBmi = 24.9;

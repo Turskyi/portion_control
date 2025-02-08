@@ -11,7 +11,7 @@ import 'package:portion_control/domain/repositories/i_body_weight_repository.dar
 import 'package:portion_control/domain/repositories/i_food_weight_repository.dart';
 import 'package:portion_control/domain/repositories/i_user_details_repository.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
-import 'package:portion_control/res/constants/constants.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -63,6 +63,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               ? lastSavedBodyWeightEntry.weight
               : 0;
         }
+        final double totalConsumedYesterday =
+            await _foodWeightRepository.getTotalConsumedYesterday();
         if (todayBodyWeight == 0) {
           emit(
             DetailsSubmittedState(
@@ -70,14 +72,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               bodyWeight: todayBodyWeight,
               bodyWeightEntries: bodyWeightEntries,
               foodEntries: state.foodEntries,
-              yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+              yesterdayConsumedTotal: totalConsumedYesterday,
             ),
           );
         } else if (todayBodyWeight > 0) {
           final List<FoodWeight> todayFoodWeightEntries =
               await _foodWeightRepository.getTodayFoodEntries();
-          final double totalConsumedYesterday =
-              await _foodWeightRepository.getTotalConsumedYesterday();
 
           if (todayFoodWeightEntries.isNotEmpty) {
             emit(
@@ -276,11 +276,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final DateTime? dateOfBirth = state.dateOfBirth;
       final Gender gender = state.gender;
 
-      if (height < minHeight || height > maxHeight) {
+      if (height < constants.minHeight || height > constants.maxHeight) {
         emit(
           HeightError(
             errorMessage:
-                'Height must be between $minHeight cm and $maxHeight cm.',
+                'Height must be between ${constants.minHeight} cm and '
+                '${constants.maxHeight} cm.',
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
@@ -366,12 +367,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               await _bodyWeightRepository.getAllBodyWeightEntries();
           final BodyWeight lastSavedBodyWeightEntry =
               updatedBodyWeightEntries.last;
+          final double totalConsumedYesterday =
+              await _foodWeightRepository.getTotalConsumedYesterday();
           emit(
             BodyWeightSubmittedState(
               bodyWeight: lastSavedBodyWeightEntry.weight,
               userDetails: state.userDetails,
               bodyWeightEntries: updatedBodyWeightEntries,
               foodEntries: state.foodEntries,
+              yesterdayConsumedTotal: totalConsumedYesterday,
             ),
           );
         });

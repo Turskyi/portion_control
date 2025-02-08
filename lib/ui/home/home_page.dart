@@ -148,21 +148,19 @@ class _HomePageState extends State<HomePage> {
                     'to track how it affects your weight.',
                     style: TextStyle(fontSize: 16),
                     // textAlign: TextAlign.center,
+                  )
+                else if (state.isWeightIncreasing && state.isWeightAboveHealthy)
+                  Text(
+                    'Portion Control for today: ${state.portionControl} g',
+                    style: textTheme.titleMedium,
+                  )
+                else if (state.isWeightDecreasing && state.isWeightAboveHealthy)
+                  Text(
+                    'Your weight is decreasing! You can eat freely without '
+                    'strict Portion Control.',
+                    style: textTheme.titleMedium,
                   ),
                 if (state is BodyWeightSubmittedState) ...<Widget>[
-// Show portion control only if body weight is increasing and we have enough
-// data.
-                  if (state.isWeightIncreasing)
-                    Text(
-                      'Portion Control for today: ${state.portionControl} g',
-                      style: textTheme.titleMedium,
-                    )
-                  else if (state.isWeightDecreasing)
-                    Text(
-                      'Your weight is decreasing! You can eat freely without '
-                      'strict Portion Control.',
-                      style: textTheme.titleMedium,
-                    ),
                   Column(
                     spacing: 16,
                     children: <Widget>[
