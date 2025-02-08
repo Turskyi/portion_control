@@ -24,8 +24,9 @@ class PortionControlMessage extends StatelessWidget {
           );
         } else if (state.isWeightDecreasing && state.isWeightAboveHealthy) {
           return Text(
-            '📉 Your weight is decreasing! 🎉 You can eat freely without '
-            'strict Portion Control. 🍽️',
+            '📉 Your weight is decreasing! 🎉\nYou can enjoy your meals '
+            'without strict Portion Control, but keep logging your food to '
+            'track your progress. 🍽️',
             style: titleMediumStyle,
           );
         } else if (state.isWeightIncreasing && state.isWeightBelowHealthy) {
