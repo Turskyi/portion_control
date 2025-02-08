@@ -48,8 +48,7 @@ class _HomePageState extends State<HomePage> {
               spacing: 16.0,
               children: <Widget>[
                 const UserDetailsWidget(),
-                const SizedBox(height: 4),
-                if (state is DetailsSubmittedState)
+                if (state.isWeightNotSubmitted)
                   Text(
                     '👉 Enter weight before your first meal.',
                     style: TextStyle(

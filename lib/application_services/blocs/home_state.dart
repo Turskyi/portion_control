@@ -66,6 +66,9 @@ sealed class HomeState {
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi < constants.minHealthyBmi;
   }
+
+  bool get isWeightNotSubmitted =>
+      this is DetailsSubmittedState && this is! BodyWeightSubmittedState;
 }
 
 class HomeLoading extends HomeState {
