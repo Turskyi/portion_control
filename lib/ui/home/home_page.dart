@@ -99,10 +99,8 @@ class _HomePageState extends State<HomePage> {
                         return FoodWeightEntryRow(
                           value: '${entry.weight}',
                           time: entry.time,
-                          isEditable: (state is FoodWeightUpdateState &&
-                                  state.foodEntryId == entry.id)
-                              ? true
-                              : false,
+                          isEditable: state is FoodWeightUpdateState &&
+                              state.foodEntryId == entry.id,
                           onEdit: () {
                             context
                                 .read<HomeBloc>()

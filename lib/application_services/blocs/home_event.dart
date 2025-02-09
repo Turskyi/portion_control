@@ -48,7 +48,9 @@ class SubmitDetails extends HomeEvent {
 }
 
 class SubmitBodyWeight extends HomeEvent {
-  const SubmitBodyWeight();
+  const SubmitBodyWeight(this.bodyWeight);
+
+  final double bodyWeight;
 }
 
 class EditDetails extends HomeEvent {

@@ -35,8 +35,11 @@ class SubmitEditBodyWeightButton extends StatelessWidget {
                 ? null
                 : state is BodyWeightSubmittedState
                     ? () => context.read<HomeBloc>().add(const EditBodyWeight())
-                    : () =>
-                        context.read<HomeBloc>().add(const SubmitBodyWeight()),
+                    : () {
+                        context
+                            .read<HomeBloc>()
+                            .add(SubmitBodyWeight(state.bodyWeight));
+                      },
           );
         },
       ),

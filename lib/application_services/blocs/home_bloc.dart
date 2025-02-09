@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
@@ -368,38 +367,41 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _,
     Emitter<HomeState> emit,
   ) async {
-    if (state.bodyWeight > 0) {
+    if (state.bodyWeight > constants.minBodyWeight) {
       final double bodyWeight = state.bodyWeight;
 
       try {
         // Insert into the database.
-        await _bodyWeightRepository
-            .addOrUpdateBodyWeightEntry(
+        await _bodyWeightRepository.addOrUpdateBodyWeightEntry(
           weight: bodyWeight,
           date: DateTime.now(),
-        )
-            .whenComplete(() async {
-          final List<BodyWeight> updatedBodyWeightEntries =
-              await _bodyWeightRepository.getAllBodyWeightEntries();
-          final BodyWeight lastSavedBodyWeightEntry =
-              updatedBodyWeightEntries.last;
-          final double totalConsumedYesterday =
-              await _foodWeightRepository.getTotalConsumedYesterday();
-          emit(
-            BodyWeightSubmittedState(
-              bodyWeight: lastSavedBodyWeightEntry.weight,
-              userDetails: state.userDetails,
-              bodyWeightEntries: updatedBodyWeightEntries,
-              foodEntries: state.foodEntries,
-              yesterdayConsumedTotal: totalConsumedYesterday,
-            ),
-          );
-        });
-      } catch (e) {
+        );
+        final List<BodyWeight> updatedBodyWeightEntries =
+            await _bodyWeightRepository.getAllBodyWeightEntries();
+        // We have just saved one body weight entry, so we know that
+        // `updatedBodyWeightEntries` is not empty.
+        final BodyWeight lastSavedBodyWeightEntry =
+            updatedBodyWeightEntries.last;
+
+        final double totalConsumedYesterday =
+            await _foodWeightRepository.getTotalConsumedYesterday();
+
+        emit(
+          BodyWeightSubmittedState(
+            bodyWeight: lastSavedBodyWeightEntry.weight,
+            userDetails: state.userDetails,
+            bodyWeightEntries: updatedBodyWeightEntries,
+            foodEntries: state.foodEntries,
+            yesterdayConsumedTotal: totalConsumedYesterday,
+          ),
+        );
+      } catch (error, stackTrace) {
         // Handle errors (e.g. database issues).
+        debugPrint('Error while submitting body weight: $error');
+        debugPrint('Stack trace: $stackTrace');
         emit(
           BodyWeightError(
-            errorMessage: 'Failed to submit body weight: ${e.toString()}',
+            errorMessage: 'Failed to submit body weight: $error',
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
@@ -430,30 +432,32 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (foodWeight != null) {
       try {
         // Insert into the database.
-        await _foodWeightRepository
-            .addFoodWeightEntry(
+        await _foodWeightRepository.addFoodWeightEntry(
           weight: foodWeight,
           date: DateTime.now(),
-        )
-            .whenComplete(() async {
-          final List<FoodWeight> updatedFoodWeightEntries =
-              await _foodWeightRepository.getTodayFoodEntries();
+        );
 
-          emit(
-            FoodWeightSubmittedState(
-              bodyWeight: state.bodyWeight,
-              userDetails: state.userDetails,
-              bodyWeightEntries: state.bodyWeightEntries,
-              foodEntries: updatedFoodWeightEntries,
-              yesterdayConsumedTotal: foodWeight,
-            ),
-          );
-        });
-      } catch (e) {
+        final List<FoodWeight> updatedFoodWeightEntries =
+            await _foodWeightRepository.getTodayFoodEntries();
+
+        emit(
+          FoodWeightSubmittedState(
+            bodyWeight: state.bodyWeight,
+            userDetails: state.userDetails,
+            bodyWeightEntries: state.bodyWeightEntries,
+            foodEntries: updatedFoodWeightEntries,
+            yesterdayConsumedTotal: foodWeight,
+          ),
+        );
+      } catch (error, stackTrace) {
+        debugPrint(
+          'Error in _submitFoodWeight - Failed to insert food weight: $error',
+        );
+        debugPrint('Stack trace: $stackTrace');
         // Handle errors (e.g. database issues).
         emit(
           FoodWeightError(
-            errorMessage: 'Failed to submit food weight: $e',
+            errorMessage: 'Failed to submit food weight: $error',
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,

@@ -119,19 +119,24 @@ class AppDatabase extends _$AppDatabase {
     final DateTime now = DateTime.now();
     final DateTime yesterdayStart = DateTime(now.year, now.month, now.day - 1);
     final DateTime yesterdayEnd = yesterdayStart.add(const Duration(days: 1));
+    try {
+      final List<FoodEntry> result = await (select(foodEntries)
+            ..where(
+              ($FoodEntriesTable tbl) =>
+                  tbl.date.isBiggerOrEqualValue(yesterdayStart) &
+                  tbl.date.isSmallerThanValue(yesterdayEnd),
+            ))
+          .get();
 
-    final List<FoodEntry> result = await (select(foodEntries)
-          ..where(
-            ($FoodEntriesTable tbl) =>
-                tbl.date.isBiggerOrEqualValue(yesterdayStart) &
-                tbl.date.isSmallerThanValue(yesterdayEnd),
-          ))
-        .get();
-
-    return result.fold<double>(
-      0.0,
-      (double sum, FoodEntry entry) => sum + entry.weight,
-    );
+      return result.fold<double>(
+        0.0,
+        (double sum, FoodEntry entry) => sum + entry.weight,
+      );
+    } catch (error, stackTrace) {
+      debugPrint('Error while accessing food_entries table: $error.');
+      debugPrint('Stack trace: $stackTrace');
+      return 0.0;
+    }
   }
 
   /// Returns the amount of rows that were deleted by this statement directly
