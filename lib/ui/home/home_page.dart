@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/extensions/list_extension.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
 import 'package:portion_control/ui/home/widgets/food_weight_entry_row.dart';
 import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.dart';
@@ -122,13 +123,22 @@ class _HomePageState extends State<HomePage> {
                           },
                         );
                       }),
-                      // Input field for new food entry
-                      FoodWeightEntryRow(
-                        isEditable: true,
-                        onSave: (String value) {
-                          context.read<HomeBloc>().add(AddFoodEntry(value));
-                        },
-                      ),
+                      if (state.totalConsumedToday <
+                          constants.maxDailyFoodLimit)
+                        // Input field for new food entry
+                        FoodWeightEntryRow(
+                          isEditable: true,
+                          onSave: (String value) {
+                            context.read<HomeBloc>().add(AddFoodEntry(value));
+                          },
+                        )
+                      else
+                        const Text(
+                          'It seems like you’ve set a big challenge for '
+                          'yourself today. We’re not sure what your plans are, '
+                          'but we definitely suggest not overdoing it with '
+                          'that amount of food. 😅',
+                        ),
                     ],
                   ),
                   Text(

@@ -20,3 +20,5 @@ const double minHealthyBmi = 18.5;
 const double minBodyWeight = 20.0;
 
 const int minAge = 18;
+
+const double maxDailyFoodLimit = 6000.0;
