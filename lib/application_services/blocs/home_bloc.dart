@@ -68,6 +68,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
         final double totalConsumedYesterday =
             await _foodWeightRepository.getTotalConsumedYesterday();
+
         if (todayBodyWeight == 0) {
           emit(
             DetailsSubmittedState(
@@ -78,7 +79,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               yesterdayConsumedTotal: totalConsumedYesterday,
             ),
           );
-        } else if (todayBodyWeight > 0) {
+        } else if (todayBodyWeight > constants.minBodyWeight) {
           final List<FoodWeight> todayFoodWeightEntries =
               await _foodWeightRepository.getTodayFoodEntries();
 
@@ -103,6 +104,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               ),
             );
           }
+        } else {
+          emit(
+            LoadingError(
+              errorMessage: 'Error: Entered body weight is below the '
+                  'biologically possible limit. Please verify your input.',
+              userDetails: state.userDetails,
+              bodyWeight: todayBodyWeight,
+              bodyWeightEntries: state.bodyWeightEntries,
+              foodEntries: state.foodEntries,
+              yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+              portionControl: state.portionControl,
+            ),
+          );
         }
       } catch (e) {
         emit(

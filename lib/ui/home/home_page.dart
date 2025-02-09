@@ -25,27 +25,26 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final double horizontalIndent = 12.0;
     return GradientBackgroundScaffold(
-      body: BlocConsumer<HomeBloc, HomeState>(
-        listener: _homeStateListener,
-        builder: (BuildContext context, HomeState state) {
-          final double bodyWeight = state.bodyWeight;
-          final List<FoodWeight> foodEntries = state.foodEntries;
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        padding: EdgeInsets.fromLTRB(
+          horizontalIndent,
+          MediaQuery.of(context).padding.top + 18,
+          horizontalIndent,
+          80.0,
+        ),
+        child: BlocConsumer<HomeBloc, HomeState>(
+          listener: _homeStateListener,
+          builder: (BuildContext context, HomeState state) {
+            final double bodyWeight = state.bodyWeight;
+            final List<FoodWeight> foodEntries = state.foodEntries;
 
-          final ThemeData themeData = Theme.of(context);
-          final TextTheme textTheme = themeData.textTheme;
-          final TextStyle? titleMedium = textTheme.titleMedium;
-          final double horizontalIndent = 12.0;
-
-          return SingleChildScrollView(
-            controller: _scrollController,
-            padding: EdgeInsets.fromLTRB(
-              horizontalIndent,
-              MediaQuery.of(context).padding.top + 18,
-              horizontalIndent,
-              80.0,
-            ),
-            child: Column(
+            final ThemeData themeData = Theme.of(context);
+            final TextTheme textTheme = themeData.textTheme;
+            final TextStyle? titleMedium = textTheme.titleMedium;
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               spacing: 16.0,
               children: <Widget>[
@@ -152,9 +151,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                 ],
               ],
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
