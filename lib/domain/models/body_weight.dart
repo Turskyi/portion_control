@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 
+@immutable
 class BodyWeight {
   const BodyWeight({
     required this.id,
     required this.weight,
     required this.date,
   });
+
+  BodyWeight.empty() : this(id: 0, weight: 0, date: DateTime(0));
 
   final int id;
 

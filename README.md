@@ -72,7 +72,7 @@ This will launch the app on your connected device or emulator.
 
 ## Project Structure
 
-Here’s a breakdown of the main components in this Flutter app:
+Here&apos;s a breakdown of the main components in this Flutter app:
 
 ```
 lib/
@@ -106,12 +106,15 @@ ThemeData
 (
 colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)
 ,
-useMaterial3
-:
-true
-,
 )
 ```
+
+## Why are `repositories` located in the `infrastructure` component?
+
+**Repositories** are placed in the `infrastructure` component because they
+directly interact with the `database`. If we were to place `repositories` in
+the application services layer, they would not have access to the outer layer,
+and hence to the `database`.
 
 ## Testing
 
@@ -122,24 +125,6 @@ You can run the tests using the following command:
 
 ```bash
 flutter test
-```
-
-Example tests provided in the `test/widget_test.dart` file verify the layout,
-presence of text elements, and interaction with the placeholder buttons.
-
-```dart
-testWidgets
-('HomePage has correct layout and placeholders
-'
-, (WidgetTester tester) async {
-// Build our app and trigger a frame.
-await tester.pumpWidget(const PortionControlApp());
-
-// Verify the presence of the title, text fields, and placeholders.
-expect(find.text('PortionControl'), findsOneWidget);
-expect(find.text('Enter Your Details'), findsOneWidget);
-expect(find.byType(Placeholder), findsNWidgets(4));
-});
 ```
 
 ## Roadmap
@@ -439,4 +424,4 @@ For any inquiries, please contact support@turskyi.com.
 ## Screenshot
 
 <!--suppress CheckImageSize -->
-<img src="screenshots/Screenshot_placeholder.png" width="400"  alt="screenshot">
+<img src="screenshots/Screenshot_20250208_180426.png" width="400"  alt="screenshot">

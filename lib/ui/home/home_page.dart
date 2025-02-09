@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage> {
           final TextTheme textTheme = themeData.textTheme;
           final TextStyle? titleMedium = textTheme.titleMedium;
           final double horizontalIndent = 12.0;
+
           return SingleChildScrollView(
             controller: _scrollController,
             padding: EdgeInsets.fromLTRB(
@@ -49,11 +50,14 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 const UserDetailsWidget(),
                 if (state.isWeightNotSubmitted)
-                  Text(
-                    '👉 Enter weight before your first meal.',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: titleMedium?.fontSize,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: Text(
+                      '👉 Enter weight before your first meal.',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: titleMedium?.fontSize,
+                      ),
                     ),
                   ),
                 if (state is DetailsSubmittedState)
@@ -83,7 +87,8 @@ class _HomePageState extends State<HomePage> {
                     height: state.height,
                     weight: state.bodyWeight,
                   ),
-                const PortionControlMessage(),
+                if (state is BodyWeightSubmittedState)
+                  const PortionControlMessage(),
                 if (state is BodyWeightSubmittedState) ...<Widget>[
                   Column(
                     spacing: 16,

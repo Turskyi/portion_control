@@ -7,9 +7,10 @@ import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/models/user_details.dart';
-import 'package:portion_control/domain/repositories/i_body_weight_repository.dart';
-import 'package:portion_control/domain/repositories/i_food_weight_repository.dart';
-import 'package:portion_control/domain/repositories/i_user_details_repository.dart';
+import 'package:portion_control/domain/services/interactors/i_clear_tracking_data_use_case.dart';
+import 'package:portion_control/domain/services/repositories/i_body_weight_repository.dart';
+import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
+import 'package:portion_control/domain/services/repositories/i_user_details_repository.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 
@@ -21,13 +22,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     this._userDetailsRepository,
     this._bodyWeightRepository,
     this._foodWeightRepository,
+    this._clearTrackingDataUseCase,
   ) : super(const HomeLoading()) {
     on<LoadEntries>(_loadEntries);
     on<UpdateHeight>(_updateHeight);
     on<UpdateDateOfBirth>(_updateDateOfBirth);
     on<UpdateGender>(_updateGender);
     on<SubmitDetails>(_submitDetails);
-    on<EditDetails>(_setHeightToEditMode);
+    on<EditDetails>(_setDetailsToEditMode);
     on<UpdateBodyWeight>(_updateBodyWeightState);
     on<UpdateFoodWeight>(_updateFoodWeightState);
     on<SubmitBodyWeight>(_submitBodyWeight);
@@ -35,11 +37,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<EditBodyWeight>(_setBodyWeightToEditMode);
     on<EditFoodEntry>(_setFoodWeightToEditMode);
     on<DeleteFoodEntry>(_deleteFoodEntry);
+    on<ClearUserData>(_clearUserData);
   }
 
   final IUserDetailsRepository _userDetailsRepository;
   final IBodyWeightRepository _bodyWeightRepository;
   final IFoodWeightRepository _foodWeightRepository;
+  final IClearTrackingDataUseCase _clearTrackingDataUseCase;
 
   FutureOr<void> _loadEntries(
     LoadEntries event,
@@ -165,7 +169,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final double? height = double.tryParse(event.height);
     if (height != null) {
       emit(
-        HeightUpdatedState(
+        DetailsUpdateState(
           userDetails: state.userDetails.copyWith(height: height),
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -175,8 +179,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
     } else {
       emit(
-        HeightError(
-          errorMessage: 'Invalid height',
+        DetailsError(
+          errorMessage: 'Invalid details',
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -193,7 +197,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) {
     final Gender gender = event.gender;
     emit(
-      HeightUpdatedState(
+      DetailsUpdateState(
         userDetails: state.userDetails.copyWith(gender: gender),
         bodyWeight: state.bodyWeight,
         bodyWeightEntries: state.bodyWeightEntries,
@@ -278,7 +282,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       if (height < constants.minHeight || height > constants.maxHeight) {
         emit(
-          HeightError(
+          DetailsError(
             errorMessage:
                 'Height must be between ${constants.minHeight} cm and '
                 '${constants.maxHeight} cm.',
@@ -301,17 +305,29 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         );
 
         if (isDetailsSaved) {
-          emit(
-            DetailsSubmittedState(
-              bodyWeight: state.bodyWeight,
-              userDetails: state.userDetails,
-              bodyWeightEntries: state.bodyWeightEntries,
-              foodEntries: state.foodEntries,
-            ),
-          );
+          if (state.bodyWeight > constants.minBodyWeight) {
+            emit(
+              BodyWeightSubmittedState(
+                bodyWeight: state.bodyWeight,
+                userDetails: state.userDetails,
+                bodyWeightEntries: state.bodyWeightEntries,
+                foodEntries: state.foodEntries,
+                yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+              ),
+            );
+          } else {
+            emit(
+              DetailsSubmittedState(
+                bodyWeight: state.bodyWeight,
+                userDetails: state.userDetails,
+                bodyWeightEntries: state.bodyWeightEntries,
+                foodEntries: state.foodEntries,
+              ),
+            );
+          }
         } else {
           emit(
-            HeightError(
+            DetailsError(
               errorMessage: 'Failed to submit user details',
               bodyWeight: state.bodyWeight,
               userDetails: state.userDetails,
@@ -324,7 +340,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       } catch (e) {
         // Handle errors (e.g. data store issues).
         emit(
-          HeightError(
+          DetailsError(
             errorMessage: 'Failed to submit details: $e',
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
@@ -336,7 +352,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       }
     } else {
       emit(
-        HeightError(
+        DetailsError(
           errorMessage: 'Details cannot be empty',
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
@@ -496,12 +512,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _setHeightToEditMode(
+  FutureOr<void> _setDetailsToEditMode(
     _,
     Emitter<HomeState> emit,
   ) {
     emit(
-      HeightUpdatedState(
+      DetailsUpdateState(
         bodyWeight: state.bodyWeight,
         userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,
@@ -538,5 +554,33 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         foodEntries: state.foodEntries,
       ),
     );
+  }
+
+  FutureOr<void> _clearUserData(
+    _,
+    Emitter<HomeState> emit,
+  ) async {
+    try {
+      await _clearTrackingDataUseCase.execute();
+      emit(
+        DetailsUpdateState(
+          bodyWeight: 0,
+          userDetails: state.userDetails,
+          bodyWeightEntries: const <BodyWeight>[],
+          foodEntries: const <FoodWeight>[],
+        ),
+      );
+    } catch (error) {
+      emit(
+        DetailsError(
+          errorMessage: 'Error clearing user data: $error.',
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+        ),
+      );
+    }
   }
 }

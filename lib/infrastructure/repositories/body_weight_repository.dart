@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
-import 'package:portion_control/domain/repositories/i_body_weight_repository.dart';
+import 'package:portion_control/domain/services/repositories/i_body_weight_repository.dart';
 import 'package:portion_control/infrastructure/database/data_mappers/body_weight_entries_mapper.dart';
 import 'package:portion_control/infrastructure/database/database.dart';
 
@@ -54,5 +54,18 @@ class BodyWeightRepository implements IBodyWeightRepository {
     );
     // Return true if any row was updated.
     return updatedRows > 0;
+  }
+
+  @override
+  Future<int> clearAllTrackingData() => _database.clearBodyWeightEntries();
+
+  @override
+  Future<BodyWeight> getTodayBodyWeight() async {
+    final BodyWeightEntry? bodyWeightEntry =
+        await _database.getTodayBodyWeight();
+    if (bodyWeightEntry != null) {
+      return bodyWeightEntry.toDomain();
+    }
+    return BodyWeight.empty();
   }
 }

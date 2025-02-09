@@ -134,6 +134,30 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  /// Returns the amount of rows that were deleted by this statement directly
+  /// (not including additional rows that might be affected through triggers or
+  /// foreign key constraints).
+  Future<int> clearFoodEntries() => delete(foodEntries).go();
+
+  /// Returns the amount of rows that were deleted by this statement directly
+  /// (not including additional rows that might be affected through triggers or
+  /// foreign key constraints).
+  Future<int> clearBodyWeightEntries() => delete(bodyWeightEntries).go();
+
+  Future<BodyWeightEntry?> getTodayBodyWeight() {
+    final DateTime today = DateTime.now();
+    final DateTime startOfDay = DateTime(today.year, today.month, today.day);
+    final DateTime endOfDay = startOfDay.add(const Duration(days: 1));
+
+    return (select(bodyWeightEntries)
+          ..where(
+            ($BodyWeightEntriesTable t) =>
+                t.date.isBiggerOrEqualValue(startOfDay) &
+                t.date.isSmallerThanValue(endOfDay),
+          ))
+        .getSingleOrNull();
+  }
+
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'portion_control_db',

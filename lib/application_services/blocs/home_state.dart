@@ -19,8 +19,8 @@ sealed class HomeState {
   final double portionControl;
 
   bool get isEmptyDetails =>
-      userDetails.height == 0 &&
-      userDetails.age == 0 &&
+      userDetails.height < constants.minHeight &&
+      userDetails.age < constants.minAge &&
       userDetails.gender == Gender.preferNotToSay &&
       userDetails.dateOfBirth == null;
 
@@ -68,7 +68,9 @@ sealed class HomeState {
   }
 
   bool get isWeightNotSubmitted =>
-      this is DetailsSubmittedState && this is! BodyWeightSubmittedState;
+      this is DetailsSubmittedState &&
+      this is! BodyWeightSubmittedState &&
+      !(bodyWeightEntries.lastOrNull?.date.isToday == true);
 }
 
 class HomeLoading extends HomeState {
@@ -96,8 +98,8 @@ class HomeLoaded extends HomeState {
   });
 }
 
-class HeightUpdatedState extends HomeLoaded {
-  const HeightUpdatedState({
+class DetailsUpdateState extends HomeLoaded {
+  const DetailsUpdateState({
     required super.userDetails,
     required super.bodyWeight,
     required super.bodyWeightEntries,
@@ -213,49 +215,57 @@ class LoadingError extends HomeState {
   final String errorMessage;
 }
 
-class HeightError extends HomeState {
-  const HeightError({
+abstract class ErrorState extends HomeState {
+  const ErrorState({
+    required this.errorMessage,
     required super.userDetails,
     required super.bodyWeight,
     required super.bodyWeightEntries,
-    required this.errorMessage,
-    super.foodEntries = const <FoodWeight>[],
-    super.yesterdayConsumedTotal = 0,
-    super.portionControl = 0,
+    required super.foodEntries,
+    required super.yesterdayConsumedTotal,
+    required super.portionControl,
   });
 
   final String errorMessage;
 }
 
-class DateOfBirthError extends HomeState {
+class DetailsError extends ErrorState {
+  const DetailsError({
+    required super.errorMessage,
+    required super.userDetails,
+    required super.bodyWeight,
+    required super.bodyWeightEntries,
+    super.foodEntries = const <FoodWeight>[],
+    super.yesterdayConsumedTotal = 0,
+    super.portionControl = 0,
+  });
+}
+
+class DateOfBirthError extends ErrorState {
   const DateOfBirthError({
+    required super.errorMessage,
     required super.userDetails,
     required super.bodyWeight,
     required super.bodyWeightEntries,
-    required this.errorMessage,
     super.foodEntries = const <FoodWeight>[],
     super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
   });
-
-  final String errorMessage;
 }
 
-class GenderError extends HomeState {
+class GenderError extends ErrorState {
   const GenderError({
+    required super.errorMessage,
     required super.userDetails,
     required super.bodyWeight,
     required super.bodyWeightEntries,
-    required this.errorMessage,
     super.foodEntries = const <FoodWeight>[],
     super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
   });
-
-  final String errorMessage;
 }
 
-class BodyWeightError extends DetailsSubmittedState {
+class BodyWeightError extends DetailsSubmittedState implements ErrorState {
   const BodyWeightError({
     required super.userDetails,
     required super.bodyWeight,
@@ -265,10 +275,11 @@ class BodyWeightError extends DetailsSubmittedState {
     required this.errorMessage,
   });
 
+  @override
   final String errorMessage;
 }
 
-class FoodWeightError extends BodyWeightSubmittedState {
+class FoodWeightError extends BodyWeightSubmittedState implements ErrorState {
   const FoodWeightError({
     required super.userDetails,
     required super.bodyWeight,
@@ -278,5 +289,6 @@ class FoodWeightError extends BodyWeightSubmittedState {
     required this.errorMessage,
   });
 
+  @override
   final String errorMessage;
 }

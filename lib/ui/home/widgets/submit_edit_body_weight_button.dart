@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/ui/widgets/responsive_button.dart';
 
 /// Submit/Edit Body Weight Button with animation.
@@ -30,7 +31,7 @@ class SubmitEditBodyWeightButton extends StatelessWidget {
             label: state is BodyWeightSubmittedState
                 ? 'Edit Body Weight'
                 : 'Submit Body Weight',
-            onPressed: state.bodyWeight == 0
+            onPressed: state.bodyWeight < constants.minBodyWeight
                 ? null
                 : state is BodyWeightSubmittedState
                     ? () => context.read<HomeBloc>().add(const EditBodyWeight())

@@ -28,4 +28,6 @@ abstract interface class IFoodWeightRepository {
   });
 
   Future<double> getTotalConsumedYesterday();
+
+  Future<int> clearAllTrackingData();
 }

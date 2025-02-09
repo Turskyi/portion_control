@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
-import 'package:portion_control/domain/repositories/i_food_weight_repository.dart';
+import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
 import 'package:portion_control/infrastructure/database/data_mappers/food_entries_mapper.dart';
 import 'package:portion_control/infrastructure/database/database.dart';
 
@@ -63,4 +63,7 @@ class FoodWeightRepository implements IFoodWeightRepository {
   Future<double> getTotalConsumedYesterday() async {
     return _database.getTotalConsumedYesterday();
   }
+
+  @override
+  Future<int> clearAllTrackingData() => _database.clearFoodEntries();
 }

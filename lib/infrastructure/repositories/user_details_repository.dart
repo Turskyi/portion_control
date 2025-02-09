@@ -1,6 +1,6 @@
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/user_details.dart';
-import 'package:portion_control/domain/repositories/i_user_details_repository.dart';
+import 'package:portion_control/domain/services/repositories/i_user_details_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Implementation of user details repository using SharedPreferences
