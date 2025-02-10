@@ -175,6 +175,12 @@ class _HomePageState extends State<HomePage> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
+    } else if (state is ErrorState) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(state.errorMessage),
+        ),
+      );
     }
   }
 

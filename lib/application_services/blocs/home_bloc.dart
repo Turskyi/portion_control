@@ -325,7 +325,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             await _userDetailsRepository.saveUserDetails(
           UserDetails(height: height, dateOfBirth: dateOfBirth, gender: gender),
         );
-
         if (isDetailsSaved) {
           if (state.bodyWeight > constants.minBodyWeight) {
             final bool isMealsConfirmed =
@@ -389,8 +388,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _submitBodyWeight(
-    _,
+  FutureOr<void> _submitBodyWeight(SubmitBodyWeight event,
     Emitter<HomeState> emit,
   ) async {
     if (state.bodyWeight > constants.minBodyWeight) {
