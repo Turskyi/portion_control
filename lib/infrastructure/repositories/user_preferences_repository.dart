@@ -4,13 +4,15 @@ import 'package:portion_control/domain/services/repositories/i_user_details_repo
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Implementation of user details repository using SharedPreferences
-class UserDetailsRepository implements IUserDetailsRepository {
-  UserDetailsRepository(this._sharedPreferences);
+class UserPreferencesRepository implements IUserDetailsRepository {
+  const UserPreferencesRepository(this._sharedPreferences);
 
   static const String _heightKey = 'user_height';
   static const String _ageKey = 'user_age';
   static const String _genderKey = 'user_gender';
   static const String _dateOfBirthKey = 'user_date_of_birth';
+  static const String _mealsConfirmedKey = 'meals_confirmed';
+  static const String _mealsConfirmedDateKey = 'meals_confirmed_date';
 
   final SharedPreferences _sharedPreferences;
 
@@ -80,5 +82,35 @@ class UserDetailsRepository implements IUserDetailsRepository {
       _dateOfBirthKey,
       dateOfBirth.toIso8601String(),
     );
+  }
+
+  @override
+  Future<bool> saveMealsConfirmed() async {
+    final DateTime today = DateTime.now();
+    final bool confirmedSaved = await _sharedPreferences.setBool(
+      _mealsConfirmedKey,
+      true,
+    );
+    final bool dateSaved = await _sharedPreferences.setString(
+      _mealsConfirmedDateKey,
+      today.toIso8601String(),
+    );
+    return confirmedSaved && dateSaved;
+  }
+
+  @override
+  bool get isMealsConfirmedForToday {
+    final bool? isConfirmed = _sharedPreferences.getBool(_mealsConfirmedKey);
+    final String? savedDateString =
+        _sharedPreferences.getString(_mealsConfirmedDateKey);
+
+    if (isConfirmed == true && savedDateString != null) {
+      final DateTime savedDate = DateTime.parse(savedDateString);
+      final DateTime today = DateTime.now();
+      return savedDate.year == today.year &&
+          savedDate.month == today.month &&
+          savedDate.day == today.day;
+    }
+    return false;
   }
 }

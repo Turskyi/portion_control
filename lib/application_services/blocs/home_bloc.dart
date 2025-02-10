@@ -37,6 +37,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<EditFoodEntry>(_setFoodWeightToEditMode);
     on<DeleteFoodEntry>(_deleteFoodEntry);
     on<ClearUserData>(_clearUserData);
+    on<ResetFoodEntries>(_clearAllFoodEntries);
+    on<ConfirmMealsLogged>(_saveMealsConfirmation);
   }
 
   final IUserDetailsRepository _userDetailsRepository;
@@ -82,7 +84,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         } else if (todayBodyWeight > constants.minBodyWeight) {
           final List<FoodWeight> todayFoodWeightEntries =
               await _foodWeightRepository.getTodayFoodEntries();
-
+          final bool isMealsConfirmed =
+              _userDetailsRepository.isMealsConfirmedForToday;
           if (todayFoodWeightEntries.isNotEmpty) {
             emit(
               FoodWeightSubmittedState(
@@ -91,6 +94,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 bodyWeightEntries: bodyWeightEntries,
                 foodEntries: todayFoodWeightEntries,
                 yesterdayConsumedTotal: totalConsumedYesterday,
+                isConfirmedAllMealsLogged: isMealsConfirmed,
               ),
             );
           } else {
@@ -101,6 +105,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 bodyWeightEntries: bodyWeightEntries,
                 foodEntries: todayFoodWeightEntries,
                 yesterdayConsumedTotal: totalConsumedYesterday,
+                isConfirmedAllMealsLogged: isMealsConfirmed,
               ),
             );
           }
@@ -254,6 +259,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) {
     final double? foodWeight = double.tryParse(event.foodWeight);
+    final bool isMealsConfirmed =
+        _userDetailsRepository.isMealsConfirmedForToday;
     if (foodWeight != null) {
       final int foodEntryId = event.foodEntryId;
       _foodWeightRepository.updateFoodWeightEntry(
@@ -268,6 +275,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
+          isConfirmedAllMealsLogged: isMealsConfirmed,
         ),
       );
     } else {
@@ -279,6 +287,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          isConfirmedAllMealsLogged: isMealsConfirmed,
         ),
       );
     }
@@ -319,6 +328,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         if (isDetailsSaved) {
           if (state.bodyWeight > constants.minBodyWeight) {
+            final bool isMealsConfirmed =
+                _userDetailsRepository.isMealsConfirmedForToday;
             emit(
               BodyWeightSubmittedState(
                 bodyWeight: state.bodyWeight,
@@ -326,6 +337,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 bodyWeightEntries: state.bodyWeightEntries,
                 foodEntries: state.foodEntries,
                 yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+                isConfirmedAllMealsLogged: isMealsConfirmed,
               ),
             );
           } else {
@@ -399,7 +411,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         final double totalConsumedYesterday =
             await _foodWeightRepository.getTotalConsumedYesterday();
-
+        final bool isMealsConfirmed =
+            _userDetailsRepository.isMealsConfirmedForToday;
         emit(
           BodyWeightSubmittedState(
             bodyWeight: lastSavedBodyWeightEntry.weight,
@@ -407,6 +420,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             bodyWeightEntries: updatedBodyWeightEntries,
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: totalConsumedYesterday,
+            isConfirmedAllMealsLogged: isMealsConfirmed,
           ),
         );
       } catch (error, stackTrace) {
@@ -443,6 +457,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final double? foodWeight = double.tryParse(event.foodWeight);
+    final bool isMealsConfirmed =
+        _userDetailsRepository.isMealsConfirmedForToday;
     if (foodWeight != null) {
       try {
         // Insert into the database.
@@ -461,6 +477,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: updatedFoodWeightEntries,
             yesterdayConsumedTotal: foodWeight,
+            isConfirmedAllMealsLogged: isMealsConfirmed,
           ),
         );
       } catch (error, stackTrace) {
@@ -477,6 +494,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+            isConfirmedAllMealsLogged: isMealsConfirmed,
           ),
         );
       }
@@ -489,6 +507,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          isConfirmedAllMealsLogged: isMealsConfirmed,
         ),
       );
     }
@@ -498,6 +517,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     DeleteFoodEntry event,
     Emitter<HomeState> emit,
   ) async {
+    final bool isMealsConfirmed =
+        _userDetailsRepository.isMealsConfirmedForToday;
     try {
       await _foodWeightRepository
           .deleteFoodWeightEntry(event.foodEntryId)
@@ -512,6 +533,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: updatedFoodWeightEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+            isConfirmedAllMealsLogged: isMealsConfirmed,
           ),
         );
       });
@@ -525,6 +547,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          isConfirmedAllMealsLogged: isMealsConfirmed,
         ),
       );
     }
@@ -562,6 +585,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     EditFoodEntry event,
     Emitter<HomeState> emit,
   ) {
+    final bool isMealsConfirmed =
+        _userDetailsRepository.isMealsConfirmedForToday;
     emit(
       FoodWeightUpdateState(
         foodEntryId: event.foodEntryId,
@@ -570,6 +595,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,
         foodEntries: state.foodEntries,
+        isConfirmedAllMealsLogged: isMealsConfirmed,
       ),
     );
   }
@@ -597,6 +623,67 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _clearAllFoodEntries(
+    _,
+    Emitter<HomeState> emit,
+  ) async {
+    try {
+      await _foodWeightRepository.clearAllTrackingData();
+      emit(
+        BodyWeightSubmittedState(
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: const <FoodWeight>[],
+          yesterdayConsumedTotal: 0,
+          isConfirmedAllMealsLogged: false,
+        ),
+      );
+    } catch (error) {
+      emit(
+        BodyWeightError(
+          errorMessage: 'Error clearing food entries: $error.',
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _saveMealsConfirmation(
+    _,
+    Emitter<HomeState> emit,
+  ) async {
+    bool isSaved = await _userDetailsRepository.saveMealsConfirmed();
+    if (isSaved) {
+      emit(
+        BodyWeightSubmittedState(
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          isConfirmedAllMealsLogged: isSaved,
+        ),
+      );
+    } else {
+      // We should never get here.
+      emit(
+        BodyWeightSubmittedState(
+          bodyWeight: state.bodyWeight,
+          userDetails: state.userDetails,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          isConfirmedAllMealsLogged: false,
         ),
       );
     }

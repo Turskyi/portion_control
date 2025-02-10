@@ -38,7 +38,8 @@ class _HomePageState extends State<HomePage> {
         child: BlocConsumer<HomeBloc, HomeState>(
           listener: _homeStateListener,
           builder: (BuildContext context, HomeState state) {
-            final double bodyWeight = state.bodyWeight;
+            final double weight = state.bodyWeight;
+            final double height = state.height;
             final List<FoodWeight> foodEntries = state.foodEntries;
 
             final ThemeData themeData = Theme.of(context);
@@ -61,14 +62,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 if (state is DetailsSubmittedState)
-                  // Body Weight Input
+                  // Body Weight Input.
                   InputRow(
                     label: 'Body weight',
                     unit: 'kg',
-                    initialValue: '${bodyWeight > 0 ? bodyWeight : ''}',
-                    value: state is BodyWeightSubmittedState
-                        ? '$bodyWeight'
-                        : null,
+                    initialValue:
+                        '${weight > constants.minBodyWeight ? weight : ''}',
+                    value: state is BodyWeightSubmittedState ? '$weight' : null,
                     onChanged: (String value) {
                       context.read<HomeBloc>().add(UpdateBodyWeight(value));
                     },
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                 if (state is DetailsSubmittedState)
                   const SubmitEditBodyWeightButton(),
                 if (state.bodyWeightEntries.length > 1)
-                  // Line Chart of Body Weight trends
+                  // Line Chart of Body Weight trends for the last two weeks.
                   BodyWeightLineChart(
                     bodyWeightEntries: state.bodyWeightEntries
                         .takeLast(DateTime.daysPerWeek * 2)
@@ -84,8 +84,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                 if (state is BodyWeightSubmittedState)
                   HealthyWeightRecommendations(
-                    height: state.height,
-                    weight: state.bodyWeight,
+                    height: height,
+                    weight: weight,
                   ),
                 if (state is BodyWeightSubmittedState)
                   const PortionControlMessage(),
@@ -122,13 +122,16 @@ class _HomePageState extends State<HomePage> {
                       }),
                       if (state.totalConsumedToday <
                           constants.maxDailyFoodLimit)
-                        // Input field for new food entry
-                        FoodWeightEntryRow(
-                          isEditable: true,
-                          onSave: (String value) {
-                            context.read<HomeBloc>().add(AddFoodEntry(value));
-                          },
-                        )
+                        if (state.shouldAskForMealConfirmation)
+                          const SizedBox()
+                        else
+                          // Input field for new food entry
+                          FoodWeightEntryRow(
+                            isEditable: true,
+                            onSave: (String value) {
+                              context.read<HomeBloc>().add(AddFoodEntry(value));
+                            },
+                          )
                       else
                         const Text(
                           'It seems like you’ve set a big challenge for '
@@ -138,10 +141,13 @@ class _HomePageState extends State<HomePage> {
                         ),
                     ],
                   ),
-                  Text(
-                    'Total consumed today: ${state.totalConsumedToday} g',
-                    style: textTheme.titleMedium,
-                  ),
+                  if (state.shouldAskForMealConfirmation)
+                    const SizedBox()
+                  else
+                    Text(
+                      'Total consumed today: ${state.totalConsumedToday} g',
+                      style: textTheme.titleMedium,
+                    ),
                   if (state.totalConsumedToday < state.portionControl)
                     Text(
                       'You can eat '

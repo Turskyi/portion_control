@@ -2,6 +2,8 @@ import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 
 abstract interface class IUserDetailsRepository {
+  const IUserDetailsRepository();
+
   /// The method is designed to return a `double?`, meaning it can either
   /// return a valid double value or null if no value exists.
   double? getHeight();
@@ -25,4 +27,8 @@ abstract interface class IUserDetailsRepository {
   Future<bool> saveGender(Gender gender);
 
   Future<bool> saveUserDetails(UserDetails userDetails);
+
+  Future<bool> saveMealsConfirmed();
+
+  bool get isMealsConfirmedForToday;
 }

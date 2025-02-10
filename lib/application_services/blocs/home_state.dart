@@ -43,11 +43,25 @@ sealed class HomeState {
       (bodyWeightEntries.length == 1 && bodyWeightEntries.first.date.isToday) ||
       (bodyWeightEntries.length > 1 && yesterdayConsumedTotal == 0);
 
-  bool get isWeightIncreasing =>
-      yesterdayConsumedTotal > 0 &&
-      bodyWeightEntries.length > 1 &&
-      bodyWeightEntries.last.weight >
-          bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+  bool get isWeightIncreasing {
+    if (bodyWeightEntries.length < 2 || yesterdayConsumedTotal <= 0) {
+      return false;
+    }
+    final BodyWeight last = bodyWeightEntries.last;
+    final BodyWeight previous = bodyWeightEntries[bodyWeightEntries.length - 2];
+    return last.weight > previous.weight;
+  }
+
+  bool get isWeightIncreasingOrSame {
+    if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
+      return false;
+    }
+    if (bodyWeightEntries.length == 1) {
+      return true;
+    }
+    return bodyWeightEntries.last.weight >=
+        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+  }
 
   bool get isWeightDecreasing =>
       yesterdayConsumedTotal > 0 &&
@@ -71,6 +85,15 @@ sealed class HomeState {
       this is DetailsSubmittedState &&
       this is! BodyWeightSubmittedState &&
       !(bodyWeightEntries.lastOrNull?.date.isToday == true);
+
+  bool get isMealsConfirmedForToday =>
+      this is BodyWeightSubmittedState &&
+      (this as BodyWeightSubmittedState).isConfirmedAllMealsLogged;
+
+  bool get shouldAskForMealConfirmation =>
+      isWeightIncreasingOrSame &&
+      isWeightAboveHealthy &&
+      !isMealsConfirmedForToday;
 }
 
 class HomeLoading extends HomeState {
@@ -154,12 +177,15 @@ class BodyWeightUpdatedState extends DetailsSubmittedState {
 
 class BodyWeightSubmittedState extends DetailsSubmittedState {
   const BodyWeightSubmittedState({
+    required this.isConfirmedAllMealsLogged,
     required super.userDetails,
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
   });
+
+  final bool isConfirmedAllMealsLogged;
 }
 
 class FoodWeightUpdateState extends BodyWeightSubmittedState {
@@ -170,6 +196,7 @@ class FoodWeightUpdateState extends BodyWeightSubmittedState {
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
+    required super.isConfirmedAllMealsLogged,
   });
 
   final int foodEntryId;
@@ -182,10 +209,8 @@ class FoodWeightSubmittedState extends BodyWeightSubmittedState {
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
-    this.foodEntryId,
+    required super.isConfirmedAllMealsLogged,
   });
-
-  final int? foodEntryId;
 }
 
 class FoodWeightUpdatedState extends BodyWeightSubmittedState {
@@ -196,6 +221,7 @@ class FoodWeightUpdatedState extends BodyWeightSubmittedState {
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
+    required super.isConfirmedAllMealsLogged,
   });
 
   final int foodEntryId;
@@ -287,6 +313,7 @@ class FoodWeightError extends BodyWeightSubmittedState implements ErrorState {
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
     required this.errorMessage,
+    required super.isConfirmedAllMealsLogged,
   });
 
   @override
