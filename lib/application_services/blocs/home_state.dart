@@ -63,11 +63,44 @@ sealed class HomeState {
         bodyWeightEntries[bodyWeightEntries.length - 2].weight;
   }
 
+  bool checkIfWeightIncreasingOrSame(List<BodyWeight> bodyWeightEntries) {
+    if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
+      return false;
+    }
+    if (bodyWeightEntries.length == 1) {
+      return true;
+    }
+    return bodyWeightEntries.last.weight >=
+        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+  }
+
   bool get isWeightDecreasing =>
       yesterdayConsumedTotal > 0 &&
       bodyWeightEntries.length > 1 &&
       bodyWeightEntries.last.weight <
           bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+
+  bool get isWeightDecreasingOrSame {
+    if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
+      return false;
+    }
+    if (bodyWeightEntries.length == 1) {
+      return true;
+    }
+    return bodyWeightEntries.last.weight <=
+        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+  }
+
+  bool checkIfWeightDecreasingOrSame(List<BodyWeight> bodyWeightEntries) {
+    if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
+      return false;
+    }
+    if (bodyWeightEntries.length == 1) {
+      return true;
+    }
+    return bodyWeightEntries.last.weight <=
+        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+  }
 
   bool get isWeightAboveHealthy {
     final double heightInMeters = height / 100;
@@ -75,7 +108,19 @@ sealed class HomeState {
     return bmi > constants.maxHealthyBmi;
   }
 
+  bool checkIfWeightAboveHealthy(double bodyWeight) {
+    final double heightInMeters = height / 100;
+    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
+    return bmi > constants.maxHealthyBmi;
+  }
+
   bool get isWeightBelowHealthy {
+    final double heightInMeters = height / 100;
+    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
+    return bmi < constants.minHealthyBmi;
+  }
+
+  bool checkIfWeightBelowHealthy(double bodyWeight) {
     final double heightInMeters = height / 100;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi < constants.minHealthyBmi;

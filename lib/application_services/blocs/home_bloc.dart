@@ -9,7 +9,7 @@ import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/services/interactors/i_clear_tracking_data_use_case.dart';
 import 'package:portion_control/domain/services/repositories/i_body_weight_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
-import 'package:portion_control/domain/services/repositories/i_user_details_repository.dart';
+import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 
@@ -17,8 +17,7 @@ part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc(
-    this._userDetailsRepository,
+  HomeBloc(this._userPreferencesRepository,
     this._bodyWeightRepository,
     this._foodWeightRepository,
     this._clearTrackingDataUseCase,
@@ -41,7 +40,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ConfirmMealsLogged>(_saveMealsConfirmation);
   }
 
-  final IUserDetailsRepository _userDetailsRepository;
+  final IUserPreferencesRepository _userPreferencesRepository;
   final IBodyWeightRepository _bodyWeightRepository;
   final IFoodWeightRepository _foodWeightRepository;
   final IClearTrackingDataUseCase _clearTrackingDataUseCase;
@@ -50,7 +49,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadEntries event,
     Emitter<HomeState> emit,
   ) async {
-    final UserDetails userDetails = _userDetailsRepository.getUserDetails();
+    final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
     double todayBodyWeight = 0;
 
     if (userDetails.isNotEmpty) {
@@ -71,6 +70,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final double totalConsumedYesterday =
             await _foodWeightRepository.getTotalConsumedYesterday();
 
+        double portionControl = constants.maxDailyFoodLimit;
+        if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+          portionControl = totalConsumedYesterday;
+        }
+
         if (todayBodyWeight == 0) {
           emit(
             DetailsSubmittedState(
@@ -85,7 +89,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           final List<FoodWeight> todayFoodWeightEntries =
               await _foodWeightRepository.getTodayFoodEntries();
           final bool isMealsConfirmed =
-              _userDetailsRepository.isMealsConfirmedForToday;
+              _userPreferencesRepository.isMealsConfirmedForToday;
           if (todayFoodWeightEntries.isNotEmpty) {
             emit(
               FoodWeightSubmittedState(
@@ -95,12 +99,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 foodEntries: todayFoodWeightEntries,
                 yesterdayConsumedTotal: totalConsumedYesterday,
                 isConfirmedAllMealsLogged: isMealsConfirmed,
-                portionControl: totalConsumedYesterday,
+                portionControl: portionControl,
               ),
             );
           } else {
-            final double portionControl =
-                await _foodWeightRepository.getTotalConsumedYesterday();
             emit(
               BodyWeightSubmittedState(
                 userDetails: userDetails,
@@ -264,7 +266,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) {
     final double? foodWeight = double.tryParse(event.foodWeight);
     final bool isMealsConfirmed =
-        _userDetailsRepository.isMealsConfirmedForToday;
+        _userPreferencesRepository.isMealsConfirmedForToday;
     if (foodWeight != null) {
       final int foodEntryId = event.foodEntryId;
       _foodWeightRepository.updateFoodWeightEntry(
@@ -328,13 +330,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       try {
         // Insert into the data store.
         final bool isDetailsSaved =
-            await _userDetailsRepository.saveUserDetails(
+            await _userPreferencesRepository.saveUserDetails(
           UserDetails(height: height, dateOfBirth: dateOfBirth, gender: gender),
         );
         if (isDetailsSaved) {
           if (state.bodyWeight > constants.minBodyWeight) {
             final bool isMealsConfirmed =
-                _userDetailsRepository.isMealsConfirmedForToday;
+                _userPreferencesRepository.isMealsConfirmedForToday;
             emit(
               BodyWeightSubmittedState(
                 bodyWeight: state.bodyWeight,
@@ -399,11 +401,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     SubmitBodyWeight event,
     Emitter<HomeState> emit,
   ) async {
-    if (state.bodyWeight > constants.minBodyWeight) {
+    if (event.bodyWeight > constants.minBodyWeight) {
       final double bodyWeight = state.bodyWeight;
 
       try {
-        // Insert into the database.
         await _bodyWeightRepository.addOrUpdateBodyWeightEntry(
           weight: bodyWeight,
           date: DateTime.now(),
@@ -412,22 +413,74 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             await _bodyWeightRepository.getAllBodyWeightEntries();
         // We have just saved one body weight entry, so we know that
         // `updatedBodyWeightEntries` is not empty.
-        final BodyWeight lastSavedBodyWeightEntry =
-            updatedBodyWeightEntries.last;
+        final double lastSavedBodyWeight = updatedBodyWeightEntries.last.weight;
 
-        final double totalConsumedYesterday =
-            await _foodWeightRepository.getTotalConsumedYesterday();
+        final double totalConsumedYesterday = state.yesterdayConsumedTotal;
+
+        final bool isWeightIncreasingOrSame =
+            state.checkIfWeightIncreasingOrSame(
+          updatedBodyWeightEntries,
+        );
+
+        final bool isWeightDecreasingOrSame =
+            state.checkIfWeightDecreasingOrSame(
+          updatedBodyWeightEntries,
+        );
+
+        final bool isWeightBelowHealthy = state.checkIfWeightBelowHealthy(
+          lastSavedBodyWeight,
+        );
+
+        final bool isWeightAboveHealthy = state.checkIfWeightAboveHealthy(
+          lastSavedBodyWeight,
+        );
         final bool isMealsConfirmed =
-            _userDetailsRepository.isMealsConfirmedForToday;
+            _userPreferencesRepository.isMealsConfirmedForToday;
+
+        double portionControl = constants.maxDailyFoodLimit;
+        if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+          portionControl = totalConsumedYesterday;
+        } else if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
+          final double? savedPortionControl =
+              _userPreferencesRepository.getPortionControl();
+          if (savedPortionControl == null) {
+            await _userPreferencesRepository.savePortionControl(
+              totalConsumedYesterday,
+            );
+          } else if (savedPortionControl < totalConsumedYesterday) {
+            portionControl = savedPortionControl;
+          } else if (savedPortionControl > totalConsumedYesterday) {
+            portionControl = totalConsumedYesterday;
+            await _userPreferencesRepository.savePortionControl(
+              totalConsumedYesterday,
+            );
+          }
+        } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
+          final double? savedPortionControl =
+              _userPreferencesRepository.getPortionControl();
+          if (savedPortionControl == null) {
+            await _userPreferencesRepository.savePortionControl(
+              totalConsumedYesterday,
+            );
+          } else if (savedPortionControl > totalConsumedYesterday) {
+            portionControl = savedPortionControl;
+          } else if (savedPortionControl < totalConsumedYesterday) {
+            portionControl = totalConsumedYesterday;
+            await _userPreferencesRepository.savePortionControl(
+              totalConsumedYesterday,
+            );
+          }
+        }
+
         emit(
           BodyWeightSubmittedState(
-            bodyWeight: lastSavedBodyWeightEntry.weight,
+            bodyWeight: lastSavedBodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: updatedBodyWeightEntries,
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: totalConsumedYesterday,
             isConfirmedAllMealsLogged: isMealsConfirmed,
-            portionControl: totalConsumedYesterday,
+            portionControl: portionControl,
           ),
         );
       } catch (error, stackTrace) {
@@ -448,7 +501,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(
         BodyWeightError(
-          errorMessage: 'Body weight cannot be empty',
+          errorMessage:
+              'Body weight should not be below the ${constants.minBodyWeight} '
+              'kg',
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -465,7 +520,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     final double? foodWeight = double.tryParse(event.foodWeight);
     final bool isMealsConfirmed =
-        _userDetailsRepository.isMealsConfirmedForToday;
+        _userPreferencesRepository.isMealsConfirmedForToday;
     if (foodWeight != null) {
       try {
         // Insert into the database.
@@ -528,7 +583,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final bool isMealsConfirmed =
-        _userDetailsRepository.isMealsConfirmedForToday;
+        _userPreferencesRepository.isMealsConfirmedForToday;
     try {
       await _foodWeightRepository
           .deleteFoodWeightEntry(event.foodEntryId)
@@ -598,7 +653,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) {
     final bool isMealsConfirmed =
-        _userDetailsRepository.isMealsConfirmedForToday;
+        _userPreferencesRepository.isMealsConfirmedForToday;
     emit(
       FoodWeightUpdateState(
         foodEntryId: event.foodEntryId,
@@ -676,7 +731,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _,
     Emitter<HomeState> emit,
   ) async {
-    bool isSaved = await _userDetailsRepository.saveMealsConfirmed();
+    bool isSaved = await _userPreferencesRepository.saveMealsConfirmed();
     if (isSaved) {
       emit(
         BodyWeightSubmittedState(

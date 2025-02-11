@@ -119,6 +119,7 @@ class AppDatabase extends _$AppDatabase {
     final DateTime now = DateTime.now();
     final DateTime yesterdayStart = DateTime(now.year, now.month, now.day - 1);
     final DateTime yesterdayEnd = yesterdayStart.add(const Duration(days: 1));
+
     try {
       final List<FoodEntry> result = await (select(foodEntries)
             ..where(

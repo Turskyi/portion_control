@@ -1,10 +1,10 @@
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/user_details.dart';
-import 'package:portion_control/domain/services/repositories/i_user_details_repository.dart';
+import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Implementation of user details repository using SharedPreferences
-class UserPreferencesRepository implements IUserDetailsRepository {
+class UserPreferencesRepository implements IUserPreferencesRepository {
   const UserPreferencesRepository(this._sharedPreferences);
 
   static const String _heightKey = 'user_height';
@@ -13,10 +13,10 @@ class UserPreferencesRepository implements IUserDetailsRepository {
   static const String _dateOfBirthKey = 'user_date_of_birth';
   static const String _mealsConfirmedKey = 'meals_confirmed';
   static const String _mealsConfirmedDateKey = 'meals_confirmed_date';
+  static const String _portionControlKey = 'portion_control';
 
   final SharedPreferences _sharedPreferences;
 
-  // Getters
   @override
   double? getHeight() => _sharedPreferences.getDouble(_heightKey);
 
@@ -33,7 +33,6 @@ class UserPreferencesRepository implements IUserDetailsRepository {
     return dobString != null ? DateTime.parse(dobString) : null;
   }
 
-  // Setters
   @override
   Future<bool> saveHeight(double height) {
     return _sharedPreferences.setDouble(_heightKey, height);
@@ -112,5 +111,15 @@ class UserPreferencesRepository implements IUserDetailsRepository {
           savedDate.day == today.day;
     }
     return false;
+  }
+
+  @override
+  double? getPortionControl() {
+    return _sharedPreferences.getDouble(_portionControlKey);
+  }
+
+  @override
+  Future<bool> savePortionControl(double portionControl) {
+    return _sharedPreferences.setDouble(_portionControlKey, portionControl);
   }
 }

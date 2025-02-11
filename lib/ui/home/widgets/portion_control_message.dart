@@ -17,6 +17,7 @@ class PortionControlMessage extends StatelessWidget {
         final bool isWeightDecreasing = state.isWeightDecreasing;
         final bool isWeightIncreasing = state.isWeightIncreasing;
         final double portionControl = state.portionControl;
+
         if (state.hasNoPortionControl) {
           return Text(
             '🍽️ No portion control today!\n'
