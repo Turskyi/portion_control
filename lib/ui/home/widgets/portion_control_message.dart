@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
 
 class PortionControlMessage extends StatelessWidget {
   const PortionControlMessage({super.key});
@@ -15,6 +16,7 @@ class PortionControlMessage extends StatelessWidget {
         final bool isWeightBelowHealthy = state.isWeightBelowHealthy;
         final bool isWeightDecreasing = state.isWeightDecreasing;
         final bool isWeightIncreasing = state.isWeightIncreasing;
+        final double portionControl = state.portionControl;
         if (state.hasNoPortionControl) {
           return Text(
             '🍽️ No portion control today!\n'
@@ -22,9 +24,10 @@ class PortionControlMessage extends StatelessWidget {
             style: titleMediumStyle,
           );
         } else if (state.isWeightIncreasingOrSame && isWeightAboveHealthy) {
-          if (state.isMealsConfirmedForToday) {
+          if (state.isMealsConfirmedForToday &&
+              portionControl > constants.safeMinimumFoodIntakeG) {
             return Text(
-              '⚖️ Portion Control for today: ${state.portionControl} g 🍽️',
+              '⚖️ Portion Control for today: $portionControl g 🍽️',
               style: titleMediumStyle,
             );
           } else {

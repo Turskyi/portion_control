@@ -16,6 +16,7 @@ class FoodEntriesColumn extends StatelessWidget {
       builder: (BuildContext context, HomeState state) {
         final ThemeData themeData = Theme.of(context);
         final TextTheme textTheme = themeData.textTheme;
+        final double totalConsumedToday = state.totalConsumedToday;
         return Column(
           spacing: 16,
           children: <Widget>[
@@ -42,10 +43,12 @@ class FoodEntriesColumn extends StatelessWidget {
                 },
               );
             }),
-            if (state.totalConsumedToday < constants.maxDailyFoodLimit)
-              if (state.shouldAskForMealConfirmation)
+            if (totalConsumedToday < constants.maxDailyFoodLimit)
+              if (state.shouldAskForMealConfirmation ||
+                  totalConsumedToday > state.portionControl)
                 const SizedBox()
               else
+                // Input field for new food entry.
                 FoodWeightEntryRow(
                   isEditable: true,
                   onSave: (String value) {

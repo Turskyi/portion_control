@@ -95,9 +95,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 foodEntries: todayFoodWeightEntries,
                 yesterdayConsumedTotal: totalConsumedYesterday,
                 isConfirmedAllMealsLogged: isMealsConfirmed,
+                portionControl: totalConsumedYesterday,
               ),
             );
           } else {
+            final double portionControl =
+                await _foodWeightRepository.getTotalConsumedYesterday();
             emit(
               BodyWeightSubmittedState(
                 userDetails: userDetails,
@@ -106,6 +109,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 foodEntries: todayFoodWeightEntries,
                 yesterdayConsumedTotal: totalConsumedYesterday,
                 isConfirmedAllMealsLogged: isMealsConfirmed,
+                portionControl: portionControl,
               ),
             );
           }
@@ -276,6 +280,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           isConfirmedAllMealsLogged: isMealsConfirmed,
+          portionControl: state.portionControl,
         ),
       );
     } else {
@@ -288,6 +293,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: isMealsConfirmed,
+          portionControl: state.portionControl,
         ),
       );
     }
@@ -337,6 +343,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 foodEntries: state.foodEntries,
                 yesterdayConsumedTotal: state.yesterdayConsumedTotal,
                 isConfirmedAllMealsLogged: isMealsConfirmed,
+                portionControl: state.portionControl,
               ),
             );
           } else {
@@ -388,7 +395,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _submitBodyWeight(SubmitBodyWeight event,
+  FutureOr<void> _submitBodyWeight(
+    SubmitBodyWeight event,
     Emitter<HomeState> emit,
   ) async {
     if (state.bodyWeight > constants.minBodyWeight) {
@@ -419,6 +427,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: totalConsumedYesterday,
             isConfirmedAllMealsLogged: isMealsConfirmed,
+            portionControl: totalConsumedYesterday,
           ),
         );
       } catch (error, stackTrace) {
@@ -476,6 +485,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             foodEntries: updatedFoodWeightEntries,
             yesterdayConsumedTotal: foodWeight,
             isConfirmedAllMealsLogged: isMealsConfirmed,
+            portionControl: state.portionControl,
           ),
         );
       } catch (error, stackTrace) {
@@ -493,6 +503,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             isConfirmedAllMealsLogged: isMealsConfirmed,
+            portionControl: state.portionControl,
           ),
         );
       }
@@ -506,6 +517,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: isMealsConfirmed,
+          portionControl: state.portionControl,
         ),
       );
     }
@@ -532,6 +544,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             foodEntries: updatedFoodWeightEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             isConfirmedAllMealsLogged: isMealsConfirmed,
+            portionControl: state.portionControl,
           ),
         );
       });
@@ -546,6 +559,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: isMealsConfirmed,
+          portionControl: state.portionControl,
         ),
       );
     }
@@ -594,6 +608,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         bodyWeightEntries: state.bodyWeightEntries,
         foodEntries: state.foodEntries,
         isConfirmedAllMealsLogged: isMealsConfirmed,
+        portionControl: state.portionControl,
       ),
     );
   }
@@ -640,6 +655,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: const <FoodWeight>[],
           yesterdayConsumedTotal: 0,
           isConfirmedAllMealsLogged: false,
+          portionControl: 0,
         ),
       );
     } catch (error) {
@@ -670,6 +686,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: isSaved,
+          portionControl: state.portionControl,
         ),
       );
     } else {
@@ -682,6 +699,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: false,
+          portionControl: state.portionControl,
         ),
       );
     }

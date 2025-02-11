@@ -22,3 +22,5 @@ const double minBodyWeight = 20.0;
 const int minAge = 18;
 
 const double maxDailyFoodLimit = 6000.0;
+
+const double safeMinimumFoodIntakeG = 1499.0;

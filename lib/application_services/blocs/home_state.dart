@@ -183,6 +183,7 @@ class BodyWeightSubmittedState extends DetailsSubmittedState {
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
+    required super.portionControl,
   });
 
   final bool isConfirmedAllMealsLogged;
@@ -197,6 +198,7 @@ class FoodWeightUpdateState extends BodyWeightSubmittedState {
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
     required super.isConfirmedAllMealsLogged,
+    required super.portionControl,
   });
 
   final int foodEntryId;
@@ -210,6 +212,7 @@ class FoodWeightSubmittedState extends BodyWeightSubmittedState {
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
     required super.isConfirmedAllMealsLogged,
+    required super.portionControl,
   });
 }
 
@@ -222,6 +225,7 @@ class FoodWeightUpdatedState extends BodyWeightSubmittedState {
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
     required super.isConfirmedAllMealsLogged,
+    required super.portionControl,
   });
 
   final int foodEntryId;
@@ -314,6 +318,7 @@ class FoodWeightError extends BodyWeightSubmittedState implements ErrorState {
     required super.yesterdayConsumedTotal,
     required this.errorMessage,
     required super.isConfirmedAllMealsLogged,
+    required super.portionControl,
   });
 
   @override
