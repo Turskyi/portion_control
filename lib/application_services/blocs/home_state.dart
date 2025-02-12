@@ -139,6 +139,16 @@ sealed class HomeState {
       isWeightIncreasingOrSame &&
       isWeightAboveHealthy &&
       !isMealsConfirmedForToday;
+
+  String get formattedRemainingFood => (portionControl - totalConsumedToday)
+      .toStringAsFixed(1)
+      .replaceAll(RegExp(r'\.0$'), '');
+
+  String get formattedTotalConsumedToday =>
+      totalConsumedToday.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+
+  String get formattedPortionControl =>
+      portionControl.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
 }
 
 class HomeLoading extends HomeState {

@@ -17,7 +17,11 @@ class FoodEntriesColumn extends StatelessWidget {
         final ThemeData themeData = Theme.of(context);
         final TextTheme textTheme = themeData.textTheme;
         final double totalConsumedToday = state.totalConsumedToday;
+        final double portionControl = state.portionControl;
+        final bool shouldAskForMealConfirmation =
+            state.shouldAskForMealConfirmation;
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 16,
           children: <Widget>[
             // Existing food entries.
@@ -43,39 +47,36 @@ class FoodEntriesColumn extends StatelessWidget {
                 },
               );
             }),
-            if (totalConsumedToday < constants.maxDailyFoodLimit)
-              if (state.shouldAskForMealConfirmation ||
-                  totalConsumedToday > state.portionControl)
-                const SizedBox()
-              else
-                // Input field for new food entry.
-                FoodWeightEntryRow(
-                  isEditable: true,
-                  onSave: (String value) {
-                    context.read<HomeBloc>().add(AddFoodEntry(value));
-                  },
-                )
-            else
+            if (totalConsumedToday < constants.maxDailyFoodLimit &&
+                !shouldAskForMealConfirmation &&
+                totalConsumedToday < portionControl)
+              FoodWeightEntryRow(
+                isEditable: true,
+                onSave: (String value) {
+                  context.read<HomeBloc>().add(AddFoodEntry(value));
+                },
+              )
+            else if (totalConsumedToday >= constants.maxDailyFoodLimit)
               const Text(
                 'It seems like you’ve set a big challenge for '
                 'yourself today. We’re not sure what your plans are, '
                 'but we definitely suggest not overdoing it with '
                 'that amount of food. 😅',
               ),
-            if (state.shouldAskForMealConfirmation)
-              const SizedBox()
-            else
+
+            if (!shouldAskForMealConfirmation) ...<Widget>[
               Text(
-                'Total consumed today: ${state.totalConsumedToday} g',
+                'Total consumed today: '
+                '${state.formattedTotalConsumedToday} g',
                 style: textTheme.titleMedium,
               ),
-            if (state.totalConsumedToday < state.portionControl)
-              Text(
-                'You can eat '
-                '${state.portionControl - state.totalConsumedToday} g more '
-                'today',
-                style: textTheme.bodyMedium,
-              ),
+              if (totalConsumedToday < portionControl &&
+                  portionControl != constants.maxDailyFoodLimit)
+                Text(
+                  'You can eat ${state.formattedRemainingFood} g more today',
+                  style: textTheme.bodyMedium,
+                ),
+            ],
           ],
         );
       },

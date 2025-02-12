@@ -27,10 +27,13 @@ class PortionControlMessage extends StatelessWidget {
         } else if (state.isWeightIncreasingOrSame && isWeightAboveHealthy) {
           if (state.isMealsConfirmedForToday &&
               portionControl > constants.safeMinimumFoodIntakeG) {
-            return Text(
-              '⚖️ Portion Control for today: $portionControl g 🍽️',
-              style: titleMediumStyle,
-            );
+            if (portionControl != constants.maxDailyFoodLimit) {
+              return Text(
+                '⚖️ Portion Control for today: '
+                '${state.formattedPortionControl} g 🍽️',
+                style: titleMediumStyle,
+              );
+            }
           } else {
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 16),
