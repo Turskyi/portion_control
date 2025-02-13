@@ -20,6 +20,7 @@ class FoodEntriesColumn extends StatelessWidget {
         final double portionControl = state.portionControl;
         final bool shouldAskForMealConfirmation =
             state.shouldAskForMealConfirmation;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 16,
