@@ -16,7 +16,7 @@ class PortionControlMessage extends StatelessWidget {
         final bool isWeightBelowHealthy = state.isWeightBelowHealthy;
         final bool isWeightDecreasing = state.isWeightDecreasing;
         final bool isWeightIncreasing = state.isWeightIncreasing;
-        final double portionControl = state.portionControl;
+        final double portionControl = state.adjustedPortion;
 
         if (state.hasNoPortionControl) {
           return Text(
@@ -34,7 +34,8 @@ class PortionControlMessage extends StatelessWidget {
                 style: titleMediumStyle,
               );
             }
-          } else {
+          } else if (!state.isMealsConfirmedForToday) {
+            final double yesterdayTotal = state.yesterdayConsumedTotal;
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               child: Padding(
@@ -42,12 +43,33 @@ class PortionControlMessage extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+                    // Display yesterday's total consumed amount
+                    if (yesterdayTotal > 0)
+                      Text(
+                        'Yesterday, you consumed (logged) '
+                        '${state.formattedYesterdayConsumedTotal} g. '
+                        '🍽️',
+                        style: titleMediumStyle,
+                        textAlign: TextAlign.center,
+                      )
+                    else
+                      Text(
+                        'You didn’t log any meals yesterday. Don’t forget to '
+                        'track your food! ⏳',
+                        style: titleMediumStyle,
+                        textAlign: TextAlign.center,
+                      ),
+
+                    const SizedBox(height: 12),
+
                     Text(
                       'Did you log every meal you ate yesterday? 📋',
                       style: titleMediumStyle,
                       textAlign: TextAlign.center,
                     ),
+
                     const SizedBox(height: 12),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[

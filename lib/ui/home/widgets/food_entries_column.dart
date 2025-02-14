@@ -17,7 +17,7 @@ class FoodEntriesColumn extends StatelessWidget {
         final ThemeData themeData = Theme.of(context);
         final TextTheme textTheme = themeData.textTheme;
         final double totalConsumedToday = state.totalConsumedToday;
-        final double portionControl = state.portionControl;
+        final double portionControl = state.adjustedPortion;
         final bool shouldAskForMealConfirmation =
             state.shouldAskForMealConfirmation;
 
@@ -49,7 +49,7 @@ class FoodEntriesColumn extends StatelessWidget {
               );
             }),
             if (totalConsumedToday < constants.maxDailyFoodLimit &&
-                !shouldAskForMealConfirmation &&
+                (!shouldAskForMealConfirmation || state.hasNoPortionControl) &&
                 totalConsumedToday < portionControl)
               FoodWeightEntryRow(
                 isEditable: true,
@@ -65,7 +65,8 @@ class FoodEntriesColumn extends StatelessWidget {
                 'that amount of food. 😅',
               ),
 
-            if (!shouldAskForMealConfirmation) ...<Widget>[
+            if (!shouldAskForMealConfirmation ||
+                state.hasNoPortionControl) ...<Widget>[
               Text(
                 'Total consumed today: '
                 '${state.formattedTotalConsumedToday} g',

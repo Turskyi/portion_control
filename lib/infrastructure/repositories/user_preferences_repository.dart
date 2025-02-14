@@ -66,12 +66,17 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
   Future<bool> saveUserDetails(UserDetails userDetails) async {
     final bool heightSaved = await saveHeight(userDetails.height);
     final bool ageSaved = await saveAge(userDetails.age);
-    final bool genderSaved = await saveGender(userDetails.gender);
+    final Gender gender = userDetails.gender;
+    final bool genderSaved = await saveGender(gender);
     final DateTime? dateOfBirth = userDetails.dateOfBirth;
     final bool dateOfBirthSaved =
         dateOfBirth == null ? false : await saveDateOfBirth(dateOfBirth);
 
-    return heightSaved && ageSaved && genderSaved && dateOfBirthSaved;
+    if (gender.isMaleOrFemale) {
+      return heightSaved && ageSaved && genderSaved && dateOfBirthSaved;
+    } else {
+      return heightSaved;
+    }
   }
 
   /// Save Date of Birth as an ISO8601 [String].
@@ -100,16 +105,19 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
   @override
   bool get isMealsConfirmedForToday {
     final bool? isConfirmed = _sharedPreferences.getBool(_mealsConfirmedKey);
+
     final String? savedDateString =
         _sharedPreferences.getString(_mealsConfirmedDateKey);
 
     if (isConfirmed == true && savedDateString != null) {
       final DateTime savedDate = DateTime.parse(savedDateString);
       final DateTime today = DateTime.now();
+
       return savedDate.year == today.year &&
           savedDate.month == today.month &&
           savedDate.day == today.day;
     }
+
     return false;
   }
 

@@ -43,6 +43,7 @@ class _HomePageContentState extends State<HomePageContent> {
         final double height = state.height;
         final List<FoodWeight> foodEntries = state.foodEntries;
         final double horizontalIndent = 12.0;
+
         return SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(
             horizontalIndent,

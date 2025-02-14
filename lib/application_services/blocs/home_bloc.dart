@@ -379,6 +379,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             await _userPreferencesRepository.saveUserDetails(
           UserDetails(height: height, dateOfBirth: dateOfBirth, gender: gender),
         );
+
         if (isDetailsSaved) {
           if (state.bodyWeight > constants.minBodyWeight) {
             final bool isMealsConfirmed =
@@ -489,13 +490,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           final double? savedPortionControl =
               _userPreferencesRepository.getPortionControl();
           if (savedPortionControl == null) {
-            portionControl = totalConsumedYesterday;
-            await _userPreferencesRepository.savePortionControl(
-              totalConsumedYesterday,
-            );
-          } else if (savedPortionControl < totalConsumedYesterday) {
+            if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+              portionControl = totalConsumedYesterday;
+              await _userPreferencesRepository.savePortionControl(
+                totalConsumedYesterday,
+              );
+            }
+          } else if (savedPortionControl < totalConsumedYesterday &&
+              savedPortionControl > constants.safeMinimumFoodIntakeG) {
             portionControl = savedPortionControl;
-          } else if (savedPortionControl > totalConsumedYesterday) {
+          } else if (savedPortionControl > totalConsumedYesterday &&
+              totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
             portionControl = totalConsumedYesterday;
             await _userPreferencesRepository.savePortionControl(
               totalConsumedYesterday,
@@ -557,6 +562,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final double? foodWeight = double.tryParse(event.foodWeight);
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
+
     if (foodWeight != null) {
       try {
         // Insert into the database.
@@ -574,7 +580,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: updatedFoodWeightEntries,
-            yesterdayConsumedTotal: foodWeight,
+            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             isConfirmedAllMealsLogged: isMealsConfirmed,
             portionControl: state.portionControl,
           ),

@@ -20,6 +20,16 @@ sealed class HomeState {
   final double portionControl;
   final Language language;
 
+  double get adjustedPortion {
+    if (portionControl >= constants.safeMinimumFoodIntakeG) {
+      return portionControl;
+    } else if (yesterdayConsumedTotal >= constants.safeMinimumFoodIntakeG) {
+      return yesterdayConsumedTotal;
+    } else {
+      return constants.maxDailyFoodLimit;
+    }
+  }
+
   bool get isEmptyDetails =>
       userDetails.height < constants.minHeight &&
       userDetails.age < constants.minAge &&
@@ -142,7 +152,7 @@ sealed class HomeState {
       isWeightAboveHealthy &&
       !isMealsConfirmedForToday;
 
-  String get formattedRemainingFood => (portionControl - totalConsumedToday)
+  String get formattedRemainingFood => (adjustedPortion - totalConsumedToday)
       .toStringAsFixed(1)
       .replaceAll(RegExp(r'\.0$'), '');
 
@@ -150,7 +160,10 @@ sealed class HomeState {
       totalConsumedToday.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
 
   String get formattedPortionControl =>
-      portionControl.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+      adjustedPortion.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+
+  String get formattedYesterdayConsumedTotal =>
+      yesterdayConsumedTotal.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
 }
 
 class HomeLoading extends HomeState {
