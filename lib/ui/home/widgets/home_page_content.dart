@@ -1,5 +1,7 @@
+import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/extensions/list_extension.dart';
@@ -21,6 +23,13 @@ class HomePageContent extends StatefulWidget {
 
 class _HomePageContentState extends State<HomePageContent> {
   final ScrollController _scrollController = ScrollController();
+  FeedbackController? _feedbackController;
+
+  @override
+  void didChangeDependencies() {
+    _feedbackController = BetterFeedback.of(context);
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +104,17 @@ class _HomePageContentState extends State<HomePageContent> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _feedbackController?.removeListener(_onFeedbackChanged);
+    _feedbackController = null;
     super.dispose();
+  }
+
+  void _onFeedbackChanged() {
+    final bool? isVisible = _feedbackController?.isVisible;
+    if (isVisible == false) {
+      _feedbackController?.removeListener(_onFeedbackChanged);
+      context.read<HomeBloc>().add(const ClosingFeedbackEvent());
+    }
   }
 
   void _homeStateListener(BuildContext context, HomeState state) {
@@ -107,8 +126,18 @@ class _HomePageContentState extends State<HomePageContent> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(state.errorMessage),
+          action: SnackBarAction(
+            label: 'Report',
+            onPressed: () {
+              context.read<HomeBloc>().add(const BugReportPressedEvent());
+            },
+          ),
         ),
       );
+    } else if (state is FeedbackState) {
+      _showFeedbackUi();
+    } else if (state is FeedbackSent) {
+      _notifyFeedbackSent();
     }
   }
 
@@ -120,5 +149,24 @@ class _HomePageContentState extends State<HomePageContent> {
         curve: Curves.easeOut,
       );
     }
+  }
+
+  void _showFeedbackUi() {
+    _feedbackController?.show(
+      (UserFeedback feedback) =>
+          context.read<HomeBloc>().add(SubmitFeedbackEvent(feedback)),
+    );
+    _feedbackController?.addListener(_onFeedbackChanged);
+  }
+
+  void _notifyFeedbackSent() {
+    BetterFeedback.of(context).hide();
+    // Let user know that his feedback is sent.
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(translate('feedback.feedbackSent')),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 }

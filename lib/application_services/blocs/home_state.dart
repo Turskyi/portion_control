@@ -9,6 +9,7 @@ sealed class HomeState {
     required this.bodyWeightEntries,
     required this.foodEntries,
     required this.portionControl,
+    this.language = Language.en,
   });
 
   final UserDetails userDetails;
@@ -17,6 +18,7 @@ sealed class HomeState {
   final List<BodyWeight> bodyWeightEntries;
   final List<FoodWeight> foodEntries;
   final double portionControl;
+  final Language language;
 
   bool get isEmptyDetails =>
       userDetails.height < constants.minHeight &&
@@ -378,4 +380,49 @@ class FoodWeightError extends BodyWeightSubmittedState implements ErrorState {
 
   @override
   final String errorMessage;
+}
+
+final class FeedbackState extends HomeState {
+  const FeedbackState({
+    required super.userDetails,
+    required super.bodyWeight,
+    required super.yesterdayConsumedTotal,
+    required super.bodyWeightEntries,
+    required super.foodEntries,
+    required super.portionControl,
+    super.language,
+  });
+
+  FeedbackState copyWith({
+    Language? language,
+    UserDetails? userDetails,
+    double? bodyWeight,
+    double? yesterdayConsumedTotal,
+    List<BodyWeight>? bodyWeightEntries,
+    List<FoodWeight>? foodEntries,
+    double? portionControl,
+  }) {
+    return FeedbackState(
+      language: language ?? this.language,
+      userDetails: userDetails ?? this.userDetails,
+      bodyWeight: bodyWeight ?? this.bodyWeight,
+      yesterdayConsumedTotal:
+          yesterdayConsumedTotal ?? this.yesterdayConsumedTotal,
+      bodyWeightEntries: bodyWeightEntries ?? this.bodyWeightEntries,
+      foodEntries: foodEntries ?? this.foodEntries,
+      portionControl: portionControl ?? this.portionControl,
+    );
+  }
+}
+
+final class FeedbackSent extends HomeState {
+  const FeedbackSent({
+    required super.userDetails,
+    required super.bodyWeight,
+    required super.yesterdayConsumedTotal,
+    required super.bodyWeightEntries,
+    required super.foodEntries,
+    required super.portionControl,
+    super.language,
+  });
 }

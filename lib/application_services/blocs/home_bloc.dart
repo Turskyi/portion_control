@@ -1,8 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:feedback/feedback.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:flutter_translate/flutter_translate.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:portion_control/domain/enums/feedback_rating.dart';
+import 'package:portion_control/domain/enums/feedback_type.dart';
 import 'package:portion_control/domain/enums/gender.dart';
+import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/models/user_details.dart';
@@ -12,6 +21,7 @@ import 'package:portion_control/domain/services/repositories/i_food_weight_repos
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:url_launcher/url_launcher.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -39,12 +49,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ClearUserData>(_clearUserData);
     on<ResetFoodEntries>(_clearAllFoodEntries);
     on<ConfirmMealsLogged>(_saveMealsConfirmation);
+    on<BugReportPressedEvent>(_onFeedbackRequested);
+    on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
+    on<SubmitFeedbackEvent>(_sendUserFeedback);
+    on<ErrorEvent>(_handleError);
   }
 
   final IUserPreferencesRepository _userPreferencesRepository;
   final IBodyWeightRepository _bodyWeightRepository;
   final IFoodWeightRepository _foodWeightRepository;
   final IClearTrackingDataUseCase _clearTrackingDataUseCase;
+
+  // Store the previous state.
+  HomeState? _previousState;
 
   FutureOr<void> _loadEntries(
     LoadEntries event,
@@ -776,6 +793,136 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           portionControl: state.portionControl,
         ),
       );
+    }
+  }
+
+  FutureOr<void> _onFeedbackRequested(_, Emitter<HomeState> emit) {
+    _previousState = state;
+    emit(
+      FeedbackState(
+        userDetails: state.userDetails,
+        bodyWeight: state.bodyWeight,
+        yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+        bodyWeightEntries: state.bodyWeightEntries,
+        foodEntries: state.foodEntries,
+        portionControl: state.portionControl,
+      ),
+    );
+  }
+
+  FutureOr<void> _onFeedbackDialogDismissed(_, Emitter<HomeState> emit) {
+    if (_previousState != null) {
+      emit(_previousState!);
+    } else {
+      add(const LoadEntries());
+    }
+  }
+
+  FutureOr<void> _handleError(ErrorEvent event, Emitter<HomeState> emit) {
+    debugPrint('ErrorEvent: ${event.error}');
+    if (_previousState != null) {
+      emit(_previousState!);
+    } else {
+      add(const LoadEntries());
+    }
+  }
+
+  FutureOr<void> _sendUserFeedback(
+    SubmitFeedbackEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    emit(const HomeLoading());
+    final UserFeedback feedback = event.feedback;
+    try {
+      final String screenshotFilePath = await _writeImageToStorage(
+        feedback.screenshot,
+      );
+
+      final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+      final Map<String, dynamic>? extra = feedback.extra;
+      final dynamic rating = extra?['rating'];
+      final dynamic type = extra?['feedback_type'];
+
+      // Construct the feedback text with details from `extra'.
+      final StringBuffer feedbackBody = StringBuffer()
+        ..writeln('${type is FeedbackType ? translate('feedback.type') : ''}:'
+            ' ${type is FeedbackType ? type.value : ''}')
+        ..writeln()
+        ..writeln(feedback.text)
+        ..writeln()
+        ..writeln('${translate('appId')}: ${packageInfo.packageName}')
+        ..writeln('${translate('appVersion')}: ${packageInfo.version}')
+        ..writeln('${translate('buildNumber')}: ${packageInfo.buildNumber}')
+        ..writeln()
+        ..writeln(
+            '${rating is FeedbackRating ? translate('feedback.rating') : ''}'
+            '${rating is FeedbackRating ? ':' : ''}'
+            ' ${rating is FeedbackRating ? rating.value : ''}');
+
+      final List<String> attachmentPaths = screenshotFilePath.isNotEmpty
+          ? <String>[screenshotFilePath]
+          : <String>[];
+
+      final Email email = Email(
+        body: feedbackBody.toString(),
+        subject: '${translate('feedback.appFeedback')}: '
+            '${packageInfo.appName}',
+        recipients: <String>[constants.supportEmail],
+        attachmentPaths: attachmentPaths,
+      );
+      try {
+        if (kIsWeb) {
+          // Handle email sending on the web using a `mailto` link.
+          final Uri emailLaunchUri = Uri(
+            scheme: 'mailto',
+            path: constants.supportEmail,
+            queryParameters: <String, String>{
+              'subject': '${translate('feedback.appFeedback')}: '
+                  '${packageInfo.appName}',
+              'body': feedbackBody.toString(),
+            },
+          );
+
+          if (await canLaunchUrl(emailLaunchUri)) {
+            await launchUrl(emailLaunchUri);
+          } else {
+            add(ErrorEvent(translate('error.unexpectedError')));
+          }
+        } else {
+          await FlutterEmailSender.send(email);
+        }
+      } catch (error, stackTrace) {
+        debugPrint(
+          'Error in $runtimeType in `onError`: $error.\n'
+          'Stacktrace: $stackTrace',
+        );
+        add(ErrorEvent(translate('error.unexpectedError')));
+      }
+    } catch (error, stackTrace) {
+      debugPrint(
+        'Error in $runtimeType in `onError`: $error.\n'
+        'Stacktrace: $stackTrace',
+      );
+      add(ErrorEvent(translate('error.unexpectedError')));
+    }
+    if (_previousState != null) {
+      emit(_previousState!);
+    } else {
+      add(const LoadEntries());
+    }
+  }
+
+  Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {
+    if (kIsWeb) {
+      // No file storage on web.
+      return '';
+    } else {
+      final Directory output = await getTemporaryDirectory();
+      final String screenshotFilePath = '${output.path}/feedback.png';
+      final File screenshotFile = File(screenshotFilePath);
+      await screenshotFile.writeAsBytes(feedbackScreenshot);
+      return screenshotFilePath;
     }
   }
 }

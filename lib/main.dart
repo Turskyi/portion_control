@@ -1,5 +1,7 @@
+import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/application_services/interactors/clear_tracking_data_use_case.dart';
@@ -8,7 +10,10 @@ import 'package:portion_control/infrastructure/repositories/body_weight_reposito
 import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/tracking_repository.dart';
 import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
+import 'package:portion_control/localization/localization_delelegate_getter.dart'
+    as localization;
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/ui/feedback/feedback_form.dart';
 import 'package:portion_control/ui/home/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,6 +34,9 @@ Future<void> main() async {
   // `SharedPreferences` dependencies initialization.
   WidgetsFlutterBinding.ensureInitialized();
 
+  final LocalizationDelegate localizationDelegate =
+      await localization.getLocalizationDelegate();
+
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final AppDatabase appDatabase = AppDatabase();
 
@@ -43,9 +51,22 @@ Future<void> main() async {
           child: const HomePage(),
         ),
   };
+
   runApp(
-    App(
-      routeMap: routeMap,
+    LocalizedApp(
+      localizationDelegate,
+      BetterFeedback(
+        feedbackBuilder: (
+          _,
+          OnSubmit onSubmit,
+          ScrollController? scrollController,
+        ) =>
+            FeedbackForm(
+          onSubmit: onSubmit,
+          scrollController: scrollController,
+        ),
+        child: App(routeMap: routeMap),
+      ),
     ),
   );
 }

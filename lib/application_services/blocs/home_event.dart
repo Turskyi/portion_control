@@ -5,35 +5,35 @@ sealed class HomeEvent {
   const HomeEvent();
 }
 
-class LoadEntries extends HomeEvent {
+final class LoadEntries extends HomeEvent {
   const LoadEntries();
 }
 
-class UpdateHeight extends HomeEvent {
+final class UpdateHeight extends HomeEvent {
   const UpdateHeight(this.height);
 
   final String height;
 }
 
-class UpdateDateOfBirth extends HomeEvent {
+final class UpdateDateOfBirth extends HomeEvent {
   const UpdateDateOfBirth(this.dateOfBirth);
 
   final DateTime dateOfBirth;
 }
 
-class UpdateGender extends HomeEvent {
+final class UpdateGender extends HomeEvent {
   const UpdateGender(this.gender);
 
   final Gender gender;
 }
 
-class UpdateBodyWeight extends HomeEvent {
+final class UpdateBodyWeight extends HomeEvent {
   const UpdateBodyWeight(this.bodyWeight);
 
   final String bodyWeight;
 }
 
-class UpdateFoodWeight extends HomeEvent {
+final class UpdateFoodWeight extends HomeEvent {
   const UpdateFoodWeight({
     required this.foodEntryId,
     required this.foodWeight,
@@ -43,43 +43,43 @@ class UpdateFoodWeight extends HomeEvent {
   final int foodEntryId;
 }
 
-class SubmitDetails extends HomeEvent {
+final class SubmitDetails extends HomeEvent {
   const SubmitDetails();
 }
 
-class SubmitBodyWeight extends HomeEvent {
+final class SubmitBodyWeight extends HomeEvent {
   const SubmitBodyWeight(this.bodyWeight);
 
   final double bodyWeight;
 }
 
-class EditDetails extends HomeEvent {
+final class EditDetails extends HomeEvent {
   const EditDetails();
 }
 
-class EditBodyWeight extends HomeEvent {
+final class EditBodyWeight extends HomeEvent {
   const EditBodyWeight();
 }
 
-class AddFoodEntry extends HomeEvent {
+final class AddFoodEntry extends HomeEvent {
   const AddFoodEntry(this.foodWeight);
 
   final String foodWeight;
 }
 
-class EditFoodEntry extends HomeEvent {
+final class EditFoodEntry extends HomeEvent {
   const EditFoodEntry(this.foodEntryId);
 
   final int foodEntryId;
 }
 
-class DeleteFoodEntry extends HomeEvent {
+final class DeleteFoodEntry extends HomeEvent {
   const DeleteFoodEntry(this.foodEntryId);
 
   final int foodEntryId;
 }
 
-class ClearUserData extends HomeEvent {
+final class ClearUserData extends HomeEvent {
   /// Reset all user data (body weight, food intake, etc.).
   const ClearUserData();
 }
@@ -91,4 +91,24 @@ final class ConfirmMealsLogged extends HomeEvent {
 final class ResetFoodEntries extends HomeEvent {
   /// Reset all user'` food intake.
   const ResetFoodEntries();
+}
+
+final class BugReportPressedEvent extends HomeEvent {
+  const BugReportPressedEvent();
+}
+
+final class ClosingFeedbackEvent extends HomeEvent {
+  const ClosingFeedbackEvent();
+}
+
+final class SubmitFeedbackEvent extends HomeEvent {
+  const SubmitFeedbackEvent(this.feedback);
+
+  final UserFeedback feedback;
+}
+
+final class ErrorEvent extends HomeEvent {
+  const ErrorEvent(this.error);
+
+  final String error;
 }
