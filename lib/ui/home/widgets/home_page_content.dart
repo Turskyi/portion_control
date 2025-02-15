@@ -12,6 +12,7 @@ import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.d
 import 'package:portion_control/ui/home/widgets/portion_control_message.dart';
 import 'package:portion_control/ui/home/widgets/submit_edit_body_weight_button.dart';
 import 'package:portion_control/ui/home/widgets/user_details_widget.dart';
+import 'package:portion_control/ui/widgets/fancy_loading_indicator.dart';
 import 'package:portion_control/ui/widgets/input_row.dart';
 
 class HomePageContent extends StatefulWidget {
@@ -95,6 +96,7 @@ class _HomePageContentState extends State<HomePageContent> {
                 const PortionControlMessage(),
               if (state is BodyWeightSubmittedState)
                 FoodEntriesColumn(foodEntries: foodEntries),
+              if (state is HomeLoading) const FancyLoadingIndicator(),
             ],
           ),
         );
