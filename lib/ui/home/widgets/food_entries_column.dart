@@ -20,7 +20,8 @@ class FoodEntriesColumn extends StatelessWidget {
         final double portionControl = state.adjustedPortion;
         final bool shouldAskForMealConfirmation =
             state.shouldAskForMealConfirmation;
-
+        final bool isWeightBelowHealthy = state.isWeightBelowHealthy;
+        final bool isWeightDecreasingOrSame = state.isWeightDecreasingOrSame;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 16,
@@ -48,9 +49,12 @@ class FoodEntriesColumn extends StatelessWidget {
                 },
               );
             }),
-            if (totalConsumedToday < constants.maxDailyFoodLimit &&
-                (!shouldAskForMealConfirmation || state.hasNoPortionControl) &&
-                totalConsumedToday < portionControl)
+            if ((totalConsumedToday < constants.maxDailyFoodLimit &&
+                    (!shouldAskForMealConfirmation ||
+                        state.hasNoPortionControl) &&
+                    totalConsumedToday < portionControl) ||
+                (isWeightBelowHealthy && isWeightDecreasingOrSame))
+              // Input field for new food entry.
               FoodWeightEntryRow(
                 isEditable: true,
                 onSave: (String value) {
@@ -72,7 +76,17 @@ class FoodEntriesColumn extends StatelessWidget {
                 '${state.formattedTotalConsumedToday} g',
                 style: textTheme.titleMedium,
               ),
-              if (totalConsumedToday < portionControl &&
+              if (isWeightBelowHealthy &&
+                  isWeightDecreasingOrSame &&
+                  totalConsumedToday < portionControl &&
+                  portionControl != constants.maxDailyFoodLimit &&
+                  portionControl != constants.safeMinimumFoodIntakeG)
+                Text(
+                  '❗You must eat at least ${state.formattedRemainingFood} g '
+                  'more today',
+                  style: textTheme.bodyMedium,
+                )
+              else if (totalConsumedToday < portionControl &&
                   portionControl != constants.maxDailyFoodLimit)
                 Text(
                   'You can eat ${state.formattedRemainingFood} g more today',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home_bloc.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/ui/home/widgets/meal_confirmation_card.dart';
 
 class PortionControlMessage extends StatelessWidget {
   const PortionControlMessage({super.key});
@@ -17,7 +18,7 @@ class PortionControlMessage extends StatelessWidget {
         final bool isWeightDecreasing = state.isWeightDecreasing;
         final bool isWeightIncreasing = state.isWeightIncreasing;
         final double portionControl = state.adjustedPortion;
-
+        final double yesterdayTotal = state.yesterdayConsumedTotal;
         if (state.hasNoPortionControl) {
           return Text(
             '🍽️ No portion control today!\n'
@@ -35,60 +36,7 @@ class PortionControlMessage extends StatelessWidget {
               );
             }
           } else if (!state.isMealsConfirmedForToday) {
-            final double yesterdayTotal = state.yesterdayConsumedTotal;
-            return Card(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    // Display yesterday's total consumed amount
-                    if (yesterdayTotal > 0)
-                      Text(
-                        'Yesterday, you consumed (logged) '
-                        '${state.formattedYesterdayConsumedTotal} g. '
-                        '🍽️',
-                        style: titleMediumStyle,
-                        textAlign: TextAlign.center,
-                      )
-                    else
-                      Text(
-                        'You didn’t log any meals yesterday. Don’t forget to '
-                        'track your food! ⏳',
-                        style: titleMediumStyle,
-                        textAlign: TextAlign.center,
-                      ),
-
-                    const SizedBox(height: 12),
-
-                    Text(
-                      'Did you log every meal you ate yesterday? 📋',
-                      style: titleMediumStyle,
-                      textAlign: TextAlign.center,
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        ElevatedButton(
-                          onPressed: () => context
-                              .read<HomeBloc>()
-                              .add(const ConfirmMealsLogged()),
-                          child: const Text('Yes ✅'),
-                        ),
-                        OutlinedButton(
-                          onPressed: () => _showIncompleteDataDialog(context),
-                          child: const Text('No ❌'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
+            return MealConfirmationCard(yesterdayTotal: yesterdayTotal);
           }
         } else if (isWeightDecreasing && isWeightAboveHealthy) {
           return Text(
@@ -103,41 +51,31 @@ class PortionControlMessage extends StatelessWidget {
             'Ensure you eat nutritious meals to reach a healthy weight. 🥗🍞',
             style: titleMediumStyle,
           );
-        } else if (isWeightDecreasing && isWeightBelowHealthy) {
-          return Text(
-            '⚠️ Warning: Your weight is dropping below the healthy range! ❗ '
-            'Consider increasing your food intake. 🍔🍚',
-            style: titleMediumStyle,
-          );
+        } else if (state.isWeightDecreasingOrSame && isWeightBelowHealthy) {
+          if (state.isMealsConfirmedForToday &&
+              portionControl > constants.safeMinimumFoodIntakeG) {
+            if (portionControl != constants.maxDailyFoodLimit &&
+                portionControl != constants.safeMinimumFoodIntakeG) {
+              return Text(
+                '⚠️ Warning: Your weight is dropping below the healthy range! '
+                '❗\nConsider increasing your food intake. 🍔🍚\n🍽️ Minimum '
+                'intake for today: '
+                '${state.formattedPortionControl} g ⚖️',
+                style: titleMediumStyle,
+              );
+            }
+          } else if (!state.isMealsConfirmedForToday) {
+            return MealConfirmationCard(yesterdayTotal: yesterdayTotal);
+          } else {
+            return Text(
+              '⚠️ Warning: Your weight is dropping below the healthy range! ❗ '
+              'Consider increasing your food intake. 🍔🍚',
+              style: titleMediumStyle,
+            );
+          }
         }
 // Default empty widget if no condition matches.
         return const SizedBox.shrink();
-      },
-    );
-  }
-
-  Future<void> _showIncompleteDataDialog(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Incomplete Data Warning'),
-          content: const Text(
-            '⚠️ To provide accurate portion control, we rely on complete meal '
-            'tracking. Since some entries might be missing, we will reset food '
-            'logs for yesterday. This ensures future recommendations are based '
-            'on reliable data. 🔄',
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                context.read<HomeBloc>().add(const ResetFoodEntries());
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
       },
     );
   }

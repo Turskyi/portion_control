@@ -103,9 +103,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             lastSavedBodyWeightEntry.weight,
           );
 
+          final double? savedPortionControl =
+              _userPreferencesRepository.getPortionControl();
           if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
-            final double? savedPortionControl =
-                _userPreferencesRepository.getPortionControl();
             if (savedPortionControl == null) {
               portionControl = totalConsumedYesterday;
             } else if (savedPortionControl < totalConsumedYesterday) {
@@ -114,10 +114,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               portionControl = totalConsumedYesterday;
             }
           } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
-//FIXME: The app is designed to control the portion of food intake. If user's
-// body weight bellow the healthy range, there is nothing to control, I have to
-// think about it later on how to handle this. Because if I try to help user
-            // gain weight it would be against the app's concept.
+            portionControl = constants.safeMinimumFoodIntakeG;
+            if (savedPortionControl == null) {
+              portionControl = totalConsumedYesterday;
+            } else if (savedPortionControl > totalConsumedYesterday) {
+              portionControl = savedPortionControl;
+            } else if (savedPortionControl < totalConsumedYesterday) {
+              portionControl = totalConsumedYesterday;
+            }
           }
         }
 
@@ -485,10 +489,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             _userPreferencesRepository.isMealsConfirmedForToday;
 
         double portionControl = constants.maxDailyFoodLimit;
-
+        final double? savedPortionControl =
+            _userPreferencesRepository.getPortionControl();
         if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
-          final double? savedPortionControl =
-              _userPreferencesRepository.getPortionControl();
           if (savedPortionControl == null) {
             if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
               portionControl = totalConsumedYesterday;
@@ -507,12 +510,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             );
           }
         } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
-//FIXME: The app is designed to control the portion of food intake. If user's
-// body weight bellow the healthy range, there is nothing to control, I have to
-// think about it later on how to handle this. Because if I try to help user
-          // gain weight it would be against the app's concept.
+          portionControl = constants.safeMinimumFoodIntakeG;
+          if (savedPortionControl == null) {
+            if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+              portionControl = totalConsumedYesterday;
+              await _userPreferencesRepository.savePortionControl(
+                totalConsumedYesterday,
+              );
+            }
+          } else if (savedPortionControl > totalConsumedYesterday &&
+              savedPortionControl > constants.safeMinimumFoodIntakeG) {
+            portionControl = savedPortionControl;
+          } else if (savedPortionControl < totalConsumedYesterday &&
+              totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+            portionControl = totalConsumedYesterday;
+            await _userPreferencesRepository.savePortionControl(
+              totalConsumedYesterday,
+            );
+          }
         }
-
         emit(
           BodyWeightSubmittedState(
             bodyWeight: lastSavedBodyWeight,

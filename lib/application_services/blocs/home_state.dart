@@ -25,6 +25,8 @@ sealed class HomeState {
       return portionControl;
     } else if (yesterdayConsumedTotal >= constants.safeMinimumFoodIntakeG) {
       return yesterdayConsumedTotal;
+    } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
+      return constants.safeMinimumFoodIntakeG;
     } else {
       return constants.maxDailyFoodLimit;
     }
