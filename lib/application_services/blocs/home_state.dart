@@ -67,17 +67,10 @@ sealed class HomeState {
   }
 
   bool get isWeightIncreasingOrSame {
-    if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
-      return false;
-    }
-    if (bodyWeightEntries.length == 1) {
-      return true;
-    }
-    return bodyWeightEntries.last.weight >=
-        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+    return isWeightIncreasingOrSameFor(bodyWeightEntries);
   }
 
-  bool checkIfWeightIncreasingOrSame(List<BodyWeight> bodyWeightEntries) {
+  bool isWeightIncreasingOrSameFor(List<BodyWeight> bodyWeightEntries) {
     if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
       return false;
     }
@@ -95,6 +88,10 @@ sealed class HomeState {
           bodyWeightEntries[bodyWeightEntries.length - 2].weight;
 
   bool get isWeightDecreasingOrSame {
+    return isWeightDecreasingOrSameFor(bodyWeightEntries);
+  }
+
+  bool isWeightDecreasingOrSameFor(List<BodyWeight> bodyWeightEntries) {
     if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
       return false;
     }
@@ -105,36 +102,17 @@ sealed class HomeState {
         bodyWeightEntries[bodyWeightEntries.length - 2].weight;
   }
 
-  bool checkIfWeightDecreasingOrSame(List<BodyWeight> bodyWeightEntries) {
-    if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
-      return false;
-    }
-    if (bodyWeightEntries.length == 1) {
-      return true;
-    }
-    return bodyWeightEntries.last.weight <=
-        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
-  }
+  bool get isWeightAboveHealthy => isWeightAboveHealthyFor(bodyWeight);
 
-  bool get isWeightAboveHealthy {
+  bool isWeightAboveHealthyFor(double bodyWeight) {
     final double heightInMeters = height / 100;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi > constants.maxHealthyBmi;
   }
 
-  bool checkIfWeightAboveHealthy(double bodyWeight) {
-    final double heightInMeters = height / 100;
-    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
-    return bmi > constants.maxHealthyBmi;
-  }
+  bool get isWeightBelowHealthy => isWeightBelowHealthyFor(bodyWeight);
 
-  bool get isWeightBelowHealthy {
-    final double heightInMeters = height / 100;
-    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
-    return bmi < constants.minHealthyBmi;
-  }
-
-  bool checkIfWeightBelowHealthy(double bodyWeight) {
+  bool isWeightBelowHealthyFor(double bodyWeight) {
     final double heightInMeters = height / 100;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi < constants.minHealthyBmi;
@@ -166,6 +144,13 @@ sealed class HomeState {
 
   String get formattedYesterdayConsumedTotal =>
       yesterdayConsumedTotal.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+
+  String get previousPortionControlInfo =>
+      (yesterdayConsumedTotal != adjustedPortion &&
+              adjustedPortion != constants.maxDailyFoodLimit &&
+              adjustedPortion != constants.safeMinimumFoodIntakeG)
+          ? '\n⚖️ Previous portion control: $adjustedPortion g'
+          : '';
 }
 
 class HomeLoading extends HomeState {

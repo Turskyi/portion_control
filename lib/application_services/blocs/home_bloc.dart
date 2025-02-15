@@ -88,18 +88,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               : 0;
 
           final bool isWeightIncreasingOrSame =
-              state.checkIfWeightIncreasingOrSame(
+              state.isWeightIncreasingOrSameFor(
             bodyWeightEntries,
           );
 
-          final bool isWeightAboveHealthy = state.checkIfWeightAboveHealthy(
+          final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
             lastSavedBodyWeightEntry.weight,
           );
           final bool isWeightDecreasingOrSame =
-              state.checkIfWeightDecreasingOrSame(
+              state.isWeightDecreasingOrSameFor(
             bodyWeightEntries,
           );
-          final bool isWeightBelowHealthy = state.checkIfWeightBelowHealthy(
+          final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
             lastSavedBodyWeightEntry.weight,
           );
 
@@ -468,21 +468,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         final double totalConsumedYesterday = state.yesterdayConsumedTotal;
 
-        final bool isWeightIncreasingOrSame =
-            state.checkIfWeightIncreasingOrSame(
+        final bool isWeightIncreasingOrSame = state.isWeightIncreasingOrSameFor(
           updatedBodyWeightEntries,
         );
 
-        final bool isWeightDecreasingOrSame =
-            state.checkIfWeightDecreasingOrSame(
+        final bool isWeightDecreasingOrSame = state.isWeightDecreasingOrSameFor(
           updatedBodyWeightEntries,
         );
 
-        final bool isWeightBelowHealthy = state.checkIfWeightBelowHealthy(
+        final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
           lastSavedBodyWeight,
         );
 
-        final bool isWeightAboveHealthy = state.checkIfWeightAboveHealthy(
+        final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
           lastSavedBodyWeight,
         );
         final bool isMealsConfirmed =

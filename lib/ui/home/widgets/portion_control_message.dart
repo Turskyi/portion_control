@@ -39,11 +39,24 @@ class PortionControlMessage extends StatelessWidget {
             return MealConfirmationCard(yesterdayTotal: yesterdayTotal);
           }
         } else if (isWeightDecreasing && isWeightAboveHealthy) {
-          return Text(
-            '📉 Your weight is decreasing! 🎉\nYou can enjoy your meals '
-            'without strict Portion Control, but keep logging your food to '
-            'track your progress. 🍽️',
-            style: titleMediumStyle,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 16,
+            children: <Widget>[
+              Text(
+                '📉 Your weight is decreasing! 🎉\n'
+                'Enjoy your meals without strict Portion Control, but keep '
+                'logging to track your progress. 🍽️',
+                style: titleMediumStyle,
+              ),
+              Text(
+                '📊 Yesterday: $yesterdayTotal g'
+                '${state.previousPortionControlInfo}\n'
+                'Use this as a reference today!',
+                // Slightly smaller than titleMediumStyle.
+                style: textTheme.bodyMedium,
+              ),
+            ],
           );
         } else if (isWeightIncreasing && isWeightBelowHealthy) {
           return Text(
