@@ -49,13 +49,15 @@ class PortionControlMessage extends StatelessWidget {
                 'logging to track your progress. 🍽️',
                 style: titleMediumStyle,
               ),
-              Text(
-                '📊 Yesterday: $yesterdayTotal g'
-                '${state.previousPortionControlInfo}\n'
-                'Use this as a reference today!',
-                // Slightly smaller than titleMediumStyle.
-                style: textTheme.bodyMedium,
-              ),
+              if (yesterdayTotal > constants.safeMinimumFoodIntakeG &&
+                  yesterdayTotal < constants.maxDailyFoodLimit)
+                Text(
+                  '📊 Yesterday: $yesterdayTotal g'
+                  '${state.previousPortionControlInfo}\n'
+                  'Use this as a reference today!',
+                  // Slightly smaller than titleMediumStyle.
+                  style: textTheme.bodyMedium,
+                ),
             ],
           );
         } else if (isWeightIncreasing && isWeightBelowHealthy) {
