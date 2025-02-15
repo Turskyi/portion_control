@@ -156,3 +156,5 @@ effectful
 deps
 vscode
 niladic
+codecov
+ve

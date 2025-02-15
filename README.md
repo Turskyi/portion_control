@@ -1,5 +1,6 @@
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct-single.svg)](https://stand-with-ukraine.pp.ua)
 [![style: flutter lints](https://img.shields.io/badge/style-flutter__lints-blue)](https://pub.dev/packages/flutter_lints)
+[![codecov](https://codecov.io/gh/Turskyi/portion_control/graph/badge.svg?token=66LWUIL7WJ)](https://codecov.io/gh/Turskyi/portion_control)
 <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Turskyi/portion_control">
 
 # PortionControl
@@ -8,6 +9,12 @@
 track their food intake and weight straightforwardly. The app allows users to
 record their body weight and food portions, making it easier to monitor the
 relationship between food consumption and weight changes.
+
+### Testing the App:
+
+Join our testing program and provide valuable feedback:
+
+- [Android App Distribution Tester Invite](https://appdistribution.firebase.dev/i/3a90590762e477b7)
 
 ## Features
 
@@ -31,7 +38,8 @@ Before you begin, make sure you have the following installed:
    [Flutter website](https://docs.flutter.dev/get-started/install).
 2. **Android Studio** or **Visual Studio Code**: Preferred IDE for Flutter
    development.
-3. **Dart SDK**: It comes bundled with Flutter, but ensure you’re on the latest
+3. **Dart SDK**: It comes bundled with Flutter, but ensure you&#39;re on the
+   latest
    stable version.
 
 ### Installation
@@ -56,7 +64,7 @@ flutter pub get
 
 ### Create generated files:
 
-```
+```bash
 dart run build_runner build --delete-conflicting-outputs
 ```
 
@@ -101,14 +109,6 @@ be replaced later with actual input widgets.
 The app uses `Material3` components and a color scheme seeded with
 `Colors.deepPurple` to create a clean and vibrant user interface.
 
-```dart
-ThemeData
-(
-colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)
-,
-)
-```
-
 ## Why are `repositories` located in the `infrastructure` component?
 
 **Repositories** are placed in the `infrastructure` component because they
@@ -120,7 +120,7 @@ and hence to the `database`.
 
 ### Widget Testing
 
-Tests for this project ensure that the app’s UI components render correctly.
+Tests for this project ensure that the app&#39;s UI components render correctly.
 You can run the tests using the following command:
 
 ```bash
@@ -176,7 +176,8 @@ it's preferable to do so.
 
 - ### Avoid Mental Mapping
 
-A single-letter name is a poor choice; it’s just a placeholder that the reader
+A single-letter name is a poor choice; it&#39;s just a placeholder that the
+reader
 must mentally map to the actual concept. There can be no worse reason for using
 the name `c` than because `a` and `b` were already taken.
 
@@ -192,14 +193,14 @@ If a name requires a comment, then the name does not reveal its intent.
 
 - ### Use Pronounceable Names
 
-If you can’t pronounce it, you can’t discuss it without sounding silly.
+If you can&#39;t pronounce it, you can&#39;t discuss it without sounding silly.
 
 - ### Class Names
 
 Classes and objects should have noun or noun phrase names and not include
 indistinct noise words:
 
-```
+```dart
 GOOD:
 Customer, WikiPage, Account, AddressParser.
 
@@ -233,7 +234,8 @@ should be **_above_** the callee, if possible.
 
 - ### Use Descriptive Names
 
-Don’t be afraid to make a name long. A long descriptive name is better than a
+Don&#39;t be afraid to make a name long. A long descriptive name is better than
+a
 short enigmatic name. A long descriptive name is better than a long descriptive
 comment.
 
@@ -243,7 +245,7 @@ The ideal number of arguments for a function is zero (niladic). Next comes one
 (monadic), followed closely by two (dyadic). Three arguments (triadic) should
 be avoided where possible.
 
-```
+```dart
 GOOD:
 includeSetupPage()
 
@@ -258,7 +260,7 @@ practice. It immediately complicates the signature of the method, loudly
 proclaiming that this function does more than one thing. It does one thing if
 the flag is true and another if the flag is false!
 
-```
+```dart
 GOOD:
 renderForSuite()
 renderForSingleTest()
@@ -271,10 +273,11 @@ render(bool isSuite)
 
 Only the code can truly tell you what it does. Comments are, at best, a
 necessary evil. Rather than spend your time writing the comments that explain
-the mess you’ve made, spend it cleaning that mess. Inaccurate comments are far
+the mess you&#39;ve made, spend it cleaning that mess. Inaccurate comments are
+far
 worse than no comments at all.
 
-```
+```dart
 BAD:
 // Check to see if the employee is eligible
 // for full benefits
@@ -288,7 +291,7 @@ if (employee.isEligibleForFullBenefits())
 - ### TODO Comments
 
 Nowadays, good IDEs provide special gestures and features to locate all the
-`//TODO` comments, so it’s not likely that they will get lost.
+`//TODO` comments, so it&#39;s not likely that they will get lost.
 
 - ### Public APIs
 
@@ -301,26 +304,27 @@ It would be challenging, at best, to write programs without them.
 
 - ### Commented-Out Code
 
-We’ve had good source code control systems for a very long time now. Those
-systems will remember the code for us. We don’t have to comment it out anymore.
+We&#39;ve had good source code control systems for a very long time now. Those
+systems will remember the code for us. We don&#39;t have to comment it out
+anymore.
 
 - ### Position Markers
 
 In general, they are the clutter that should be eliminated—especially the noisy
-train of slashes at the end. If you overuse banners, they’ll fall into the
+train of slashes at the end. If you overuse banners, they&#39;ll fall into the
 background noise and be ignored.
 
 ```dart
 // Actions //////////////////////////////////
 ```
 
-- ### Don’t Return Null
+- ### Don&#39;t Return Null
 
 When we return `null`, we are essentially creating work for ourselves and
 foisting problems upon our callers. All it takes is one missing `null` check to
 send an app spinning out of control.
 
-- ### Don’t Pass Null
+- ### Don&#39;t Pass Null
 
 In most programming languages, there is no **GOOD** way to deal with a `null`
 that is passed by a caller accidentally. Because this is the case, the rational
@@ -381,7 +385,7 @@ if (timer.hasExpired() && !timer.isRecurrent())
 Negatives are just a bit harder to understand than positives. So, when
 possible, conditionals should be expressed as positives.
 
-```
+```dart
 GOOD:
 if (buffer.shouldCompact())
 
@@ -394,7 +398,7 @@ if (!buffer.shouldNotCompact())
 Boundary conditions are hard to keep track of. Put the processing for them in
 one place.
 
-```
+```dart
 BAD:
 if (level + 1 < tags.length) {
   parts = Parse(body, tags, level + 1, offset + endTag);
@@ -411,7 +415,8 @@ if (nextLevel < tags.length) {
 
 - ### Constants versus Enums
 
-Don’t keep using the old trick of public `static` `final` `int`s. `enum`s can
+Don&#39;t keep using the old trick of public `static` `final` `int`s. `enum`s
+can
 have methods and fields. This makes them very powerful tools that allow much
 more expression and flexibility.
 
