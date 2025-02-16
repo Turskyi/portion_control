@@ -65,3 +65,5 @@ ios/Runner/GoogleService-Info.plist
 /ios/fastlane/screenshots
 /ios/app_store_connect.json
 /android/app/.cxx/
+/.firebase/
+/web/build/

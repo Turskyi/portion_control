@@ -1,0 +1,39 @@
+name: Code Quality and Tests
+
+on: [ push ]
+
+jobs:
+  check-code-quality-and-tests:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: stable
+
+      - name: Get Packages
+        run: flutter pub get
+
+      - name: Check Format Errors
+        run: dart format --set-exit-if-changed .
+
+      - name: Check Lint Errors
+        run: flutter analyze .
+
+      - name: Run Tests with Coverage and Random Order
+        run: flutter test --coverage --test-randomize-ordering-seed random
+
+      - name: Very Good Coverage
+        uses: VeryGoodOpenSource/very_good_coverage@v2.1.0
+        with:
+          min_coverage: 9
+
+      - name: Upload Coverage Reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: Turskyi/portion_control

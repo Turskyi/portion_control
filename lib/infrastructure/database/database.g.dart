@@ -215,8 +215,7 @@ class BodyWeightEntriesCompanion extends UpdateCompanion<BodyWeightEntry> {
   String toString() {
     return (StringBuffer('BodyWeightEntriesCompanion(')
           ..write('id: $id, ')
-          ..write('weight: $weight, ')
-          ..write('date: $date')..write(')'))
+          ..write('weight: $weight, ')..write('date: $date')..write(')'))
         .toString();
   }
 }
@@ -237,7 +236,7 @@ class $FoodEntriesTable extends FoodEntries
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultConstraints:
-      GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
   static const VerificationMeta _weightMeta = const VerificationMeta('weight');
   @override
   late final GeneratedColumn<double> weight = GeneratedColumn<double>(
@@ -352,8 +351,7 @@ class FoodEntry extends DataClass implements Insertable<FoodEntry> {
     };
   }
 
-  FoodEntry copyWith({int? id, double? weight, DateTime? date}) =>
-      FoodEntry(
+  FoodEntry copyWith({int? id, double? weight, DateTime? date}) => FoodEntry(
         id: id ?? this.id,
         weight: weight ?? this.weight,
         date: date ?? this.date,
@@ -370,8 +368,10 @@ class FoodEntry extends DataClass implements Insertable<FoodEntry> {
   @override
   String toString() {
     return (StringBuffer('FoodEntry(')
-      ..write('id: $id, ')..write('weight: $weight, ')..write(
-          'date: $date')..write(')'))
+          ..write('id: $id, ')
+          ..write('weight: $weight, ')
+          ..write('date: $date')
+          ..write(')'))
         .toString();
   }
 
@@ -381,10 +381,10 @@ class FoodEntry extends DataClass implements Insertable<FoodEntry> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          (other is FoodEntry &&
-              other.id == this.id &&
-              other.weight == this.weight &&
-              other.date == this.date);
+      (other is FoodEntry &&
+          other.id == this.id &&
+          other.weight == this.weight &&
+          other.date == this.date);
 }
 
 class FoodEntriesCompanion extends UpdateCompanion<FoodEntry> {
@@ -402,8 +402,7 @@ class FoodEntriesCompanion extends UpdateCompanion<FoodEntry> {
     this.id = const Value.absent(),
     required double weight,
     required DateTime date,
-  })
-      : weight = Value(weight),
+  })  : weight = Value(weight),
         date = Value(date);
 
   static Insertable<FoodEntry> custom({
@@ -445,7 +444,9 @@ class FoodEntriesCompanion extends UpdateCompanion<FoodEntry> {
   @override
   String toString() {
     return (StringBuffer('FoodEntriesCompanion(')
-      ..write('id: $id, ')..write('weight: $weight, ')..write('date: $date')
+          ..write('id: $id, ')
+          ..write('weight: $weight, ')
+          ..write('date: $date')
           ..write(')'))
         .toString();
   }
