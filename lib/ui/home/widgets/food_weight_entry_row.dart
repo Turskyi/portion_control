@@ -59,9 +59,19 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
         const SizedBox(width: 8),
         Text(widget.time),
         if (widget.isEditState)
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: _handleSave,
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _controller,
+            child: const Icon(Icons.check),
+            builder: (_, TextEditingValue value, Widget? icon) {
+              final String input = value.text;
+              return IconButton(
+                icon: icon ?? const Icon(Icons.check),
+                onPressed:
+                    (input.isNotEmpty && (double.tryParse(input) ?? 0) > 0)
+                        ? _handleSave
+                        : null,
+              );
+            },
           )
         else ...<Widget>[
           if (widget.onEdit != null)
