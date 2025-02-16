@@ -1,6 +1,9 @@
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct-single.svg)](https://stand-with-ukraine.pp.ua)
 [![style: flutter lints](https://img.shields.io/badge/style-flutter__lints-blue)](https://pub.dev/packages/flutter_lints)
 [![codecov](https://codecov.io/gh/Turskyi/portion_control/graph/badge.svg?token=66LWUIL7WJ)](https://codecov.io/gh/Turskyi/portion_control)
+[![Deploy to Firebase Hosting on merge](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml)
+[![Code Quality and Tests](https://github.com/Turskyi/portion_control/actions/workflows/code_quality_tests.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/code_quality_tests.yml)
+[![Upload Android Build to App Tester](https://github.com/Turskyi/portion_control/actions/workflows/flutter_android_ci.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/flutter_android_ci.yml)
 <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Turskyi/portion_control">
 
 # PortionControl
@@ -95,14 +98,13 @@ lib/
 `main.dart`
 
 This file contains the main entry point for the app. It sets up the theme
-(with a deep purple color scheme) and runs the `PortionControlApp`. The home
+(with a deep purple color scheme) and runs the `App`. The home
 screen is defined here, with all basic UI elements and placeholders.
 
 `home_page.dart`
 
 Contains the layout for the home page, where users input their body weight and
-food portion weight. Each input field is currently a `Placeholder` widget, to
-be replaced later with actual input widgets.
+food portion weight.
 
 `Theme`
 
