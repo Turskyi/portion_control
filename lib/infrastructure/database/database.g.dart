@@ -214,8 +214,10 @@ class BodyWeightEntriesCompanion extends UpdateCompanion<BodyWeightEntry> {
   @override
   String toString() {
     return (StringBuffer('BodyWeightEntriesCompanion(')
-          ..write('id: $id, ')..write('weight: $weight, ')..write(
-          'date: $date')..write(')'))
+          ..write('id: $id, ')
+          ..write('weight: $weight, ')
+          ..write('date: $date')
+          ..write(')'))
         .toString();
   }
 }
