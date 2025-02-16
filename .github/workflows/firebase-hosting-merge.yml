@@ -24,9 +24,6 @@ jobs:
       - name: Build web project
         run: flutter build web
 
-      - name: Ensure build directory exists
-        run: ls web/build
-
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
