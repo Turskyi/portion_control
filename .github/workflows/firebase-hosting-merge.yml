@@ -31,6 +31,5 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_PORTION_CONTROL_TRACKER }}'
           channelId: 'live'
           projectId: 'portion-control-tracker'
-          target: 'default'
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
