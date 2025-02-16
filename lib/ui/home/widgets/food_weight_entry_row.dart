@@ -44,16 +44,25 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
     return Row(
       children: <Widget>[
         Expanded(
-          child: TextFormField(
-            controller: _controller,
-            enabled: widget.isEditState,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              hintText: 'Enter food weight',
-              suffixText: 'g',
-              border: OutlineInputBorder(),
-            ),
-            onFieldSubmitted: (_) => _handleSave(),
+          child: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _controller,
+            builder: (_, TextEditingValue value, __) {
+              final String input = value.text;
+              return TextFormField(
+                controller: _controller,
+                enabled: widget.isEditState,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  hintText: 'Enter food weight',
+                  suffixText: 'g',
+                  border: OutlineInputBorder(),
+                ),
+                onFieldSubmitted:
+                    (input.isNotEmpty && (double.tryParse(input) ?? 0) > 0)
+                        ? (_) => _handleSave()
+                        : null,
+              );
+            },
           ),
         ),
         const SizedBox(width: 8),

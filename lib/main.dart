@@ -52,9 +52,7 @@ Future<void> main() async {
   }) {
     return showDialog<void>(
       context: context,
-      builder: (_) {
-        return YesterdayFoodEntriesDialog(foodEntries: foodEntries);
-      },
+      builder: (_) => YesterdayFoodEntriesDialog(foodEntries: foodEntries),
     );
   }
 
