@@ -46,9 +46,7 @@ class FoodWeightRepository implements IFoodWeightRepository {
 
   /// Delete a food weight entry by [id].
   @override
-  Future<int> deleteFoodWeightEntry(int id) async {
-    return _database.deleteFoodEntry(id);
-  }
+  Future<int> deleteFoodWeightEntry(int id) => _database.deleteFoodEntry(id);
 
   /// Update an existing food weight entry.
   @override
@@ -66,4 +64,12 @@ class FoodWeightRepository implements IFoodWeightRepository {
 
   @override
   Future<int> clearAllTrackingData() => _database.clearFoodEntries();
+
+  @override
+  Future<List<FoodWeight>> fetchYesterdayEntries() async {
+    final List<FoodEntry> foodEntries = await _database.fetchYesterdayEntries();
+    return foodEntries
+        .map((FoodEntry weightEntry) => weightEntry.toDomain())
+        .toList();
+  }
 }

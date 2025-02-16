@@ -2,7 +2,7 @@ import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/ui/home/home_page.dart';
 import 'package:portion_control/ui/home/widgets/home_page_content.dart'
     show HomePageContent;

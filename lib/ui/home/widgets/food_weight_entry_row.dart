@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class FoodWeightEntryRow extends StatefulWidget {
   const FoodWeightEntryRow({
-    this.time = '',
     this.value,
-    this.isEditable = false,
+    this.time = '',
+    this.isEditState = false,
     this.onEdit,
     this.onDelete,
     this.onSave,
@@ -13,7 +13,7 @@ class FoodWeightEntryRow extends StatefulWidget {
 
   final String? value;
   final String time;
-  final bool isEditable;
+  final bool isEditState;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final ValueChanged<String>? onSave;
@@ -46,7 +46,7 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
         Expanded(
           child: TextFormField(
             controller: _controller,
-            enabled: widget.isEditable,
+            enabled: widget.isEditState,
             keyboardType: TextInputType.number,
             decoration: const InputDecoration(
               hintText: 'Enter food weight',
@@ -58,20 +58,23 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
         ),
         const SizedBox(width: 8),
         Text(widget.time),
-        if (!widget.isEditable) ...<Widget>[
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: widget.onEdit,
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: widget.onDelete,
-          ),
-        ] else
+        if (widget.isEditState)
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: _handleSave,
-          ),
+          )
+        else ...<Widget>[
+          if (widget.onEdit != null)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: widget.onEdit,
+            ),
+          if (widget.onDelete != null)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: widget.onDelete,
+            ),
+        ],
       ],
     );
   }

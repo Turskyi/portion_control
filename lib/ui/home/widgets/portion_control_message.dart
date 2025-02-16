@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/ui/home/widgets/meal_confirmation_card.dart';
 
@@ -49,10 +49,17 @@ class PortionControlMessage extends StatelessWidget {
                 'logging to track your progress. 🍽️',
                 style: titleMediumStyle,
               ),
-              if (yesterdayTotal > constants.safeMinimumFoodIntakeG &&
-                  yesterdayTotal < constants.maxDailyFoodLimit)
+              if (yesterdayTotal > 0)
                 Text(
                   '📊 Yesterday: $yesterdayTotal g'
+                  '${state.previousPortionControlInfo}\n'
+                  'Use this as a reference today!',
+                  // Slightly smaller than titleMediumStyle.
+                  style: textTheme.bodyMedium,
+                )
+              else if (portionControl > constants.safeMinimumFoodIntakeG &&
+                  portionControl < constants.maxDailyFoodLimit)
+                Text(
                   '${state.previousPortionControlInfo}\n'
                   'Use this as a reference today!',
                   // Slightly smaller than titleMediumStyle.

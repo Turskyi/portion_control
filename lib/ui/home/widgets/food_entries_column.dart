@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/ui/home/widgets/food_weight_entry_row.dart';
@@ -31,7 +31,7 @@ class FoodEntriesColumn extends StatelessWidget {
               return FoodWeightEntryRow(
                 value: '${entry.weight}',
                 time: entry.time,
-                isEditable: state is FoodWeightUpdateState &&
+                isEditState: state is FoodWeightUpdateState &&
                     state.foodEntryId == entry.id,
                 onEdit: () {
                   context.read<HomeBloc>().add(EditFoodEntry(entry.id));
@@ -56,7 +56,7 @@ class FoodEntriesColumn extends StatelessWidget {
                 (isWeightBelowHealthy && isWeightDecreasingOrSame))
               // Input field for new food entry.
               FoodWeightEntryRow(
-                isEditable: true,
+                isEditState: true,
                 onSave: (String value) {
                   context.read<HomeBloc>().add(AddFoodEntry(value));
                 },

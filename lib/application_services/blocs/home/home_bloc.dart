@@ -491,7 +491,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             _userPreferencesRepository.getPortionControl();
         if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
           if (savedPortionControl == null) {
-            if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+            if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
+                totalConsumedYesterday < constants.maxDailyFoodLimit) {
               portionControl = totalConsumedYesterday;
               await _userPreferencesRepository.savePortionControl(
                 totalConsumedYesterday,
@@ -501,7 +502,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               savedPortionControl > constants.safeMinimumFoodIntakeG) {
             portionControl = savedPortionControl;
           } else if (savedPortionControl > totalConsumedYesterday &&
-              totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+              totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
+              totalConsumedYesterday < constants.maxDailyFoodLimit) {
             portionControl = totalConsumedYesterday;
             await _userPreferencesRepository.savePortionControl(
               totalConsumedYesterday,
@@ -510,7 +512,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
           portionControl = constants.safeMinimumFoodIntakeG;
           if (savedPortionControl == null) {
-            if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+            if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
+                totalConsumedYesterday < constants.maxDailyFoodLimit) {
               portionControl = totalConsumedYesterday;
               await _userPreferencesRepository.savePortionControl(
                 totalConsumedYesterday,
@@ -520,7 +523,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               savedPortionControl > constants.safeMinimumFoodIntakeG) {
             portionControl = savedPortionControl;
           } else if (savedPortionControl < totalConsumedYesterday &&
-              totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+              totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
+              totalConsumedYesterday < constants.maxDailyFoodLimit) {
             portionControl = totalConsumedYesterday;
             await _userPreferencesRepository.savePortionControl(
               totalConsumedYesterday,

@@ -21,9 +21,10 @@ sealed class HomeState {
   final Language language;
 
   double get adjustedPortion {
-    if (portionControl >= constants.safeMinimumFoodIntakeG) {
+    if (portionControl > constants.safeMinimumFoodIntakeG &&
+        portionControl < constants.maxDailyFoodLimit) {
       return portionControl;
-    } else if (yesterdayConsumedTotal >= constants.safeMinimumFoodIntakeG) {
+    } else if (yesterdayConsumedTotal > 0) {
       return yesterdayConsumedTotal;
     } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
       return constants.safeMinimumFoodIntakeG;

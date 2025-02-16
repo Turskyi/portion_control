@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
 
 class MealConfirmationCard extends StatelessWidget {
   const MealConfirmationCard({
@@ -25,14 +26,39 @@ class MealConfirmationCard extends StatelessWidget {
           spacing: 12,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            // Display yesterday's total consumed amount
+            // Display yesterday's total consumed amount.
             if (yesterdayTotal > 0)
-              Text(
-                'Yesterday, you consumed (logged) '
-                '$formattedYesterdayConsumedTotal g. '
-                '🍽️',
-                style: titleMediumStyle,
-                textAlign: TextAlign.center,
+              Wrap(
+                alignment: WrapAlignment.center,
+                runAlignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  Text(
+                    ' 🍽️ Yesterday, you consumed (logged) ',
+                    style: titleMediumStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                  TextButton(
+                    onPressed: () => context
+                        .read<YesterdayEntriesBloc>()
+                        .add(const LoadYesterdayEntries()),
+                    child: Text(
+                      '$formattedYesterdayConsumedTotal g',
+                      style: titleMediumStyle?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.help_outline),
+                    onPressed: () => context
+                        .read<YesterdayEntriesBloc>()
+                        .add(const LoadYesterdayEntries()),
+                    tooltip: 'View yesterday\'s entries',
+                  ),
+                ],
               )
             else
               Text(

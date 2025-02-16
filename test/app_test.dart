@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/app.dart';
-import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/localization/localization_delelegate_getter.dart'
     as localization;
 import 'package:portion_control/router/app_route.dart';

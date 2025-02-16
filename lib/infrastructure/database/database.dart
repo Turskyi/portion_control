@@ -164,6 +164,27 @@ class AppDatabase extends _$AppDatabase {
         .getSingleOrNull();
   }
 
+  /// Retrieve all food entries from yesterday.
+  Future<List<FoodEntry>> fetchYesterdayEntries() async {
+    final DateTime now = DateTime.now();
+    final DateTime yesterdayStart = DateTime(now.year, now.month, now.day - 1);
+    final DateTime yesterdayEnd = yesterdayStart.add(const Duration(days: 1));
+
+    try {
+      return await (select(foodEntries)
+            ..where(
+              ($FoodEntriesTable tbl) =>
+                  tbl.date.isBiggerOrEqualValue(yesterdayStart) &
+                  tbl.date.isSmallerThanValue(yesterdayEnd),
+            ))
+          .get();
+    } catch (error, stackTrace) {
+      debugPrint('Error while fetching yesterday\'s entries: $error.');
+      debugPrint('Stack trace: $stackTrace');
+      return <FoodEntry>[];
+    }
+  }
+
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'portion_control_db',

@@ -46,6 +46,7 @@ dependencies:
   flutter_translate: ^4.1.0
   meta: any
   mocktail: ^1.0.4
+  nested: ^1.0.0
   package_info_plus: ^8.2.1
   path_provider: ^2.1.5
   shared_preferences: ^2.5.2

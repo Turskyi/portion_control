@@ -7,12 +7,30 @@ class GradientBackgroundScaffold extends StatelessWidget {
     this.appBar,
     this.floatingActionButton,
     this.drawer,
+    this.persistentFooterAlignment = AlignmentDirectional.centerEnd,
+    this.persistentFooterButtons,
   });
 
   final Widget body;
   final PreferredSizeWidget? appBar;
   final Widget? floatingActionButton;
   final Widget? drawer;
+
+  /// The alignment of the [persistentFooterButtons] inside the [OverflowBar].
+  ///
+  /// Defaults to [AlignmentDirectional.centerEnd].
+  final AlignmentDirectional persistentFooterAlignment;
+
+  /// A set of buttons that are displayed at the bottom of the scaffold.
+  ///
+  /// Typically this is a list of [TextButton] widgets. These buttons are
+  /// persistently visible, even if the [body] of the scaffold scrolls.
+  ///
+  /// These widgets will be wrapped in an [OverflowBar].
+  ///
+  /// The [persistentFooterButtons] are rendered above the
+  /// [bottomNavigationBar] but below the [body].
+  final List<Widget>? persistentFooterButtons;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +57,8 @@ class GradientBackgroundScaffold extends StatelessWidget {
         drawer: drawer,
         body: body,
         floatingActionButton: floatingActionButton,
+        persistentFooterAlignment: persistentFooterAlignment,
+        persistentFooterButtons: persistentFooterButtons,
       ),
     );
   }

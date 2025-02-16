@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:portion_control/application_services/blocs/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/res/constants/date_constants.dart'

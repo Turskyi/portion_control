@@ -13,12 +13,6 @@ track their food intake and weight straightforwardly. The app allows users to
 record their body weight and food portions, making it easier to monitor the
 relationship between food consumption and weight changes.
 
-### Testing the App:
-
-Join our testing program and provide valuable feedback:
-
-- [Android App Distribution Tester Invite](https://appdistribution.firebase.dev/i/3a90590762e477b7)
-
 ## Features
 
 - **Track Body Weight**: Enter your current body weight (in kilograms).
@@ -97,9 +91,7 @@ lib/
 
 `main.dart`
 
-This file contains the main entry point for the app. It sets up the theme
-(with a deep purple color scheme) and runs the `App`. The home
-screen is defined here, with all basic UI elements and placeholders.
+This file contains the main entry point for the app.
 
 `home_page.dart`
 
@@ -108,8 +100,8 @@ food portion weight.
 
 `Theme`
 
-The app uses `Material3` components and a color scheme seeded with
-`Colors.deepPurple` to create a clean and vibrant user interface.
+The app uses `Material3` components and a color scheme to create a clean and
+vibrant user interface.
 
 ## Why are `repositories` located in the `infrastructure` component?
 
@@ -119,6 +111,10 @@ the application services layer, they would not have access to the outer layer,
 and hence to the `database`.
 
 ## Testing
+
+Join our testing program and provide valuable feedback:
+
+- [Android App Distribution Tester Invite](https://appdistribution.firebase.dev/i/3a90590762e477b7)
 
 ### Widget Testing
 
@@ -134,10 +130,9 @@ flutter test
 This project is under active development. Future improvements and features will
 include:
 
-- **Functional Input Fields**: Replace Placeholder widgets with real input
-  fields for body weight and food portions.
-- **Submit Button Logic**: Implement the functionality of the submit button to
-  store and track weight changes.
+- **Functional Input Fields**: input fields for body weight and food portions.
+- **Submit Button Logic**: functionality of the submit button to store and
+  track weight changes.
 - **Recommendation Engine**: Based on entered data, provide recommendations or
   trends to the user.
 - **Graphs/Charts**: Display weight change over time using graphs.
@@ -145,12 +140,13 @@ include:
 
 ## Contributing
 
-We welcome contributions from the community! To contribute:
+We welcome contributions from the community!
+To contribute:
 
 1. Fork this repository.
-2. Create a new branch (git checkout -b feature-name).
-3. Commit your changes (git commit -am 'Add feature').
-4. Push to the branch (git push origin feature-name).
+2. Create a new branch (`git checkout -b feature-name`).
+3. Commit your changes (`git commit -am 'Add feature'`).
+4. Push to the branch (`git push origin feature-name`).
 5. Create a new Pull Request.
 
 Please ensure your code follows the existing style guidelines and includes
@@ -179,15 +175,14 @@ it's preferable to do so.
 - ### Avoid Mental Mapping
 
 A single-letter name is a poor choice; it&#39;s just a placeholder that the
-reader
-must mentally map to the actual concept. There can be no worse reason for using
-the name `c` than because `a` and `b` were already taken.
+reader must mentally map to the actual concept. There can be no worse reason
+for using the name `c` than because `a` and `b` were already taken.
 
 - ### Method names
 
 Methods should have verb or verb phrase names like `postPayment`, `deletePage`,
 or `save`. Accessors, mutators, and predicates should be named for their value
-and prefixed with `get`…, `set`…, and `is`….
+and prefixed with `get`…, `set`…, and `is`… respectively.
 
 - ### Use Intention-Revealing Names
 
@@ -203,17 +198,14 @@ Classes and objects should have noun or noun phrase names and not include
 indistinct noise words:
 
 ```dart
-GOOD:
-Customer, WikiPage, Account, AddressParser.
-
-BAD:
-Manager, Processor, Data, Info.
+GOOD: Customer, WikiPage, Account, AddressParser.
+BAD: Manager, Processor, Data, Info
 ```
 
 - ### Functions should be small
 
 Functions should hardly ever be 20 lines long.
-Blocks within if statements, else statements, while statements, and so on
+Blocks within `if` statements, `else` statements, `while` statements, and so on
 should be **_one_** line long. Probably that line should be a function call.
 
 - ### Functions should do one thing
@@ -237,9 +229,8 @@ should be **_above_** the callee, if possible.
 - ### Use Descriptive Names
 
 Don&#39;t be afraid to make a name long. A long descriptive name is better than
-a
-short enigmatic name. A long descriptive name is better than a long descriptive
-comment.
+a short enigmatic name. A long descriptive name is better than a long
+descriptive comment.
 
 - ### Function Arguments
 
@@ -247,13 +238,9 @@ The ideal number of arguments for a function is zero (niladic). Next comes one
 (monadic), followed closely by two (dyadic). Three arguments (triadic) should
 be avoided where possible.
 
-```dart
-GOOD:
-includeSetupPage()
+GOOD:`includeSetupPage()`
 
-BAD:
-includeSetupPageInto(newPageContent)
-```
+BAD: `includeSetupPageInto(newPageContent)`
 
 - ### Flag Arguments
 
@@ -262,33 +249,24 @@ practice. It immediately complicates the signature of the method, loudly
 proclaiming that this function does more than one thing. It does one thing if
 the flag is true and another if the flag is false!
 
-```dart
-GOOD:
-renderForSuite()
-renderForSingleTest()
+GOOD: `renderForSuite()`
+`renderForSingleTest()`
 
-BAD:
-render(bool isSuite)
-```
+BAD: `render(bool isSuite)`
 
 - ### Explain Yourself in Code
 
 Only the code can truly tell you what it does. Comments are, at best, a
 necessary evil. Rather than spend your time writing the comments that explain
 the mess you&#39;ve made, spend it cleaning that mess. Inaccurate comments are
-far
-worse than no comments at all.
+far worse than no comments at all.
 
-```dart
 BAD:
-// Check to see if the employee is eligible
-// for full benefits
-if ((employee.flags & hourlyFlag) && (employee.age > 65))
+`// Check to see if the employee is eligible for full benefits`
+`if((employee.flags & hourlyFlag) && (employee.age > 65))`
 
 GOOD:
-if (employee.isEligibleForFullBenefits())
-
-```
+`if (employee.isEligibleForFullBenefits())`
 
 - ### TODO Comments
 
@@ -374,35 +352,27 @@ Boolean logic is hard enough to understand without having to see it in the
 context of an `if` or `while` statement. Extract functions that explain the
 intent of the conditional.
 
-```
-GOOD:
-if (shouldBeDeleted(timer))
+GOOD: `if(shouldBeDeleted(timer))`
 
-BAD:
-if (timer.hasExpired() && !timer.isRecurrent())
-```
+BAD: `if (timer.hasExpired() && !timer.isRecurrent())`
 
 - ### Avoid Negative Conditionals
 
 Negatives are just a bit harder to understand than positives. So, when
 possible, conditionals should be expressed as positives.
 
-```dart
-GOOD:
-if (buffer.shouldCompact())
+GOOD: `if (buffer.shouldCompact())`
 
-BAD:
-if (!buffer.shouldNotCompact())
-```
+BAD: `if (!buffer.shouldNotCompact())`
 
 - ### Encapsulate Boundary Conditions
 
 Boundary conditions are hard to keep track of. Put the processing for them in
 one place.
 
-```dart
-BAD:
-if (level + 1 < tags.length) {
+```
+BAD: 
+if(level + 1 < tags.length) {
   parts = Parse(body, tags, level + 1, offset + endTag);
   body = null;
 }
@@ -418,15 +388,15 @@ if (nextLevel < tags.length) {
 - ### Constants versus Enums
 
 Don&#39;t keep using the old trick of public `static` `final` `int`s. `enum`s
-can
-have methods and fields. This makes them very powerful tools that allow much
+can have methods and fields. This makes them very powerful tools that allow much
 more expression and flexibility.
 
 </details>
 
 ## Contact
 
-For any inquiries, please contact support@turskyi.com.
+For any inquiries, please contact
+[support@turskyi.com](mailto:support@turskyi.com).
 
 ## Screenshot
 
