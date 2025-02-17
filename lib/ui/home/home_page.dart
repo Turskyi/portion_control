@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/home/widgets/home_page_content.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
@@ -11,13 +12,13 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GradientBackgroundScaffold(
       body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          if (constraints.maxWidth > 600) {
+        builder: (_, BoxConstraints constraints) {
+          if (constraints.maxWidth > constants.wideScreenThreshold) {
             // Wide screen layout.
             return const Center(
               child: SizedBox(
                 // Fixed width for wide screens.
-                width: 800,
+                width: constants.wideScreenContentWidth,
                 child: HomePageContent(),
               ),
             );

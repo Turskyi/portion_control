@@ -24,3 +24,9 @@ const int minAge = 18;
 const double maxDailyFoodLimit = 6000.0;
 
 const double safeMinimumFoodIntakeG = 1499.0;
+
+/// When to switch to wide layout.
+const double wideScreenThreshold = 600.0;
+
+// Max content width for wide layout.
+const double wideScreenContentWidth = 800.0;
