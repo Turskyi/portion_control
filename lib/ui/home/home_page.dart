@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/home/widgets/home_page_content.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 
@@ -25,6 +27,24 @@ class HomePage extends StatelessWidget {
           }
         },
       ),
+      persistentFooterAlignment: AlignmentDirectional.center,
+      persistentFooterButtons: <Widget>[
+        if (kIsWeb)
+          Semantics(
+            label: 'Privacy Policy',
+            button: true,
+            child: TextButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+              },
+              icon: Icon(
+                Icons.privacy_tip,
+                size: Theme.of(context).textTheme.titleMedium?.fontSize,
+              ),
+              label: const Text('Privacy Policy'),
+            ),
+          ),
+      ],
     );
   }
 }
