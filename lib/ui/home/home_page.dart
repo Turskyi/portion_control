@@ -29,23 +29,24 @@ class HomePage extends StatelessWidget {
         },
       ),
       persistentFooterAlignment: AlignmentDirectional.center,
-      persistentFooterButtons: <Widget>[
-        if (kIsWeb)
-          Semantics(
-            label: 'Privacy Policy',
-            button: true,
-            child: TextButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoute.privacyPolity.path);
-              },
-              icon: Icon(
-                Icons.privacy_tip,
-                size: Theme.of(context).textTheme.titleMedium?.fontSize,
+      persistentFooterButtons: kIsWeb
+          ? <Widget>[
+              Semantics(
+                label: 'Privacy Policy',
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+                  },
+                  icon: Icon(
+                    Icons.privacy_tip,
+                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                  ),
+                  label: const Text('Privacy Policy'),
+                ),
               ),
-              label: const Text('Privacy Policy'),
-            ),
-          ),
-      ],
+            ]
+          : null,
     );
   }
 }

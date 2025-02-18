@@ -770,7 +770,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: const <FoodWeight>[],
           yesterdayConsumedTotal: 0,
           isConfirmedAllMealsLogged: false,
-          portionControl: 0,
+          portionControl: state.portionControl,
         ),
       );
     } catch (error) {

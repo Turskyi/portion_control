@@ -94,23 +94,23 @@ class MealConfirmationCard extends StatelessWidget {
     );
   }
 
-  Future<void> _showIncompleteDataDialog(BuildContext context) {
+  Future<void> _showIncompleteDataDialog(BuildContext parentContext) {
     return showDialog(
-      context: context,
+      context: parentContext,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Incomplete Data Warning'),
           content: const Text(
             '⚠️ To provide accurate portion control, we rely on complete meal '
-            'tracking. Since some entries might be missing, we will reset food '
-            'logs for yesterday. This ensures future recommendations are based '
-            'on reliable data. 🔄',
+            'tracking. Since some entries might be missing, we will reset all '
+            'food logs. This ensures future recommendations are based on '
+            'reliable data. 🔄',
           ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                context.read<HomeBloc>().add(const ResetFoodEntries());
+                parentContext.read<HomeBloc>().add(const ResetFoodEntries());
               },
               child: const Text('OK'),
             ),
