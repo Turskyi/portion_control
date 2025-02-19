@@ -1,4 +1,5 @@
 enum AppRoute {
+  landing('/'),
   home('/home'),
   privacyPolity('/privacy-policy');
 

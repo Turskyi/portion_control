@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:portion_control/router/app_route.dart';
 
@@ -22,7 +23,7 @@ class App extends StatelessWidget {
           secondary: const Color(0xFFD47A9B),
         ),
       ),
-      initialRoute: AppRoute.home.path,
+      initialRoute: kIsWeb ? AppRoute.landing.path : AppRoute.home.path,
       routes: routeMap,
     );
   }

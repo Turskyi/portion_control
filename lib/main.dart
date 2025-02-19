@@ -8,6 +8,7 @@ import 'package:portion_control/localization/localization_delelegate_getter.dart
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
 import 'package:portion_control/ui/home/home_view.dart' show HomeView;
+import 'package:portion_control/ui/landing/landing_page.dart';
 import 'package:portion_control/ui/privacy/privacy_policy_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,10 +36,8 @@ Future<void> main() async {
   final AppDatabase appDatabase = AppDatabase();
 
   final Map<String, WidgetBuilder> routeMap = <String, WidgetBuilder>{
-    AppRoute.home.path: (_) => HomeView(
-          prefs: prefs,
-          appDatabase: appDatabase,
-        ),
+    AppRoute.landing.path: (_) => const LandingPage(),
+    AppRoute.home.path: (_) => HomeView(prefs: prefs, appDatabase: appDatabase),
     AppRoute.privacyPolity.path: (_) => const PrivacyPolicyPage(),
   };
 
