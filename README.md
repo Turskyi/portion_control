@@ -4,6 +4,7 @@
 [![Deploy to Firebase Hosting on merge](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml)
 [![Code Quality and Tests](https://github.com/Turskyi/portion_control/actions/workflows/code_quality_tests.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/code_quality_tests.yml)
 [![Upload Android Build to App Tester](https://github.com/Turskyi/portion_control/actions/workflows/flutter_android_ci.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/flutter_android_ci.yml)
+[![Codemagic build status](https://api.codemagic.io/apps/67b7c966163430e15999e56f/67b7c966163430e15999e56e/status_badge.svg)](https://codemagic.io/app/67b7c966163430e15999e56f/67b7c966163430e15999e56e/latest_build)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Turskyi/portion_control)
 <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Turskyi/portion_control">
 

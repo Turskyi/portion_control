@@ -851,7 +851,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _sendUserFeedback(HomeSubmitFeedbackEvent event,
+  FutureOr<void> _sendUserFeedback(
+    HomeSubmitFeedbackEvent event,
     Emitter<HomeState> emit,
   ) async {
     emit(const HomeLoading());
