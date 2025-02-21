@@ -116,7 +116,7 @@ class _HomePageContentState extends State<HomePageContent> {
     final bool? isVisible = _feedbackController?.isVisible;
     if (isVisible == false) {
       _feedbackController?.removeListener(_onFeedbackChanged);
-      context.read<HomeBloc>().add(const ClosingFeedbackEvent());
+      context.read<HomeBloc>().add(const HomeClosingFeedbackEvent());
     }
   }
 
@@ -132,14 +132,14 @@ class _HomePageContentState extends State<HomePageContent> {
           action: SnackBarAction(
             label: 'Report',
             onPressed: () {
-              context.read<HomeBloc>().add(const BugReportPressedEvent());
+              context.read<HomeBloc>().add(const HomeBugReportPressedEvent());
             },
           ),
         ),
       );
-    } else if (state is FeedbackState) {
+    } else if (state is HomeFeedbackState) {
       _showFeedbackUi();
-    } else if (state is FeedbackSent) {
+    } else if (state is HomeFeedbackSent) {
       _notifyFeedbackSent();
     }
   }
@@ -157,7 +157,7 @@ class _HomePageContentState extends State<HomePageContent> {
   void _showFeedbackUi() {
     _feedbackController?.show(
       (UserFeedback feedback) =>
-          context.read<HomeBloc>().add(SubmitFeedbackEvent(feedback)),
+          context.read<HomeBloc>().add(HomeSubmitFeedbackEvent(feedback)),
     );
     _feedbackController?.addListener(_onFeedbackChanged);
   }

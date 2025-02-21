@@ -93,16 +93,16 @@ final class ResetFoodEntries extends HomeEvent {
   const ResetFoodEntries();
 }
 
-final class BugReportPressedEvent extends HomeEvent {
-  const BugReportPressedEvent();
+final class HomeBugReportPressedEvent extends HomeEvent {
+  const HomeBugReportPressedEvent();
 }
 
-final class ClosingFeedbackEvent extends HomeEvent {
-  const ClosingFeedbackEvent();
+final class HomeClosingFeedbackEvent extends HomeEvent {
+  const HomeClosingFeedbackEvent();
 }
 
-final class SubmitFeedbackEvent extends HomeEvent {
-  const SubmitFeedbackEvent(this.feedback);
+final class HomeSubmitFeedbackEvent extends HomeEvent {
+  const HomeSubmitFeedbackEvent(this.feedback);
 
   final UserFeedback feedback;
 }

@@ -383,8 +383,8 @@ class FoodWeightError extends BodyWeightSubmittedState implements ErrorState {
   final String errorMessage;
 }
 
-final class FeedbackState extends HomeState {
-  const FeedbackState({
+final class HomeFeedbackState extends HomeState {
+  const HomeFeedbackState({
     required super.userDetails,
     required super.bodyWeight,
     required super.yesterdayConsumedTotal,
@@ -394,7 +394,7 @@ final class FeedbackState extends HomeState {
     super.language,
   });
 
-  FeedbackState copyWith({
+  HomeFeedbackState copyWith({
     Language? language,
     UserDetails? userDetails,
     double? bodyWeight,
@@ -403,7 +403,7 @@ final class FeedbackState extends HomeState {
     List<FoodWeight>? foodEntries,
     double? portionControl,
   }) {
-    return FeedbackState(
+    return HomeFeedbackState(
       language: language ?? this.language,
       userDetails: userDetails ?? this.userDetails,
       bodyWeight: bodyWeight ?? this.bodyWeight,
@@ -416,8 +416,8 @@ final class FeedbackState extends HomeState {
   }
 }
 
-final class FeedbackSent extends HomeState {
-  const FeedbackSent({
+final class HomeFeedbackSent extends HomeState {
+  const HomeFeedbackSent({
     required super.userDetails,
     required super.bodyWeight,
     required super.yesterdayConsumedTotal,

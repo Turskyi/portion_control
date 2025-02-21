@@ -6,6 +6,7 @@ import 'package:portion_control/infrastructure/database/database.dart';
 import 'package:portion_control/localization/localization_delelegate_getter.dart'
     as localization;
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/ui/about/about_us_page.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
 import 'package:portion_control/ui/home/home_view.dart' show HomeView;
 import 'package:portion_control/ui/landing/landing_page.dart';
@@ -39,6 +40,7 @@ Future<void> main() async {
     AppRoute.landing.path: (_) => const LandingPage(),
     AppRoute.home.path: (_) => HomeView(prefs: prefs, appDatabase: appDatabase),
     AppRoute.privacyPolity.path: (_) => const PrivacyPolicyPage(),
+    AppRoute.about.path: (_) => const AboutUsPage(),
   };
 
   runApp(

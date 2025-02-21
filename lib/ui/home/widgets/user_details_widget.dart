@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
@@ -37,12 +38,25 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 16,
           children: <Widget>[
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: textTheme.titleLarge?.fontSize,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: textTheme.titleLarge?.fontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (!kIsWeb)
+                  IconButton(
+                    icon: Icon(
+                      Icons.menu,
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                  ),
+              ],
             ),
             GenderSelectionWidget(
               bodyWeight: bodyWeight,

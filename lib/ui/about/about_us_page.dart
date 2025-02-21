@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
-import 'package:portion_control/ui/privacy/widgets/privacy_policy_page_content.dart';
+import 'package:portion_control/ui/about/widgets/about_us_page_content.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 
-class PrivacyPolicyPage extends StatelessWidget {
-  const PrivacyPolicyPage({super.key});
+class AboutUsPage extends StatelessWidget {
+  const AboutUsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class PrivacyPolicyPage extends StatelessWidget {
             ),
           ),
         ),
-        title: 'Privacy Policy',
+        title: 'About Us',
       ),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -41,12 +41,12 @@ class PrivacyPolicyPage extends StatelessWidget {
               child: SizedBox(
                 // Fixed width for wide screens.
                 width: constants.wideScreenContentWidth,
-                child: PrivacyPolicyPageContent(),
+                child: AboutUsPageContent(),
               ),
             );
           } else {
             // Narrow screen layout.
-            return const PrivacyPolicyPageContent();
+            return const AboutUsPageContent();
           }
         },
       ),

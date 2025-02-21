@@ -54,7 +54,7 @@ class GradientBackgroundScaffold extends StatelessWidget {
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.transparent,
         appBar: appBar,
-        drawer: drawer,
+        endDrawer: drawer,
         body: body,
         floatingActionButton: floatingActionButton,
         persistentFooterAlignment: persistentFooterAlignment,

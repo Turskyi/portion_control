@@ -4,6 +4,7 @@
 [![Deploy to Firebase Hosting on merge](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml)
 [![Code Quality and Tests](https://github.com/Turskyi/portion_control/actions/workflows/code_quality_tests.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/code_quality_tests.yml)
 [![Upload Android Build to App Tester](https://github.com/Turskyi/portion_control/actions/workflows/flutter_android_ci.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/flutter_android_ci.yml)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/Turskyi/portion_control)
 <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Turskyi/portion_control">
 
 # PortionControl
@@ -12,6 +13,18 @@
 track their food intake and weight straightforwardly. The app allows users to
 record their body weight and food portions, making it easier to monitor the
 relationship between food consumption and weight changes.
+
+## Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Code Explanation](#code-explanation)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [Contact](#contact)
+- [Screenshot](#screenshot)
+- [Download](#download)
 
 ## Features
 
@@ -402,3 +415,10 @@ For any inquiries, please contact
 
 <!--suppress CheckImageSize -->
 <img src="screenshots/Screenshot_20250208_180426.png" width="400"  alt="screenshot">
+
+## Download
+
+<a href="https://play.google.com/store/apps/details?id=com.turskyi.portion_control" target="_blank">
+<img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240  alt="google play badge"/>
+</a>
+

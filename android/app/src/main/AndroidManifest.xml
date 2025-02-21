@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:versionCode="1"
-    android:versionName="1.0.0">
+    android:versionCode="3"
+    android:versionName="1.0.3">
+
     <!--suppress AndroidDomInspection -->
     <application
         android:name="${applicationName}"
@@ -35,6 +36,16 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!--        https://firebase.google.com/docs/analytics/configure-data-collection?platform=android -->
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
+
+        <meta-data
+            android:name="google_analytics_default_allow_ad_personalization_signals"
+            android:value="false" />
+
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

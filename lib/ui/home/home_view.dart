@@ -20,6 +20,7 @@ import 'package:portion_control/infrastructure/repositories/body_weight_reposito
     show BodyWeightRepository;
 import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart'
     show FoodWeightRepository;
+import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
 import 'package:portion_control/infrastructure/repositories/tracking_repository.dart'
     show TrackingRepository;
 import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart'
@@ -31,6 +32,8 @@ import 'package:portion_control/ui/widgets/fancy_loading_indicator.dart'
     show FancyLoadingIndicator;
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
+
+import '../../application_services/blocs/menu/menu_bloc.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({
@@ -58,6 +61,10 @@ class HomeView extends StatelessWidget {
           create: (_) => YesterdayEntriesBloc(
             FoodWeightRepository(appDatabase),
           ),
+        ),
+        BlocProvider<MenuBloc>(
+          create: (_) => MenuBloc(SettingsRepository(prefs))
+            ..add(const LoadingInitialMenuStateEvent()),
         ),
       ],
       child: BlocListener<YesterdayEntriesBloc, YesterdayEntriesState>(

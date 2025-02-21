@@ -122,6 +122,20 @@ class LandingPage extends StatelessWidget {
             label: const Text('Privacy Policy'),
           ),
         ),
+        Semantics(
+          label: 'About Us',
+          button: true,
+          child: TextButton.icon(
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoute.about.path);
+            },
+            icon: Icon(
+              Icons.group,
+              size: Theme.of(context).textTheme.titleMedium?.fontSize,
+            ),
+            label: const Text('About Us'),
+          ),
+        ),
       ],
     );
   }

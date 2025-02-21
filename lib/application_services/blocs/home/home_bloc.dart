@@ -49,9 +49,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ClearUserData>(_clearUserData);
     on<ResetFoodEntries>(_clearAllFoodEntries);
     on<ConfirmMealsLogged>(_saveMealsConfirmation);
-    on<BugReportPressedEvent>(_onFeedbackRequested);
-    on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
-    on<SubmitFeedbackEvent>(_sendUserFeedback);
+    on<HomeBugReportPressedEvent>(_onFeedbackRequested);
+    on<HomeClosingFeedbackEvent>(_onFeedbackDialogDismissed);
+    on<HomeSubmitFeedbackEvent>(_sendUserFeedback);
     on<ErrorEvent>(_handleError);
   }
 
@@ -823,7 +823,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> _onFeedbackRequested(_, Emitter<HomeState> emit) {
     _previousState = state;
     emit(
-      FeedbackState(
+      HomeFeedbackState(
         userDetails: state.userDetails,
         bodyWeight: state.bodyWeight,
         yesterdayConsumedTotal: state.yesterdayConsumedTotal,
@@ -851,8 +851,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _sendUserFeedback(
-    SubmitFeedbackEvent event,
+  FutureOr<void> _sendUserFeedback(HomeSubmitFeedbackEvent event,
     Emitter<HomeState> emit,
   ) async {
     emit(const HomeLoading());
@@ -895,6 +894,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         recipients: <String>[constants.supportEmail],
         attachmentPaths: attachmentPaths,
       );
+
       try {
         if (kIsWeb) {
           // Handle email sending on the web using a `mailto` link.
