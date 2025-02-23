@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -134,6 +135,28 @@ class LandingPage extends StatelessWidget {
               size: Theme.of(context).textTheme.titleMedium?.fontSize,
             ),
             label: const Text('About Us'),
+          ),
+        ),
+        Semantics(
+          label: 'Google Play Store',
+          button: true,
+          child: SizedBox(
+            height: 50,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              onPressed: () => launchUrl(
+                Uri.parse(constants.googlePlayUrl),
+                mode: LaunchMode.externalApplication,
+              ),
+              child: Image.asset(
+                '${constants.imagePath}play_store_badge.png',
+                width: 150,
+              ),
+            ),
           ),
         ),
       ],
