@@ -1,7 +1,9 @@
-const String baseUrl = 'https://portion-control.turskyi.com/';
+const String baseUrl = 'https://portion-control-tracker.web.app';
 const String supportEmail = 'support@$companyDomain';
 const String companyDomain = 'turskyi.com';
 const String appName = 'PortionControl';
+const String googlePlayUrl =
+    'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
 
 const String imagePath = 'assets/images/';
 
