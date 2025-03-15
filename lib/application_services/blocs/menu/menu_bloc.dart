@@ -26,6 +26,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     on<BugReportPressedEvent>(_onFeedbackRequested);
     on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
     on<SubmitFeedbackEvent>(_sendUserFeedback);
+    on<MenuErrorEvent>(_handleError);
   }
 
   final ISettingsRepository _settingsRepository;
@@ -101,7 +102,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           if (await canLaunchUrl(emailLaunchUri)) {
             await launchUrl(emailLaunchUri);
           } else {
-            add(ErrorEvent(translate('error.unexpectedError')));
+            add(MenuErrorEvent(translate('error.unexpectedError')));
           }
         } else {
           await FlutterEmailSender.send(email);
@@ -111,14 +112,14 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           'Error in $runtimeType in `onError`: $error.\n'
           'Stacktrace: $stackTrace',
         );
-        add(ErrorEvent(translate('error.unexpectedError')));
+        add(MenuErrorEvent(translate('error.unexpectedError')));
       }
     } catch (error, stackTrace) {
       debugPrint(
         'Error in $runtimeType in `onError`: $error.\n'
         'Stacktrace: $stackTrace',
       );
-      add(ErrorEvent(translate('error.unexpectedError')));
+      add(MenuErrorEvent(translate('error.unexpectedError')));
     }
     emit(
       MenuInitial(language: state.language),
@@ -136,5 +137,11 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   FutureOr<void> _loadInitialMenuState(_, Emitter<MenuState> emit) {
     final Language savedLanguage = _settingsRepository.getLanguage();
     emit(MenuInitial(language: savedLanguage));
+  }
+
+  FutureOr<void> _handleError(MenuErrorEvent event, Emitter<MenuState> emit) {
+    debugPrint('ErrorEvent: ${event.error}');
+    //TODO: add ErrorMenuState and use it instead.
+    emit(const MenuInitial());
   }
 }
