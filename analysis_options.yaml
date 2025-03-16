@@ -52,6 +52,7 @@ linter:
     cancel_subscriptions: true
     prefer_const_constructors: true
     prefer_const_literals_to_create_immutables: true
+    unnecessary_library_name: true
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

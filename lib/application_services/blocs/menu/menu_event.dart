@@ -23,8 +23,8 @@ final class LoadingInitialMenuStateEvent extends MenuEvent {
   const LoadingInitialMenuStateEvent();
 }
 
-final class ErrorEvent extends MenuEvent {
-  const ErrorEvent(this.error);
+final class MenuErrorEvent extends MenuEvent {
+  const MenuErrorEvent(this.error);
 
   final String error;
 }
