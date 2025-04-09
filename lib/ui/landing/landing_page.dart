@@ -13,7 +13,7 @@ class LandingPage extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
     final ColorScheme colorScheme = theme.colorScheme;
-
+    final double? titleMediumSize = textTheme.titleMedium?.fontSize;
     return GradientBackgroundScaffold(
       body: Center(
         child: Padding(
@@ -118,13 +118,13 @@ class LandingPage extends StatelessWidget {
             },
             icon: Icon(
               Icons.privacy_tip,
-              size: Theme.of(context).textTheme.titleMedium?.fontSize,
+              size: titleMediumSize,
             ),
             label: const Text('Privacy Policy'),
           ),
         ),
         Semantics(
-          label: 'About Us',
+          label: 'About',
           button: true,
           child: TextButton.icon(
             onPressed: () {
@@ -132,9 +132,23 @@ class LandingPage extends StatelessWidget {
             },
             icon: Icon(
               Icons.group,
-              size: Theme.of(context).textTheme.titleMedium?.fontSize,
+              size: titleMediumSize,
             ),
-            label: const Text('About Us'),
+            label: const Text('About'),
+          ),
+        ),
+        Semantics(
+          label: 'Support',
+          button: true,
+          child: TextButton.icon(
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoute.support.path);
+            },
+            icon: Icon(
+              Icons.support_agent,
+              size: titleMediumSize,
+            ),
+            label: const Text('Support'),
           ),
         ),
         Semantics(

@@ -46,7 +46,8 @@ class _HomePageState extends State<HomePage> {
         builder: (_, BoxConstraints constraints) {
           if (constraints.maxWidth > constants.wideScreenThreshold) {
             // Wide screen layout.
-            return const Center(
+            return const Align(
+              alignment: AlignmentDirectional.topCenter,
               child: SizedBox(
                 // Fixed width for wide screens.
                 width: constants.wideScreenContentWidth,

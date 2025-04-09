@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:url_launcher/url_launcher.dart';
 
-class AboutUsPageContent extends StatelessWidget {
-  const AboutUsPageContent({super.key});
+class AboutPageContent extends StatelessWidget {
+  const AboutPageContent({super.key});
 
   @override
   Widget build(BuildContext context) {

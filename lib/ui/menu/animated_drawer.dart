@@ -67,7 +67,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
           Expanded(
             child: AnimatedBuilder(
               animation: _controller,
-              builder: (BuildContext context, Widget? child) {
+              builder: (_, Widget? child) {
                 return Transform.translate(
                   offset: Offset(_slideAnimation.value * 100, 0),
                   child: Opacity(
@@ -81,16 +81,16 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                   AnimatedDrawerItem(
                     icon: Icons.privacy_tip,
                     text: 'Privacy Policy',
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      AppRoute.privacyPolity.path,
-                    ),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+                    },
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.group,
                     text: 'About Us',
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoute.about.path),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.about.path);
+                    },
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.feedback,
@@ -98,6 +98,13 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                     onTap: () => context
                         .read<MenuBloc>()
                         .add(const BugReportPressedEvent()),
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.support_agent,
+                    text: 'Support',
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.support.path);
+                    },
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.web,

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart'
 import 'package:nested/nested.dart' show SingleChildWidget;
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart'
     show HomeBloc, LoadEntries;
+import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart'
     show
         YesterdayEntriesBloc,
@@ -32,8 +33,6 @@ import 'package:portion_control/ui/widgets/fancy_loading_indicator.dart'
     show FancyLoadingIndicator;
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
-
-import '../../application_services/blocs/menu/menu_bloc.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({
