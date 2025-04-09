@@ -5,6 +5,8 @@ const String appName = 'PortionControl';
 const String googlePlayUrl =
     'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
 
+const String appStoreUrl = 'https://apps.apple.com/app/id6743641654';
+
 const String imagePath = 'assets/images/';
 
 /// Blur intensity constant.

@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
@@ -14,11 +15,13 @@ class LandingPage extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final ColorScheme colorScheme = theme.colorScheme;
     final double? titleMediumSize = textTheme.titleMedium?.fontSize;
+    final Color linkColor = colorScheme.primary;
     return GradientBackgroundScaffold(
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            spacing: 16,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Container(
@@ -54,15 +57,15 @@ class LandingPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 4),
               Text(
-                'PortionControl',
+                constants.appName,
                 style: textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: colorScheme.primary,
+                  letterSpacing: 0.5,
                 ),
               ),
-              const SizedBox(height: 16),
               SizedBox(
                 height: 50, // Fixed height for animated text
                 child: DefaultTextStyle(
@@ -96,12 +99,48 @@ class LandingPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              Text(
+                '${constants.appName} helps you track the weight of your food '
+                'and body without calorie counting. It uses your actual data — '
+                'meals in grams and weight in kilograms — to guide your daily '
+                'intake. Simple. Smart. No nonsense.',
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onBackground,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(AppRoute.home.path);
                 },
                 child: const Text('Get Started'),
+              ),
+              const SizedBox(height: 8),
+              SelectableText.rich(
+                TextSpan(
+                  text: 'Need help? Visit the Support page or email us at ',
+                  style: textTheme.labelSmall?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'support@${constants.companyDomain}',
+                      style: TextStyle(
+                        color: linkColor,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => launchUrl(
+                              Uri(
+                                scheme: 'mailto',
+                                path: 'support@${constants.companyDomain}',
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -154,21 +193,57 @@ class LandingPage extends StatelessWidget {
         Semantics(
           label: 'Google Play Store',
           button: true,
-          child: SizedBox(
-            height: 50,
-            child: TextButton(
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Material(
+              // Ensures the background remains unchanged.
+              color: Colors.transparent,
+              child: InkWell(
+                splashColor:
+                    Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                onTap: () {
+                  launchUrl(
+                    Uri.parse(constants.googlePlayUrl),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+                child: Ink.image(
+                  image: const AssetImage(
+                    '${constants.imagePath}play_store_badge.png',
+                  ),
+                  height: 60,
+                  width: 140,
+                  fit: BoxFit.contain,
+                ),
               ),
-              onPressed: () => launchUrl(
-                Uri.parse(constants.googlePlayUrl),
-                mode: LaunchMode.externalApplication,
-              ),
-              child: Image.asset(
-                '${constants.imagePath}play_store_badge.png',
-                width: 150,
+            ),
+          ),
+        ),
+        Semantics(
+          label: 'App Store',
+          button: true,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Material(
+              // Ensures the background remains unchanged.
+              color: Colors.transparent,
+              child: InkWell(
+                splashColor:
+                    Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                onTap: () {
+                  launchUrl(
+                    Uri.parse(constants.appStoreUrl),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+                child: Ink.image(
+                  image: const AssetImage(
+                    '${constants.imagePath}app_store_badge.png',
+                  ),
+                  height: 40,
+                  width: 140,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
