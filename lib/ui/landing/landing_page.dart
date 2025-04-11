@@ -199,8 +199,9 @@ class LandingPage extends StatelessWidget {
               // Ensures the background remains unchanged.
               color: Colors.transparent,
               child: InkWell(
-                splashColor:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                splashColor: Theme.of(context).colorScheme.primary.withOpacity(
+                      0.2,
+                    ),
                 onTap: () {
                   launchUrl(
                     Uri.parse(constants.googlePlayUrl),
@@ -211,7 +212,37 @@ class LandingPage extends StatelessWidget {
                   image: const AssetImage(
                     '${constants.imagePath}play_store_badge.png',
                   ),
-                  height: 60,
+                  height: 72,
+                  width: 156,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Semantics(
+          label: 'TestFlight',
+          button: true,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Material(
+              // Ensures the background remains unchanged.
+              color: Colors.transparent,
+              child: InkWell(
+                splashColor: Theme.of(context).colorScheme.primary.withOpacity(
+                      0.2,
+                    ),
+                onTap: () {
+                  launchUrl(
+                    Uri.parse(constants.testFlightUrl),
+                    mode: LaunchMode.externalApplication,
+                  );
+                },
+                child: Ink.image(
+                  image: const AssetImage(
+                    '${constants.imagePath}test_flight_badge.png',
+                  ),
+                  height: 40,
                   width: 140,
                   fit: BoxFit.contain,
                 ),
@@ -220,7 +251,7 @@ class LandingPage extends StatelessWidget {
           ),
         ),
         Semantics(
-          label: 'App Store',
+          label: 'MacOS',
           button: true,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
@@ -228,17 +259,18 @@ class LandingPage extends StatelessWidget {
               // Ensures the background remains unchanged.
               color: Colors.transparent,
               child: InkWell(
-                splashColor:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                splashColor: Theme.of(context).colorScheme.primary.withOpacity(
+                      0.2,
+                    ),
                 onTap: () {
                   launchUrl(
-                    Uri.parse(constants.appStoreUrl),
+                    Uri.parse(constants.macOsUrl),
                     mode: LaunchMode.externalApplication,
                   );
                 },
                 child: Ink.image(
                   image: const AssetImage(
-                    '${constants.imagePath}app_store_badge.png',
+                    '${constants.imagePath}mac_os_badge.png',
                   ),
                   height: 40,
                   width: 140,

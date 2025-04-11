@@ -360,12 +360,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final DateTime? dateOfBirth = state.dateOfBirth;
       final Gender gender = state.gender;
 
-      if (height < constants.minHeight || height > constants.maxHeight) {
+      if (height < constants.minUserHeight ||
+          height > constants.maxUserHeight) {
         emit(
           DetailsError(
             errorMessage:
-                'Height must be between ${constants.minHeight} cm and '
-                '${constants.maxHeight} cm.',
+                'Height must be between ${constants.minUserHeight} cm and '
+                '${constants.maxUserHeight} cm.',
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,

@@ -7,15 +7,20 @@ const String googlePlayUrl =
 
 const String appStoreUrl = 'https://apps.apple.com/app/id6743641654';
 
+const String testFlightUrl = 'https://testflight.apple.com/join/aJkP43FB';
+
+const String macOsUrl =
+    'https://github.com/Turskyi/portion_control/releases/download/1.0.5/PortionControl.zip';
+
 const String imagePath = 'assets/images/';
 
 /// Blur intensity constant.
 const double blurSigma = 12.0;
 
 // in centimeters
-final double minHeight = 100.0;
+final double minUserHeight = 100.0;
 // in centimeters
-final double maxHeight = 250.0;
+final double maxUserHeight = 250.0;
 
 const double maxHealthyBmi = 24.9;
 

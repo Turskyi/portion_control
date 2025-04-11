@@ -31,7 +31,7 @@ class SubmitEditDetailsButton extends StatelessWidget {
             label: state is DetailsSubmittedState
                 ? 'Edit Details'
                 : 'Submit Details',
-            onPressed: state.height < constants.minHeight
+            onPressed: state.height < constants.minUserHeight
                 ? null
                 : state is DetailsSubmittedState
                     ? () async {

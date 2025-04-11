@@ -130,6 +130,7 @@ and hence to the `database`.
 Join our testing program and provide valuable feedback:
 
 - [Android App Distribution Tester Invite](https://appdistribution.firebase.dev/i/3a90590762e477b7)
+- [Apple TestFlight Invite](https://testflight.apple.com/join/aJkP43FB)
 
 ### Widget Testing
 
