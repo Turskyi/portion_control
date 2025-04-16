@@ -1,5 +1,4 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
@@ -15,7 +14,6 @@ class LandingPage extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final ColorScheme colorScheme = theme.colorScheme;
     final double? titleMediumSize = textTheme.titleMedium?.fontSize;
-    final Color linkColor = colorScheme.primary;
     return GradientBackgroundScaffold(
       body: Center(
         child: Padding(
@@ -24,37 +22,9 @@ class LandingPage extends StatelessWidget {
             spacing: 16,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.0),
-                  // Glowing border.
-                  border: Border.all(color: Colors.white, width: 3),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.6),
-                      blurRadius: 8,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () => Navigator.of(context).pushReplacementNamed(
-                        AppRoute.home.path,
-                      ),
-                      child: Ink.image(
-                        image: const AssetImage(
-                          '${constants.imagePath}logo.png',
-                        ),
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+              GlowingAnimatedBox(
+                onTap: () => Navigator.of(context).pushReplacementNamed(
+                  AppRoute.home.path,
                 ),
               ),
               const SizedBox(height: 4),
@@ -99,48 +69,12 @@ class LandingPage extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                '${constants.appName} helps you track the weight of your food '
-                'and body without calorie counting. It uses your actual data — '
-                'meals in grams and weight in kilograms — to guide your daily '
-                'intake. Simple. Smart. No nonsense.',
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onBackground,
-                ),
-                textAlign: TextAlign.center,
-              ),
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(AppRoute.home.path);
                 },
                 child: const Text('Get Started'),
-              ),
-              const SizedBox(height: 8),
-              SelectableText.rich(
-                TextSpan(
-                  text: 'Need help? Visit the Support page or email us at ',
-                  style: textTheme.labelSmall?.copyWith(
-                    color: colorScheme.onSurface,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'support@${constants.companyDomain}',
-                      style: TextStyle(
-                        color: linkColor,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => launchUrl(
-                              Uri(
-                                scheme: 'mailto',
-                                path: 'support@${constants.companyDomain}',
-                              ),
-                            ),
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -281,6 +215,92 @@ class LandingPage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class GlowingAnimatedBox extends StatefulWidget {
+  const GlowingAnimatedBox({required this.onTap, super.key});
+
+  final VoidCallback onTap;
+
+  @override
+  State<GlowingAnimatedBox> createState() => _GlowingAnimatedBoxState();
+}
+
+class _GlowingAnimatedBoxState extends State<GlowingAnimatedBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<Color?> _glowColor;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+
+    _glowColor = ColorTween(
+      begin: Colors.pinkAccent.withOpacity(0.4),
+      end: Colors.pinkAccent.withOpacity(0.9),
+    ).animate(_controller);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _glowColor,
+      builder: (_, Widget? logoChildWidget) {
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: Colors.white, width: 3),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: _glowColor.value ?? Colors.pinkAccent,
+                blurRadius: 12,
+                spreadRadius: 3,
+              ),
+            ],
+          ),
+          child: logoChildWidget,
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Material(
+          color: Colors.transparent,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: Colors.white),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.pinkAccent.withOpacity(0.2),
+                  blurRadius: 12,
+                  spreadRadius: 3,
+                ),
+              ],
+            ),
+            child: InkWell(
+              onTap: widget.onTap,
+              child: Ink.image(
+                image: const AssetImage('${constants.imagePath}logo.png'),
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
