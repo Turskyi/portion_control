@@ -2,6 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/ui/landing/widgets/glowing_animated_box.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,6 +15,8 @@ class LandingPage extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final ColorScheme colorScheme = theme.colorScheme;
     final double? titleMediumSize = textTheme.titleMedium?.fontSize;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isNarrowScreen = screenWidth < 600;
     return GradientBackgroundScaffold(
       body: Center(
         child: Padding(
@@ -81,226 +84,191 @@ class LandingPage extends StatelessWidget {
         ),
       ),
       persistentFooterAlignment: AlignmentDirectional.center,
-      persistentFooterButtons: <Widget>[
-        Semantics(
-          label: 'Privacy Policy',
-          button: true,
-          child: TextButton.icon(
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoute.privacyPolity.path);
-            },
-            icon: Icon(
-              Icons.privacy_tip,
-              size: titleMediumSize,
-            ),
-            label: const Text('Privacy Policy'),
-          ),
-        ),
-        Semantics(
-          label: 'About',
-          button: true,
-          child: TextButton.icon(
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoute.about.path);
-            },
-            icon: Icon(
-              Icons.group,
-              size: titleMediumSize,
-            ),
-            label: const Text('About'),
-          ),
-        ),
-        Semantics(
-          label: 'Support',
-          button: true,
-          child: TextButton.icon(
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoute.support.path);
-            },
-            icon: Icon(
-              Icons.support_agent,
-              size: titleMediumSize,
-            ),
-            label: const Text('Support'),
-          ),
-        ),
-        Semantics(
-          label: 'Google Play Store',
-          button: true,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Material(
-              // Ensures the background remains unchanged.
-              color: Colors.transparent,
-              child: InkWell(
-                splashColor: Theme.of(context).colorScheme.primary.withOpacity(
-                      0.2,
-                    ),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse(constants.googlePlayUrl),
-                    mode: LaunchMode.externalApplication,
-                  );
+      persistentFooterButtons: isNarrowScreen
+          ? <Widget>[
+              PopupMenuButton<String>(
+                icon: Icon(Icons.more_horiz, color: colorScheme.primary),
+                onSelected: (String result) {
+                  if (result == AppRoute.privacyPolity.name) {
+                    Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+                  } else if (result == AppRoute.about.name) {
+                    Navigator.pushNamed(context, AppRoute.about.path);
+                  } else if (result == AppRoute.support.name) {
+                    Navigator.pushNamed(context, AppRoute.support.path);
+                  } else if (result == constants.googlePlayUrl) {
+                    launchUrl(
+                      Uri.parse(constants.googlePlayUrl),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  } else if (result == constants.testFlightUrl) {
+                    launchUrl(
+                      Uri.parse(constants.testFlightUrl),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  } else if (result == constants.macOsUrl) {
+                    launchUrl(
+                      Uri.parse(constants.macOsUrl),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  }
                 },
-                child: Ink.image(
-                  image: const AssetImage(
-                    '${constants.imagePath}play_store_badge.png',
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    value: AppRoute.privacyPolity.name,
+                    child: const Text('Privacy Policy'),
                   ),
-                  height: 72,
-                  width: 156,
-                  fit: BoxFit.contain,
+                  PopupMenuItem<String>(
+                    value: AppRoute.about.name,
+                    child: const Text('About'),
+                  ),
+                  PopupMenuItem<String>(
+                    value: AppRoute.support.name,
+                    child: const Text('Support'),
+                  ),
+                  const PopupMenuDivider(),
+                  const PopupMenuItem<String>(
+                    value: constants.googlePlayUrl,
+                    child: Text('Google Play Store'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: constants.testFlightUrl,
+                    child: Text('TestFlight'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: constants.macOsUrl,
+                    child: Text('MacOS'),
+                  ),
+                ],
+              ),
+            ]
+          : <Widget>[
+              Semantics(
+                label: 'Privacy Policy',
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+                  },
+                  icon: Icon(
+                    Icons.privacy_tip,
+                    size: titleMediumSize,
+                  ),
+                  label: const Text('Privacy Policy'),
                 ),
               ),
-            ),
-          ),
-        ),
-        Semantics(
-          label: 'TestFlight',
-          button: true,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Material(
-              // Ensures the background remains unchanged.
-              color: Colors.transparent,
-              child: InkWell(
-                splashColor: Theme.of(context).colorScheme.primary.withOpacity(
-                      0.2,
-                    ),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse(constants.testFlightUrl),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-                child: Ink.image(
-                  image: const AssetImage(
-                    '${constants.imagePath}test_flight_badge.png',
+              Semantics(
+                label: 'About',
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.about.path);
+                  },
+                  icon: Icon(
+                    Icons.group,
+                    size: titleMediumSize,
                   ),
-                  height: 40,
-                  width: 140,
-                  fit: BoxFit.contain,
+                  label: const Text('About'),
                 ),
               ),
-            ),
-          ),
-        ),
-        Semantics(
-          label: 'MacOS',
-          button: true,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Material(
-              // Ensures the background remains unchanged.
-              color: Colors.transparent,
-              child: InkWell(
-                splashColor: Theme.of(context).colorScheme.primary.withOpacity(
-                      0.2,
-                    ),
-                onTap: () {
-                  launchUrl(
-                    Uri.parse(constants.macOsUrl),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-                child: Ink.image(
-                  image: const AssetImage(
-                    '${constants.imagePath}mac_os_badge.png',
+              Semantics(
+                label: 'Support',
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.support.path);
+                  },
+                  icon: Icon(
+                    Icons.support_agent,
+                    size: titleMediumSize,
                   ),
-                  height: 40,
-                  width: 140,
-                  fit: BoxFit.contain,
+                  label: const Text('Support'),
                 ),
               ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class GlowingAnimatedBox extends StatefulWidget {
-  const GlowingAnimatedBox({required this.onTap, super.key});
-
-  final VoidCallback onTap;
-
-  @override
-  State<GlowingAnimatedBox> createState() => _GlowingAnimatedBoxState();
-}
-
-class _GlowingAnimatedBoxState extends State<GlowingAnimatedBox>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<Color?> _glowColor;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat(reverse: true);
-
-    _glowColor = ColorTween(
-      begin: Colors.pinkAccent.withOpacity(0.4),
-      end: Colors.pinkAccent.withOpacity(0.9),
-    ).animate(_controller);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _glowColor,
-      builder: (_, Widget? logoChildWidget) {
-        return DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: Colors.white, width: 3),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: _glowColor.value ?? Colors.pinkAccent,
-                blurRadius: 12,
-                spreadRadius: 3,
+              Semantics(
+                label: 'Google Play Store',
+                button: true,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Material(
+                    // Ensures the background remains unchanged.
+                    color: Colors.transparent,
+                    child: InkWell(
+                      splashColor: colorScheme.primary.withOpacity(0.2),
+                      onTap: () {
+                        launchUrl(
+                          Uri.parse(constants.googlePlayUrl),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      },
+                      child: Ink.image(
+                        image: const AssetImage(
+                          '${constants.imagePath}play_store_badge.png',
+                        ),
+                        height: 72,
+                        width: 156,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Semantics(
+                label: 'TestFlight',
+                button: true,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Material(
+                    // Ensures the background remains unchanged.
+                    color: Colors.transparent,
+                    child: InkWell(
+                      splashColor: colorScheme.primary.withOpacity(0.2),
+                      onTap: () {
+                        launchUrl(
+                          Uri.parse(constants.testFlightUrl),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      },
+                      child: Ink.image(
+                        image: const AssetImage(
+                          '${constants.imagePath}test_flight_badge.png',
+                        ),
+                        height: 40,
+                        width: 140,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Semantics(
+                label: 'MacOS',
+                button: true,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Material(
+                    // Ensures the background remains unchanged.
+                    color: Colors.transparent,
+                    child: InkWell(
+                      splashColor: colorScheme.primary.withOpacity(0.2),
+                      onTap: () {
+                        launchUrl(
+                          Uri.parse(constants.macOsUrl),
+                          mode: LaunchMode.externalApplication,
+                        );
+                      },
+                      child: Ink.image(
+                        image: const AssetImage(
+                          '${constants.imagePath}mac_os_badge.png',
+                        ),
+                        height: 40,
+                        width: 140,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
-          ),
-          child: logoChildWidget,
-        );
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
-        child: Material(
-          color: Colors.transparent,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: Colors.white),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Colors.pinkAccent.withOpacity(0.2),
-                  blurRadius: 12,
-                  spreadRadius: 3,
-                ),
-              ],
-            ),
-            child: InkWell(
-              onTap: widget.onTap,
-              child: Ink.image(
-                image: const AssetImage('${constants.imagePath}logo.png'),
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

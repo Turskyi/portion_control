@@ -1,6 +1,6 @@
 const String baseUrl = 'https://portion-control-tracker.web.app';
-const String supportEmail = 'support@$companyDomain';
 const String companyDomain = 'turskyi.com';
+const String supportEmail = 'support@$companyDomain';
 const String appName = 'PortionControl';
 const String googlePlayUrl =
     'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
@@ -17,9 +17,9 @@ const String imagePath = 'assets/images/';
 /// Blur intensity constant.
 const double blurSigma = 12.0;
 
-// in centimeters
+// in centimetres
 final double minUserHeight = 100.0;
-// in centimeters
+// in centimetres
 final double maxUserHeight = 250.0;
 
 const double maxHealthyBmi = 24.9;

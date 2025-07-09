@@ -31,11 +31,17 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   final ISettingsRepository _settingsRepository;
 
-  FutureOr<void> _onFeedbackRequested(_, Emitter<MenuState> emit) {
+  FutureOr<void> _onFeedbackRequested(
+    BugReportPressedEvent _,
+    Emitter<MenuState> emit,
+  ) {
     emit(FeedbackState(language: state.language));
   }
 
-  FutureOr<void> _onFeedbackDialogDismissed(_, Emitter<MenuState> emit) {
+  FutureOr<void> _onFeedbackDialogDismissed(
+    ClosingFeedbackEvent _,
+    Emitter<MenuState> emit,
+  ) {
     emit(MenuInitial(language: state.language));
   }
 
@@ -134,7 +140,10 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     return screenshotFilePath;
   }
 
-  FutureOr<void> _loadInitialMenuState(_, Emitter<MenuState> emit) {
+  FutureOr<void> _loadInitialMenuState(
+    LoadingInitialMenuStateEvent _,
+    Emitter<MenuState> emit,
+  ) {
     final Language savedLanguage = _settingsRepository.getLanguage();
     emit(MenuInitial(language: savedLanguage));
   }
