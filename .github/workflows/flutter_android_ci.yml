@@ -1,15 +1,10 @@
 name: Upload Android Build to App Tester
 
-on:
-  workflow_run:
-    workflows:
-      - Code Quality and Tests
-    types:
-      - completed
+on: [ push ]
 
 jobs:
   build_apk:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ !github.event.pull_request.draft }}
     name: Build Flutter (Android)
     runs-on: ubuntu-latest
 
