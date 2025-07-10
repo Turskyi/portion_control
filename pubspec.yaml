@@ -48,7 +48,6 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^9.1.1
   flutter_email_sender: ^7.0.0
-#  Tried to upgrade to 4.1.0, did not compile.
   flutter_translate: any
   meta: any
   mocktail: ^1.0.4
