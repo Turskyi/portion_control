@@ -48,7 +48,8 @@ dependencies:
     sdk: flutter
   flutter_bloc: ^9.1.1
   flutter_email_sender: ^7.0.0
-  flutter_translate: ^4.1.0
+#  Tried 4.1.0 did ci did not work
+  flutter_translate: ^3.1.0
   meta: any
   mocktail: ^1.0.4
   nested: ^1.0.0
@@ -56,10 +57,6 @@ dependencies:
   path_provider: ^2.1.5
   shared_preferences: ^2.5.3
   url_launcher: ^6.3.1
-
-dependency_overrides:
-# 0.19.0 required for flutter_translate 4.1.0
-  intl: ^0.19.0
 
 dev_dependencies:
   build_runner: ^2.5.4
