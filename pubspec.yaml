@@ -42,7 +42,7 @@ dependencies:
   build: ^2.5.4
   drift: ^2.27.0
   drift_flutter: ^0.2.4
-  feedback: ^3.2.0
+  feedback: any
   fl_chart: ^1.0.0
   flutter:
     sdk: flutter
