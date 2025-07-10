@@ -126,17 +126,99 @@ class LandingPage extends StatelessWidget {
                     child: const Text('Support'),
                   ),
                   const PopupMenuDivider(),
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: constants.googlePlayUrl,
-                    child: Text('Google Play Store'),
+                    child: Semantics(
+                      label: 'Google Play Store',
+                      button: true,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Material(
+                          // Ensures the background remains unchanged.
+                          color: Colors.transparent,
+                          child: InkWell(
+                            splashColor: colorScheme.primary.withOpacity(0.2),
+                            onTap: () {
+                              launchUrl(
+                                Uri.parse(constants.googlePlayUrl),
+                                mode: LaunchMode.externalApplication,
+                              );
+                            },
+                            child: Ink.image(
+                              image: const AssetImage(
+                                '${constants.imagePath}play_store_badge.png',
+                              ),
+                              height: 40,
+                              // height: 72,
+                              // width: 156,
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: constants.testFlightUrl,
-                    child: Text('TestFlight'),
+                    child: Semantics(
+                      label: 'TestFlight',
+                      button: true,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Material(
+                          // Ensures the background remains unchanged.
+                          color: Colors.transparent,
+                          child: InkWell(
+                            splashColor: colorScheme.primary.withOpacity(0.2),
+                            onTap: () {
+                              launchUrl(
+                                Uri.parse(constants.testFlightUrl),
+                                mode: LaunchMode.externalApplication,
+                              );
+                            },
+                            child: Ink.image(
+                              image: const AssetImage(
+                                '${constants.imagePath}test_flight_badge.png',
+                              ),
+                              height: 40,
+                              // width: 140,
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  const PopupMenuItem<String>(
+                  PopupMenuItem<String>(
                     value: constants.macOsUrl,
-                    child: Text('MacOS'),
+                    child: Semantics(
+                      label: 'MacOS',
+                      button: true,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Material(
+                          // Ensures the background remains unchanged.
+                          color: Colors.transparent,
+                          child: InkWell(
+                            splashColor: colorScheme.primary.withOpacity(0.2),
+                            onTap: () {
+                              launchUrl(
+                                Uri.parse(constants.macOsUrl),
+                                mode: LaunchMode.externalApplication,
+                              );
+                            },
+                            child: Ink.image(
+                              image: const AssetImage(
+                                '${constants.imagePath}mac_os_badge.png',
+                              ),
+                              height: 40,
+                              // width: 140,
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
