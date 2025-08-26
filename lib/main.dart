@@ -2,7 +2,10 @@ import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/app.dart';
-import 'package:portion_control/infrastructure/database/database.dart';
+import 'package:portion_control/di/injector.dart' as di;
+import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/localization/localization_delelegate_getter.dart'
     as localization;
 import 'package:portion_control/router/app_route.dart';
@@ -17,6 +20,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// The [main] is the ultimate detail — the lowest-level policy.
 /// It is the initial entry point of the system.
 /// Nothing, other than the operating system, depends on it.
+/// Here you should [di.injectDependencies].
 /// The [main] is a dirty low-level module in the outermost circle of the onion
 /// architecture.
 /// Think of [main] as a plugin to the [App] — a plugin that sets
@@ -31,18 +35,42 @@ Future<void> main() async {
   // `SharedPreferences` dependencies initialization.
   WidgetsFlutterBinding.ensureInitialized();
 
-  final LocalizationDelegate localizationDelegate =
-      await localization.getLocalizationDelegate();
+  await di.injectDependencies();
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
+
   final AppDatabase appDatabase = AppDatabase();
 
+  final LocalDataSource localDataSource = LocalDataSource(prefs, appDatabase);
+
+  final String savedIsoCode = localDataSource.getLanguageIsoCode();
+
+  final Language savedLanguage = Language.fromIsoLanguageCode(savedIsoCode);
+
+  final LocalizationDelegate localizationDelegate =
+      await localization.getLocalizationDelegate(localDataSource);
+
+  final Language currentLanguage = Language.fromIsoLanguageCode(
+    localizationDelegate.currentLocale.languageCode,
+  );
+
+  if (savedLanguage != currentLanguage) {
+    final Locale locale = localeFromString(savedLanguage.isoLanguageCode);
+
+    localizationDelegate.changeLocale(locale);
+
+// Notify listeners that the locale has changed so they can update.
+    localizationDelegate.onLocaleChanged?.call(locale);
+  }
+
   final Map<String, WidgetBuilder> routeMap = <String, WidgetBuilder>{
-    AppRoute.landing.path: (_) => const LandingPage(),
-    AppRoute.home.path: (_) => HomeView(prefs: prefs, appDatabase: appDatabase),
-    AppRoute.privacyPolity.path: (_) => const PrivacyPolicyPage(),
-    AppRoute.about.path: (_) => const AboutPage(),
-    AppRoute.support.path: (_) => const SupportPage(),
+    AppRoute.landing.path: (BuildContext _) => const LandingPage(),
+    AppRoute.home.path: (BuildContext _) {
+      return HomeView(localDataSource: localDataSource);
+    },
+    AppRoute.privacyPolity.path: (BuildContext _) => const PrivacyPolicyPage(),
+    AppRoute.about.path: (BuildContext _) => const AboutPage(),
+    AppRoute.support.path: (BuildContext _) => const SupportPage(),
   };
 
   runApp(
@@ -50,14 +78,15 @@ Future<void> main() async {
       localizationDelegate,
       BetterFeedback(
         feedbackBuilder: (
-          _,
+          BuildContext _,
           OnSubmit onSubmit,
           ScrollController? scrollController,
-        ) =>
-            FeedbackForm(
-          onSubmit: onSubmit,
-          scrollController: scrollController,
-        ),
+        ) {
+          return FeedbackForm(
+            onSubmit: onSubmit,
+            scrollController: scrollController,
+          );
+        },
         child: App(routeMap: routeMap),
       ),
     ),

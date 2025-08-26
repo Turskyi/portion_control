@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 
@@ -54,7 +55,7 @@ class GenderSelectionWidget extends StatelessWidget {
                           1,
                         ),
                         child: Text(
-                          'Gender',
+                          translate('gender'),
                           style: TextStyle(
                             fontSize: textTheme.bodySmall?.fontSize,
                           ),
@@ -107,7 +108,7 @@ class GenderSelectionWidget extends StatelessWidget {
                       key: ValueKey<String>('$bodyWeight'),
                       value: gender,
                       decoration: InputDecoration(
-                        labelText: 'Gender',
+                        labelText: translate('gender'),
                         filled: true,
                         fillColor:
                             themeData.colorScheme.secondary.withOpacity(0.1),

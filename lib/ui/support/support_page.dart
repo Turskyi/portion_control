@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:flutter_translate/flutter_translate.dart';
+import 'package:portion_control/res/constants/constants.dart' as res;
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:portion_control/ui/widgets/leading_widget.dart';
@@ -20,9 +21,9 @@ class SupportPage extends StatelessWidget {
     final double? titleMediumFontSize = textTheme.titleMedium?.fontSize;
     final double? titleLargeFontSize = textTheme.titleLarge?.fontSize;
     return GradientBackgroundScaffold(
-      appBar: const BlurredAppBar(
-        leading: kIsWeb ? LeadingWidget() : null,
-        title: 'Support',
+      appBar: BlurredAppBar(
+        leading: kIsWeb ? const LeadingWidget() : null,
+        title: translate('support_page.title'),
       ),
       body: ResponsiveContent(
         child: SingleChildScrollView(
@@ -37,57 +38,24 @@ class SupportPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SelectableText(
-                '''
-Welcome to the ${constants.appName} support page. Here you’ll find information to help you use the app effectively and troubleshoot common issues.
-
-About the App
-
- ${constants.appName} helps users track their food intake in grams and body weight in kilograms to support mindful eating and avoid unnecessary weight gain.
-
-Getting Started
-
-- Log your height and daily weight.
-- Use a food scale to log each meal in grams.
-- The app will suggest portion guidelines to help you manage your intake.
-
-Common Questions
-
-- Q: Is my data synced or backed up?
-  A: No, all data is stored locally on your device.
-
-- Q: I forgot to log a meal. What should I do?
-  A: While the app allows you to edit or add missed meals later, we strongly recommend choosing to start the day from scratch. Accurate tracking is essential for building a reliable portion control baseline, and incomplete records can lead to misleading results.
-
-- Q: Is this app suitable for children?
-  A: No. This app is designed for adults.
-
-- Q: Does the app count calories?
-  A: No. This app tracks food weight in grams, not calories.
-
-Need Help?
-
-If you have issues or questions not covered here, feel free to reach out.
-''',
+                _mainSupportText,
                 style: TextStyle(fontSize: titleMediumFontSize),
               ),
               Text(
-                'Contact Us',
+                translate('support_page.contact_us_title'),
                 style: TextStyle(
                   fontSize: titleLargeFontSize,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const Text(
-                'For further assistance or to report a problem, '
-                'you can reach out through any of the following channels:',
-              ),
+              Text(translate('support_page.contact_us_intro')),
               Text.rich(
                 TextSpan(
-                  text: 'Email: ',
+                  text: translate('support_page.email_label'),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   children: <InlineSpan>[
                     TextSpan(
-                      text: 'support@${constants.companyDomain}',
+                      text: '${res.supportEmailPrefix}${res.companyDomain}',
                       style: TextStyle(
                         color: linkColor,
                         decoration: TextDecoration.underline,
@@ -95,8 +63,9 @@ If you have issues or questions not covered here, feel free to reach out.
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           final Uri emailLaunchUri = Uri(
-                            scheme: 'mailto',
-                            path: 'support@${constants.companyDomain}',
+                            scheme: res.mailToScheme,
+                            path:
+                                '${res.supportEmailPrefix}${res.companyDomain}',
                           );
                           launchUrl(emailLaunchUri);
                         },
@@ -106,33 +75,30 @@ If you have issues or questions not covered here, feel free to reach out.
               ),
               Text.rich(
                 TextSpan(
-                  text: 'Telegram Group: ',
+                  text: translate('support_page.telegram_label'),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   children: <InlineSpan>[
                     TextSpan(
-                      text: 'Join the community chat',
+                      text: translate('support_page.telegram_link_text'),
                       style: TextStyle(
                         color: linkColor,
                         decoration: TextDecoration.underline,
                       ),
                       recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          launchUrl(
-                            Uri.parse('https://t.me/+Zmd6QYP3iXc2MjZi'),
-                            mode: LaunchMode.externalApplication,
-                          );
-                        },
+                        ..onTap = _launchTelegramUrl,
                     ),
                   ],
                 ),
               ),
               Text.rich(
                 TextSpan(
-                  text: 'Developer Website: ',
+                  text: translate('support_page.developer_website_label'),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   children: <InlineSpan>[
                     TextSpan(
-                      text: 'https://turskyi.com/#/support',
+                      text: translate(
+                        'support_page.developer_website_link_text',
+                      ),
                       style: TextStyle(
                         color: linkColor,
                         decoration: TextDecoration.underline,
@@ -140,7 +106,11 @@ If you have issues or questions not covered here, feel free to reach out.
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           launchUrl(
-                            Uri.parse('https://turskyi.com/#/support'),
+                            Uri.parse(
+                              translate(
+                                'support_page.developer_website_link_text',
+                              ),
+                            ),
                             mode: LaunchMode.externalApplication,
                           );
                         },
@@ -153,5 +123,51 @@ If you have issues or questions not covered here, feel free to reach out.
         ),
       ),
     );
+  }
+
+  void _launchTelegramUrl() {
+    launchUrl(
+      Uri.parse(res.telegramUrl),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
+  // Helper getter to create the main text content to avoid repetition.
+  String get _mainSupportText {
+    return '''
+${translate(
+      'support_page.welcome_message',
+      args: <String, Object?>{
+        'appName': res.appName,
+      },
+    )}
+
+${translate('support_page.about_app_title')}
+
+ ${translate(
+      'support_page.about_app_content',
+      args: <String, Object?>{'appName': res.appName},
+    )}
+
+${translate('support_page.getting_started_title')}
+
+${translate('support_page.getting_started_item1')}
+${translate('support_page.getting_started_item2')}
+${translate('support_page.getting_started_item3')}
+
+${translate('support_page.common_questions_title')}
+
+${translate('support_page.faq1_data_sync')}
+
+${translate('support_page.faq2_forgot_meal')}
+
+${translate('support_page.faq3_children')}
+
+${translate('support_page.faq4_calories')}
+
+${translate('support_page.need_help_title')}
+
+${translate('support_page.need_help_content')}
+''';
   }
 }

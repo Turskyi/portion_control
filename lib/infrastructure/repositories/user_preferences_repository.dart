@@ -1,52 +1,35 @@
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 
 /// Implementation of user details repository using SharedPreferences
 class UserPreferencesRepository implements IUserPreferencesRepository {
-  const UserPreferencesRepository(this._sharedPreferences);
+  const UserPreferencesRepository(this._localDataSource);
 
-  static const String _heightKey = 'user_height';
-  static const String _ageKey = 'user_age';
-  static const String _genderKey = 'user_gender';
-  static const String _dateOfBirthKey = 'user_date_of_birth';
-  static const String _mealsConfirmedKey = 'meals_confirmed';
-  static const String _mealsConfirmedDateKey = 'meals_confirmed_date';
-  static const String _portionControlKey = 'portion_control';
-
-  final SharedPreferences _sharedPreferences;
+  final LocalDataSource _localDataSource;
 
   @override
-  double? getHeight() => _sharedPreferences.getDouble(_heightKey);
+  double? getHeight() => _localDataSource.getHeight();
 
   @override
-  int? getAge() => _sharedPreferences.getInt(_ageKey);
+  int? getAge() => _localDataSource.getAge();
 
   @override
-  String? getGender() => _sharedPreferences.getString(_genderKey);
+  String? getGender() => _localDataSource.getGender();
 
   /// Get Date of Birth from SharedPreferences.
   @override
-  DateTime? getDateOfBirth() {
-    final String? dobString = _sharedPreferences.getString(_dateOfBirthKey);
-    return dobString != null ? DateTime.parse(dobString) : null;
-  }
+  DateTime? getDateOfBirth() => _localDataSource.getDateOfBirth();
 
   @override
-  Future<bool> saveHeight(double height) {
-    return _sharedPreferences.setDouble(_heightKey, height);
-  }
+  Future<bool> saveHeight(double height) => _localDataSource.saveHeight(height);
 
   @override
-  Future<bool> saveAge(int age) {
-    return _sharedPreferences.setInt(_ageKey, age);
-  }
+  Future<bool> saveAge(int age) => _localDataSource.saveAge(age);
 
   @override
-  Future<bool> saveGender(Gender gender) {
-    return _sharedPreferences.setString(_genderKey, gender.name);
-  }
+  Future<bool> saveGender(Gender gender) => _localDataSource.saveGender(gender);
 
   @override
   UserDetails getUserDetails() {
@@ -82,52 +65,24 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
   /// Save Date of Birth as an ISO8601 [String].
   @override
   Future<bool> saveDateOfBirth(DateTime dateOfBirth) {
-    return _sharedPreferences.setString(
-      _dateOfBirthKey,
-      dateOfBirth.toIso8601String(),
-    );
+    return _localDataSource.saveDateOfBirth(dateOfBirth);
   }
 
   @override
-  Future<bool> saveMealsConfirmed() async {
-    final DateTime today = DateTime.now();
-    final bool confirmedSaved = await _sharedPreferences.setBool(
-      _mealsConfirmedKey,
-      true,
-    );
-    final bool dateSaved = await _sharedPreferences.setString(
-      _mealsConfirmedDateKey,
-      today.toIso8601String(),
-    );
-    return confirmedSaved && dateSaved;
-  }
+  Future<bool> saveMealsConfirmed() => _localDataSource.saveMealsConfirmed();
 
   @override
   bool get isMealsConfirmedForToday {
-    final bool? isConfirmed = _sharedPreferences.getBool(_mealsConfirmedKey);
-
-    final String? savedDateString =
-        _sharedPreferences.getString(_mealsConfirmedDateKey);
-
-    if (isConfirmed == true && savedDateString != null) {
-      final DateTime savedDate = DateTime.parse(savedDateString);
-      final DateTime today = DateTime.now();
-
-      return savedDate.year == today.year &&
-          savedDate.month == today.month &&
-          savedDate.day == today.day;
-    }
-
-    return false;
+    return _localDataSource.isMealsConfirmedForToday;
   }
 
   @override
   double? getPortionControl() {
-    return _sharedPreferences.getDouble(_portionControlKey);
+    return _localDataSource.getPortionControl();
   }
 
   @override
   Future<bool> savePortionControl(double portionControl) {
-    return _sharedPreferences.setDouble(_portionControlKey, portionControl);
+    return _localDataSource.savePortionControl(portionControl);
   }
 }

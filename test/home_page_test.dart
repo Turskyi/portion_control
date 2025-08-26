@@ -2,7 +2,12 @@ import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
+import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/ui/home/home_page.dart';
 import 'package:portion_control/ui/home/widgets/home_page_content.dart'
     show HomePageContent;
@@ -10,11 +15,32 @@ import 'package:portion_control/ui/home/widgets/user_details_widget.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart'
     show GradientBackgroundScaffold;
 import 'package:portion_control/ui/widgets/input_row.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'app_test.dart';
 import 'mock_interactors.dart';
 import 'mock_repositories.dart';
+import 'mocks/mock_blocs.dart';
 
 void main() {
+  late LocalDataSource localDataSource;
+  setUpAll(() async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    final AppDatabase appDatabase = AppDatabase();
+    localDataSource = LocalDataSource(preferences, appDatabase);
+    await setUpFlutterTranslateForTests();
+  });
+
+  late MenuBloc menuBloc;
+  setUp(() {
+    menuBloc = MockMenuBloc();
+
+    when(
+      () => menuBloc.state,
+    ).thenReturn(const MenuInitial(language: Language.en));
+  });
+
   group('HomePage', () {
     late MockBodyWeightRepository mockBodyWeightRepository;
     late MockFoodWeightRepository mockFoodWeightRepository;
@@ -43,7 +69,9 @@ void main() {
         BetterFeedback(
           child: BlocProvider<HomeBloc>.value(
             value: homeBloc,
-            child: const MaterialApp(home: HomePage()),
+            child: MaterialApp(
+              home: HomePage(localDataSource: localDataSource),
+            ),
           ),
         ),
       );
@@ -64,7 +92,9 @@ void main() {
         BetterFeedback(
           child: BlocProvider<HomeBloc>.value(
             value: homeBloc,
-            child: const MaterialApp(home: HomePage()),
+            child: MaterialApp(
+              home: HomePage(localDataSource: localDataSource),
+            ),
           ),
         ),
       );
@@ -79,7 +109,9 @@ void main() {
         BetterFeedback(
           child: BlocProvider<HomeBloc>.value(
             value: homeBloc,
-            child: const MaterialApp(home: HomePage()),
+            child: MaterialApp(
+              home: HomePage(localDataSource: localDataSource),
+            ),
           ),
         ),
       );
@@ -95,7 +127,9 @@ void main() {
         BetterFeedback(
           child: BlocProvider<HomeBloc>.value(
             value: homeBloc,
-            child: const MaterialApp(home: HomePage()),
+            child: MaterialApp(
+              home: HomePage(localDataSource: localDataSource),
+            ),
           ),
         ),
       );
@@ -113,10 +147,10 @@ void main() {
         BetterFeedback(
           child: BlocProvider<HomeBloc>.value(
             value: homeBloc,
-            child: const MaterialApp(
+            child: MaterialApp(
               home: SizedBox(
                 width: 800,
-                child: HomePage(),
+                child: HomePage(localDataSource: localDataSource),
               ),
             ),
           ),
@@ -136,7 +170,9 @@ void main() {
         BetterFeedback(
           child: BlocProvider<HomeBloc>.value(
             value: homeBloc,
-            child: const MaterialApp(home: HomePage()),
+            child: MaterialApp(
+              home: HomePage(localDataSource: localDataSource),
+            ),
           ),
         ),
       );

@@ -48,7 +48,7 @@ class _HomePageContentState extends State<HomePageContent> {
         return SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(
             horizontalIndent,
-            MediaQuery.of(context).padding.top + 18,
+            MediaQuery.of(context).padding.top,
             horizontalIndent,
             80.0,
           ),
@@ -62,7 +62,7 @@ class _HomePageContentState extends State<HomePageContent> {
                 Padding(
                   padding: const EdgeInsets.only(top: 12.0),
                   child: Text(
-                    '👉 Enter weight before your first meal.',
+                    translate('home_page.enter_weight_instruction'),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: titleMedium?.fontSize,
@@ -72,8 +72,8 @@ class _HomePageContentState extends State<HomePageContent> {
               if (state is DetailsSubmittedState)
                 // Body Weight Input.
                 InputRow(
-                  label: 'Body weight',
-                  unit: 'kg',
+                  label: translate('home_page.body_weight_label'),
+                  unit: translate('home_page.kg_unit'),
                   initialValue:
                       '${weight > constants.minBodyWeight ? weight : ''}',
                   value: state is BodyWeightSubmittedState ? '$weight' : null,
@@ -130,7 +130,7 @@ class _HomePageContentState extends State<HomePageContent> {
         SnackBar(
           content: Text(state.errorMessage),
           action: SnackBarAction(
-            label: 'Report',
+            label: translate('button.report'),
             onPressed: () {
               context.read<HomeBloc>().add(const HomeBugReportPressedEvent());
             },
@@ -167,7 +167,7 @@ class _HomePageContentState extends State<HomePageContent> {
     // Let user know that his feedback is sent.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(translate('feedback.feedbackSent')),
+        content: Text(translate('feedback.sent')),
         duration: const Duration(seconds: 2),
       ),
     );

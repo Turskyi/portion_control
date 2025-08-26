@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class FoodWeightEntryRow extends StatefulWidget {
   const FoodWeightEntryRow({
@@ -46,21 +47,20 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
         Expanded(
           child: ValueListenableBuilder<TextEditingValue>(
             valueListenable: _controller,
-            builder: (_, TextEditingValue value, __) {
+            builder: (BuildContext _, TextEditingValue value, Widget? __) {
               final String input = value.text;
               return TextFormField(
                 controller: _controller,
                 enabled: widget.isEditState,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  hintText: 'Enter food weight',
-                  suffixText: 'g',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  hintText: translate('hint.enter_food_weight'),
+                  suffixText: translate('unit.gram'),
+                  border: const OutlineInputBorder(),
                 ),
-                onFieldSubmitted:
-                    (input.isNotEmpty && (double.tryParse(input) ?? 0) > 0)
-                        ? (_) => _handleSave()
-                        : null,
+                onFieldSubmitted: _isValidWeightInput(input)
+                    ? (String _) => _handleSave()
+                    : null,
               );
             },
           ),
@@ -71,14 +71,11 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
           ValueListenableBuilder<TextEditingValue>(
             valueListenable: _controller,
             child: const Icon(Icons.check),
-            builder: (_, TextEditingValue value, Widget? icon) {
+            builder: (BuildContext _, TextEditingValue value, Widget? icon) {
               final String input = value.text;
               return IconButton(
                 icon: icon ?? const Icon(Icons.check),
-                onPressed:
-                    (input.isNotEmpty && (double.tryParse(input) ?? 0) > 0)
-                        ? _handleSave
-                        : null,
+                onPressed: _isValidWeightInput(input) ? _handleSave : null,
               );
             },
           )
@@ -106,5 +103,9 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
 
   void _handleSave() {
     widget.onSave?.call(_controller.text);
+  }
+
+  bool _isValidWeightInput(String input) {
+    return (input.isNotEmpty && (double.tryParse(input) ?? 0) > 0);
   }
 }

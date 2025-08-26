@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
 
@@ -16,7 +17,8 @@ class MealConfirmationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
     final TextStyle? titleMediumStyle = textTheme.titleMedium;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -34,18 +36,18 @@ class MealConfirmationCard extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: <Widget>[
                   Text(
-                    ' 🍽️ Yesterday, you consumed (logged) ',
+                    translate('meal_confirmation.yesterday_consumed_prefix'),
                     style: titleMediumStyle,
                     textAlign: TextAlign.center,
                   ),
                   TextButton(
-                    onPressed: () => context
-                        .read<YesterdayEntriesBloc>()
-                        .add(const LoadYesterdayEntries()),
+                    onPressed: () => _loadYesterdayEntries(context),
                     child: Text(
-                      '$formattedYesterdayConsumedTotal g',
+                      '$formattedYesterdayConsumedTotal${translate(
+                        'meal_confirmation.grams_suffix',
+                      )}',
                       style: titleMediumStyle?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: theme.colorScheme.primary,
                         decoration: TextDecoration.underline,
                       ),
                       textAlign: TextAlign.center,
@@ -53,23 +55,22 @@ class MealConfirmationCard extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.help_outline),
-                    onPressed: () => context
-                        .read<YesterdayEntriesBloc>()
-                        .add(const LoadYesterdayEntries()),
-                    tooltip: 'View yesterday\'s entries',
+                    onPressed: () => _loadYesterdayEntries(context),
+                    tooltip: translate(
+                      'meal_confirmation.view_yesterday_tooltip',
+                    ),
                   ),
                 ],
               )
             else
               Text(
-                'You didn’t log any meals yesterday. Don’t forget to '
-                'track your food! ⏳',
+                translate('meal_confirmation.no_meals_logged_yesterday'),
                 style: titleMediumStyle,
                 textAlign: TextAlign.center,
               ),
 
             Text(
-              'Did you log every meal you ate yesterday? 📋',
+              translate('meal_confirmation.did_you_log_all_meals_yesterday'),
               style: titleMediumStyle,
               textAlign: TextAlign.center,
             ),
@@ -80,11 +81,11 @@ class MealConfirmationCard extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () =>
                       context.read<HomeBloc>().add(const ConfirmMealsLogged()),
-                  child: const Text('Yes ✅'),
+                  child: Text('${translate('yes')} ✅'),
                 ),
                 OutlinedButton(
                   onPressed: () => _showIncompleteDataDialog(context),
-                  child: const Text('No ❌'),
+                  child: Text('${translate('no')} ❌'),
                 ),
               ],
             ),
@@ -94,17 +95,20 @@ class MealConfirmationCard extends StatelessWidget {
     );
   }
 
+  void _loadYesterdayEntries(BuildContext context) {
+    context.read<YesterdayEntriesBloc>().add(const LoadYesterdayEntries());
+  }
+
   Future<void> _showIncompleteDataDialog(BuildContext parentContext) {
     return showDialog(
       context: parentContext,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Incomplete Data Warning'),
-          content: const Text(
-            '⚠️ To provide accurate portion control, we rely on complete meal '
-            'tracking. Since some entries might be missing, we will reset all '
-            'food logs. This ensures future recommendations are based on '
-            'reliable data. 🔄',
+          title: Text(
+            translate('meal_confirmation.incomplete_data_warning_title'),
+          ),
+          content: Text(
+            translate('meal_confirmation.incomplete_data_warning_content'),
           ),
           actions: <Widget>[
             TextButton(
@@ -112,7 +116,7 @@ class MealConfirmationCard extends StatelessWidget {
                 Navigator.of(context).pop();
                 parentContext.read<HomeBloc>().add(const ResetFoodEntries());
               },
-              child: const Text('OK'),
+              child: Text(translate('button.ok')),
             ),
           ],
         );

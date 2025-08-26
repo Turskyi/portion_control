@@ -28,3 +28,9 @@ final class MenuErrorEvent extends MenuEvent {
 
   final String error;
 }
+
+class ChangeLanguageEvent extends MenuEvent {
+  const ChangeLanguageEvent(this.language);
+
+  final Language language;
+}

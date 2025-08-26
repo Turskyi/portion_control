@@ -1,18 +1,24 @@
+import 'package:flutter_translate/flutter_translate.dart';
+
 enum Gender {
-  male('Male', '♂️'),
-  female('Female', '♀️'),
-  other('Other', '🌈'),
-  preferNotToSay('Prefer not to say', '🤐');
+  male('male', '♂️'),
+  female('female', '♀️'),
+  other('other', '🌈'),
+  preferNotToSay('prefer_not_to_say', '🤐');
 
-  const Gender(this.displayName, this.emoji);
+  const Gender(this.translationKey, this.emoji);
 
-  final String displayName;
+  final String translationKey;
   final String emoji;
+
+  /// Getter for the translated display name.
+  String get displayName => translate(translationKey);
 
   /// Getter to check if [Gender] is [male] or [female].
   bool get isMaleOrFemale => this == Gender.male || this == Gender.female;
 
-  // Convert a string to a Gender enum
+  //FIXME: I do not remember how this method should work. Needs a better
+  // dartdoc and example of use.
   static Gender fromString(String value) {
     switch (value.toLowerCase()) {
       case 'male':
@@ -22,6 +28,7 @@ enum Gender {
       case 'other':
         return Gender.other;
       case 'prefer not to say':
+      case 'prefer_not_to_say':
         return Gender.preferNotToSay;
       default:
         return Gender.preferNotToSay;

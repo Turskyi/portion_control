@@ -6,6 +6,10 @@ sealed class MenuState {
 
   final Language language;
 
+  bool get isUkrainian => language == Language.uk;
+
+  String get localeCode => language.isoLanguageCode;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

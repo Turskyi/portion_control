@@ -1,6 +1,7 @@
 const String baseUrl = 'https://portion-control-tracker.web.app';
 const String companyDomain = 'turskyi.com';
-const String supportEmail = 'support@$companyDomain';
+const String supportEmailPrefix = 'support@';
+const String supportEmail = '$supportEmailPrefix$companyDomain';
 const String appName = 'PortionControl';
 const String googlePlayUrl =
     'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
@@ -39,3 +40,7 @@ const double wideScreenThreshold = 600.0;
 
 // Max content width for wide layout.
 const double wideScreenContentWidth = 800.0;
+
+const String mailToScheme = 'mailto';
+
+const String telegramUrl = 'https://t.me/+Zmd6QYP3iXc2MjZi';

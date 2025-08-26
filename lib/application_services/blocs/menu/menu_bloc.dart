@@ -27,6 +27,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
     on<SubmitFeedbackEvent>(_sendUserFeedback);
     on<MenuErrorEvent>(_handleError);
+    on<ChangeLanguageEvent>(_changeLanguage);
   }
 
   final ISettingsRepository _settingsRepository;
@@ -152,5 +153,29 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     debugPrint('ErrorEvent: ${event.error}');
     //TODO: add ErrorMenuState and use it instead.
     emit(const MenuInitial());
+  }
+
+  FutureOr<void> _changeLanguage(
+    ChangeLanguageEvent event,
+    Emitter<MenuState> emit,
+  ) async {
+    final Language language = event.language;
+
+    final MenuState state = this.state;
+
+    if (language != state.language) {
+      final bool isSaved = await _settingsRepository.saveLanguageIsoCode(
+        language.isoLanguageCode,
+      );
+      if (isSaved) {
+        if (state is MenuInitial) {
+          emit(state.copyWith(language: language));
+        } else {
+          MenuInitial(language: language);
+        }
+      } else {
+        //TODO: not sure what to do.
+      }
+    }
   }
 }

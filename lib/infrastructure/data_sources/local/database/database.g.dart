@@ -227,9 +227,7 @@ class $FoodEntriesTable extends FoodEntries
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-
   $FoodEntriesTable(this.attachedDatabase, [this._alias]);
-
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -249,17 +247,13 @@ class $FoodEntriesTable extends FoodEntries
   late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
       'date', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
-
   @override
   List<GeneratedColumn> get $columns => [id, weight, date];
-
   @override
   String get aliasedName => _alias ?? actualTableName;
-
   @override
   String get actualTableName => $name;
   static const String $name = 'food_entries';
-
   @override
   VerificationContext validateIntegrity(Insertable<FoodEntry> instance,
       {bool isInserting = false}) {
@@ -285,7 +279,6 @@ class $FoodEntriesTable extends FoodEntries
 
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
-
   @override
   FoodEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -313,9 +306,7 @@ class FoodEntry extends DataClass implements Insertable<FoodEntry> {
 
   /// The [date] the weight was recorded.
   final DateTime date;
-
   const FoodEntry({required this.id, required this.weight, required this.date});
-
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -342,7 +333,6 @@ class FoodEntry extends DataClass implements Insertable<FoodEntry> {
       date: serializer.fromJson<DateTime>(json['date']),
     );
   }
-
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -358,7 +348,6 @@ class FoodEntry extends DataClass implements Insertable<FoodEntry> {
         weight: weight ?? this.weight,
         date: date ?? this.date,
       );
-
   FoodEntry copyWithCompanion(FoodEntriesCompanion data) {
     return FoodEntry(
       id: data.id.present ? data.id.value : this.id,
@@ -379,7 +368,6 @@ class FoodEntry extends DataClass implements Insertable<FoodEntry> {
 
   @override
   int get hashCode => Object.hash(id, weight, date);
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -393,20 +381,17 @@ class FoodEntriesCompanion extends UpdateCompanion<FoodEntry> {
   final Value<int> id;
   final Value<double> weight;
   final Value<DateTime> date;
-
   const FoodEntriesCompanion({
     this.id = const Value.absent(),
     this.weight = const Value.absent(),
     this.date = const Value.absent(),
   });
-
   FoodEntriesCompanion.insert({
     this.id = const Value.absent(),
     required double weight,
     required DateTime date,
   })  : weight = Value(weight),
         date = Value(date);
-
   static Insertable<FoodEntry> custom({
     Expression<int>? id,
     Expression<double>? weight,
@@ -629,7 +614,6 @@ class $$FoodEntriesTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
@@ -649,7 +633,6 @@ class $$FoodEntriesTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
@@ -669,7 +652,6 @@ class $$FoodEntriesTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
@@ -747,7 +729,6 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$BodyWeightEntriesTableTableManager get bodyWeightEntries =>
       $$BodyWeightEntriesTableTableManager(_db, _db.bodyWeightEntries);
-
   $$FoodEntriesTableTableManager get foodEntries =>
       $$FoodEntriesTableTableManager(_db, _db.foodEntries);
 }

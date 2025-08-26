@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/home/widgets/home_page_content.dart';
@@ -12,7 +13,12 @@ import 'package:portion_control/ui/menu/animated_drawer.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({
+    required this.localDataSource,
+    super.key,
+  });
+
+  final LocalDataSource localDataSource;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -33,17 +39,24 @@ class _HomePageState extends State<HomePage> {
       drawer: kIsWeb
           ? null
           : BlocListener<MenuBloc, MenuState>(
-              listener: (_, MenuState state) {
+              listener: (BuildContext _, MenuState state) {
                 if (state is FeedbackState) {
                   _showFeedbackUi();
                 } else if (state is FeedbackSent) {
                   _notifyFeedbackSent();
                 }
               },
-              child: const AnimatedDrawer(),
+              child: AnimatedDrawer(localDataSource: widget.localDataSource),
             ),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+      ),
       body: LayoutBuilder(
-        builder: (_, BoxConstraints constraints) {
+        builder: (BuildContext _, BoxConstraints constraints) {
           if (constraints.maxWidth > constants.wideScreenThreshold) {
             // Wide screen layout.
             return const Align(
@@ -64,7 +77,7 @@ class _HomePageState extends State<HomePage> {
       persistentFooterButtons: kIsWeb
           ? <Widget>[
               Semantics(
-                label: 'Privacy Policy',
+                label: translate('semantic_label.privacy_policy_button'),
                 button: true,
                 child: TextButton.icon(
                   onPressed: () {
@@ -74,11 +87,11 @@ class _HomePageState extends State<HomePage> {
                     Icons.privacy_tip,
                     size: Theme.of(context).textTheme.titleMedium?.fontSize,
                   ),
-                  label: const Text('Privacy Policy'),
+                  label: Text(translate('button.privacy_policy')),
                 ),
               ),
               Semantics(
-                label: 'About Us',
+                label: translate('semantic_label.about_us_button'),
                 button: true,
                 child: TextButton.icon(
                   onPressed: () {
@@ -88,11 +101,11 @@ class _HomePageState extends State<HomePage> {
                     Icons.group,
                     size: Theme.of(context).textTheme.titleMedium?.fontSize,
                   ),
-                  label: const Text('About Us'),
+                  label: Text(translate('button.about_us')),
                 ),
               ),
               Semantics(
-                label: 'Feedback',
+                label: translate('semantic_label.feedback_button'),
                 button: true,
                 child: TextButton.icon(
                   onPressed: () => _showFeedbackDialog(context),
@@ -100,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                     Icons.feedback,
                     size: Theme.of(context).textTheme.titleMedium?.fontSize,
                   ),
-                  label: const Text('Feedback'),
+                  label: Text(translate('button.feedback')),
                 ),
               ),
             ]
@@ -131,7 +144,7 @@ class _HomePageState extends State<HomePage> {
     // Let user know that his feedback is sent.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(translate('feedback.feedbackSent')),
+        content: Text(translate('feedback.sent')),
         duration: const Duration(seconds: 2),
       ),
     );

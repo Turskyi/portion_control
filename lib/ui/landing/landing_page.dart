@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/landing/widgets/glowing_animated_box.dart';
@@ -17,6 +18,9 @@ class LandingPage extends StatelessWidget {
     final double? titleMediumSize = textTheme.titleMedium?.fontSize;
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isNarrowScreen = screenWidth < 600;
+
+    // Helper for translation
+    String t(String key) => translate(key);
     return GradientBackgroundScaffold(
       body: Center(
         child: Padding(
@@ -40,7 +44,7 @@ class LandingPage extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 50, // Fixed height for animated text
+                height: 50,
                 child: DefaultTextStyle(
                   style: Theme.of(context).textTheme.bodyLarge ??
                       const TextStyle(),
@@ -48,21 +52,21 @@ class LandingPage extends StatelessWidget {
                     repeatForever: true,
                     animatedTexts: <AnimatedText>[
                       TypewriterAnimatedText(
-                        'Track your food portions with ease.',
+                        t('landing_page.animated_text_1'),
                         textStyle: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onBackground,
                         ),
                         speed: const Duration(milliseconds: 100),
                       ),
                       TypewriterAnimatedText(
-                        'No calorie counting, just simple portion control.',
+                        t('landing_page.animated_text_2'),
                         textStyle: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onBackground,
                         ),
                         speed: const Duration(milliseconds: 100),
                       ),
                       TypewriterAnimatedText(
-                        'See your progress over time.',
+                        t('landing_page.animated_text_3'),
                         textStyle: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onBackground,
                         ),
@@ -77,7 +81,7 @@ class LandingPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pushNamed(AppRoute.home.path);
                 },
-                child: const Text('Get Started'),
+                child: Text(t('landing_page.get_started_button')),
               ),
             ],
           ),
@@ -115,21 +119,21 @@ class LandingPage extends StatelessWidget {
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                   PopupMenuItem<String>(
                     value: AppRoute.privacyPolity.name,
-                    child: const Text('Privacy Policy'),
+                    child: Text(t('landing_page.menu_item_privacy_policy')),
                   ),
                   PopupMenuItem<String>(
                     value: AppRoute.about.name,
-                    child: const Text('About'),
+                    child: Text(t('landing_page.menu_item_about')),
                   ),
                   PopupMenuItem<String>(
                     value: AppRoute.support.name,
-                    child: const Text('Support'),
+                    child: Text(t('landing_page.menu_item_support')),
                   ),
                   const PopupMenuDivider(),
                   PopupMenuItem<String>(
                     value: constants.googlePlayUrl,
                     child: Semantics(
-                      label: 'Google Play Store',
+                      label: t('landing_page.semantics_label_google_play'),
                       button: true,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
@@ -149,8 +153,6 @@ class LandingPage extends StatelessWidget {
                                 '${constants.imagePath}play_store_badge.png',
                               ),
                               height: 40,
-                              // height: 72,
-                              // width: 156,
                               fit: BoxFit.fitWidth,
                             ),
                           ),
@@ -161,7 +163,7 @@ class LandingPage extends StatelessWidget {
                   PopupMenuItem<String>(
                     value: constants.testFlightUrl,
                     child: Semantics(
-                      label: 'TestFlight',
+                      label: t('landing_page.semantics_label_testflight'),
                       button: true,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
@@ -181,7 +183,6 @@ class LandingPage extends StatelessWidget {
                                 '${constants.imagePath}test_flight_badge.png',
                               ),
                               height: 40,
-                              // width: 140,
                               fit: BoxFit.fitWidth,
                             ),
                           ),
@@ -192,7 +193,7 @@ class LandingPage extends StatelessWidget {
                   PopupMenuItem<String>(
                     value: constants.macOsUrl,
                     child: Semantics(
-                      label: 'MacOS',
+                      label: t('landing_page.semantics_label_macos'),
                       button: true,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
@@ -225,7 +226,7 @@ class LandingPage extends StatelessWidget {
             ]
           : <Widget>[
               Semantics(
-                label: 'Privacy Policy',
+                label: t('landing_page.menu_item_privacy_policy'),
                 button: true,
                 child: TextButton.icon(
                   onPressed: () {
@@ -235,11 +236,11 @@ class LandingPage extends StatelessWidget {
                     Icons.privacy_tip,
                     size: titleMediumSize,
                   ),
-                  label: const Text('Privacy Policy'),
+                  label: Text(t('landing_page.menu_item_privacy_policy')),
                 ),
               ),
               Semantics(
-                label: 'About',
+                label: t('landing_page.menu_item_about'),
                 button: true,
                 child: TextButton.icon(
                   onPressed: () {
@@ -249,11 +250,11 @@ class LandingPage extends StatelessWidget {
                     Icons.group,
                     size: titleMediumSize,
                   ),
-                  label: const Text('About'),
+                  label: Text(t('landing_page.menu_item_about')),
                 ),
               ),
               Semantics(
-                label: 'Support',
+                label: t('landing_page.menu_item_support'),
                 button: true,
                 child: TextButton.icon(
                   onPressed: () {
@@ -263,11 +264,11 @@ class LandingPage extends StatelessWidget {
                     Icons.support_agent,
                     size: titleMediumSize,
                   ),
-                  label: const Text('Support'),
+                  label: Text(t('landing_page.menu_item_support')),
                 ),
               ),
               Semantics(
-                label: 'Google Play Store',
+                label: t('landing_page.semantics_label_google_play'),
                 button: true,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
@@ -295,7 +296,7 @@ class LandingPage extends StatelessWidget {
                 ),
               ),
               Semantics(
-                label: 'TestFlight',
+                label: t('landing_page.semantics_label_testflight'),
                 button: true,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
@@ -323,7 +324,7 @@ class LandingPage extends StatelessWidget {
                 ),
               ),
               Semantics(
-                label: 'MacOS',
+                label: t('landing_page.semantics_label_macos'),
                 button: true,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),

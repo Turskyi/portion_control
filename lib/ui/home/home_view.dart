@@ -15,8 +15,7 @@ import 'package:portion_control/application_services/blocs/yesterday_entries_blo
 import 'package:portion_control/application_services/interactors/clear_tracking_data_use_case.dart'
     show ClearTrackingDataUseCase;
 import 'package:portion_control/domain/models/food_weight.dart' show FoodWeight;
-import 'package:portion_control/infrastructure/database/database.dart'
-    show AppDatabase;
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart'
     show BodyWeightRepository;
 import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart'
@@ -31,39 +30,41 @@ import 'package:portion_control/ui/home/widgets/yesterday_food_entries_dialog.da
     show YesterdayFoodEntriesDialog;
 import 'package:portion_control/ui/widgets/fancy_loading_indicator.dart'
     show FancyLoadingIndicator;
-import 'package:shared_preferences/shared_preferences.dart'
-    show SharedPreferences;
 
 class HomeView extends StatelessWidget {
   const HomeView({
-    required this.prefs,
-    required this.appDatabase,
+    required this.localDataSource,
     super.key,
   });
 
-  final SharedPreferences prefs;
-  final AppDatabase appDatabase;
+  final LocalDataSource localDataSource;
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: <SingleChildWidget>[
         BlocProvider<HomeBloc>(
-          create: (_) => HomeBloc(
-            UserPreferencesRepository(prefs),
-            BodyWeightRepository(appDatabase),
-            FoodWeightRepository(appDatabase),
-            ClearTrackingDataUseCase(TrackingRepository(appDatabase)),
-          )..add(const LoadEntries()),
+          create: (BuildContext _) {
+            return HomeBloc(
+              UserPreferencesRepository(localDataSource),
+              BodyWeightRepository(localDataSource),
+              FoodWeightRepository(localDataSource),
+              ClearTrackingDataUseCase(TrackingRepository(localDataSource)),
+            )..add(const LoadEntries());
+          },
         ),
         BlocProvider<YesterdayEntriesBloc>(
-          create: (_) => YesterdayEntriesBloc(
-            FoodWeightRepository(appDatabase),
-          ),
+          create: (BuildContext _) {
+            return YesterdayEntriesBloc(
+              FoodWeightRepository(localDataSource),
+            );
+          },
         ),
         BlocProvider<MenuBloc>(
-          create: (_) => MenuBloc(SettingsRepository(prefs))
-            ..add(const LoadingInitialMenuStateEvent()),
+          create: (BuildContext _) {
+            return MenuBloc(SettingsRepository(localDataSource))
+              ..add(const LoadingInitialMenuStateEvent());
+          },
         ),
       ],
       child: BlocListener<YesterdayEntriesBloc, YesterdayEntriesState>(
@@ -72,7 +73,7 @@ class HomeView extends StatelessWidget {
             showDialog<void>(
               context: context,
               barrierDismissible: false,
-              builder: (_) => const FancyLoadingIndicator(),
+              builder: (BuildContext _) => const FancyLoadingIndicator(),
             );
           } else if (state is YesterdayEntriesLoaded) {
             // Close the loading dialog.
@@ -89,7 +90,7 @@ class HomeView extends StatelessWidget {
             );
           }
         },
-        child: const HomePage(),
+        child: HomePage(localDataSource: localDataSource),
       ),
     );
   }
@@ -100,7 +101,9 @@ class HomeView extends StatelessWidget {
   }) {
     return showDialog<void>(
       context: context,
-      builder: (_) => YesterdayFoodEntriesDialog(foodEntries: foodEntries),
+      builder: (BuildContext _) {
+        return YesterdayFoodEntriesDialog(foodEntries: foodEntries);
+      },
     );
   }
 }

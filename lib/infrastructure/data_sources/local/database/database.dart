@@ -4,14 +4,14 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:portion_control/infrastructure/database/tables/body_weight_entries.dart';
-import 'package:portion_control/infrastructure/database/tables/food_entries.dart';
+import 'package:portion_control/infrastructure/data_sources/local/database/tables/body_weight_entries.dart';
+import 'package:portion_control/infrastructure/data_sources/local/database/tables/food_entries.dart';
 
 part 'database.g.dart';
 
 @DriftDatabase(tables: <Type>[BodyWeightEntries, FoodEntries])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase([QueryExecutor? e]) : super(e ?? _openConnection());
+  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   AppDatabase.forTesting(DatabaseConnection super.connection);
 
@@ -157,9 +157,9 @@ class AppDatabase extends _$AppDatabase {
 
     return (select(bodyWeightEntries)
           ..where(
-            ($BodyWeightEntriesTable t) =>
-                t.date.isBiggerOrEqualValue(startOfDay) &
-                t.date.isSmallerThanValue(endOfDay),
+            ($BodyWeightEntriesTable table) =>
+                table.date.isBiggerOrEqualValue(startOfDay) &
+                table.date.isSmallerThanValue(endOfDay),
           ))
         .getSingleOrNull();
   }
