@@ -55,6 +55,7 @@ dependencies:
   flutter_translate: any
   intl: ^0.20.2
   meta: any
+  mockito: ^5.4.6
   mocktail: ^1.0.4
   nested: ^1.0.0
   package_info_plus: ^8.3.0

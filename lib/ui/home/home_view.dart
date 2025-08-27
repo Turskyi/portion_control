@@ -68,34 +68,39 @@ class HomeView extends StatelessWidget {
         ),
       ],
       child: BlocListener<YesterdayEntriesBloc, YesterdayEntriesState>(
-        listener: (BuildContext context, YesterdayEntriesState state) {
-          if (state is YesterdayEntriesLoading) {
-            showDialog<void>(
-              context: context,
-              barrierDismissible: false,
-              builder: (BuildContext _) => const FancyLoadingIndicator(),
-            );
-          } else if (state is YesterdayEntriesLoaded) {
-            // Close the loading dialog.
-            Navigator.of(context).pop();
-            showYesterdayEntriesDialog(
-              context: context,
-              foodEntries: state.foodEntries,
-            );
-          } else if (state is YesterdayEntriesError) {
-            // Close the loading dialog
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
-          }
-        },
+        listener: _yesterdayEntriesStateListener,
         child: HomePage(localDataSource: localDataSource),
       ),
     );
   }
 
-  Future<void> showYesterdayEntriesDialog({
+  void _yesterdayEntriesStateListener(
+    BuildContext context,
+    YesterdayEntriesState state,
+  ) {
+    if (state is YesterdayEntriesLoading) {
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext _) => const FancyLoadingIndicator(),
+      );
+    } else if (state is YesterdayEntriesLoaded) {
+      // Close the loading dialog.
+      Navigator.of(context).pop();
+      _showYesterdayEntriesDialog(
+        context: context,
+        foodEntries: state.foodEntries,
+      );
+    } else if (state is YesterdayEntriesError) {
+      // Close the loading dialog
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.message)),
+      );
+    }
+  }
+
+  Future<void> _showYesterdayEntriesDialog({
     required BuildContext context,
     required List<FoodWeight> foodEntries,
   }) {

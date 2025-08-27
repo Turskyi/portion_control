@@ -6,7 +6,7 @@ import 'package:portion_control/di/injector.dart' as di;
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
-import 'package:portion_control/localization/localization_delelegate_getter.dart'
+import 'package:portion_control/localization/localization_delegate_getter.dart'
     as localization;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/about/about_page.dart';

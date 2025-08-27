@@ -39,13 +39,7 @@ class _HomePageState extends State<HomePage> {
       drawer: kIsWeb
           ? null
           : BlocListener<MenuBloc, MenuState>(
-              listener: (BuildContext _, MenuState state) {
-                if (state is FeedbackState) {
-                  _showFeedbackUi();
-                } else if (state is FeedbackSent) {
-                  _notifyFeedbackSent();
-                }
-              },
+              listener: _menuStateListener,
               child: AnimatedDrawer(localDataSource: widget.localDataSource),
             ),
       appBar: AppBar(
@@ -126,6 +120,14 @@ class _HomePageState extends State<HomePage> {
     _feedbackController?.removeListener(_onFeedbackChanged);
     _feedbackController = null;
     super.dispose();
+  }
+
+  void _menuStateListener(BuildContext _, MenuState state) {
+    if (state is FeedbackState) {
+      _showFeedbackUi();
+    } else if (state is FeedbackSent) {
+      _notifyFeedbackSent();
+    }
   }
 
   void _showFeedbackDialog(BuildContext context) =>
