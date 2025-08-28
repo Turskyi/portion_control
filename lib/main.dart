@@ -1,11 +1,14 @@
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/app.dart';
+import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/di/injector.dart' as di;
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
+import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
 import 'package:portion_control/localization/localization_delegate_getter.dart'
     as localization;
 import 'package:portion_control/router/app_route.dart';
@@ -64,7 +67,14 @@ Future<void> main() async {
   }
 
   final Map<String, WidgetBuilder> routeMap = <String, WidgetBuilder>{
-    AppRoute.landing.path: (BuildContext _) => const LandingPage(),
+    AppRoute.landing.path: (BuildContext _) {
+      return BlocProvider<SettingsBloc>(
+        create: (BuildContext _) {
+          return SettingsBloc(SettingsRepository(localDataSource));
+        },
+        child: LandingPage(localDataSource: localDataSource),
+      );
+    },
     AppRoute.home.path: (BuildContext _) {
       return HomeView(localDataSource: localDataSource);
     },

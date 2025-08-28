@@ -24,8 +24,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   ) : super(const LoadingMenuState()) {
     on<LoadingInitialMenuStateEvent>(_loadInitialMenuState);
     on<BugReportPressedEvent>(_onFeedbackRequested);
-    on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
-    on<SubmitFeedbackEvent>(_sendUserFeedback);
+    on<MenuClosingFeedbackEvent>(_onFeedbackDialogDismissed);
+    on<MenuSubmitFeedbackEvent>(_sendUserFeedback);
     on<MenuErrorEvent>(_handleError);
     on<ChangeLanguageEvent>(_changeLanguage);
   }
@@ -36,18 +36,18 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     BugReportPressedEvent _,
     Emitter<MenuState> emit,
   ) {
-    emit(FeedbackState(language: state.language));
+    emit(MenuFeedbackState(language: state.language));
   }
 
   FutureOr<void> _onFeedbackDialogDismissed(
-    ClosingFeedbackEvent _,
+    MenuClosingFeedbackEvent _,
     Emitter<MenuState> emit,
   ) {
     emit(MenuInitial(language: state.language));
   }
 
   FutureOr<void> _sendUserFeedback(
-    SubmitFeedbackEvent event,
+    MenuSubmitFeedbackEvent event,
     Emitter<MenuState> emit,
   ) async {
     emit(
@@ -150,7 +150,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   }
 
   FutureOr<void> _handleError(MenuErrorEvent event, Emitter<MenuState> emit) {
-    debugPrint('ErrorEvent: ${event.error}');
+    debugPrint('MenuErrorEvent: ${event.error}');
     //TODO: add ErrorMenuState and use it instead.
     emit(const MenuInitial());
   }

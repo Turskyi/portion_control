@@ -44,3 +44,15 @@ const double wideScreenContentWidth = 800.0;
 const String mailToScheme = 'mailto';
 
 const String telegramUrl = 'https://t.me/+Zmd6QYP3iXc2MjZi';
+
+const String feedbackTypeProperty = 'feedback_type';
+const String feedbackTextProperty = 'feedback_text';
+const String ratingProperty = 'rating';
+const String screenSizeProperty = 'screenSize';
+
+// Expires Mar 13, 2026.
+const String resendEmailDomain = 'kima.website';
+
+const String subjectParameter = 'subject';
+
+const String bodyParameter = 'body';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/ui/privacy/widgets/privacy_policy_page_content.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
@@ -9,10 +10,13 @@ class PrivacyPolicyPage extends StatelessWidget {
   const PrivacyPolicyPage({super.key});
 
   @override
-  Widget build(_) {
-    return const GradientBackgroundScaffold(
-      appBar: BlurredAppBar(leading: LeadingWidget(), title: 'Privacy Policy'),
-      body: ResponsiveContent(child: PrivacyPolicyPageContent()),
+  Widget build(BuildContext _) {
+    return GradientBackgroundScaffold(
+      appBar: BlurredAppBar(
+        leading: const LeadingWidget(),
+        title: translate('privacy_policy.title'),
+      ),
+      body: const ResponsiveContent(child: PrivacyPolicyPageContent()),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:nested/nested.dart' show SingleChildWidget;
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart'
     show HomeBloc, LoadEntries;
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
+import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart'
     show
         YesterdayEntriesBloc,
@@ -64,6 +65,11 @@ class HomeView extends StatelessWidget {
           create: (BuildContext _) {
             return MenuBloc(SettingsRepository(localDataSource))
               ..add(const LoadingInitialMenuStateEvent());
+          },
+        ),
+        BlocProvider<SettingsBloc>(
+          create: (BuildContext _) {
+            return SettingsBloc(SettingsRepository(localDataSource));
           },
         ),
       ],

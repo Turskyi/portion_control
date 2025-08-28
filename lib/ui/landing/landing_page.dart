@@ -1,6 +1,12 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
+import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/extensions/build_context_extensions.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
+import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/landing/widgets/glowing_animated_box.dart';
@@ -8,7 +14,12 @@ import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LandingPage extends StatelessWidget {
-  const LandingPage({super.key});
+  const LandingPage({
+    required this.localDataSource,
+    super.key,
+  });
+
+  final LocalDataSource localDataSource;
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +27,8 @@ class LandingPage extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final ColorScheme colorScheme = theme.colorScheme;
     final double? titleMediumSize = textTheme.titleMedium?.fontSize;
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final bool isNarrowScreen = screenWidth < 600;
 
-    // Helper for translation
+    // Helper for translation.
     String t(String key) => translate(key);
     return GradientBackgroundScaffold(
       body: Center(
@@ -88,12 +97,14 @@ class LandingPage extends StatelessWidget {
         ),
       ),
       persistentFooterAlignment: AlignmentDirectional.center,
-      persistentFooterButtons: isNarrowScreen
+      persistentFooterButtons: context.isNarrowScreen
           ? <Widget>[
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_horiz, color: colorScheme.primary),
                 onSelected: (String result) {
-                  if (result == AppRoute.privacyPolity.name) {
+                  if (result == 'language') {
+                    _showLanguageSelectionDialog(context);
+                  } else if (result == AppRoute.privacyPolity.name) {
                     Navigator.pushNamed(context, AppRoute.privacyPolity.path);
                   } else if (result == AppRoute.about.name) {
                     Navigator.pushNamed(context, AppRoute.about.path);
@@ -116,115 +127,117 @@ class LandingPage extends StatelessWidget {
                     );
                   }
                 },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                  PopupMenuItem<String>(
-                    value: AppRoute.privacyPolity.name,
-                    child: Text(t('landing_page.menu_item_privacy_policy')),
-                  ),
-                  PopupMenuItem<String>(
-                    value: AppRoute.about.name,
-                    child: Text(t('landing_page.menu_item_about')),
-                  ),
-                  PopupMenuItem<String>(
-                    value: AppRoute.support.name,
-                    child: Text(t('landing_page.menu_item_support')),
-                  ),
-                  const PopupMenuDivider(),
-                  PopupMenuItem<String>(
-                    value: constants.googlePlayUrl,
-                    child: Semantics(
-                      label: t('landing_page.semantics_label_google_play'),
-                      button: true,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Material(
-                          // Ensures the background remains unchanged.
-                          color: Colors.transparent,
-                          child: InkWell(
-                            splashColor: colorScheme.primary.withOpacity(0.2),
-                            onTap: () {
-                              launchUrl(
-                                Uri.parse(constants.googlePlayUrl),
-                                mode: LaunchMode.externalApplication,
-                              );
-                            },
-                            child: Ink.image(
-                              image: const AssetImage(
-                                '${constants.imagePath}play_store_badge.png',
+                itemBuilder: (BuildContext _) {
+                  final double badgeHeight = 40.0;
+                  return <PopupMenuEntry<String>>[
+                    PopupMenuItem<String>(
+                      value: 'language',
+                      child: Text(t('language')),
+                    ),
+                    const PopupMenuDivider(),
+                    PopupMenuItem<String>(
+                      value: AppRoute.privacyPolity.name,
+                      child: Text(t('landing_page.menu_item_privacy_policy')),
+                    ),
+                    PopupMenuItem<String>(
+                      value: AppRoute.about.name,
+                      child: Text(t('landing_page.menu_item_about')),
+                    ),
+                    PopupMenuItem<String>(
+                      value: AppRoute.support.name,
+                      child: Text(t('landing_page.menu_item_support')),
+                    ),
+                    const PopupMenuDivider(),
+                    PopupMenuItem<String>(
+                      value: constants.googlePlayUrl,
+                      child: Semantics(
+                        label: t('landing_page.semantics_label_google_play'),
+                        button: true,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Material(
+                            // Ensures the background remains unchanged.
+                            color: Colors.transparent,
+                            child: InkWell(
+                              splashColor: colorScheme.primary.withOpacity(0.2),
+                              onTap: _launchGooglePlayUrl,
+                              child: Ink.image(
+                                image: const AssetImage(
+                                  '${constants.imagePath}play_store_badge.png',
+                                ),
+                                height: badgeHeight,
+                                fit: BoxFit.fitHeight,
                               ),
-                              height: 40,
-                              fit: BoxFit.fitWidth,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: constants.testFlightUrl,
-                    child: Semantics(
-                      label: t('landing_page.semantics_label_testflight'),
-                      button: true,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Material(
-                          // Ensures the background remains unchanged.
-                          color: Colors.transparent,
-                          child: InkWell(
-                            splashColor: colorScheme.primary.withOpacity(0.2),
-                            onTap: () {
-                              launchUrl(
-                                Uri.parse(constants.testFlightUrl),
-                                mode: LaunchMode.externalApplication,
-                              );
-                            },
-                            child: Ink.image(
-                              image: const AssetImage(
-                                '${constants.imagePath}test_flight_badge.png',
+                    PopupMenuItem<String>(
+                      value: constants.testFlightUrl,
+                      child: Semantics(
+                        label: t('landing_page.semantics_label_testflight'),
+                        button: true,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Material(
+                            // Ensures the background remains unchanged.
+                            color: Colors.transparent,
+                            child: InkWell(
+                              splashColor: colorScheme.primary.withOpacity(0.2),
+                              onTap: _launchTestFlightUrl,
+                              child: Ink.image(
+                                image: const AssetImage(
+                                  '${constants.imagePath}test_flight_badge.png',
+                                ),
+                                height: badgeHeight,
                               ),
-                              height: 40,
-                              fit: BoxFit.fitWidth,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: constants.macOsUrl,
-                    child: Semantics(
-                      label: t('landing_page.semantics_label_macos'),
-                      button: true,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Material(
-                          // Ensures the background remains unchanged.
-                          color: Colors.transparent,
-                          child: InkWell(
-                            splashColor: colorScheme.primary.withOpacity(0.2),
-                            onTap: () {
-                              launchUrl(
-                                Uri.parse(constants.macOsUrl),
-                                mode: LaunchMode.externalApplication,
-                              );
-                            },
-                            child: Ink.image(
-                              image: const AssetImage(
-                                '${constants.imagePath}mac_os_badge.png',
+                    PopupMenuItem<String>(
+                      value: constants.macOsUrl,
+                      child: Semantics(
+                        label: t('landing_page.semantics_label_macos'),
+                        button: true,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Material(
+                            // Ensures the background remains unchanged.
+                            color: Colors.transparent,
+                            child: InkWell(
+                              splashColor: colorScheme.primary.withOpacity(0.2),
+                              onTap: _launchMacOsUrl,
+                              child: Ink.image(
+                                image: const AssetImage(
+                                  '${constants.imagePath}mac_os_badge.png',
+                                ),
+                                height: badgeHeight,
                               ),
-                              height: 40,
-                              // width: 140,
-                              fit: BoxFit.fitWidth,
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ];
+                },
               ),
             ]
           : <Widget>[
+              Semantics(
+                label: t('language'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () => _showLanguageSelectionDialog(context),
+                  icon: Icon(
+                    Icons.language,
+                    size: titleMediumSize,
+                  ),
+                  label: Text(t('language')),
+                ),
+              ),
               Semantics(
                 label: t('landing_page.menu_item_privacy_policy'),
                 button: true,
@@ -277,12 +290,7 @@ class LandingPage extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       splashColor: colorScheme.primary.withOpacity(0.2),
-                      onTap: () {
-                        launchUrl(
-                          Uri.parse(constants.googlePlayUrl),
-                          mode: LaunchMode.externalApplication,
-                        );
-                      },
+                      onTap: _launchGooglePlayUrl,
                       child: Ink.image(
                         image: const AssetImage(
                           '${constants.imagePath}play_store_badge.png',
@@ -305,12 +313,7 @@ class LandingPage extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       splashColor: colorScheme.primary.withOpacity(0.2),
-                      onTap: () {
-                        launchUrl(
-                          Uri.parse(constants.testFlightUrl),
-                          mode: LaunchMode.externalApplication,
-                        );
-                      },
+                      onTap: _launchTestFlightUrl,
                       child: Ink.image(
                         image: const AssetImage(
                           '${constants.imagePath}test_flight_badge.png',
@@ -333,12 +336,7 @@ class LandingPage extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       splashColor: colorScheme.primary.withOpacity(0.2),
-                      onTap: () {
-                        launchUrl(
-                          Uri.parse(constants.macOsUrl),
-                          mode: LaunchMode.externalApplication,
-                        );
-                      },
+                      onTap: _launchMacOsUrl,
                       child: Ink.image(
                         image: const AssetImage(
                           '${constants.imagePath}mac_os_badge.png',
@@ -353,5 +351,94 @@ class LandingPage extends StatelessWidget {
               ),
             ],
     );
+  }
+
+  void _launchMacOsUrl() {
+    launchUrl(
+      Uri.parse(constants.macOsUrl),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
+  void _launchGooglePlayUrl() {
+    launchUrl(
+      Uri.parse(constants.googlePlayUrl),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
+  void _launchTestFlightUrl() {
+    launchUrl(
+      Uri.parse(constants.testFlightUrl),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
+  void _showLanguageSelectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BlocProvider<SettingsBloc>(
+          create: (BuildContext _) {
+            return SettingsBloc(SettingsRepository(localDataSource));
+          },
+          child: BlocBuilder<SettingsBloc, SettingsState>(
+            builder: (BuildContext context, SettingsState state) {
+              final Language currentLanguage = state.language;
+              return AlertDialog(
+                title: Text(translate('select_language')),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    RadioListTile<Language>(
+                      title: Text(translate('english')),
+                      value: Language.en,
+                      groupValue: currentLanguage,
+                      onChanged: (Language? newLanguage) {
+                        if (newLanguage != null) {
+                          _changeLanguage(
+                            context: context,
+                            newLanguage: newLanguage,
+                          );
+                        }
+                      },
+                    ),
+                    RadioListTile<Language>(
+                      title: const Text('Українська'),
+                      value: Language.uk,
+                      groupValue: currentLanguage,
+                      onChanged: (Language? newLanguage) {
+                        if (newLanguage != null) {
+                          _changeLanguage(
+                            context: context,
+                            newLanguage: newLanguage,
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void _changeLanguage({
+    required BuildContext context,
+    required Language newLanguage,
+  }) {
+    changeLocale(context, newLanguage.isoLanguageCode)
+        // The returned value is always `null`.
+        .then((Object? _) {
+      if (context.mounted) {
+        context
+            .read<SettingsBloc>()
+            .add(SettingsChangeLanguageEvent(newLanguage));
+        Navigator.pop(context);
+      }
+    });
   }
 }
