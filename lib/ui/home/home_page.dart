@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       persistentFooterAlignment: AlignmentDirectional.center,
-      persistentFooterButtons: context.isNarrowScreen
+      persistentFooterButtons: kIsWeb && context.isNarrowScreen
           ? <Widget>[
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_horiz, color: colorScheme.primary),
@@ -206,74 +206,79 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
             ]
-          : <Widget>[
-              Semantics(
-                label: t('language'),
-                button: true,
-                child: TextButton.icon(
-                  onPressed: _showLanguageSelectionDialog,
-                  icon: Icon(
-                    Icons.language,
-                    size: titleMediumSize,
+          : kIsWeb
+              ? <Widget>[
+                  Semantics(
+                    label: t('language'),
+                    button: true,
+                    child: TextButton.icon(
+                      onPressed: _showLanguageSelectionDialog,
+                      icon: Icon(
+                        Icons.language,
+                        size: titleMediumSize,
+                      ),
+                      label: Text(t('language')),
+                    ),
                   ),
-                  label: Text(t('language')),
-                ),
-              ),
-              Semantics(
-                label: translate('semantic_label.privacy_policy_button'),
-                button: true,
-                child: TextButton.icon(
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoute.privacyPolity.path);
-                  },
-                  icon: Icon(
-                    Icons.privacy_tip,
-                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                  Semantics(
+                    label: translate('semantic_label.privacy_policy_button'),
+                    button: true,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoute.privacyPolity.path,
+                        );
+                      },
+                      icon: Icon(
+                        Icons.privacy_tip,
+                        size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                      ),
+                      label: Text(translate('button.privacy_policy')),
+                    ),
                   ),
-                  label: Text(translate('button.privacy_policy')),
-                ),
-              ),
-              Semantics(
-                label: translate('semantic_label.about_us_button'),
-                button: true,
-                child: TextButton.icon(
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoute.about.path);
-                  },
-                  icon: Icon(
-                    Icons.group,
-                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                  Semantics(
+                    label: translate('semantic_label.about_us_button'),
+                    button: true,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoute.about.path);
+                      },
+                      icon: Icon(
+                        Icons.group,
+                        size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                      ),
+                      label: Text(translate('button.about_us')),
+                    ),
                   ),
-                  label: Text(translate('button.about_us')),
-                ),
-              ),
-              Semantics(
-                label: t('landing_page.menu_item_support'),
-                button: true,
-                child: TextButton.icon(
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoute.support.path);
-                  },
-                  icon: Icon(
-                    Icons.support_agent,
-                    size: titleMediumSize,
+                  Semantics(
+                    label: t('landing_page.menu_item_support'),
+                    button: true,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoute.support.path);
+                      },
+                      icon: Icon(
+                        Icons.support_agent,
+                        size: titleMediumSize,
+                      ),
+                      label: Text(t('landing_page.menu_item_support')),
+                    ),
                   ),
-                  label: Text(t('landing_page.menu_item_support')),
-                ),
-              ),
-              Semantics(
-                label: translate('semantic_label.feedback_button'),
-                button: true,
-                child: TextButton.icon(
-                  onPressed: () => _showFeedbackDialog(context),
-                  icon: Icon(
-                    Icons.feedback,
-                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                  Semantics(
+                    label: translate('semantic_label.feedback_button'),
+                    button: true,
+                    child: TextButton.icon(
+                      onPressed: () => _showFeedbackDialog(context),
+                      icon: Icon(
+                        Icons.feedback,
+                        size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                      ),
+                      label: Text(translate('button.feedback')),
+                    ),
                   ),
-                  label: Text(translate('button.feedback')),
-                ),
-              ),
-            ],
+                ]
+              : null,
     );
   }
 
