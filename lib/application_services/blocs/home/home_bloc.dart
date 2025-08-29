@@ -352,7 +352,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> _submitDetails(
-    _,
+    SubmitDetails _,
     Emitter<HomeState> emit,
   ) async {
     if (state.isNotEmptyDetails) {
@@ -360,12 +360,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final DateTime? dateOfBirth = state.dateOfBirth;
       final Gender gender = state.gender;
 
-      if (height < constants.minHeight || height > constants.maxHeight) {
+      if (height < constants.minUserHeight ||
+          height > constants.maxUserHeight) {
         emit(
           DetailsError(
             errorMessage:
-                'Height must be between ${constants.minHeight} cm and '
-                '${constants.maxHeight} cm.',
+                'Height must be between ${constants.minUserHeight} cm and '
+                '${constants.maxUserHeight} cm.',
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
@@ -681,7 +682,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> _setDetailsToEditMode(
-    _,
+    EditDetails _,
     Emitter<HomeState> emit,
   ) {
     emit(
@@ -695,7 +696,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> _setBodyWeightToEditMode(
-    _,
+    EditBodyWeight _,
     Emitter<HomeState> emit,
   ) {
     emit(
@@ -729,7 +730,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> _clearUserData(
-    _,
+    ClearUserData _,
     Emitter<HomeState> emit,
   ) async {
     try {
@@ -757,7 +758,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> _clearAllFoodEntries(
-    _,
+    ResetFoodEntries _,
     Emitter<HomeState> emit,
   ) async {
     try {
@@ -788,7 +789,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> _saveMealsConfirmation(
-    _,
+    ConfirmMealsLogged _,
     Emitter<HomeState> emit,
   ) async {
     bool isSaved = await _userPreferencesRepository.saveMealsConfirmed();
@@ -820,7 +821,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _onFeedbackRequested(_, Emitter<HomeState> emit) {
+  FutureOr<void> _onFeedbackRequested(
+    HomeBugReportPressedEvent _,
+    Emitter<HomeState> emit,
+  ) {
     _previousState = state;
     emit(
       HomeFeedbackState(
@@ -834,7 +838,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  FutureOr<void> _onFeedbackDialogDismissed(_, Emitter<HomeState> emit) {
+  FutureOr<void> _onFeedbackDialogDismissed(
+    HomeClosingFeedbackEvent _,
+    Emitter<HomeState> emit,
+  ) {
     if (_previousState != null) {
       emit(_previousState!);
     } else {

@@ -24,23 +24,30 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   ) : super(const LoadingMenuState()) {
     on<LoadingInitialMenuStateEvent>(_loadInitialMenuState);
     on<BugReportPressedEvent>(_onFeedbackRequested);
-    on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
-    on<SubmitFeedbackEvent>(_sendUserFeedback);
+    on<MenuClosingFeedbackEvent>(_onFeedbackDialogDismissed);
+    on<MenuSubmitFeedbackEvent>(_sendUserFeedback);
     on<MenuErrorEvent>(_handleError);
+    on<ChangeLanguageEvent>(_changeLanguage);
   }
 
   final ISettingsRepository _settingsRepository;
 
-  FutureOr<void> _onFeedbackRequested(_, Emitter<MenuState> emit) {
-    emit(FeedbackState(language: state.language));
+  FutureOr<void> _onFeedbackRequested(
+    BugReportPressedEvent _,
+    Emitter<MenuState> emit,
+  ) {
+    emit(MenuFeedbackState(language: state.language));
   }
 
-  FutureOr<void> _onFeedbackDialogDismissed(_, Emitter<MenuState> emit) {
+  FutureOr<void> _onFeedbackDialogDismissed(
+    MenuClosingFeedbackEvent _,
+    Emitter<MenuState> emit,
+  ) {
     emit(MenuInitial(language: state.language));
   }
 
   FutureOr<void> _sendUserFeedback(
-    SubmitFeedbackEvent event,
+    MenuSubmitFeedbackEvent event,
     Emitter<MenuState> emit,
   ) async {
     emit(
@@ -134,14 +141,41 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     return screenshotFilePath;
   }
 
-  FutureOr<void> _loadInitialMenuState(_, Emitter<MenuState> emit) {
+  FutureOr<void> _loadInitialMenuState(
+    LoadingInitialMenuStateEvent _,
+    Emitter<MenuState> emit,
+  ) {
     final Language savedLanguage = _settingsRepository.getLanguage();
     emit(MenuInitial(language: savedLanguage));
   }
 
   FutureOr<void> _handleError(MenuErrorEvent event, Emitter<MenuState> emit) {
-    debugPrint('ErrorEvent: ${event.error}');
+    debugPrint('MenuErrorEvent: ${event.error}');
     //TODO: add ErrorMenuState and use it instead.
     emit(const MenuInitial());
+  }
+
+  FutureOr<void> _changeLanguage(
+    ChangeLanguageEvent event,
+    Emitter<MenuState> emit,
+  ) async {
+    final Language language = event.language;
+
+    final MenuState state = this.state;
+
+    if (language != state.language) {
+      final bool isSaved = await _settingsRepository.saveLanguageIsoCode(
+        language.isoLanguageCode,
+      );
+      if (isSaved) {
+        if (state is MenuInitial) {
+          emit(state.copyWith(language: language));
+        } else {
+          MenuInitial(language: language);
+        }
+      } else {
+        //TODO: not sure what to do.
+      }
+    }
   }
 }

@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
@@ -23,6 +23,8 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Helper for translation.
+    String t(String key) => translate(key);
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (BuildContext context, HomeState state) {
         final ThemeData themeData = Theme.of(context);
@@ -32,8 +34,8 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
         final String dateOfBirth = state.dateOfBirth?.toReadableDate() ?? '';
         final double height = state.height;
         final String title = state is BodyWeightSubmittedState
-            ? 'Your Details'
-            : 'Enter Your Details';
+            ? t('user_details_widget.title_your_details')
+            : t('user_details_widget.title_enter_your_details');
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 16,
@@ -48,14 +50,6 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (!kIsWeb)
-                  IconButton(
-                    icon: Icon(
-                      Icons.menu,
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    onPressed: () => Scaffold.of(context).openEndDrawer(),
-                  ),
               ],
             ),
             GenderSelectionWidget(
@@ -64,11 +58,12 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
               isDetailsSubmitted: state is DetailsSubmittedState,
             ),
             Row(
+              spacing: 8.0,
               children: <Widget>[
                 if (gender.isMaleOrFemale)
                   Expanded(
                     child: InputRow(
-                      label: 'Date of Birth',
+                      label: t('user_details_widget.label_date_of_birth'),
                       controller: _dateOfBirthTextEditingController
                         ..text = dateOfBirth,
                       readOnly: true,
@@ -80,11 +75,10 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                       ),
                     ),
                   ),
-                const SizedBox(width: 8),
                 Expanded(
                   child: InputRow(
-                    label: 'Height',
-                    unit: 'cm',
+                    label: t('user_details_widget.label_height'),
+                    unit: t('user_details_widget.unit_cm'),
                     initialValue: '${height > 0 ? height : ''}',
                     isRequired: true,
                     value: state is DetailsSubmittedState ? '$height' : null,

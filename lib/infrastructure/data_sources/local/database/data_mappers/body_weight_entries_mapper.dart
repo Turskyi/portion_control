@@ -1,5 +1,5 @@
 import 'package:portion_control/domain/models/body_weight.dart';
-import 'package:portion_control/infrastructure/database/database.dart';
+import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 
 extension BodyWeightEntriesMapper on BodyWeightEntry {
   BodyWeight toDomain() {

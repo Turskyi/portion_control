@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/ui/widgets/responsive_button.dart';
 
@@ -24,28 +26,47 @@ class SubmitEditDetailsButton extends StatelessWidget {
       },
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (BuildContext context, HomeState state) {
-          return ResponsiveButton(
-            // Assign a unique key to differentiate widgets during
-            // transitions.
-            key: ValueKey<bool>(state is DetailsSubmittedState),
-            label: state is DetailsSubmittedState
-                ? 'Edit Details'
-                : 'Submit Details',
-            onPressed: state.height < constants.minHeight
-                ? null
-                : state is DetailsSubmittedState
-                    ? () async {
-                        if (state.bodyWeightEntries.isEmpty) {
-                          context.read<HomeBloc>().add(const EditDetails());
-                        } else {
-                          await _showConfirmationDialog(context);
-                        }
-                      }
-                    : () => context.read<HomeBloc>().add(const SubmitDetails()),
+          final bool isDetailsSubmitted = state is DetailsSubmittedState;
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return BlocListener<MenuBloc, MenuState>(
+                listenWhen: _shouldRebuildOnLanguageChange,
+                listener: (BuildContext _, MenuState __) {
+                  setState(() {});
+                },
+                child: ResponsiveButton(
+                  // Assign a unique key to differentiate widgets during
+                  // transitions.
+                  key: ValueKey<bool>(isDetailsSubmitted),
+                  label: isDetailsSubmitted
+                      ? translate('button.edit_details')
+                      : translate('button.submit_details'),
+                  onPressed: state.height < constants.minUserHeight
+                      ? null
+                      : isDetailsSubmitted
+                          ? () async {
+                              if (state.bodyWeightEntries.isEmpty) {
+                                context
+                                    .read<HomeBloc>()
+                                    .add(const EditDetails());
+                              } else {
+                                await _showConfirmationDialog(context);
+                              }
+                            }
+                          : () => context
+                              .read<HomeBloc>()
+                              .add(const SubmitDetails()),
+                ),
+              );
+            },
           );
         },
       ),
     );
+  }
+
+  bool _shouldRebuildOnLanguageChange(MenuState previous, MenuState current) {
+    return previous.language != current.language;
   }
 
   Future<void> _showConfirmationDialog(BuildContext context) async {
@@ -53,25 +74,22 @@ class SubmitEditDetailsButton extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Reset Data'),
-          content: const Text(
-            'Changing your details will affect your tracking. Do you want to '
-            'start fresh and reset all data?',
-          ),
+          title: Text(translate('dialog.reset_data_title')),
+          content: Text(translate('dialog.reset_data_content')),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 // Don't reset data.
                 Navigator.of(context).pop(false);
               },
-              child: const Text('Keep My Records'),
+              child: Text(translate('button.keep_my_records')),
             ),
             TextButton(
               onPressed: () {
                 // Reset all data.
                 Navigator.of(context).pop(true);
               },
-              child: const Text('Start Fresh'),
+              child: Text(translate('button.start_fresh')),
             ),
           ],
         );

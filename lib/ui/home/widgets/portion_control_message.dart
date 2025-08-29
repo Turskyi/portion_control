@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/ui/home/widgets/meal_confirmation_card.dart';
@@ -11,6 +12,11 @@ class PortionControlMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final TextStyle? titleMediumStyle = textTheme.titleMedium;
+    final String gramsSuffix = translate('portion_control_status.grams_suffix');
+    final String useAsReferenceSuffix = translate(
+      'portion_control_status.use_as_reference_suffix',
+    );
+
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (BuildContext context, HomeState state) {
         final bool isWeightAboveHealthy = state.isWeightAboveHealthy;
@@ -21,8 +27,7 @@ class PortionControlMessage extends StatelessWidget {
         final double yesterdayTotal = state.yesterdayConsumedTotal;
         if (state.hasNoPortionControl) {
           return Text(
-            '🍽️ No portion control today!\n'
-            '📝 Log everything you eat to track how it affects your weight.',
+            translate('portion_control_status.no_portion_control_today'),
             style: titleMediumStyle,
           );
         } else if (state.isWeightIncreasingOrSame && isWeightAboveHealthy) {
@@ -30,8 +35,12 @@ class PortionControlMessage extends StatelessWidget {
               portionControl > constants.safeMinimumFoodIntakeG) {
             if (portionControl != constants.maxDailyFoodLimit) {
               return Text(
-                '⚖️ Portion Control for today: '
-                '${state.formattedPortionControl} g 🍽️',
+                '${translate(
+                  'portion_control_status.portion_control_for_today_prefix',
+                )}'
+                '${state.formattedPortionControl}${translate(
+                  'portion_control_status.grams_suffix_with_emoji',
+                )}',
                 style: titleMediumStyle,
               );
             }
@@ -44,16 +53,16 @@ class PortionControlMessage extends StatelessWidget {
             spacing: 16,
             children: <Widget>[
               Text(
-                '📉 Your weight is decreasing! 🎉\n'
-                'Enjoy your meals without strict Portion Control, but keep '
-                'logging to track your progress. 🍽️',
+                translate('portion_control_status.weight_decreasing_celebrate'),
                 style: titleMediumStyle,
               ),
               if (yesterdayTotal > 0)
                 Text(
-                  '📊 Yesterday: $yesterdayTotal g'
+                  '${translate(
+                    'portion_control_status.yesterday_prefix',
+                  )}$yesterdayTotal$gramsSuffix'
                   '${state.previousPortionControlInfo}\n'
-                  'Use this as a reference today!',
+                  '$useAsReferenceSuffix',
                   // Slightly smaller than titleMediumStyle.
                   style: textTheme.bodyMedium,
                 )
@@ -61,7 +70,7 @@ class PortionControlMessage extends StatelessWidget {
                   portionControl < constants.maxDailyFoodLimit)
                 Text(
                   '${state.previousPortionControlInfo}\n'
-                  'Use this as a reference today!',
+                  '$useAsReferenceSuffix',
                   // Slightly smaller than titleMediumStyle.
                   style: textTheme.bodyMedium,
                 ),
@@ -69,8 +78,7 @@ class PortionControlMessage extends StatelessWidget {
           );
         } else if (isWeightIncreasing && isWeightBelowHealthy) {
           return Text(
-            '📈 Your weight is increasing, which is good! 💪 '
-            'Ensure you eat nutritious meals to reach a healthy weight. 🥗🍞',
+            translate('portion_control_status.weight_increasing_good'),
             style: titleMediumStyle,
           );
         } else if (state.isWeightDecreasingOrSame && isWeightBelowHealthy) {
@@ -79,10 +87,12 @@ class PortionControlMessage extends StatelessWidget {
             if (portionControl != constants.maxDailyFoodLimit &&
                 portionControl != constants.safeMinimumFoodIntakeG) {
               return Text(
-                '⚠️ Warning: Your weight is dropping below the healthy range! '
-                '❗\nConsider increasing your food intake. 🍔🍚\n🍽️ Minimum '
-                'intake for today: '
-                '${state.formattedPortionControl} g ⚖️',
+                '${translate(
+                  'portion_control_status.warning_weight_dropping_prefix',
+                )}'
+                '${state.formattedPortionControl}${translate(
+                  'portion_control_status.grams_suffix_with_emoji',
+                )}',
                 style: titleMediumStyle,
               );
             }
@@ -90,8 +100,9 @@ class PortionControlMessage extends StatelessWidget {
             return MealConfirmationCard(yesterdayTotal: yesterdayTotal);
           } else {
             return Text(
-              '⚠️ Warning: Your weight is dropping below the healthy range! ❗ '
-              'Consider increasing your food intake. 🍔🍚',
+              translate(
+                'portion_control_status.warning_weight_dropping_general',
+              ),
               style: titleMediumStyle,
             );
           }

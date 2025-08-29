@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class HealthyWeightRecommendations extends StatelessWidget {
   const HealthyWeightRecommendations({
@@ -23,6 +24,8 @@ class HealthyWeightRecommendations extends StatelessWidget {
     final double minHealthyWeight = 18.5 * (heightInMeters * heightInMeters);
     final double maxHealthyWeight = 24.9 * (heightInMeters * heightInMeters);
 
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final String kgSuffix = translate('healthy_weight.kg_suffix');
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -36,22 +39,26 @@ class HealthyWeightRecommendations extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Your Body Mass Index (BMI): ${bmi.toStringAsFixed(1)}',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    '${translate(
+                      'healthy_weight.your_bmi_prefix',
+                    )}${bmi.toStringAsFixed(1)}',
+                    style: textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Healthy Weight Range: '
-                    '${minHealthyWeight.toStringAsFixed(1)} – '
-                    '${maxHealthyWeight.toStringAsFixed(1)} kg',
-                    style: Theme.of(context).textTheme.titleMedium,
+                    '${translate('healthy_weight.range_prefix')}'
+                    '${minHealthyWeight.toStringAsFixed(1)}${translate(
+                      'healthy_weight.range_separator',
+                    )}'
+                    '${maxHealthyWeight.toStringAsFixed(1)}$kgSuffix',
+                    style: textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     _getBmiMessage(bmi),
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: _getBmiMessageColor(bmi, context),
-                        ),
+                    style: textTheme.titleLarge?.copyWith(
+                      color: _getBmiMessageColor(bmi, context),
+                    ),
                   ),
                 ],
               ),
@@ -64,16 +71,13 @@ class HealthyWeightRecommendations extends StatelessWidget {
 
   String _getBmiMessage(double bmi) {
     if (bmi < 18.5) {
-      return 'You are underweight. 🥦💪 \n'
-          'You may need to eat more to maintain health.';
+      return translate('healthy_weight.underweight_message');
     } else if (bmi >= 18.5 && bmi <= 24.9) {
-      return 'You are in the healthy weight range. 🎉💚 \nKeep it up!';
+      return translate('healthy_weight.healthy_message');
     } else if (bmi >= 25.0 && bmi <= 29.9) {
-      return 'You are above the recommended weight range. 🍔⚠️\n'
-          'Small lifestyle adjustments can support long-term well-being.';
+      return translate('healthy_weight.overweight_message');
     } else {
-      return 'You are in the obese range. 🍩🚨\n'
-          'Managing portions could help stabilize your weight.';
+      return translate('healthy_weight.obese_message');
     }
   }
 

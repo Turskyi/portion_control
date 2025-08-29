@@ -9,6 +9,7 @@ class GradientBackgroundScaffold extends StatelessWidget {
     this.drawer,
     this.persistentFooterAlignment = AlignmentDirectional.centerEnd,
     this.persistentFooterButtons,
+    this.bottomNavigationBar,
   });
 
   final Widget body;
@@ -31,6 +32,15 @@ class GradientBackgroundScaffold extends StatelessWidget {
   /// The [persistentFooterButtons] are rendered above the
   /// [bottomNavigationBar] but below the [body].
   final List<Widget>? persistentFooterButtons;
+
+  /// A bottom navigation bar to display at the bottom of the scaffold.
+  ///
+  /// Snack bars slide from underneath the bottom navigation bar while bottom
+  /// sheets are stacked on top.
+  ///
+  /// The [bottomNavigationBar] is rendered below the [persistentFooterButtons]
+  /// and the [body].
+  final Widget? bottomNavigationBar;
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +69,7 @@ class GradientBackgroundScaffold extends StatelessWidget {
         floatingActionButton: floatingActionButton,
         persistentFooterAlignment: persistentFooterAlignment,
         persistentFooterButtons: persistentFooterButtons,
+        bottomNavigationBar: bottomNavigationBar,
       ),
     );
   }

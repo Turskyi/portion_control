@@ -1,13 +1,11 @@
-import 'package:drift/drift.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
-import 'package:portion_control/infrastructure/database/data_mappers/food_entries_mapper.dart';
-import 'package:portion_control/infrastructure/database/database.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 
 class FoodWeightRepository implements IFoodWeightRepository {
-  const FoodWeightRepository(this._database);
+  const FoodWeightRepository(this._localDataSource);
 
-  final AppDatabase _database;
+  final LocalDataSource _localDataSource;
 
   /// Insert a new food weight entry.
   @override
@@ -15,38 +13,26 @@ class FoodWeightRepository implements IFoodWeightRepository {
     required double weight,
     required DateTime date,
   }) {
-    final FoodEntriesCompanion entry = FoodEntriesCompanion(
-      weight: Value<double>(weight),
-      date: Value<DateTime>(date),
-    );
-
-    return _database.insertFoodEntry(entry);
+    return _localDataSource.addFoodWeightEntry(weight: weight, date: date);
   }
 
   /// Retrieve food weight entries from today.
   @override
-  Future<List<FoodWeight>> getTodayFoodEntries() async {
-    final List<FoodEntry> foodEntries =
-        await _database.getFoodEntriesByDate(DateTime.now());
-
-    return foodEntries
-        .map((FoodEntry weightEntry) => weightEntry.toDomain())
-        .toList();
+  Future<List<FoodWeight>> getTodayFoodEntries() {
+    return _localDataSource.getTodayFoodEntries();
   }
 
   /// Retrieve food weight entries by a specific date.
   @override
-  Future<List<FoodWeight>> getFoodEntriesByDate(DateTime date) async {
-    final List<FoodEntry> foodEntries =
-        await _database.getFoodEntriesByDate(date);
-    return foodEntries
-        .map((FoodEntry weightEntry) => weightEntry.toDomain())
-        .toList();
+  Future<List<FoodWeight>> getFoodEntriesByDate(DateTime date) {
+    return _localDataSource.getFoodEntriesByDate(date);
   }
 
   /// Delete a food weight entry by [id].
   @override
-  Future<int> deleteFoodWeightEntry(int id) => _database.deleteFoodEntry(id);
+  Future<int> deleteFoodWeightEntry(int id) {
+    return _localDataSource.deleteFoodWeightEntry(id);
+  }
 
   /// Update an existing food weight entry.
   @override
@@ -54,22 +40,22 @@ class FoodWeightRepository implements IFoodWeightRepository {
     required int foodEntryId,
     required double foodEntryValue,
   }) {
-    return _database.updateFoodEntry(id: foodEntryId, weight: foodEntryValue);
+    return _localDataSource.updateFoodWeightEntry(
+      foodEntryId: foodEntryId,
+      foodEntryValue: foodEntryValue,
+    );
   }
 
   @override
-  Future<double> getTotalConsumedYesterday() async {
-    return _database.getTotalConsumedYesterday();
+  Future<double> getTotalConsumedYesterday() {
+    return _localDataSource.getTotalConsumedYesterday();
   }
 
   @override
-  Future<int> clearAllTrackingData() => _database.clearFoodEntries();
+  Future<int> clearAllTrackingData() => _localDataSource.clearAllTrackingData();
 
   @override
-  Future<List<FoodWeight>> fetchYesterdayEntries() async {
-    final List<FoodEntry> foodEntries = await _database.fetchYesterdayEntries();
-    return foodEntries
-        .map((FoodEntry weightEntry) => weightEntry.toDomain())
-        .toList();
+  Future<List<FoodWeight>> fetchYesterdayEntries() {
+    return _localDataSource.fetchYesterdayEntries();
   }
 }

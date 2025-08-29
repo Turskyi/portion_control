@@ -1,14 +1,14 @@
-import 'package:drift/drift.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/services/repositories/i_body_weight_repository.dart';
-import 'package:portion_control/infrastructure/database/data_mappers/body_weight_entries_mapper.dart';
-import 'package:portion_control/infrastructure/database/database.dart';
+import 'package:portion_control/infrastructure/data_sources/local/database/data_mappers/body_weight_entries_mapper.dart';
+import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 
 class BodyWeightRepository implements IBodyWeightRepository {
-  /// Constructor to inject the database instance.
-  const BodyWeightRepository(this._database);
+  /// Constructor to inject the local data source instance.
+  const BodyWeightRepository(this._localDataSource);
 
-  final AppDatabase _database;
+  final LocalDataSource _localDataSource;
 
   /// Insert a new body weight entry.
   @override
@@ -16,14 +16,14 @@ class BodyWeightRepository implements IBodyWeightRepository {
     required double weight,
     required DateTime date,
   }) {
-    return _database.insertOrUpdateBodyWeight(weight, date);
+    return _localDataSource.insertOrUpdateBodyWeight(weight, date);
   }
 
   /// Retrieve all body weight entries, sorted by date.
   @override
   Future<List<BodyWeight>> getAllBodyWeightEntries() async {
     final List<BodyWeightEntry> bodyWeightEntries =
-        await _database.getAllBodyWeightEntries();
+        await _localDataSource.getAllBodyWeightEntries();
     return bodyWeightEntries
         .map((BodyWeightEntry entry) => entry.toDomain())
         .toList();
@@ -32,9 +32,7 @@ class BodyWeightRepository implements IBodyWeightRepository {
   /// Delete a body weight entry by id.
   @override
   Future<int> deleteBodyWeightEntry(int id) {
-    return (_database.delete(_database.bodyWeightEntries)
-          ..where(($BodyWeightEntriesTable tbl) => tbl.id.equals(id)))
-        .go();
+    return _localDataSource.deleteBodyWeightEntry(id);
   }
 
   /// Update a body weight entry by id.
@@ -43,29 +41,19 @@ class BodyWeightRepository implements IBodyWeightRepository {
     required int id,
     required double weight,
     required DateTime date,
-  }) async {
-    final int updatedRows = await (_database.update(_database.bodyWeightEntries)
-          ..where(($BodyWeightEntriesTable tbl) => tbl.id.equals(id)))
-        .write(
-      BodyWeightEntriesCompanion(
-        weight: Value<double>(weight),
-        date: Value<DateTime>(date),
-      ),
+  }) {
+    return _localDataSource.updateBodyWeightEntry(
+      id: id,
+      weight: weight,
+      date: date,
     );
-    // Return true if any row was updated.
-    return updatedRows > 0;
   }
 
   @override
-  Future<int> clearAllTrackingData() => _database.clearBodyWeightEntries();
+  Future<int> clearAllTrackingData() => _localDataSource.clearAllTrackingData();
 
   @override
-  Future<BodyWeight> getTodayBodyWeight() async {
-    final BodyWeightEntry? bodyWeightEntry =
-        await _database.getTodayBodyWeight();
-    if (bodyWeightEntry != null) {
-      return bodyWeightEntry.toDomain();
-    }
-    return BodyWeight.empty();
+  Future<BodyWeight> getTodayBodyWeight() {
+    return _localDataSource.getTodayBodyWeight();
   }
 }

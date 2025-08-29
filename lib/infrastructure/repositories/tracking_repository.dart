@@ -1,16 +1,11 @@
 import 'package:portion_control/domain/services/repositories/i_tracking_repository.dart';
-import 'package:portion_control/infrastructure/database/database.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 
 class TrackingRepository implements ITrackingRepository {
-  const TrackingRepository(this._database);
+  const TrackingRepository(this._localDataSource);
 
-  final AppDatabase _database;
+  final LocalDataSource _localDataSource;
 
   @override
-  Future<void> clearTrackingData() {
-    return _database.transaction(() async {
-      await _database.clearBodyWeightEntries();
-      await _database.clearBodyWeightEntries();
-    });
-  }
+  Future<void> clearTrackingData() => _localDataSource.clearTrackingData();
 }

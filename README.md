@@ -1,12 +1,12 @@
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner-direct-single.svg)](https://stand-with-ukraine.pp.ua)
 [![style: flutter lints](https://img.shields.io/badge/style-flutter__lints-blue)](https://pub.dev/packages/flutter_lints)
 [![codecov](https://codecov.io/gh/Turskyi/portion_control/graph/badge.svg?token=66LWUIL7WJ)](https://codecov.io/gh/Turskyi/portion_control)
-[![Deploy to Firebase Hosting on merge](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml)
-[![Deploy to Firebase Hosting on PR](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-pull-request.yml)
 [![Code Quality and Tests](https://github.com/Turskyi/portion_control/actions/workflows/code_quality_tests.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/code_quality_tests.yml)
 [![Upload Android Build to App Tester](https://github.com/Turskyi/portion_control/actions/workflows/flutter_android_ci.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/flutter_android_ci.yml)
 [![Codemagic build status](https://api.codemagic.io/apps/67b7c966163430e15999e56f/67b7c966163430e15999e56e/status_badge.svg)](https://codemagic.io/app/67b7c966163430e15999e56f/67b7c966163430e15999e56e/latest_build)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Turskyi/portion_control)
+[![Deploy to Firebase Hosting on merge](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml)
+[![Deploy to Firebase Hosting on PR](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-pull-request.yml)
 <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Turskyi/portion_control">
 
 # PortionControl
@@ -130,6 +130,7 @@ and hence to the `database`.
 Join our testing program and provide valuable feedback:
 
 - [Android App Distribution Tester Invite](https://appdistribution.firebase.dev/i/3a90590762e477b7)
+- [Apple TestFlight Invite](https://testflight.apple.com/join/aJkP43FB)
 
 ### Widget Testing
 

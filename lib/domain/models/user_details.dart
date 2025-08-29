@@ -14,7 +14,7 @@ class UserDetails {
         gender = Gender.preferNotToSay;
 
   /// Creates a [UserDetails] object from a [Map].
-  factory UserDetails.fromMap(Map<String, dynamic> map) {
+  factory UserDetails.fromMap(Map<String, Object?> map) {
     return UserDetails(
       height: (map['height'] is num) ? (map['height'] as num).toDouble() : 0.0,
       dateOfBirth: (map['dateOfBirth'] is String)

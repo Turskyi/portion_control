@@ -34,7 +34,7 @@ sealed class HomeState {
   }
 
   bool get isEmptyDetails =>
-      userDetails.height < constants.minHeight &&
+      userDetails.height < constants.minUserHeight &&
       userDetails.age < constants.minAge &&
       userDetails.gender == Gender.preferNotToSay &&
       userDetails.dateOfBirth == null;

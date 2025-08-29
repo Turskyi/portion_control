@@ -16,7 +16,7 @@ class YesterdayEntriesBloc
   final IFoodWeightRepository _foodRepository;
 
   Future<void> _onLoadYesterdayEntries(
-    _,
+    LoadYesterdayEntries _,
     Emitter<YesterdayEntriesState> emit,
   ) async {
     emit(const YesterdayEntriesLoading());

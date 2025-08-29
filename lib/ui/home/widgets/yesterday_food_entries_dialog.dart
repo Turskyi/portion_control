@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/ui/home/widgets/food_weight_entry_row.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
@@ -24,13 +25,14 @@ class YesterdayFoodEntriesDialog extends StatelessWidget {
         .replaceAll(RegExp(r'\.0$'), '');
 
     final double horizontalIndent = 12.0;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
 
     return Dialog.fullscreen(
       child: GradientBackgroundScaffold(
-        appBar: const BlurredAppBar(title: 'Yesterday\'s Food Entries'),
+        appBar: BlurredAppBar(title: translate('yesterday_entries.title')),
         body: ListView.separated(
-          separatorBuilder: (BuildContext context, int index) {
+          separatorBuilder: (BuildContext _, int __) {
             return const SizedBox(height: 16);
           },
           padding: EdgeInsets.fromLTRB(
@@ -55,10 +57,14 @@ class YesterdayFoodEntriesDialog extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Text(
-                  'Total Consumed: $totalWeight g',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: colorScheme.primary,
-                      ),
+                  '${translate(
+                    'yesterday_entries.total_consumed_prefix',
+                  )} $totalWeight${translate(
+                    'yesterday_entries.grams_suffix',
+                  )}',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.primary,
+                  ),
                 ),
               );
             }
@@ -67,8 +73,8 @@ class YesterdayFoodEntriesDialog extends StatelessWidget {
         persistentFooterAlignment: AlignmentDirectional.center,
         persistentFooterButtons: <Widget>[
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            onPressed: Navigator.of(context).pop,
+            child: Text(translate('button.close')),
           ),
         ],
       ),

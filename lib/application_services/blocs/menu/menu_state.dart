@@ -6,6 +6,10 @@ sealed class MenuState {
 
   final Language language;
 
+  bool get isUkrainian => language == Language.uk;
+
+  String get localeCode => language.isoLanguageCode;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -34,30 +38,32 @@ final class MenuInitial extends MenuState {
   String toString() => 'MenuInitial(language: $language)';
 }
 
-final class FeedbackState extends MenuState {
-  const FeedbackState({required super.language});
+final class MenuFeedbackState extends MenuState {
+  const MenuFeedbackState({required super.language});
 
-  FeedbackState copyWith({
+  MenuFeedbackState copyWith({
     Language? language,
-  }) =>
-      FeedbackState(language: language ?? this.language);
+  }) {
+    return MenuFeedbackState(language: language ?? this.language);
+  }
 
   @override
-  String toString() => 'FeedbackState(language: $language)';
+  String toString() => 'MenuFeedbackState(language: $language)';
 }
 
-final class FeedbackSent extends MenuState {
-  const FeedbackSent({required super.language});
+final class MenuFeedbackSent extends MenuState {
+  const MenuFeedbackSent({required super.language});
 
-  FeedbackSent copyWith({
+  MenuFeedbackSent copyWith({
     Language? language,
-  }) =>
-      FeedbackSent(
-        language: language ?? this.language,
-      );
+  }) {
+    return MenuFeedbackSent(
+      language: language ?? this.language,
+    );
+  }
 
   @override
-  String toString() => 'FeedbackSent(language: $language)';
+  String toString() => 'MenuFeedbackSent(language: $language)';
 }
 
 final class LoadingMenuState extends MenuState {

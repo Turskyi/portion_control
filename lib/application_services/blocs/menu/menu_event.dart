@@ -9,14 +9,14 @@ final class BugReportPressedEvent extends MenuEvent {
   const BugReportPressedEvent();
 }
 
-final class SubmitFeedbackEvent extends MenuEvent {
-  const SubmitFeedbackEvent(this.feedback);
+final class MenuSubmitFeedbackEvent extends MenuEvent {
+  const MenuSubmitFeedbackEvent(this.feedback);
 
   final UserFeedback feedback;
 }
 
-final class ClosingFeedbackEvent extends MenuEvent {
-  const ClosingFeedbackEvent();
+final class MenuClosingFeedbackEvent extends MenuEvent {
+  const MenuClosingFeedbackEvent();
 }
 
 final class LoadingInitialMenuStateEvent extends MenuEvent {
@@ -27,4 +27,10 @@ final class MenuErrorEvent extends MenuEvent {
   const MenuErrorEvent(this.error);
 
   final String error;
+}
+
+class ChangeLanguageEvent extends MenuEvent {
+  const ChangeLanguageEvent(this.language);
+
+  final Language language;
 }

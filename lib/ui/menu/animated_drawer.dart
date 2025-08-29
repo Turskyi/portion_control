@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
+import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
+import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AnimatedDrawer extends StatefulWidget {
-  const AnimatedDrawer({super.key});
+  const AnimatedDrawer({
+    required this.localDataSource,
+    super.key,
+  });
+
+  final LocalDataSource localDataSource;
 
   @override
   State<AnimatedDrawer> createState() => _AnimatedDrawerState();
@@ -56,7 +65,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Text(
-                'Menu',
+                translate('menu'),
                 style: textTheme.headlineSmall?.copyWith(
                   color: colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
@@ -67,7 +76,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
           Expanded(
             child: AnimatedBuilder(
               animation: _controller,
-              builder: (BuildContext context, Widget? child) {
+              builder: (BuildContext _, Widget? child) {
                 return Transform.translate(
                   offset: Offset(_slideAnimation.value * 100, 0),
                   child: Opacity(
@@ -79,29 +88,41 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               child: ListView(
                 children: <Widget>[
                   AnimatedDrawerItem(
+                    icon: Icons.language,
+                    text: translate('language'),
+                    onTap: _showLanguageSelectionDialog,
+                  ),
+                  AnimatedDrawerItem(
                     icon: Icons.privacy_tip,
-                    text: 'Privacy Policy',
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      AppRoute.privacyPolity.path,
-                    ),
+                    text: translate('privacy_policy.title'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+                    },
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.group,
-                    text: 'About Us',
-                    onTap: () =>
-                        Navigator.pushNamed(context, AppRoute.about.path),
+                    text: translate('about_us.title'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.about.path);
+                    },
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.feedback,
-                    text: 'Feedback',
+                    text: translate('button.feedback'),
                     onTap: () => context
                         .read<MenuBloc>()
                         .add(const BugReportPressedEvent()),
                   ),
                   AnimatedDrawerItem(
+                    icon: Icons.support_agent,
+                    text: translate('support.title'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.support.path);
+                    },
+                  ),
+                  AnimatedDrawerItem(
                     icon: Icons.web,
-                    text: 'Open Web Version',
+                    text: translate('open_web_version'),
                     onTap: () => launchUrl(Uri.parse(constants.baseUrl)),
                   ),
                 ],
@@ -117,5 +138,55 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _showLanguageSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BlocProvider<MenuBloc>(
+          create: (BuildContext _) {
+            return MenuBloc(SettingsRepository(widget.localDataSource))
+              ..add(const LoadingInitialMenuStateEvent());
+          },
+          child: BlocBuilder<MenuBloc, MenuState>(
+            builder: (BuildContext _, MenuState state) {
+              final Language currentLanguage = state.language;
+              return AlertDialog(
+                title: Text(translate('select_language')),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    RadioListTile<Language>(
+                      title: Text(translate('english')),
+                      value: Language.en,
+                      groupValue: currentLanguage,
+                      onChanged: _changeLanguage,
+                    ),
+                    RadioListTile<Language>(
+                      title: const Text('Українська'),
+                      value: Language.uk,
+                      groupValue: currentLanguage,
+                      onChanged: _changeLanguage,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void _changeLanguage(Language? newLanguage) {
+    changeLocale(context, newLanguage?.isoLanguageCode)
+        // The returned value is always `null`.
+        .then((Object? _) {
+      if (mounted && newLanguage != null) {
+        context.read<MenuBloc>().add(ChangeLanguageEvent(newLanguage));
+        Navigator.pop(context);
+      }
+    });
   }
 }

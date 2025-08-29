@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,14 +16,19 @@ class PrivacyPolicyPageContent extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final Color linkColor = themeData.colorScheme.primary;
     final TextTheme textTheme = themeData.textTheme;
-    final double? headlineSmallFontSize = textTheme.headlineSmall?.fontSize;
     final double? titleMediumFontSize = textTheme.titleMedium?.fontSize;
     final double? titleLargeFontSize = textTheme.titleLarge?.fontSize;
+
+    final Map<String, Style> htmlStyles = <String, Style>{
+      'p': Style(fontSize: FontSize(titleMediumFontSize ?? 16.0)),
+      'li': Style(fontSize: FontSize(titleMediumFontSize ?? 16.0)),
+      'b': Style(fontWeight: FontWeight.bold),
+    };
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
         horizontalIndent,
-        MediaQuery.of(context).padding.top + 18,
+        MediaQuery.of(context).padding.top,
         horizontalIndent,
         80.0,
       ),
@@ -29,67 +36,33 @@ class PrivacyPolicyPageContent extends StatelessWidget {
         spacing: 16,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            'Privacy Policy',
-            style: TextStyle(
-              fontSize: headlineSmallFontSize,
-              fontWeight: FontWeight.bold,
+          SelectionArea(
+            child: Html(
+              data: translate(
+                'privacy_policy.content_html',
+                args: <String, Object?>{'appName': constants.appName},
+              ),
+              style: htmlStyles,
             ),
           ),
-          SelectableText(
-            '''
-Introduction
-              
-${constants.appName} respects your privacy and is committed to protecting it. This Privacy Policy explains how we collect, use, and safeguard your data.
-              
-Information We Collect
-              
-- Personal Data: We do not collect personally identifiable information.
-- Health and Fitness Data: The app stores your body weight and food weight entries locally on your device.
-- App Usage Data: We may collect anonymous usage analytics to improve user experience.
-              
-Data Storage and Security
-              
-- Your data is stored securely on your device.
-- We do not transmit personal data to external servers.
-              
-Third-Party Services
-              
-- The app uses Firebase Analytics for anonymous usage insights, compliant with industry standards, and does not include personally identifiable information.
-              
-Children’s Privacy  
-      
-- This app is not intended for use by children under 13 years old.  
-- We do not specifically design PortionControl for children, as tracking food intake may not be suitable for their growth and nutritional needs.  
-- While the app does not collect personal data, it may use Firebase Analytics for anonymous usage insights.  
-- Parents and guardians should be aware that this app is intended for adults managing their portion sizes.  
-              
-User Rights
-              
-- You can delete your data at any time by uninstalling the app.
-- No registration is required to use ${constants.appName}.
-              
-Changes to This Policy
-              
-We may update this Privacy Policy as needed. Continued use of the app implies acceptance of any changes.
-              ''',
-            style: TextStyle(fontSize: titleMediumFontSize),
-          ),
           Text(
-            'Contact Us',
+            translate('contact_us.title'),
             style: TextStyle(
               fontSize: titleLargeFontSize,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const Text(
-            'If you have any questions or concerns about this Privacy '
-            'Policy or your personal data, feel free to contact us at:',
+          Text(
+            translate('privacy_policy.contact_us_prompt'),
+            style: TextStyle(fontSize: titleMediumFontSize),
           ),
           Text.rich(
             TextSpan(
-              text: 'Email: ',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              text: translate('contact_us.email_label'),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: titleMediumFontSize,
+              ),
               children: <InlineSpan>[
                 TextSpan(
                   text: 'privacy@${constants.companyDomain}',
@@ -100,7 +73,7 @@ We may update this Privacy Policy as needed. Continued use of the app implies ac
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       final Uri emailLaunchUri = Uri(
-                        scheme: 'mailto',
+                        scheme: constants.mailToScheme,
                         path: 'privacy@${constants.companyDomain}',
                       );
                       launchUrl(emailLaunchUri);

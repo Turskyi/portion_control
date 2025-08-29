@@ -4,24 +4,216 @@
   "appId": "App id",
   "appVersion": "App version",
   "buildNumber": "Build number",
+  "yes": "Yes",
+  "no": "No",
+  "gender": "Gender",
+  "menu": "Menu",
+  "open_web_version": "Open Web Version",
+  "language": "Language",
+  "select_language": "Select Language",
+  "english": "English",
+  "ukrainian": "Ukrainian",
+  "male": "Male",
+  "female": "Female",
+  "other": "Other",
+  "prefer_not_to_say": "Prefer not to say",
+  "web": "Web",
+  "android": "Android",
+  "ios": "iOS",
+  "macos": "macOS",
+  "windows": "Windows",
+  "linux": "Linux",
+  "unknown": "Unknown",
+  "app_id": "App id",
+  "app_version": "App version",
+  "build_number": "Build number",
+  "platform": "Platform",
+  "screen_size": "Screen size",
+  "privacy_policy": {
+    "title": "Privacy Policy",
+    "introduction_title": "Introduction",
+    "content_html": "<p><b>Introduction</b></p><p>{appName} respects your privacy and is committed to protecting it. This Privacy Policy explains how we collect, use, and safeguard your data.</p><p><b>Information We Collect</b></p><ul><li>Personal Data: We do not collect personally identifiable information.</li><li>Health and Fitness Data: The app stores your body weight and food weight entries locally on your device.</li><li>App Usage Data: We may collect anonymous usage analytics to improve user experience.</li></ul><p><b>Data Storage and Security</b></p><ul><li>Your data is stored securely on your device.</li><li>We do not transmit personal data to external servers.</li></ul><p><b>Third-Party Services</b></p><ul><li>The app uses Firebase Analytics for anonymous usage insights, compliant with industry standards, and does not include personally identifiable information.</li></ul><p><b>Children’s Privacy</b></p><ul><li>This app is not intended for use by children under 13 years old.</li><li>We do not specifically design {appName} for children, as tracking food intake may not be suitable for their growth and nutritional needs.</li><li>While the app does not collect personal data, it may use Firebase Analytics for anonymous usage insights.</li><li>Parents and guardians should be aware that this app is intended for adults managing their portion sizes.</li></ul><p><b>User Rights</b></p><ul><li>You can delete your data at any time by uninstalling the app.</li><li>No registration is required to use {appName}.</li></ul><p><b>Changes to This Policy</b></p><p>We may update this Privacy Policy as needed. Continued use of the app implies acceptance of any changes.</p>",
+    "contact_us_prompt": "If you have any questions or concerns about this Privacy Policy or your personal data, feel free to contact us at:"
+  },
+  "support": {
+    "title": "Support"
+  },
   "feedback": {
-    "appFeedback": "App Feedback",
+    "app_feedback": "App Feedback",
     "whatKind": "What kind of feedback do you want to give?",
     "whatIsYourFeedback": "What is your feedback?",
     "howDoesThisFeel": "How does this make you feel?",
-    "feedbackSent": "Your feedback has been sent successfully!",
     "bugReport": "Bug report",
     "featureRequest": "Feature request",
     "type": "Feedback Type",
     "rating": "Rating",
     "bad": "Bad",
     "neutral": "Neutral",
-    "good": "Good"
+    "good": "Good",
+    "sent": "Thank you! Your feedback has been sent.",
+    "failed_short": "Oops! Something went wrong."
   },
   "error": {
     "pleaseCheckInternet": "An error occurred. Please check your internet connection and try again.",
     "unexpectedError": "An unexpected error occurred. Please try again.",
     "oops": "Oops! Something went wrong. Please try again later.",
-    "cors": "Error: Local Environment Setup Required\nTo run this application locally on web, please use the following command:\nflutter run -d chrome --web-browser-flag \"--disable-web-security\"\nThis step is necessary to bypass CORS restrictions during local development. Please note that this flag should only be used in a development environment and never in production."
+    "cors": "Error: Local Environment Setup Required\nTo run this application locally on web, please use the following command:\nflutter run -d chrome --web-browser-flag \"--disable-web-security\"\nThis step is necessary to bypass CORS restrictions during local development. Please note that this flag should only be used in a development environment and never in production.",
+    "launch_email_failed": "Could not launch the email application.",
+    "unexpected_error": "An unexpected error occurred. Please try again."
+  },
+  "about_us": {
+    "title": "About Us",
+    "story_prefix": "The idea for ",
+    "story_chat_gpt_prompt": " was sparked by a simple ChatGPT prompt: \"Fill the gap. To lose weight, forget about eating the __ for at least one year.\" The response? \"To lose weight, forget about eating the wrong portions for at least one year.\" That sentence resonated deeply.\n\nAround the same time, our Bengal cat, Bella, had a vet visit. The verdict? She had \"gotten rounded.\" Our solution was simple: we adjusted her automatic feeder to dispense smaller portions. It worked for Bella — but could a similar approach work for people?\n\nObviously, humans aren't cats, and we don’t eat the same thing every day. However, from experience, I noticed that when people overeat, they often do so with foods they’re familiar with. When trying something new, portions tend to be smaller. This observation led to an idea: What if portion control alone could help maintain a healthy weight without the need for complex diets?\n\nTheoretically, if someone stopped eating altogether and only drank water, they would lose weight—but that’s neither healthy nor sustainable. On the flip side, eating without restraint often leads to weight gain. I had already experienced this cycle: my wife and I followed a diet prescribed by a nutritionist, carefully weighing our portions. We lost weight — but as soon as we stopped following the program, the weight returned. The problem wasn’t just what we ate, but how much.\n\nThat’s when the idea for ",
+    "story_app_goal": " took shape. What if I created a mobile app where users could enter their height, weight, and the weight of the food they consume each time they eat? The app could calculate a recommended daily food intake in grams — enough to prevent weight gain while still being sustainable. By tracking daily weight measurements, the app could adjust recommendations dynamically. If weight starts creeping up, the app lowers the recommended intake.\n\nUnlike calorie counting, ",
+    "story_app_benefit": " simplifies the process. No need to track complex nutritional values, hunt for specific ingredients, or cook elaborate meals. Just start small — control portions, track progress, and find balance.\n\nWelcome to ",
+    "story_app_welcome_suffix": " — the practical approach to mindful eating.",
+    "story": "The idea for {appName} was sparked by a simple ChatGPT prompt: \"Fill the gap. To lose weight, forget about eating the __ for at least one year.\" The response? \"To lose weight, forget about eating the wrong portions for at least one year.\" That sentence resonated deeply.\n\nAround the same time, our Bengal cat, Bella, had a vet visit. The verdict? She had \"gotten rounded.\" Our solution was simple: we adjusted her automatic feeder to dispense smaller portions. It worked for Bella - but could a similar approach work for people?\n\nObviously, humans aren't cats, and we don’t eat the same thing every day. However, from experience, I noticed that when people overeat, they often do so with foods they’re familiar with. When trying something new, portions tend to be smaller. This observation led to an idea: What if portion control alone could help maintain a healthy weight without the need for complex diets?\n\nTheoretically, if someone stopped eating altogether and only drank water, they would lose weight - but that’s neither healthy nor sustainable. On the flip side, eating without restraint often leads to weight gain. I had already experienced this cycle: my wife and I followed a diet prescribed by a nutritionist, carefully weighing our portions. We lost weight - but as soon as we stopped following the program, the weight returned. The problem wasn’t just what we ate, but how much.\n\nThat’s when the idea for {appName} took shape. What if I created a mobile app where users could enter their height, weight, and the weight of the food they consume each time they eat? The app could calculate a recommended daily food intake in grams - enough to prevent weight gain while still being sustainable. By tracking daily weight measurements, the app could adjust recommendations dynamically. If weight starts creeping up, the app lowers the recommended intake.\n\nUnlike calorie counting, {appName} simplifies the process. No need to track complex nutritional values, hunt for specific ingredients, or cook elaborate meals. Just start small - control portions, track progress, and find balance.\n\nWelcome to {appName} - the practical approach to mindful eating."
+  },
+  "contact_us": {
+    "title": "Contact Us",
+    "intro": "For any questions or feedback, feel free to contact us at:",
+    "email_label": "Email: "
+  },
+  "button": {
+    "privacy_policy": "Privacy Policy",
+    "about_us": "About Us",
+    "feedback": "Feedback",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "close": "Close",
+    "report": "Report",
+    "edit_details": "Edit Details",
+    "submit_details": "Submit Details",
+    "keep_my_records": "Keep My Records",
+    "start_fresh": "Start Fresh"
+  },
+  "semantic_label": {
+    "privacy_policy_button": "Navigate to Privacy Policy page",
+    "about_us_button": "Navigate to About Us page",
+    "feedback_button": "Open feedback form"
+  },
+  "meal_confirmation": {
+    "yesterday_consumed_prefix": " 🍽️ Yesterday, you consumed (logged) ",
+    "grams_suffix": " g",
+    "view_yesterday_tooltip": "View yesterday's entries",
+    "no_meals_logged_yesterday": "You didn’t log any meals yesterday. Don’t forget to track your food! ⏳",
+    "did_you_log_all_meals_yesterday": "Did you log every meal you ate yesterday? 📋",
+    "incomplete_data_warning_title": "Incomplete Data Warning",
+    "incomplete_data_warning_content": "⚠️ To provide accurate portion control, we rely on complete meal tracking. Since some entries might be missing, we will reset all food logs. This ensures future recommendations are based on reliable data. 🔄"
+  },
+  "yesterday_entries": {
+    "title": "Yesterday's Food Entries",
+    "total_consumed_prefix": "Total Consumed:",
+    "grams_suffix": " g"
+  },
+  "food_entry": {
+    "challenge_warning": "It seems like you’ve set a big challenge for yourself today. We’re not sure what your plans are, but we definitely suggest not overdoing it with that amount of food. 😅",
+    "total_consumed_today_prefix": "Total consumed today: ",
+    "grams_suffix": " g",
+    "must_eat_at_least_prefix": "❗You must eat at least ",
+    "can_eat_prefix": "You can eat ",
+    "more_today_suffix": " more today"
+  },
+  "healthy_weight": {
+    "your_bmi_prefix": "Your Body Mass Index (BMI): ",
+    "range_prefix": "Healthy Weight Range: ",
+    "range_separator": " – ",
+    "kg_suffix": " kg",
+    "underweight_message": "You are underweight. 🥦💪 \nYou may need to eat more to maintain health.",
+    "healthy_message": "You are in the healthy weight range. 🎉💚 \nKeep it up!",
+    "overweight_message": "You are above the recommended weight range. 🍔⚠️\nSmall lifestyle adjustments can support long-term well-being.",
+    "obese_message": "You are in the obese range. 🍩🚨\nManaging portions could help stabilize your weight."
+  },
+  "home_page": {
+    "enter_weight_instruction": "👉 Enter weight before your first meal.",
+    "body_weight_label": "Body weight",
+    "kg_unit": "kg"
+  },
+  "portion_control_status": {
+    "no_portion_control_today": "🍽️ No portion control today!\n📝 Log everything you eat to track how it affects your weight.",
+    "portion_control_for_today_prefix": "⚖️ Portion Control for today: ",
+    "grams_suffix_with_emoji": " g 🍽️",
+    "weight_decreasing_celebrate": "📉 Your weight is decreasing! 🎉\nEnjoy your meals without strict Portion Control, but keep logging to track your progress. 🍽️",
+    "yesterday_prefix": "📊 Yesterday: ",
+    "grams_suffix": " g",
+    "use_as_reference_suffix": "\nUse this as a reference today!",
+    "weight_increasing_good": "📈 Your weight is increasing, which is good! 💪 Ensure you eat nutritious meals to reach a healthy weight. 🥗🍞",
+    "warning_weight_dropping_prefix": "⚠️ Warning: Your weight is dropping below the healthy range! ❗\nConsider increasing your food intake. 🍔🍚\n🍽️ Minimum intake for today: ",
+    "warning_weight_dropping_general": "⚠️ Warning: Your weight is dropping below the healthy range! ❗ Consider increasing your food intake. 🍔🍚"
+  },
+  "dialog": {
+    "reset_data_title": "Reset Data",
+    "reset_data_content": "Changing your details will affect your tracking. Do you want to start fresh and reset all data?"
+  },
+  "support_page": {
+    "title": "Support",
+    "welcome_message": "Welcome to the {appName} support page. Here you’ll find information to help you use the app effectively and troubleshoot common issues.",
+    "about_app_title": "About the App",
+    "about_app_content": "{appName} helps users track their food intake in grams and body weight in kilograms to support mindful eating and avoid unnecessary weight gain.",
+    "getting_started_title": "Getting Started",
+    "getting_started_item1": "- Log your height and daily weight.",
+    "getting_started_item2": "- Use a food scale to log each meal in grams.",
+    "getting_started_item3": "- The app will suggest portion guidelines to help you manage your intake.",
+    "common_questions_title": "Common Questions",
+    "faq1_data_sync": "- Q: Is my data synced or backed up?\n  A: No, all data is stored locally on your device.",
+    "faq2_forgot_meal": "- Q: I forgot to log a meal. What should I do?\n  A: While the app allows you to edit or add missed meals later, we strongly recommend choosing to start the day from scratch. Accurate tracking is essential for building a reliable portion control baseline, and incomplete records can lead to misleading results.",
+    "faq3_children": "- Q: Is this app suitable for children?\n  A: No. This app is designed for adults.",
+    "faq4_calories": "- Q: Does the app count calories?\n  A: No. This app tracks food weight in grams, not calories.",
+    "need_help_title": "Need Help?",
+    "need_help_content": "If you have issues or questions not covered here, feel free to reach out.",
+    "contact_us_title": "Contact Us",
+    "contact_us_intro": "For further assistance or to report a problem, you can reach out through any of the following channels:",
+    "email_label": "Email: ",
+    "email_address": "support@{companyDomain}",
+    "telegram_label": "Telegram Group: ",
+    "telegram_link_text": "Join the community chat",
+    "developer_website_label": "Developer Website: ",
+    "developer_website_link_text": "https://turskyi.com/#/support"
+  },
+  "landing_page": {
+    "app_name": "Portion Control",
+    "animated_text_1": "Track your food portions with ease.",
+    "animated_text_2": "No calorie counting, just simple portion control.",
+    "animated_text_3": "See your progress over time.",
+    "get_started_button": "Get Started",
+    "menu_item_privacy_policy": "Privacy Policy",
+    "menu_item_about": "About",
+    "menu_item_support": "Support",
+    "semantics_label_google_play": "Google Play Store",
+    "semantics_label_testflight": "TestFlight",
+    "semantics_label_macos": "MacOS"
+  },
+  "user_details_widget": {
+    "title_your_details": "Your Details",
+    "title_enter_your_details": "Enter Your Details",
+    "label_date_of_birth": "Date of Birth",
+    "label_height": "Height",
+    "unit_cm": "cm"
+  },
+  "hint": {
+    "enter_food_weight": "Enter food weight"
+  },
+  "unit": {
+    "gram": "g"
+  },
+  "submit_edit_body_weight_button": {
+    "edit_body_weight": "Edit Body Weight",
+    "submit_body_weight": "Submit Body Weight"
+  },
+  "month_names": {
+    "january": "January",
+    "february": "February",
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December"
   }
 }

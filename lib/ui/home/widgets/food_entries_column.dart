@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
@@ -22,6 +23,12 @@ class FoodEntriesColumn extends StatelessWidget {
             state.shouldAskForMealConfirmation;
         final bool isWeightBelowHealthy = state.isWeightBelowHealthy;
         final bool isWeightDecreasingOrSame = state.isWeightDecreasingOrSame;
+        // Prepare translated suffixes once.
+        final String gramsSuffix = translate('food_entry.grams_suffix');
+        final String moreTodaySuffix = translate(
+          'food_entry.more_today_suffix',
+        );
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 16,
@@ -62,18 +69,13 @@ class FoodEntriesColumn extends StatelessWidget {
                 },
               )
             else if (totalConsumedToday >= constants.maxDailyFoodLimit)
-              const Text(
-                'It seems like you’ve set a big challenge for '
-                'yourself today. We’re not sure what your plans are, '
-                'but we definitely suggest not overdoing it with '
-                'that amount of food. 😅',
-              ),
+              Text(translate('food_entry.challenge_warning')),
 
             if (!shouldAskForMealConfirmation ||
                 state.hasNoPortionControl) ...<Widget>[
               Text(
-                'Total consumed today: '
-                '${state.formattedTotalConsumedToday} g',
+                '${translate('food_entry.total_consumed_today_prefix')}'
+                '${state.formattedTotalConsumedToday}$gramsSuffix',
                 style: textTheme.titleMedium,
               ),
               if (isWeightBelowHealthy &&
@@ -82,14 +84,19 @@ class FoodEntriesColumn extends StatelessWidget {
                   portionControl != constants.maxDailyFoodLimit &&
                   portionControl != constants.safeMinimumFoodIntakeG)
                 Text(
-                  '❗You must eat at least ${state.formattedRemainingFood} g '
-                  'more today',
+                  '${translate(
+                    'food_entry.must_eat_at_least_prefix',
+                  )}${state.formattedRemainingFood}$gramsSuffix'
+                  '$moreTodaySuffix',
                   style: textTheme.bodyMedium,
                 )
               else if (totalConsumedToday < portionControl &&
                   portionControl != constants.maxDailyFoodLimit)
                 Text(
-                  'You can eat ${state.formattedRemainingFood} g more today',
+                  '${translate(
+                    'food_entry.can_eat_prefix',
+                  )}${state.formattedRemainingFood}'
+                  '$gramsSuffix$moreTodaySuffix',
                   style: textTheme.bodyMedium,
                 ),
             ],
