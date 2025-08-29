@@ -28,6 +28,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     on<MenuSubmitFeedbackEvent>(_sendUserFeedback);
     on<MenuErrorEvent>(_handleError);
     on<ChangeLanguageEvent>(_changeLanguage);
+    on<OpenWebVersionEvent>(_openWebPage);
   }
 
   final ISettingsRepository _settingsRepository;
@@ -177,5 +178,16 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         //TODO: not sure what to do.
       }
     }
+  }
+
+  FutureOr<void> _openWebPage(
+    OpenWebVersionEvent _,
+    Emitter<MenuState> __,
+  ) {
+    String url = constants.baseUrl;
+    if (state.isUkrainian) {
+      url = constants.ukrainianWebVersion;
+    }
+    launchUrl(Uri.parse(url));
   }
 }

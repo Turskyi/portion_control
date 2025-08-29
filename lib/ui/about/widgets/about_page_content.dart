@@ -13,28 +13,19 @@ class AboutPageContent extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final Color linkColor = themeData.colorScheme.primary;
     final TextTheme textTheme = themeData.textTheme;
-    final double? headlineSmallFontSize = textTheme.headlineSmall?.fontSize;
     final double? titleMediumFontSize = textTheme.titleMedium?.fontSize;
     final double? titleLargeFontSize = textTheme.titleLarge?.fontSize;
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
         horizontalIndent,
-        MediaQuery.of(context).padding.top + 18,
+        0.0,
         horizontalIndent,
         80.0,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            translate('about_us.title'),
-            style: TextStyle(
-              fontSize: headlineSmallFontSize,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
           SelectableText(
             translate(
               'about_us.story',

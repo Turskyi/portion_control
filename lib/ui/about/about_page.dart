@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/ui/about/widgets/about_page_content.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
@@ -10,9 +12,12 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(_) {
-    return const GradientBackgroundScaffold(
-      appBar: BlurredAppBar(leading: LeadingWidget(), title: 'About'),
-      body: ResponsiveContent(child: AboutPageContent()),
+    return GradientBackgroundScaffold(
+      appBar: BlurredAppBar(
+        leading: kIsWeb ? const LeadingWidget() : null,
+        title: translate('about_us.title'),
+      ),
+      body: const ResponsiveContent(child: AboutPageContent()),
     );
   }
 }

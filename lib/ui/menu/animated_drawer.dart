@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -5,10 +6,8 @@ import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
-import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AnimatedDrawer extends StatefulWidget {
   const AnimatedDrawer({
@@ -120,11 +119,12 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                       Navigator.pushNamed(context, AppRoute.support.path);
                     },
                   ),
-                  AnimatedDrawerItem(
-                    icon: Icons.web,
-                    text: translate('open_web_version'),
-                    onTap: () => launchUrl(Uri.parse(constants.baseUrl)),
-                  ),
+                  if (!kIsWeb)
+                    AnimatedDrawerItem(
+                      icon: Icons.web,
+                      text: translate('open_web_version'),
+                      onTap: _openWebVersion,
+                    ),
                 ],
               ),
             ),
@@ -138,6 +138,10 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _openWebVersion() {
+    context.read<MenuBloc>().add(const OpenWebVersionEvent());
   }
 
   void _showLanguageSelectionDialog() {

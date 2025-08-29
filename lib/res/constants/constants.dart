@@ -1,4 +1,5 @@
 const String baseUrl = 'https://portion-control-tracker.web.app';
+const String ukrainianWebVersion = 'https://uk.portion-control.turskyi.com';
 const String companyDomain = 'turskyi.com';
 const String supportEmailPrefix = 'support@';
 const String supportEmail = '$supportEmailPrefix$companyDomain';
