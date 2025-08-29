@@ -12,7 +12,7 @@ const String appStoreUrl = 'https://apps.apple.com/app/id6743641654';
 const String testFlightUrl = 'https://testflight.apple.com/join/aJkP43FB';
 
 const String macOsUrl =
-    'https://github.com/Turskyi/portion_control/releases/download/1.0.5/PortionControl.zip';
+    'https://apps.apple.com/ca/app/portion-control/id6743641654';
 
 const String imagePath = 'assets/images/';
 
