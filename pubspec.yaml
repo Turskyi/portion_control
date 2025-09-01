@@ -53,8 +53,12 @@ dependencies:
   flutter_html: ^3.0.0
   flutter_localizations:
     sdk: flutter
+  # flutter_translate: Attempting to use "^4.1.0" resulted in a version solving conflict
+  # because portion_control depends on `intl` ^0.20.2.
   flutter_translate: any
   intl: ^0.20.2
+  # meta: Attempting to use "^1.17.0" resulted in a version solving conflict
+  # because portion_control depends on `flutter_test` from sdk.
   meta: any
   mockito: ^5.5.0
   mocktail: ^1.0.4
