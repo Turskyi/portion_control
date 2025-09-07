@@ -56,4 +56,9 @@ class BodyWeightRepository implements IBodyWeightRepository {
   Future<BodyWeight> getTodayBodyWeight() {
     return _localDataSource.getTodayBodyWeight();
   }
+
+  @override
+  Future<BodyWeight> getLastBodyWeight() {
+    return _localDataSource.getLastBodyWeight();
+  }
 }

@@ -38,3 +38,7 @@ class ChangeLanguageEvent extends MenuEvent {
 class OpenWebVersionEvent extends MenuEvent {
   const OpenWebVersionEvent();
 }
+
+class PinWidgetEvent extends MenuEvent {
+  const PinWidgetEvent();
+}

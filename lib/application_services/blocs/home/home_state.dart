@@ -34,14 +34,14 @@ sealed class HomeState {
   }
 
   bool get isEmptyDetails =>
-      userDetails.height < constants.minUserHeight &&
+      userDetails.heightInCm < constants.minUserHeight &&
       userDetails.age < constants.minAge &&
       userDetails.gender == Gender.preferNotToSay &&
       userDetails.dateOfBirth == null;
 
   bool get isNotEmptyDetails => !isEmptyDetails;
 
-  double get height => userDetails.height;
+  double get heightInCm => userDetails.heightInCm;
 
   DateTime? get dateOfBirth => userDetails.dateOfBirth;
 
@@ -106,7 +106,7 @@ sealed class HomeState {
   bool get isWeightAboveHealthy => isWeightAboveHealthyFor(bodyWeight);
 
   bool isWeightAboveHealthyFor(double bodyWeight) {
-    final double heightInMeters = height / 100;
+    final double heightInMeters = heightInCm / 100;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi > constants.maxHealthyBmi;
   }
@@ -114,7 +114,7 @@ sealed class HomeState {
   bool get isWeightBelowHealthy => isWeightBelowHealthyFor(bodyWeight);
 
   bool isWeightBelowHealthyFor(double bodyWeight) {
-    final double heightInMeters = height / 100;
+    final double heightInMeters = heightInCm / 100;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi < constants.minHealthyBmi;
   }
@@ -146,18 +146,48 @@ sealed class HomeState {
   String get formattedYesterdayConsumedTotal =>
       yesterdayConsumedTotal.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
 
-  String get previousPortionControlInfo =>
-      (yesterdayConsumedTotal != adjustedPortion &&
-              adjustedPortion != constants.maxDailyFoodLimit &&
-              adjustedPortion != constants.safeMinimumFoodIntakeG)
-          ? '\n⚖️ Previous portion control: $adjustedPortion g'
-          : '';
+  String get previousPortionControlInfo {
+    return (yesterdayConsumedTotal != adjustedPortion &&
+            adjustedPortion != constants.maxDailyFoodLimit &&
+            adjustedPortion != constants.safeMinimumFoodIntakeG)
+        ? '\n${translate(
+            'previous_portion_control',
+            args: <String, Object?>{'adjustedPortion': adjustedPortion},
+          )}'
+        : '';
+  }
+
+  /// Body Mass Index (BMI) formula, as described on Wikipedia:
+  /// https://en.wikipedia.org/wiki/Body_mass_index
+  /// BMI = weight (kg) / [height (m)]^2
+  double get bmi {
+    final double weight = bodyWeight;
+    final double heightInMeters = heightInCm / 100;
+    return weight / (heightInMeters * heightInMeters);
+  }
+
+  String get bmiMessage {
+    if (bmi < constants.bmiUnderweightThreshold) {
+      return translate('healthy_weight.underweight_message');
+    } else if (bmi >= constants.bmiUnderweightThreshold &&
+        bmi <= constants.bmiHealthyUpperThreshold) {
+      return translate('healthy_weight.healthy_message');
+    } else if (bmi >= constants.bmiOverweightLowerThreshold &&
+        bmi <= constants.bmiOverweightUpperThreshold) {
+      return translate('healthy_weight.overweight_message');
+    } else {
+      return translate('healthy_weight.obese_message');
+    }
+  }
+
+  List<BodyWeight> get lastTwoWeeksBodyWeightEntries =>
+      bodyWeightEntries.takeLast(DateTime.daysPerWeek * 2).toList();
 }
 
 class HomeLoading extends HomeState {
   const HomeLoading({
     super.userDetails = const UserDetails(
-      height: 0,
+      heightInCm: 0,
       gender: Gender.preferNotToSay,
     ),
     super.bodyWeight = 0,

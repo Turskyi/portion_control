@@ -49,13 +49,13 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
-  flutter_email_sender: ^7.0.0
   flutter_html: ^3.0.0
   flutter_localizations:
     sdk: flutter
   # flutter_translate: Attempting to use "^4.1.0" resulted in a version solving conflict
   # because portion_control depends on `intl` ^0.20.2.
   flutter_translate: any
+  home_widget: ^0.8.0
   intl: ^0.20.2
   # meta: Attempting to use "^1.17.0" resulted in a version solving conflict
   # because portion_control depends on `flutter_test` from sdk.

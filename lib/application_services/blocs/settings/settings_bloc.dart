@@ -4,10 +4,8 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:portion_control/domain/enums/feedback_rating.dart';
 import 'package:portion_control/domain/enums/feedback_submission_type.dart';
 import 'package:portion_control/domain/enums/feedback_type.dart';
@@ -151,18 +149,18 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
             );
           }
         } else {
-          final String screenshotFilePath = await _writeImageToStorage(
-            feedback.screenshot,
-          );
-          final Email email = Email(
-            subject:
-                '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
-            body: feedbackBody.toString(),
-            recipients: <String>[constants.supportEmail],
-            attachmentPaths: <String>[screenshotFilePath],
-          );
           try {
-            await FlutterEmailSender.send(email);
+            // TODO: move this thing to "data".
+            final Resend resend = Resend.instance;
+            await resend.sendEmail(
+              from: 'Do Not Reply ${constants.appName} '
+                  '<no-reply@${constants.resendEmailDomain}>',
+              to: <String>[constants.supportEmail],
+              subject: '${translate(
+                'feedback.app_feedback',
+              )}: ${packageInfo.appName}',
+              text: feedbackBody.toString(),
+            );
           } catch (e, stackTrace) {
             debugPrint(
               'Warning: an error occurred in $this: $e;\n'
@@ -197,14 +195,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       errorMessage = state.errorMessage;
     }
     emit(FeedbackState(language: state.language, errorMessage: errorMessage));
-  }
-
-  Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {
-    final Directory output = await getTemporaryDirectory();
-    final String screenshotFilePath = '${output.path}/feedback.png';
-    final File screenshotFile = File(screenshotFilePath);
-    await screenshotFile.writeAsBytes(feedbackScreenshot);
-    return screenshotFilePath;
   }
 
   FutureOr<void> _onFeedbackDialogDismissed(

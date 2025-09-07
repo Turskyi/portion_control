@@ -26,6 +26,7 @@ import 'package:portion_control/infrastructure/repositories/tracking_repository.
     show TrackingRepository;
 import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart'
     show UserPreferencesRepository;
+import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/home/home_page.dart';
 import 'package:portion_control/ui/home/widgets/yesterday_food_entries_dialog.dart'
     show YesterdayFoodEntriesDialog;
@@ -51,6 +52,8 @@ class HomeView extends StatelessWidget {
               BodyWeightRepository(localDataSource),
               FoodWeightRepository(localDataSource),
               ClearTrackingDataUseCase(TrackingRepository(localDataSource)),
+              const HomeWidgetServiceImpl(),
+              localDataSource,
             )..add(const LoadEntries());
           },
         ),
@@ -63,8 +66,14 @@ class HomeView extends StatelessWidget {
         ),
         BlocProvider<MenuBloc>(
           create: (BuildContext _) {
-            return MenuBloc(SettingsRepository(localDataSource))
-              ..add(const LoadingInitialMenuStateEvent());
+            return MenuBloc(
+              SettingsRepository(localDataSource),
+              const HomeWidgetServiceImpl(),
+              BodyWeightRepository(localDataSource),
+              FoodWeightRepository(localDataSource),
+              UserPreferencesRepository(localDataSource),
+              localDataSource,
+            )..add(const LoadingInitialMenuStateEvent());
           },
         ),
         BlocProvider<SettingsBloc>(

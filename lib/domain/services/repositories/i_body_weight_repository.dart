@@ -22,4 +22,6 @@ abstract interface class IBodyWeightRepository {
   Future<int> clearAllTrackingData();
 
   Future<BodyWeight> getTodayBodyWeight();
+
+  Future<BodyWeight> getLastBodyWeight();
 }

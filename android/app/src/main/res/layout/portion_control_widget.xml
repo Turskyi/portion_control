@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?><!--suppress AndroidDomInspection -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- A TextView for the weight. -->
+    <TextView
+        android:id="@+id/text_weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:textSize="64sp" />
+
+    <!-- A TextView for the consumed amount with top padding. -->
+    <TextView
+        android:id="@+id/text_consumed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="24sp" />
+
+    <!-- A TextView for the portion control. -->
+    <TextView
+        android:id="@+id/text_portion_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="18sp" />
+
+    <!-- A TextView for the recommendation. -->
+    <TextView
+        android:id="@+id/text_recommendation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="You are in the healthy weight range. 🎉💚\n
+Keep it up!" />
+
+    <!-- A TextView for the last updated time. -->
+    <TextView
+        android:id="@+id/text_last_updated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textSize="14sp" />
+
+    <!-- An ImageView for the chart image. -->
+    <!--suppress AndroidUnknownAttribute -->
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="0dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/rounded_corner_image"
+        android:clipToOutline="true"
+        android:contentDescription="@string/image"
+        android:gravity="center_horizontal"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_launcher_round"
+        android:visibility="visible"
+        tools:ignore="UnusedAttribute"
+        tools:visibility="visible" />
+
+</LinearLayout>

@@ -13,6 +13,7 @@ import 'package:portion_control/infrastructure/repositories/settings_repository.
 import 'package:portion_control/localization/localization_delegate_getter.dart'
     as localization;
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
 import 'package:portion_control/ui/home/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'helpers/translate_test_helper.dart';
 import 'mock_interactors.dart';
 import 'mock_repositories.dart';
+import 'mocks/mock_services.dart';
 
 void main() {
   group('App Tests', () {
@@ -30,6 +32,7 @@ void main() {
     late LocalDataSource localDataSource;
     late LocalizationDelegate localizationDelegate;
     late SettingsRepository settingsRepository;
+    late HomeWidgetService mockHomeWidgetService;
 
     setUp(() async {
       TestWidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +42,7 @@ void main() {
       mockFoodWeightRepository = MockFoodWeightRepository();
       mockUserDetailsRepository = MockUserDetailsRepository();
       mockClearTrackingDataUseCase = MockClearTrackingDataUseCase();
+      mockHomeWidgetService = MockHomeWidgetService();
 
       // Set up SharedPreferences
       SharedPreferences.setMockInitialValues(<String, Object>{});
@@ -80,15 +84,28 @@ void main() {
             child: MultiBlocProvider(
               providers: <SingleChildWidget>[
                 BlocProvider<HomeBloc>(
-                  create: (BuildContext _) => HomeBloc(
-                    mockUserDetailsRepository,
-                    mockBodyWeightRepository,
-                    mockFoodWeightRepository,
-                    mockClearTrackingDataUseCase,
-                  ),
+                  create: (BuildContext _) {
+                    return HomeBloc(
+                      mockUserDetailsRepository,
+                      mockBodyWeightRepository,
+                      mockFoodWeightRepository,
+                      mockClearTrackingDataUseCase,
+                      mockHomeWidgetService,
+                      localDataSource,
+                    );
+                  },
                 ),
                 BlocProvider<MenuBloc>(
-                  create: (_) => MenuBloc(settingsRepository),
+                  create: (BuildContext _) {
+                    return MenuBloc(
+                      settingsRepository,
+                      mockHomeWidgetService,
+                      mockBodyWeightRepository,
+                      mockFoodWeightRepository,
+                      mockUserDetailsRepository,
+                      localDataSource,
+                    );
+                  },
                 ),
               ],
               child: App(routeMap: testRoutes),

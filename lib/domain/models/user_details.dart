@@ -3,20 +3,21 @@ import 'package:portion_control/domain/enums/gender.dart';
 
 class UserDetails {
   const UserDetails({
-    required this.height,
+    required this.heightInCm,
     required this.gender,
     this.dateOfBirth,
   });
 
   const UserDetails.empty()
-      : height = 0,
+      : heightInCm = 0,
         dateOfBirth = null,
         gender = Gender.preferNotToSay;
 
   /// Creates a [UserDetails] object from a [Map].
   factory UserDetails.fromMap(Map<String, Object?> map) {
     return UserDetails(
-      height: (map['height'] is num) ? (map['height'] as num).toDouble() : 0.0,
+      heightInCm:
+          (map['height'] is num) ? (map['height'] as num).toDouble() : 0.0,
       dateOfBirth: (map['dateOfBirth'] is String)
           ? DateTime.tryParse(map['dateOfBirth'] as String)
           : null,
@@ -26,16 +27,17 @@ class UserDetails {
     );
   }
 
-  // Height in centimeters.
-  final double height;
+  /// Height in centimeters.
+  final double heightInCm;
   final DateTime? dateOfBirth;
   final Gender gender;
 
-  bool get isEmpty =>
-      height == 0 &&
-      age == 0 &&
-      gender == Gender.preferNotToSay &&
-      dateOfBirth == null;
+  bool get isEmpty {
+    return heightInCm == 0 &&
+        age == 0 &&
+        gender == Gender.preferNotToSay &&
+        dateOfBirth == null;
+  }
 
   bool get isNotEmpty => !isEmpty;
 
@@ -57,7 +59,7 @@ class UserDetails {
   /// Converts the UserDetails object to a map (for saving to SharedPreferences)
   Map<String, dynamic> toMap() {
     return <String, Object?>{
-      'height': height,
+      'height': heightInCm,
       'dateOfBirth': dateOfBirth?.toIso8601String(),
       'gender': gender.displayName,
     };
@@ -68,7 +70,7 @@ class UserDetails {
   String toString() {
     if (kDebugMode) {
       return 'UserDetails('
-          'height: $height, '
+          'height: $heightInCm, '
           'dateOfBirth: ${dateOfBirth?.toIso8601String()}, '
           'age: $age, '
           'gender: ${gender.displayName},'
@@ -80,12 +82,12 @@ class UserDetails {
 
   /// Returns a new instance with updated values
   UserDetails copyWith({
-    double? height,
+    double? heightInCm,
     DateTime? dateOfBirth,
     Gender? gender,
   }) {
     return UserDetails(
-      height: height ?? this.height,
+      heightInCm: heightInCm ?? this.heightInCm,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       gender: gender ?? this.gender,
     );

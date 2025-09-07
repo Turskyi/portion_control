@@ -364,4 +364,13 @@ class LocalDataSource {
     };
     return localizedErrors[key]?[locale] ?? key;
   }
+
+  Future<BodyWeight> getLastBodyWeight() async {
+    final BodyWeightEntry? bodyWeightEntry =
+        await _appDatabase.getLastBodyWeight();
+    if (bodyWeightEntry != null) {
+      return bodyWeightEntry.toDomain();
+    }
+    return BodyWeight.empty();
+  }
 }

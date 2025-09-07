@@ -38,7 +38,7 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
     final String? gender = getGender();
 
     return UserDetails(
-      height: height ?? 0,
+      heightInCm: height ?? 0,
       dateOfBirth: dateOfBirth,
       gender:
           gender != null ? Gender.fromString(gender) : Gender.preferNotToSay,
@@ -47,7 +47,7 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
 
   @override
   Future<bool> saveUserDetails(UserDetails userDetails) async {
-    final bool heightSaved = await saveHeight(userDetails.height);
+    final bool heightSaved = await saveHeight(userDetails.heightInCm);
     final bool ageSaved = await saveAge(userDetails.age);
     final Gender gender = userDetails.gender;
     final bool genderSaved = await saveGender(gender);

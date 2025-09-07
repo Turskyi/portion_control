@@ -1,26 +1,33 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:portion_control/domain/enums/feedback_rating.dart';
 import 'package:portion_control/domain/enums/feedback_type.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
+import 'package:portion_control/domain/models/portion_control_summary.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/services/interactors/i_clear_tracking_data_use_case.dart';
 import 'package:portion_control/domain/services/repositories/i_body_weight_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
+import 'package:portion_control/extensions/list_extension.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/res/enums/home_widget_keys.dart';
+import 'package:portion_control/services/home_widget_service.dart';
+import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
+import 'package:resend/resend.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'home_event.dart';
@@ -32,6 +39,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     this._bodyWeightRepository,
     this._foodWeightRepository,
     this._clearTrackingDataUseCase,
+    this._homeWidgetService,
+    this._localDataSource,
   ) : super(const HomeLoading()) {
     on<LoadEntries>(_loadEntries);
     on<UpdateHeight>(_updateHeight);
@@ -53,12 +62,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeClosingFeedbackEvent>(_onFeedbackDialogDismissed);
     on<HomeSubmitFeedbackEvent>(_sendUserFeedback);
     on<ErrorEvent>(_handleError);
+    on<UpdateDeviceHomeWidgetEvent>(_updateDeviceHomeWidget);
   }
 
   final IUserPreferencesRepository _userPreferencesRepository;
   final IBodyWeightRepository _bodyWeightRepository;
   final IFoodWeightRepository _foodWeightRepository;
   final IClearTrackingDataUseCase _clearTrackingDataUseCase;
+  final HomeWidgetService _homeWidgetService;
+  final LocalDataSource _localDataSource;
 
   // Store the previous state.
   HomeState? _previousState;
@@ -236,15 +248,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _updateHeight(
+  Future<void> _updateHeight(
     UpdateHeight event,
     Emitter<HomeState> emit,
-  ) {
+  ) async {
     final double? height = double.tryParse(event.height);
     if (height != null) {
       emit(
         DetailsUpdateState(
-          userDetails: state.userDetails.copyWith(height: height),
+          userDetails: state.userDetails.copyWith(heightInCm: height),
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
@@ -281,10 +293,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  FutureOr<void> _updateBodyWeightState(
+  Future<void> _updateBodyWeightState(
     UpdateBodyWeight event,
     Emitter<HomeState> emit,
-  ) {
+  ) async {
     final double? bodyWeight = double.tryParse(event.bodyWeight);
     if (bodyWeight != null) {
       emit(
@@ -299,7 +311,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(
         BodyWeightError(
-          errorMessage: 'Invalid body weight',
+          errorMessage: translate('error.invalid_body_weight'),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -356,7 +368,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     if (state.isNotEmptyDetails) {
-      final double height = state.height;
+      final double height = state.heightInCm;
       final DateTime? dateOfBirth = state.dateOfBirth;
       final Gender gender = state.gender;
 
@@ -364,9 +376,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           height > constants.maxUserHeight) {
         emit(
           DetailsError(
-            errorMessage:
-                'Height must be between ${constants.minUserHeight} cm and '
-                '${constants.maxUserHeight} cm.',
+            errorMessage: translate(
+              'error.height_range',
+              args: <String, Object?>{
+                'minHeight': constants.minUserHeight,
+                'maxHeight': constants.maxUserHeight,
+              },
+            ),
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
@@ -382,7 +398,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         // Insert into the data store.
         final bool isDetailsSaved =
             await _userPreferencesRepository.saveUserDetails(
-          UserDetails(height: height, dateOfBirth: dateOfBirth, gender: gender),
+          UserDetails(
+            heightInCm: height,
+            dateOfBirth: dateOfBirth,
+            gender: gender,
+          ),
         );
 
         if (isDetailsSaved) {
@@ -413,7 +433,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         } else {
           emit(
             DetailsError(
-              errorMessage: 'Failed to submit user details',
+              errorMessage: translate('error.failed_to_submit_user_details'),
               bodyWeight: state.bodyWeight,
               userDetails: state.userDetails,
               bodyWeightEntries: state.bodyWeightEntries,
@@ -426,7 +446,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         // Handle errors (e.g. data store issues).
         emit(
           DetailsError(
-            errorMessage: 'Failed to submit details: $e',
+            errorMessage: translate(
+              'error.failed_to_submit_details',
+              args: <String, Object?>{'errorDetails': '$e'},
+            ),
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
@@ -435,10 +458,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ),
         );
       }
+
+      // Only add the event if it's NOT web AND NOT macOS.
+      // For context, see issue:
+      // https://github.com/ABausG/home_widget/issues/137.
+      await _triggerHomeWidgetUpdate();
     } else {
       emit(
         DetailsError(
-          errorMessage: 'Details cannot be empty',
+          errorMessage: translate('error.details_cannot_be_empty'),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -549,7 +577,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         debugPrint('Stack trace: $stackTrace');
         emit(
           BodyWeightError(
-            errorMessage: 'Failed to submit body weight: $error',
+            errorMessage: translate(
+              'error.failed_to_submit_body_weight',
+              args: <String, Object?>{'errorDetails': '$error'},
+            ),
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
@@ -558,12 +589,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           ),
         );
       }
+
+      // Only add the event if it's NOT web AND NOT macOS.
+      // For context, see issue:
+      // https://github.com/ABausG/home_widget/issues/137.
+      await _triggerHomeWidgetUpdate();
     } else {
       emit(
         BodyWeightError(
-          errorMessage:
-              'Body weight should not be below the ${constants.minBodyWeight} '
-              'kg',
+          errorMessage: translate(
+            'error.body_weight_too_low',
+            args: <String, Object?>{'minBodyWeight': constants.minBodyWeight},
+          ),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -865,15 +902,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(const HomeLoading());
     final UserFeedback feedback = event.feedback;
     try {
-      final String screenshotFilePath = await _writeImageToStorage(
-        feedback.screenshot,
-      );
-
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-      final Map<String, dynamic>? extra = feedback.extra;
-      final dynamic rating = extra?['rating'];
-      final dynamic type = extra?['feedback_type'];
+      final Map<String, Object?>? extra = feedback.extra;
+      final Object? rating = extra?['rating'];
+      final Object? type = extra?['feedback_type'];
 
       // Construct the feedback text with details from `extra'.
       final StringBuffer feedbackBody = StringBuffer()
@@ -890,18 +923,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             '${rating is FeedbackRating ? translate('feedback.rating') : ''}'
             '${rating is FeedbackRating ? ':' : ''}'
             ' ${rating is FeedbackRating ? rating.value : ''}');
-
-      final List<String> attachmentPaths = screenshotFilePath.isNotEmpty
-          ? <String>[screenshotFilePath]
-          : <String>[];
-
-      final Email email = Email(
-        body: feedbackBody.toString(),
-        subject: '${translate('feedback.appFeedback')}: '
-            '${packageInfo.appName}',
-        recipients: <String>[constants.supportEmail],
-        attachmentPaths: attachmentPaths,
-      );
 
       try {
         if (kIsWeb) {
@@ -922,7 +943,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             add(ErrorEvent(translate('error.unexpectedError')));
           }
         } else {
-          await FlutterEmailSender.send(email);
+          // TODO: move this thing to "data".
+          final Resend resend = Resend.instance;
+          await resend.sendEmail(
+            from: 'Do Not Reply ${constants.appName} '
+                '<no-reply@${constants.resendEmailDomain}>',
+            to: <String>[constants.supportEmail],
+            subject:
+                '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
+            text: feedbackBody.toString(),
+          );
         }
       } catch (error, stackTrace) {
         debugPrint(
@@ -945,16 +975,124 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {
-    if (kIsWeb) {
-      // No file storage on web.
-      return '';
+  FutureOr<void> _updateDeviceHomeWidget(
+    UpdateDeviceHomeWidgetEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    // Check if the platform is web OR macOS. If so, return early.
+    // See issue: https://github.com/ABausG/home_widget/issues/137.
+    if (!kIsWeb && !Platform.isMacOS) {
+      final BodyWeight todayBodyWeight =
+          await _bodyWeightRepository.getTodayBodyWeight();
+
+      final PortionControlSummary portionControlSummary = PortionControlSummary(
+        weight: todayBodyWeight.weight,
+        consumed: state.totalConsumedToday,
+        portionControl: state.portionControl,
+        recommendation: state.bmiMessage,
+        formattedLastUpdatedDateTime: _formattedLastUpdatedDateTime,
+      );
+
+      try {
+        _homeWidgetService.setAppGroupId(constants.appleAppGroupId);
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.weight.stringValue,
+          portionControlSummary.weight.toString(),
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.consumed.stringValue,
+          portionControlSummary.consumed.toString(),
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.portionControl.stringValue,
+          portionControlSummary.portionControl.toString(),
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.textLastUpdated.stringValue,
+          '${translate('last_updated_on_label')}\n'
+          '${portionControlSummary.formattedLastUpdatedDateTime}',
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.textRecommendation.stringValue,
+          portionControlSummary.recommendation,
+        );
+
+        if (state.bodyWeightEntries.length > 1) {
+          // Line Chart of Body Weight trends for the last two weeks.
+          _homeWidgetService.renderFlutterWidget(
+            BodyWeightLineChart(
+              bodyWeightEntries: state.lastTwoWeeksBodyWeightEntries,
+            ),
+            logicalSize: const Size(100, 400),
+            key: HomeWidgetKey.image.stringValue,
+          );
+        }
+
+        _homeWidgetService.updateWidget(
+          name: 'PortionControlWidget',
+          iOSName: constants.iOSWidgetName,
+          androidName: constants.androidWidgetName,
+        );
+        if (Platform.isAndroid) {
+          _homeWidgetService.updateWidget(
+            qualifiedAndroidName:
+                'com.turskyi.portion_control.glance.HomeWidgetReceiver',
+          );
+        }
+      } catch (e) {
+        debugPrint('Failed to update home screen widget: $e');
+      }
     } else {
-      final Directory output = await getTemporaryDirectory();
-      final String screenshotFilePath = '${output.path}/feedback.png';
-      final File screenshotFile = File(screenshotFilePath);
-      await screenshotFile.writeAsBytes(feedbackScreenshot);
-      return screenshotFilePath;
+      debugPrint(
+        'Home screen widget update skipped, '
+        'because it is not supported on this platform.',
+      );
+    }
+  }
+
+  String get _formattedLastUpdatedDateTime {
+    final DateTime now = DateTime.now();
+    final DateTime lastUpdatedDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+    );
+    final String languageIsoCode = _localDataSource.getLanguageIsoCode();
+    try {
+      final DateFormat formatter = DateFormat(
+        'MMM dd, EEEE \'-\' hh:mm a',
+        languageIsoCode,
+      );
+      return formatter.format(lastUpdatedDateTime);
+    } catch (e, stackTrace) {
+      // We will get here if user does not have any of the app supported
+      // languages on his device.
+      debugPrint(
+        'Error in `Weather.formattedLastUpdatedDateTime`:\n'
+        'Failed to format date with locale "$languageIsoCode".\n'
+        'Falling back to default locale formatting.\n'
+        'Error: $e\n'
+        'StackTrace: $stackTrace',
+      );
+
+      final DateFormat formatter = DateFormat('MMM dd, EEEE \'at\' hh:mm a');
+      return formatter.format(lastUpdatedDateTime);
+    }
+  }
+
+  Future<void> _triggerHomeWidgetUpdate() async {
+    // Only add the event if it's NOT web AND NOT macOS.
+    // For context, see issue:
+    // https://github.com/ABausG/home_widget/issues/137.
+    if (!kIsWeb && !Platform.isMacOS) {
+      add(const UpdateDeviceHomeWidgetEvent());
     }
   }
 }

@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
+import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
+import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
+import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
 
 class AnimatedDrawer extends StatefulWidget {
@@ -23,6 +30,7 @@ class AnimatedDrawer extends StatefulWidget {
 
 class _AnimatedDrawerState extends State<AnimatedDrawer>
     with SingleTickerProviderStateMixin {
+  bool _isRequestPinWidgetSupported = false;
   late AnimationController _controller;
   late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
@@ -41,6 +49,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
     _controller.forward();
+    _checkPinability();
   }
 
   @override
@@ -119,6 +128,17 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                       Navigator.pushNamed(context, AppRoute.support.path);
                     },
                   ),
+                  // Only add the event if it's NOT web AND NOT macOS.
+                  // For context, see issue:
+                  // https://github.com/ABausG/home_widget/issues/137.
+                  if (!kIsWeb &&
+                      !Platform.isMacOS &&
+                      _isRequestPinWidgetSupported)
+                    AnimatedDrawerItem(
+                      icon: Icons.widgets_outlined,
+                      text: translate('pin_widget'),
+                      onTap: _pinWidget,
+                    ),
                   if (!kIsWeb)
                     AnimatedDrawerItem(
                       icon: Icons.web,
@@ -144,14 +164,25 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
     context.read<MenuBloc>().add(const OpenWebVersionEvent());
   }
 
+  void _pinWidget() {
+    context.read<MenuBloc>().add(const PinWidgetEvent());
+  }
+
   void _showLanguageSelectionDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return BlocProvider<MenuBloc>(
           create: (BuildContext _) {
-            return MenuBloc(SettingsRepository(widget.localDataSource))
-              ..add(const LoadingInitialMenuStateEvent());
+            final LocalDataSource localDataSource = widget.localDataSource;
+            return MenuBloc(
+              SettingsRepository(widget.localDataSource),
+              const HomeWidgetServiceImpl(),
+              BodyWeightRepository(localDataSource),
+              FoodWeightRepository(localDataSource),
+              UserPreferencesRepository(localDataSource),
+              localDataSource,
+            )..add(const LoadingInitialMenuStateEvent());
           },
           child: BlocBuilder<MenuBloc, MenuState>(
             builder: (BuildContext _, MenuState state) {
@@ -192,5 +223,15 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
         Navigator.pop(context);
       }
     });
+  }
+
+  Future<void> _checkPinability() async {
+    final bool? isRequestPinWidgetSupported =
+        await HomeWidget.isRequestPinWidgetSupported();
+    if (mounted) {
+      setState(() {
+        _isRequestPinWidgetSupported = isRequestPinWidgetSupported ?? false;
+      });
+    }
   }
 }

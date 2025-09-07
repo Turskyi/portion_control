@@ -206,4 +206,9 @@ class AppDatabase extends _$AppDatabase {
       ),
     );
   }
+
+  Future<BodyWeightEntry?> getLastBodyWeight() async {
+    final List<BodyWeightEntry> entries = await getAllBodyWeightEntries();
+    return entries.isNotEmpty ? entries.last : null;
+  }
 }

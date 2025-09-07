@@ -57,3 +57,24 @@ const String resendEmailDomain = 'kima.website';
 const String subjectParameter = 'subject';
 
 const String bodyParameter = 'body';
+
+const String appleAppGroupId = 'group.dmytrowidget';
+const String iOSWidgetName = 'PortionControlWidgets';
+const String androidWidgetName = 'PortionControlWidget';
+
+/// BMI classification thresholds (kg/m²).
+/// Source: https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index
+/// Marks end of underweight / start of healthy.
+const double bmiUnderweightThreshold = 18.5;
+
+/// Marks end of healthy.
+const double bmiHealthyUpperThreshold = 24.9;
+
+/// Marks start of overweight.
+const double bmiOverweightLowerThreshold = 25.0;
+
+/// Marks end of overweight.
+const double bmiOverweightUpperThreshold = 29.9;
+
+/// Marks start of obese.
+const double bmiObeseLowerThreshold = 30.0;
