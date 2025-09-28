@@ -276,8 +276,9 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
                 size: Size(400, 200),
               ),
               child: BodyWeightLineChart(
-                bodyWeightEntries:
-                    bodyWeightEntries.takeLast(DateTime.daysPerWeek * 2).toList(),
+                bodyWeightEntries: bodyWeightEntries
+                    .takeLast(DateTime.daysPerWeek * 2)
+                    .toList(),
               ),
             ),
             // This is the logical size for the home_widget plugin.
