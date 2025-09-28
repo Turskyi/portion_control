@@ -12,7 +12,8 @@ class BodyWeightLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final ThemeData themeData = Theme.of(context);
+    final ColorScheme colorScheme = themeData.colorScheme;
     final Color onTertiaryColor = colorScheme.onTertiary;
     return SizedBox(
       height: 60,
@@ -50,6 +51,9 @@ class BodyWeightLineChart extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Text(
+                      style: TextStyle(
+                        color: themeData.textTheme.labelLarge?.color,
+                      ),
                       value.toStringAsFixed(
                         value.truncateToDouble() == value ? 0 : 1,
                       ),

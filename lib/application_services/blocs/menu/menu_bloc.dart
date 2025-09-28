@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -270,11 +270,18 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         if (bodyWeightEntries.length > 1) {
           // Line Chart of Body Weight trends for the last two weeks.
           _homeWidgetService.renderFlutterWidget(
-            BodyWeightLineChart(
-              bodyWeightEntries:
-                  bodyWeightEntries.takeLast(DateTime.daysPerWeek * 2).toList(),
+            MediaQuery(
+              data: const MediaQueryData(
+                // Logical pixels for the chart rendering.
+                size: Size(400, 200),
+              ),
+              child: BodyWeightLineChart(
+                bodyWeightEntries:
+                    bodyWeightEntries.takeLast(DateTime.daysPerWeek * 2).toList(),
+              ),
             ),
-            logicalSize: const Size(100, 400),
+            // This is the logical size for the home_widget plugin.
+            logicalSize: const Size(400, 200),
             key: HomeWidgetKey.image.stringValue,
           );
         }

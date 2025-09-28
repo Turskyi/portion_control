@@ -42,7 +42,7 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            GlanceContent(context, currentState())
+            GlanceContent(context, currentState = currentState())
         }
     }
 
@@ -63,23 +63,35 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
             widgetData.getString("text_last_updated", null)
         val imagePath: String? = widgetData.getString("image", null)
 
-        val defaultMessages = listOf(
-            "🍽️ Oops! No meal data available.",
-            "🤷 Looks like we couldn’t log your portion this time.",
-            "🥗 No recommendation? Trust your instincts today!",
-            "📊 Data’s taking a break - try again soon!",
-            "🚀 Tracking paused, try again later!",
-            "😴 No portions logged - rest day?",
-            "❌ No entry available",
-            "🤔 No portion info right now"
+        val defaultMessages: List<String> = listOf(
+            context.getString(R.string.oops_no_meal_data_available),
+            context.getString(
+                R.string.looks_like_we_couldn_t_log_your_portion_this_time,
+            ),
+            context.getString(
+                R.string.no_recommendation_trust_your_instincts_today,
+            ),
+            context.getString(
+                R.string.data_s_taking_a_break_try_again_soon,
+            ),
+            context.getString(R.string.tracking_paused_try_again_later),
+            context.getString(R.string.no_portions_logged_rest_day),
+            context.getString(R.string.no_entry_available),
+            context.getString(R.string.no_portion_info_right_now)
         )
 
         // Check for hints.
-        val weightValue = weight?.toDoubleOrNull() ?: 0.0
+        val weightValue: Double = weight?.toDoubleOrNull() ?: 0.0
         val consumedValue = consumed?.toDoubleOrNull() ?: 0.0
         val hintMessage: String? = when {
-            weightValue == 0.0 -> "👉 Enter weight before your first meal."
-            weightValue != 0.0 && consumedValue == 0.0 -> "👉 Enter food weight."
+            weightValue == 0.0 -> context.getString(
+                R.string.enter_weight_before_your_first_meal,
+            )
+
+            weightValue != 0.0 && consumedValue == 0.0 -> context.getString(
+                R.string.enter_food_weight,
+            )
+
             else -> null
         }
 
@@ -89,7 +101,9 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
                 .padding(16.dp)
                 .background(ImageProvider(R.drawable.bg_widget_radial))
                 .cornerRadius(12.dp)
-                .clickable(onClick = actionStartActivity<MainActivity>(context)),
+                .clickable(
+                    onClick = actionStartActivity<MainActivity>(context),
+                ),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -99,31 +113,44 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
             ) {
                 // Weight.
                 if (weightValue != 0.0) {
-                    Text(
-                        text = "Weight: $weight kg",
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold
+                    weight?.let { nnWeight: String ->
+                        Text(
+                            text = context.getString(
+                                R.string.weight_kg,
+                                nnWeight
+                            ),
+                            style = TextStyle(
+                                fontSize = 24.sp,
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold
+                            )
                         )
-                    )
+                    }
                 }
 
                 // Consumed.
                 if (consumedValue != 0.0) {
-                    Text(
-                        text = "Consumed: $consumed g",
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Center
+                    consumed?.let {
+                        Text(
+                            text = context.getString(
+                                R.string.consumed_g,
+                                it,
+                            ),
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                textAlign = TextAlign.Center
+                            )
                         )
-                    )
+                    }
                 }
 
                 // Portion Control.
                 if (!portionControl.isNullOrEmpty()) {
                     Text(
-                        text = "Limit: $portionControl g",
+                        text = context.getString(
+                            R.string.limit_g,
+                            portionControl
+                        ),
                         style = TextStyle(
                             fontSize = 16.sp,
                             textAlign = TextAlign.Center
@@ -160,14 +187,17 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
 
                 // Chart image.
                 imagePath?.let {
-                    val bitmap: Bitmap? = BitmapFactory.decodeFile(it)
-                    bitmap?.let { bmp ->
+                    val bitmap: Bitmap? = BitmapFactory.decodeFile(
+                        it,
+                    )
+                    bitmap?.let { bmp: Bitmap ->
                         Image(
-                            provider = ImageProvider(bmp),
-                            contentDescription = "Chart",
+                            provider = ImageProvider(bitmap = bmp),
+                            contentDescription = context.getString(
+                                R.string.chart,
+                            ),
                             modifier = GlanceModifier
                                 .fillMaxWidth()
-                                .padding(top = 6.dp)
                         )
                     }
                 }
