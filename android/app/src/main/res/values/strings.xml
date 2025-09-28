@@ -17,6 +17,6 @@
     <string name="enter_food_weight">👉 Enter food weight.</string>
     <string name="weight_kg">Weight: %1$s kg</string>
     <string name="consumed_g">Consumed: %1$s g</string>
-    <string name="limit_g">Limit: %1$s g</string>
+    <string name="limit_g">Portion Control: %1$s g</string>
     <string name="chart">Chart</string>
 </resources>

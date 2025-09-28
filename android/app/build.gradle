@@ -131,5 +131,4 @@ flutter {
 
 dependencies {
     implementation 'androidx.glance:glance-appwidget:1.1.1'
-    implementation 'androidx.compose.ui:ui:1.9.2'
 }

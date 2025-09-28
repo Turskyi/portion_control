@@ -57,45 +57,30 @@ internal fun updateAppWidget(
 
         setOnClickPendingIntent(R.id.widget_container, pendingIntent)
 
-        val consumed: String? = widgetData.getString("text_consumed", null)
-
-        setTextViewText(R.id.text_consumed, consumed ?: "")
-
-        val weight: String? = widgetData.getString("text_weight", null)
-
-        setTextViewText(
-            R.id.text_weight,
-            weight ?: "",
+        val portionControl: String? = widgetData.getString(
+            "text_portion_control",
+            null,
         )
 
-        val portionControl: String? = widgetData.getString(
-            "portion_control",
-            null,
+// Default messages with emojis.
+        val defaultMessages: List<String> = listOf(
+            "🍽️ Oops! No meal data available.",
+            "🤷 Looks like we couldn’t log your portion this time.",
+            "🥗 No recommendation? Trust your instincts today!",
+            "📊 Data’s taking a break - try again soon!",
+            "🚀 Tracking paused, try again later!",
+            "😴 No portions logged - rest day?",
+            "❌ No entry available",
+            "🤔 No portion info right now"
         )
 
         setTextViewText(
             R.id.text_portion_control,
-            portionControl ?: "",
-        )
-
-        val recommendation: String? = widgetData.getString(
-            "text_recommendation",
-            null,
-        )
-
-        setTextViewText(
-            R.id.text_recommendation,
-            recommendation ?: "",
-        )
-
-        val lastUpdated: String? = widgetData.getString(
-            "text_last_updated",
-            null,
-        )
-
-        setTextViewText(
-            R.id.text_last_updated,
-            lastUpdated ?: "",
+            if (!portionControl.isNullOrEmpty()) {
+                "Portion Control: $portionControl g"
+            } else {
+                defaultMessages.random()
+            }
         )
 
         // Get image and put it in the widget if it exists.
@@ -117,23 +102,6 @@ internal fun updateAppWidget(
                     setImageViewBitmap(R.id.image, myBitmap)
                 }
             }
-        } else if (recommendation.isNullOrEmpty()) {
-            // Default messages with emojis.
-            val defaultMessages: List<String> = listOf(
-                "🍽️ Oops! No meal data available.",
-                "🤷 Looks like we couldn’t log your portion this time.",
-                "🥗 No recommendation? Trust your instincts today!",
-                "📊 Data’s taking a break - try again soon!",
-                "🚀 Tracking paused, try again later!",
-                "😴 No portions logged - rest day?",
-                "❌ No entry available",
-                "🤔 No portion info right now"
-            )
-
-            setTextViewText(
-                R.id.text_recommendation,
-                defaultMessages.random(),
-            )
         }
     }
 

@@ -56,7 +56,7 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
         val weight: String? = widgetData.getString("text_weight", null)
         val consumed: String? = widgetData.getString("text_consumed", null)
         val portionControl: String? =
-            widgetData.getString("portion_control", null)
+            widgetData.getString("text_portion_control", null)
         val recommendation: String? =
             widgetData.getString("text_recommendation", null)
         val lastUpdated: String? =

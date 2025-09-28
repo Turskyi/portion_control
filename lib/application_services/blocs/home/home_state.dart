@@ -20,13 +20,33 @@ sealed class HomeState {
   final double portionControl;
   final Language language;
 
+  bool get isSafePortionControl =>
+      portionControl > constants.safeMinimumFoodIntakeG &&
+      portionControl < constants.maxDailyFoodLimit;
+
+  // Helper getter to check if yesterday's consumption is positive AND
+  // would be a safe portion size if used today.
+  bool get _isYesterdayConsumedTotalASafePortion =>
+      yesterdayConsumedTotal > constants.safeMinimumFoodIntakeG &&
+      yesterdayConsumedTotal < constants.maxDailyFoodLimit;
+
   double get adjustedPortion {
+    if (isSafePortionControl) {
+      return portionControl;
+    } else if (_isYesterdayConsumedTotalASafePortion) {
+      return yesterdayConsumedTotal;
+    } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
+      return constants.safeMinimumFoodIntakeG;
+    } else {
+      return constants.maxDailyFoodLimit;
+    }
+  }
+
+  double get safePortionControl {
     if (portionControl > constants.safeMinimumFoodIntakeG &&
         portionControl < constants.maxDailyFoodLimit) {
       return portionControl;
-    } else if (yesterdayConsumedTotal > 0) {
-      return yesterdayConsumedTotal;
-    } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
+    } else if (portionControl < constants.safeMinimumFoodIntakeG) {
       return constants.safeMinimumFoodIntakeG;
     } else {
       return constants.maxDailyFoodLimit;
@@ -141,6 +161,15 @@ sealed class HomeState {
       totalConsumedToday.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
 
   String get formattedPortionControl =>
+      adjustedPortion.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+
+  /// Formats the safe minimum food intake constant consistently with
+  /// [formattedPortionControl].
+  String get formattedSafeMinimumFoodIntake => constants.safeMinimumFoodIntakeG
+      .toStringAsFixed(1)
+      .replaceAll(RegExp(r'\.0$'), '');
+
+  String get formattedAdjustedPortion =>
       adjustedPortion.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
 
   String get formattedYesterdayConsumedTotal =>

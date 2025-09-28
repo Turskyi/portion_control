@@ -34,6 +34,23 @@ const int minAge = 18;
 
 const double maxDailyFoodLimit = 6000.0;
 
+/// The minimum daily portion control limit, in grams.
+///
+/// This safeguard exists to prevent the app from recommending
+/// dangerously low food intake.
+///
+/// The value of `1499 g` is derived from the widely accepted
+/// minimum safe caloric intake for adults (≈1500 kcal/day)
+/// recommended by public health authorities such as WHO and CDC.
+///
+/// Because the app tracks food weight in grams rather than
+/// calories, this constant acts as a conservative proxy: it ensures
+/// that even with low-calorie-density foods (for example,
+/// vegetables), users are not advised to eat below this threshold.
+///
+/// This is a general safety floor and does not replace personalized
+/// medical advice. Users with special dietary needs should consult
+/// a healthcare professional.
 const double safeMinimumFoodIntakeG = 1499.0;
 
 /// When to switch to wide layout.
