@@ -19,4 +19,5 @@
     <string name="consumed_g">Consumed: %1$s g</string>
     <string name="limit_g">Portion Control: %1$s g</string>
     <string name="chart">Chart</string>
+    <string name="portion_control_g">Portion Control: %1$s g</string>
 </resources>

@@ -36,6 +36,14 @@ import com.turskyi.portion_control.R
 import es.antonborri.home_widget.actionStartActivity
 
 class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
+    companion object {
+        const val KEY_PORTION_CONTROL = "text_portion_control"
+        const val KEY_IMAGE_PATH = "image"
+        const val KEY_WEIGHT = "text_weight"
+        const val KEY_CONSUMED = "text_consumed"
+        const val KEY_RECOMMENDATION = "text_recommendation"
+        const val KEY_LAST_UPDATED = "text_last_updated"
+    }
 
     override val stateDefinition: GlanceStateDefinition<*>?
         get() = HomeWidgetGlanceStateDefinition()
@@ -53,15 +61,21 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
     ) {
         val widgetData = currentState.preferences
 
-        val weight: String? = widgetData.getString("text_weight", null)
-        val consumed: String? = widgetData.getString("text_consumed", null)
-        val portionControl: String? =
-            widgetData.getString("text_portion_control", null)
-        val recommendation: String? =
-            widgetData.getString("text_recommendation", null)
-        val lastUpdated: String? =
-            widgetData.getString("text_last_updated", null)
-        val imagePath: String? = widgetData.getString("image", null)
+        val weight: String? = widgetData.getString(KEY_WEIGHT, null)
+        val consumed: String? = widgetData.getString(KEY_CONSUMED, null)
+        val portionControl: String? = widgetData.getString(
+            KEY_PORTION_CONTROL,
+            null,
+        )
+        val recommendation: String? = widgetData.getString(
+            KEY_RECOMMENDATION,
+            null,
+        )
+        val lastUpdated: String? = widgetData.getString(
+            KEY_LAST_UPDATED,
+            null,
+        )
+        val imagePath: String? = widgetData.getString(KEY_IMAGE_PATH, null)
 
         val defaultMessages: List<String> = listOf(
             context.getString(R.string.oops_no_meal_data_available),

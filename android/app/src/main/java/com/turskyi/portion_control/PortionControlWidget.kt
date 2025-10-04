@@ -7,6 +7,8 @@ import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.RemoteViews
+import com.turskyi.portion_control.PortionControlWidget.Companion.KEY_IMAGE_PATH
+import com.turskyi.portion_control.PortionControlWidget.Companion.KEY_PORTION_CONTROL
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetPlugin
 import es.antonborri.home_widget.HomeWidgetProvider
@@ -16,6 +18,11 @@ import java.io.File
  * Implementation of App Widget functionality.
  */
 class PortionControlWidget : HomeWidgetProvider() {
+    companion object {
+        const val KEY_PORTION_CONTROL = "text_portion_control"
+        const val KEY_IMAGE_PATH = "image"
+    }
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -58,26 +65,35 @@ internal fun updateAppWidget(
         setOnClickPendingIntent(R.id.widget_container, pendingIntent)
 
         val portionControl: String? = widgetData.getString(
-            "text_portion_control",
+            KEY_PORTION_CONTROL,
             null,
         )
 
 // Default messages with emojis.
         val defaultMessages: List<String> = listOf(
-            "🍽️ Oops! No meal data available.",
-            "🤷 Looks like we couldn’t log your portion this time.",
-            "🥗 No recommendation? Trust your instincts today!",
-            "📊 Data’s taking a break - try again soon!",
-            "🚀 Tracking paused, try again later!",
-            "😴 No portions logged - rest day?",
-            "❌ No entry available",
-            "🤔 No portion info right now"
+            context.getString(R.string.oops_no_meal_data_available),
+            context.getString(
+                R.string.looks_like_we_couldn_t_log_your_portion_this_time,
+            ),
+            context.getString(
+                R.string.no_recommendation_trust_your_instincts_today,
+            ),
+            context.getString(
+                R.string.data_s_taking_a_break_try_again_soon,
+            ),
+            context.getString(R.string.tracking_paused_try_again_later),
+            context.getString(R.string.no_portions_logged_rest_day),
+            context.getString(R.string.no_entry_available),
+            context.getString(R.string.no_portion_info_right_now),
         )
 
         setTextViewText(
             R.id.text_portion_control,
             if (!portionControl.isNullOrEmpty()) {
-                "Portion Control: $portionControl g"
+                context.getString(
+                    R.string.portion_control_g,
+                    portionControl,
+                )
             } else {
                 defaultMessages.random()
             }
@@ -85,7 +101,7 @@ internal fun updateAppWidget(
 
         // Get image and put it in the widget if it exists.
         val imagePath: String? = widgetData.getString(
-            "image",
+            KEY_IMAGE_PATH,
             null,
         )
 
