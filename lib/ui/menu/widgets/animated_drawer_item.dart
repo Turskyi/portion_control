@@ -29,10 +29,7 @@ class _AnimatedDrawerItemState extends State<AnimatedDrawerItem>
       vsync: this,
     )..forward();
 
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOut,
-    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
   }
 
   @override
@@ -57,9 +54,7 @@ class _AnimatedDrawerItemState extends State<AnimatedDrawerItem>
           leading: Icon(widget.icon, color: colorScheme.onSurface),
           title: Text(widget.text, style: theme.textTheme.bodyLarge),
           onTap: widget.onTap,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           hoverColor: colorScheme.surfaceVariant,
         ),
       ),

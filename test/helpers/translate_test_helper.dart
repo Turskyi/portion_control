@@ -107,10 +107,11 @@ const Map<String, Object?> _enTestTranslations = <String, Object?>{
   'error': <String, String>{
     'please_check_internet':
         'An error occurred. Please check your internet connection and try '
-            'again.',
+        'again.',
     'unexpected_error': 'An unexpected error occurred. Please try again.',
     'oops': 'Oops! Something went wrong. Please try again later.',
-    'cors': 'Error: Local Environment Setup Required\nTo run this application '
+    'cors':
+        'Error: Local Environment Setup Required\nTo run this application '
         'locally on web, please use the following command:\nflutter run -d '
         'chrome --web-browser-flag "--disable-web-security"\nThis step is '
         'necessary to bypass CORS restrictions during local development. '
@@ -131,7 +132,7 @@ const Map<String, Object?> _enTestTranslations = <String, Object?>{
         'Use imperial measurements for temperature units.',
     'feedback_subtitle':
         'Let us know your thoughts and suggestions. You can also report any '
-            'issues with the app’s content.',
+        'issues with the app’s content.',
     'support_subtitle':
         'Visit our support page for help and frequently asked questions.',
   },
@@ -143,56 +144,56 @@ const Map<String, Object?> _enTestTranslations = <String, Object?>{
     'view_privacy_policy': 'View Privacy Policy',
     'support_description':
         'Having trouble? Need help or want to suggest a feature? Join the '
-            'community or contact the developer directly.',
+        'community or contact the developer directly.',
     'contact_support': 'Contact Support',
   },
   'privacy': <String, String>{
     'policy_intro':
         "Your privacy is important to us. It is {appName}'s policy to respect "
-            'your privacy and comply with any applicable law and regulation '
-            'regarding any personal information we may collect about you, '
-            'including across our app, «{appName}», and its associated '
-            'services.',
+        'your privacy and comply with any applicable law and regulation '
+        'regarding any personal information we may collect about you, '
+        'including across our app, «{appName}», and its associated '
+        'services.',
     'information_we_collect': 'Information We Collect',
     'no_personal_data_collection':
         'We do not collect any personal information such as name, email '
-            'address, or phone number.',
+        'address, or phone number.',
     'third_party_services_info':
         '«{appName}» uses third-party services that may collect information '
-            'used to identify you. These services include Firebase Crashlytics '
-            'and Google Analytics. The data collected by these services is '
-            'used to improve app stability and user experience. You can find '
-            'more information about their privacy practices at their '
-            'respective websites.',
+        'used to identify you. These services include Firebase Crashlytics '
+        'and Google Analytics. The data collected by these services is '
+        'used to improve app stability and user experience. You can find '
+        'more information about their privacy practices at their '
+        'respective websites.',
     'consent_agreement':
         'By using our services, you consent to the collection and use of your '
-            'information as described in this privacy policy.',
+        'information as described in this privacy policy.',
     'security_measures': 'Security Measures',
     'security_measures_description':
         'We take reasonable measures to protect your information from '
-            'unauthorized access, disclosure, or modification.',
+        'unauthorized access, disclosure, or modification.',
     'children_description':
         'Our services are not directed towards children under the age of '
-            '{age}. We do not knowingly collect personal information from '
-            'children under {age}. While we strive to minimize data '
-            'collection, third-party services we use (such as Firebase '
-            'Crashlytics and Google Analytics) may collect some data. However, '
-            'this data is collected anonymously and is not linked to any '
-            'personal information. If you believe that a child under {age} has '
-            'provided us with personal information, please contact us, and we '
-            'will investigate the matter.',
+        '{age}. We do not knowingly collect personal information from '
+        'children under {age}. While we strive to minimize data '
+        'collection, third-party services we use (such as Firebase '
+        'Crashlytics and Google Analytics) may collect some data. However, '
+        'this data is collected anonymously and is not linked to any '
+        'personal information. If you believe that a child under {age} has '
+        'provided us with personal information, please contact us, and we '
+        'will investigate the matter.',
     'crashlytics_description':
         '«{appName}» uses Firebase Crashlytics, a service by Google, to '
-            'collect crash reports anonymously to help us improve app '
-            'stability and fix bugs. The data collected by Crashlytics does '
-            'not include any personal information.',
+        'collect crash reports anonymously to help us improve app '
+        'stability and fix bugs. The data collected by Crashlytics does '
+        'not include any personal information.',
     'updates_and_notifications_description':
         'This privacy policy may be updated periodically. Any changes to the '
-            'policy will be communicated to you through app updates or '
-            'notifications.',
+        'policy will be communicated to you through app updates or '
+        'notifications.',
     'contact_us_invitation':
         'For any questions or concerns regarding your privacy, you may contact '
-            'us using the following details:',
+        'us using the following details:',
   },
   'support': <String, String>{
     'title': 'Support',
@@ -240,7 +241,8 @@ const Map<String, Object?> _ukTestTranslations = <String, Object?>{
   'could_not_launch': 'Не вдалося відкрити',
   'faq': 'Часті запитання',
   'contact_support': 'Звернутися до служби підтримки',
-  'legal_and_app_info_title': '📄 Правова інформація та інформація про '
+  'legal_and_app_info_title':
+      '📄 Правова інформація та інформація про '
       'програму',
   'developer': 'Розробник',
   'developer_name': 'Дмитро Турський',

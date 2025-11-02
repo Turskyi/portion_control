@@ -75,9 +75,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     MenuSubmitFeedbackEvent event,
     Emitter<MenuState> emit,
   ) async {
-    emit(
-      LoadingMenuState(language: state.language),
-    );
+    emit(LoadingMenuState(language: state.language));
     final UserFeedback feedback = event.feedback;
     try {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -88,8 +86,10 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
       // Construct the feedback text with details from `extra'.
       final StringBuffer feedbackBody = StringBuffer()
-        ..writeln('${type is FeedbackType ? translate('feedback.type') : ''}:'
-            ' ${type is FeedbackType ? type.value : ''}')
+        ..writeln(
+          '${type is FeedbackType ? translate('feedback.type') : ''}:'
+          ' ${type is FeedbackType ? type.value : ''}',
+        )
         ..writeln()
         ..writeln(feedback.text)
         ..writeln()
@@ -98,9 +98,10 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         ..writeln('${translate('buildNumber')}: ${packageInfo.buildNumber}')
         ..writeln()
         ..writeln(
-            '${rating is FeedbackRating ? translate('feedback.rating') : ''}'
-            '${rating is FeedbackRating ? ':' : ''}'
-            ' ${rating is FeedbackRating ? rating.value : ''}');
+          '${rating is FeedbackRating ? translate('feedback.rating') : ''}'
+          '${rating is FeedbackRating ? ':' : ''}'
+          ' ${rating is FeedbackRating ? rating.value : ''}',
+        );
 
       try {
         if (kIsWeb) {
@@ -109,7 +110,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
             scheme: 'mailto',
             path: constants.supportEmail,
             queryParameters: <String, String>{
-              'subject': '${translate('feedback.appFeedback')}: '
+              'subject':
+                  '${translate('feedback.appFeedback')}: '
                   '${packageInfo.appName}',
               'body': feedbackBody.toString(),
             },
@@ -124,7 +126,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           // TODO: move this thing to "data".
           final Resend resend = Resend.instance;
           await resend.sendEmail(
-            from: 'Do Not Reply ${constants.appName} '
+            from:
+                'Do Not Reply ${constants.appName} '
                 '<no-reply@${constants.resendEmailDomain}>',
             to: <String>[constants.supportEmail],
             subject:
@@ -146,9 +149,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       );
       add(MenuErrorEvent(translate('error.unexpectedError')));
     }
-    emit(
-      MenuInitial(language: state.language),
-    );
+    emit(MenuInitial(language: state.language));
   }
 
   FutureOr<void> _loadInitialMenuState(
@@ -189,10 +190,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  FutureOr<void> _openWebPage(
-    OpenWebVersionEvent _,
-    Emitter<MenuState> _,
-  ) {
+  FutureOr<void> _openWebPage(OpenWebVersionEvent _, Emitter<MenuState> _) {
     String url = constants.baseUrl;
     if (state.isUkrainian) {
       url = constants.ukrainianWebVersion;
@@ -217,8 +215,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     // Check if the platform is web OR macOS. If so, return early.
     // See issue: https://github.com/ABausG/home_widget/issues/137.
     if (!kIsWeb && !Platform.isMacOS) {
-      final BodyWeight todayBodyWeight =
-          await _bodyWeightRepository.getTodayBodyWeight();
+      final BodyWeight todayBodyWeight = await _bodyWeightRepository
+          .getTodayBodyWeight();
       final List<FoodWeight> todayFoodWeightEntries =
           await _foodWeightRepository.getTodayFoodEntries();
       final double totalConsumedToday = todayFoodWeightEntries.fold(
@@ -265,8 +263,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           portionControlSummary.recommendation,
         );
 
-        final List<BodyWeight> bodyWeightEntries =
-            await _bodyWeightRepository.getAllBodyWeightEntries();
+        final List<BodyWeight> bodyWeightEntries = await _bodyWeightRepository
+            .getAllBodyWeightEntries();
         if (bodyWeightEntries.length > 1) {
           // Line Chart of Body Weight trends for the last two weeks.
           _homeWidgetService.renderFlutterWidget(
@@ -311,10 +309,10 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   //TODO: move this to a UseCase
   Future<double> _calculatePortionControl() async {
-    final double totalConsumedYesterday =
-        await _foodWeightRepository.getTotalConsumedYesterday();
-    final List<BodyWeight> bodyWeightEntries =
-        await _bodyWeightRepository.getAllBodyWeightEntries();
+    final double totalConsumedYesterday = await _foodWeightRepository
+        .getTotalConsumedYesterday();
+    final List<BodyWeight> bodyWeightEntries = await _bodyWeightRepository
+        .getAllBodyWeightEntries();
     double portionControl = constants.maxDailyFoodLimit;
 
     if (bodyWeightEntries.isNotEmpty) {
@@ -333,8 +331,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         lastSavedBodyWeightEntry.weight,
       );
 
-      final double? savedPortionControl =
-          _userPreferencesRepository.getPortionControl();
+      final double? savedPortionControl = _userPreferencesRepository
+          .getPortionControl();
 
       if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
         if (savedPortionControl == null) {
@@ -380,8 +378,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   Future<bool> _isWeightIncreasingOrSameFor(
     List<BodyWeight> bodyWeightEntries,
   ) async {
-    final double yesterdayConsumedTotal =
-        await _foodWeightRepository.getTotalConsumedYesterday();
+    final double yesterdayConsumedTotal = await _foodWeightRepository
+        .getTotalConsumedYesterday();
     if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
       return false;
     }
@@ -408,8 +406,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   }
 
   Future<double> _getBmi() async {
-    final BodyWeight bodyWeight =
-        await _bodyWeightRepository.getLastBodyWeight();
+    final BodyWeight bodyWeight = await _bodyWeightRepository
+        .getLastBodyWeight();
     final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
     final double weight = bodyWeight.weight;
     final double heightInMeters = userDetails.heightInCm / 100;
@@ -458,8 +456,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   Future<bool> _isWeightDecreasingOrSameFor(
     List<BodyWeight> bodyWeightEntries,
   ) async {
-    final double yesterdayConsumedTotal =
-        await _foodWeightRepository.getTotalConsumedYesterday();
+    final double yesterdayConsumedTotal = await _foodWeightRepository
+        .getTotalConsumedYesterday();
     if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
       return false;
     }

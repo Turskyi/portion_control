@@ -9,15 +9,16 @@ class UserDetails {
   });
 
   const UserDetails.empty()
-      : heightInCm = 0,
-        dateOfBirth = null,
-        gender = Gender.preferNotToSay;
+    : heightInCm = 0,
+      dateOfBirth = null,
+      gender = Gender.preferNotToSay;
 
   /// Creates a [UserDetails] object from a [Map].
   factory UserDetails.fromMap(Map<String, Object?> map) {
     return UserDetails(
-      heightInCm:
-          (map['height'] is num) ? (map['height'] as num).toDouble() : 0.0,
+      heightInCm: (map['height'] is num)
+          ? (map['height'] as num).toDouble()
+          : 0.0,
       dateOfBirth: (map['dateOfBirth'] is String)
           ? DateTime.tryParse(map['dateOfBirth'] as String)
           : null,

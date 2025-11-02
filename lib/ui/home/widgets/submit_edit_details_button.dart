@@ -8,19 +8,14 @@ import 'package:portion_control/ui/widgets/responsive_button.dart';
 
 /// Submit/Edit Height Button with animation.
 class SubmitEditDetailsButton extends StatelessWidget {
-  const SubmitEditDetailsButton({
-    super.key,
-  });
+  const SubmitEditDetailsButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
       // Animation duration.
       duration: const Duration(milliseconds: 300),
-      transitionBuilder: (
-        Widget child,
-        Animation<double> animation,
-      ) {
+      transitionBuilder: (Widget child, Animation<double> animation) {
         // Define the transition effect.
         return ScaleTransition(scale: animation, child: child);
       },
@@ -44,18 +39,15 @@ class SubmitEditDetailsButton extends StatelessWidget {
                   onPressed: state.heightInCm < constants.minUserHeight
                       ? null
                       : isDetailsSubmitted
-                          ? () async {
-                              if (state.bodyWeightEntries.isEmpty) {
-                                context
-                                    .read<HomeBloc>()
-                                    .add(const EditDetails());
-                              } else {
-                                await _showConfirmationDialog(context);
-                              }
-                            }
-                          : () => context
-                              .read<HomeBloc>()
-                              .add(const SubmitDetails()),
+                      ? () async {
+                          if (state.bodyWeightEntries.isEmpty) {
+                            context.read<HomeBloc>().add(const EditDetails());
+                          } else {
+                            await _showConfirmationDialog(context);
+                          }
+                        }
+                      : () =>
+                            context.read<HomeBloc>().add(const SubmitDetails()),
                 ),
               );
             },

@@ -1,4 +1,5 @@
 
+
 import WidgetKit
 import SwiftUI
 
@@ -14,10 +15,9 @@ struct WidgetDataKeys {
 
 // MARK: - Timeline Provider
 struct Provider: TimelineProvider {
-    let appGroupIdentifier = "group.dmytrowidget"
-    // Replace with your App Group Identifier
-    let userDefaults = UserDefaults(suiteName: "group.dmytrowidget")
 
+    let userDefaults = UserDefaults(suiteName: "group.dmytrowidget")
+    
     func placeholder(in context: Context) -> PortionControlEntry {
         PortionControlEntry(
             date: Date(),
@@ -27,21 +27,21 @@ struct Provider: TimelineProvider {
             recommendation: "Looking good!",
             lastUpdated: "Just now",
             chartImage: nil,
-            )
+        )
     }
-
+    
     func getSnapshot(in context: Context, completion: @escaping (PortionControlEntry) -> ()) {
         let entry = readData()
         completion(entry)
     }
-
+    
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         let entry = readData()
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }
-
+    
     private func readData() -> PortionControlEntry {
         let weight = userDefaults?.string(forKey: WidgetDataKeys.weight)
         let consumed = userDefaults?.string(forKey: WidgetDataKeys.consumed)
@@ -49,7 +49,7 @@ struct Provider: TimelineProvider {
         let recommendation = userDefaults?.string(forKey: WidgetDataKeys.recommendation)
         let lastUpdated = userDefaults?.string(forKey: WidgetDataKeys.lastUpdated)
         let imagePath = userDefaults?.string(forKey: WidgetDataKeys.imagePath)
-
+        
         var chartImage: UIImage?
         if let path = imagePath {
             // Important: The image path must be accessible by the widget extension.
@@ -58,7 +58,7 @@ struct Provider: TimelineProvider {
                 chartImage = image
             }
         }
-
+        
         return PortionControlEntry(
             date: Date(),
             weight: weight,
@@ -83,34 +83,30 @@ struct PortionControlEntry: TimelineEntry {
 }
 
 // MARK: - Widget View
-struct PortionControlWidgetsEntryView : View {
+struct PortionControlWidgetsEntryView: View {
     var entry: Provider.Entry
-
+    
     private let defaultMessages = [
-        "Oops, no meal data available.",
-        "Looks like we couldn't log your portion this time.",
-        "No recommendation? Trust your instincts today!",
-        "Data's taking a break. Try again soon.",
-        "Tracking paused, try again later.",
-        "No portions logged. Rest day?",
-        "No entry available.",
-        "No portion info right now."
+        "🍽️ Oops! No meal data available.",
+        "🤷 Looks like we couldn’t log your portion this time.",
+        "🥗 No recommendation? Trust your instincts today!",
+        "📊 Data’s taking a break — try again soon!"
     ]
-
+    
     var body: some View {
         let weightValue = Double(entry.weight ?? "0.0") ?? 0.0
         let consumedValue = Double(entry.consumed ?? "0.0") ?? 0.0
-
+        
         var hintMessage: String? {
             if weightValue == 0.0 {
-                return "Enter weight before your first meal."
+                return "👉 Enter weight before your first meal."
             }
             if weightValue != 0.0 && consumedValue == 0.0 {
-                return "Enter food weight."
+                return "👉 Enter food weight."
             }
             return nil
         }
-
+        
         let recommendationText: String = {
             if let hint = hintMessage {
                 return hint
@@ -120,67 +116,98 @@ struct PortionControlWidgetsEntryView : View {
                 return defaultMessages.randomElement()!
             }
         }()
-
-
+        
         ZStack {
-            // Replicating Android's radial gradient background
+            // Background gradient
             RadialGradient(
-                gradient: Gradient(colors: [Color.white.opacity(0.12), Color.white.opacity(0.06), Color.clear]),
+                gradient: Gradient(colors: [
+                    Color(red: 1.0, green: 0.94, blue: 0.96), // #FFF0F5
+                    Color(red: 0.83, green: 0.48, blue: 0.61)  // #D47A9B
+                ]),
                 center: .center,
-                startRadius: 0,
-                endRadius: 200
+                startRadius: 5,
+                endRadius: 500
             )
+            .ignoresSafeArea()
+            
+            // --- Background chart image or fallback ---
+            if let uiImage = entry.chartImage {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+                    .padding([.leading], 8)
+            } else {
+                RadialGradient(
+                    gradient: Gradient(colors: [
+                        Color(red: 1.0, green: 0.94, blue: 0.96), // #FFF0F5
+                        Color(red: 0.83, green: 0.48, blue: 0.61)  // #D47A9B
+                    ]),
+                    center: .center,
+                    startRadius: 5,
+                    endRadius: 500
+                )
                 .ignoresSafeArea()
-
-
-            VStack(spacing: 8) {
-                if weightValue != 0.0, let weight = entry.weight {
-                    Text("Weight: \(weight) kg")
-                        .font(.system(size: 24, weight: .bold))
-                }
-
-                if consumedValue != 0.0, let consumed = entry.consumed {
-                    Text("Consumed: \(consumed) g")
-                        .font(.system(size: 18))
-                }
-
-                if let portionControl = entry.portionControl, !portionControl.isEmpty {
-                    Text("Limit: \(portionControl) g")
-                        .font(.system(size: 16))
-                }
-
-                Text(recommendationText)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 8)
-
-
-                if let lastUpdated = entry.lastUpdated, !lastUpdated.isEmpty {
-                    Text(lastUpdated)
-                        .font(.system(size: 14))
-                }
-
-                if let uiImage = entry.chartImage {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
-                }
-
-                Spacer()
-
             }
-            .padding()
-            .multilineTextAlignment(.center)
+            
+            // --- Overlay text blocks ---
+            VStack {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 4) {
+
+                        if weightValue != 0.0, let weight = entry.weight {
+                            Text("Weight: \(weight) kg")
+                                .font(.system(size: 18, weight: .bold))
+                        }
+                        
+                        if consumedValue != 0.0, let consumed = entry.consumed {
+                            Text("Consumed: \(consumed) g")
+                                .font(.system(size: 16))
+                        }
+                        
+                        if let portionControl = entry.portionControl, !portionControl.isEmpty {
+                            Text("Limit: \(portionControl) g")
+                                .font(.system(size: 15))
+                        }
+                    }
+                    .padding(8)
+                    .background(.thinMaterial.opacity(0.7))
+                    .cornerRadius(10)
+                    .frame(width: UIScreen.main.bounds.width * 0.7, alignment: .leading)
+                    .padding([.top, .leading], 4)
+                }
+                
+                Spacer()
+                
+                // Bottom-left info (recommendation + last updated)
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(recommendationText)
+                            .font(.system(size: 14, weight: .bold))
+                            .multilineTextAlignment(.leading)
+                        
+                        if let lastUpdated = entry.lastUpdated, !lastUpdated.isEmpty {
+                            Text(lastUpdated)
+                                .font(.system(size: 12))
+            
+                        }
+                    }
+                    .padding(8)
+                    .background(.thinMaterial.opacity(0.7))
+                    .cornerRadius(10)
+                    .frame(width: UIScreen.main.bounds.width * 0.7, alignment: .leading)
+                    .padding([.bottom, .leading], 4)
+                }
+            }
         }
     }
 }
 
-
 // MARK: - Widget Configuration
 struct PortionControlWidgets: Widget {
     let kind: String = "PortionControlWidgets"
-
+    
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             PortionControlWidgetsEntryView(entry: entry)
@@ -203,7 +230,7 @@ struct PortionControlWidgets: Widget {
         recommendation: "Looking good!",
         lastUpdated: "Just now",
         chartImage: nil,
-        )
+    )
     PortionControlEntry(
         date: .now,
         weight: "70.5",
@@ -212,5 +239,5 @@ struct PortionControlWidgets: Widget {
         recommendation: nil,
         lastUpdated: "Just now",
         chartImage: nil,
-        )
+    )
 }

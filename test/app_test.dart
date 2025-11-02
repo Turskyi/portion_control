@@ -55,15 +55,17 @@ void main() {
 
       // Set up localization
       await setUpFlutterTranslateForTests();
-      localizationDelegate =
-          await localization.getLocalizationDelegate(localDataSource);
+      localizationDelegate = await localization.getLocalizationDelegate(
+        localDataSource,
+      );
 
       // Initialize repositories
       settingsRepository = SettingsRepository(localDataSource);
     });
 
-    testWidgets('App initializes and shows HomePage',
-        (WidgetTester tester) async {
+    testWidgets('App initializes and shows HomePage', (
+      WidgetTester tester,
+    ) async {
       // Create route map
       final Map<String, WidgetBuilder> testRoutes = <String, WidgetBuilder>{
         '/': (_) => HomePage(localDataSource: localDataSource),
@@ -78,9 +80,9 @@ void main() {
             feedbackBuilder:
                 (_, OnSubmit onSubmit, ScrollController? scrollController) =>
                     FeedbackForm(
-              onSubmit: onSubmit,
-              scrollController: scrollController,
-            ),
+                      onSubmit: onSubmit,
+                      scrollController: scrollController,
+                    ),
             child: MultiBlocProvider(
               providers: <SingleChildWidget>[
                 BlocProvider<HomeBloc>(

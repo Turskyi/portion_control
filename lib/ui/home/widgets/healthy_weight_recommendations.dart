@@ -39,17 +39,15 @@ class HealthyWeightRecommendations extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    '${translate(
-                      'healthy_weight.your_bmi_prefix',
-                    )}${bmi.toStringAsFixed(1)}',
+                    '${translate('healthy_weight.your_bmi_prefix')}'
+                    '${bmi.toStringAsFixed(1)}',
                     style: textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     '${translate('healthy_weight.range_prefix')}'
-                    '${minHealthyWeight.toStringAsFixed(1)}${translate(
-                      'healthy_weight.range_separator',
-                    )}'
+                    '${minHealthyWeight.toStringAsFixed(1)}'
+                    '${translate('healthy_weight.range_separator')}'
                     '${maxHealthyWeight.toStringAsFixed(1)}$kgSuffix',
                     style: textTheme.titleMedium,
                   ),

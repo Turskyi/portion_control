@@ -14,8 +14,9 @@ class ResponsiveButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints constraints) {
-        final double buttonWidth =
-            constraints.maxWidth > 600 ? 300 : constraints.maxWidth * 0.8;
+        final double buttonWidth = constraints.maxWidth > 600
+            ? 300
+            : constraints.maxWidth * 0.8;
 
         return Center(
           child: SizedBox(

@@ -31,11 +31,7 @@ class FoodWeight {
     }
   }
 
-  FoodWeight copyWith({
-    int? id,
-    double? weight,
-    DateTime? date,
-  }) {
+  FoodWeight copyWith({int? id, double? weight, DateTime? date}) {
     return FoodWeight(
       id: id ?? this.id,
       weight: weight ?? this.weight,

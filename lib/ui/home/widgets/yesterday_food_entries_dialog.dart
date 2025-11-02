@@ -6,10 +6,7 @@ import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 
 class YesterdayFoodEntriesDialog extends StatelessWidget {
-  const YesterdayFoodEntriesDialog({
-    required this.foodEntries,
-    super.key,
-  });
+  const YesterdayFoodEntriesDialog({required this.foodEntries, super.key});
 
   final List<FoodWeight> foodEntries;
 
@@ -17,10 +14,7 @@ class YesterdayFoodEntriesDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     // Calculate the total weight consumed yesterday.
     final String totalWeight = foodEntries
-        .fold(
-          0.0,
-          (double sum, FoodWeight entry) => sum + entry.weight,
-        )
+        .fold(0.0, (double sum, FoodWeight entry) => sum + entry.weight)
         .toStringAsFixed(1)
         .replaceAll(RegExp(r'\.0$'), '');
 
@@ -57,11 +51,8 @@ class YesterdayFoodEntriesDialog extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Text(
-                  '${translate(
-                    'yesterday_entries.total_consumed_prefix',
-                  )} $totalWeight${translate(
-                    'yesterday_entries.grams_suffix',
-                  )}',
+                  '${translate('yesterday_entries.total_consumed_prefix')} '
+                  '$totalWeight${translate('yesterday_entries.grams_suffix')}',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: colorScheme.primary,
                   ),

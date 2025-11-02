@@ -5,10 +5,7 @@ import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
 
 class MealConfirmationCard extends StatelessWidget {
-  const MealConfirmationCard({
-    required this.yesterdayTotal,
-    super.key,
-  });
+  const MealConfirmationCard({required this.yesterdayTotal, super.key});
 
   final double yesterdayTotal;
 
@@ -43,9 +40,8 @@ class MealConfirmationCard extends StatelessWidget {
                   TextButton(
                     onPressed: () => _loadYesterdayEntries(context),
                     child: Text(
-                      '$formattedYesterdayConsumedTotal${translate(
-                        'meal_confirmation.grams_suffix',
-                      )}',
+                      '$formattedYesterdayConsumedTotal'
+                      '${translate('meal_confirmation.grams_suffix')}',
                       style: titleMediumStyle?.copyWith(
                         color: theme.colorScheme.primary,
                         decoration: TextDecoration.underline,

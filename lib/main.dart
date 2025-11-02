@@ -50,10 +50,8 @@ Future<void> main() async {
 
   final Language savedLanguage = Language.fromIsoLanguageCode(savedIsoCode);
 
-  final LocalizationDelegate localizationDelegate =
-      await localization.getLocalizationDelegate(
-    localDataSource,
-  );
+  final LocalizationDelegate localizationDelegate = await localization
+      .getLocalizationDelegate(localDataSource);
 
   final Language currentLanguage = Language.fromIsoLanguageCode(
     localizationDelegate.currentLocale.languageCode,
@@ -64,7 +62,7 @@ Future<void> main() async {
 
     localizationDelegate.changeLocale(locale);
 
-// Notify listeners that the locale has changed so they can update.
+    // Notify listeners that the locale has changed so they can update.
     localizationDelegate.onLocaleChanged?.call(locale);
   }
 
@@ -89,16 +87,17 @@ Future<void> main() async {
     LocalizedApp(
       localizationDelegate,
       BetterFeedback(
-        feedbackBuilder: (
-          BuildContext _,
-          OnSubmit onSubmit,
-          ScrollController? scrollController,
-        ) {
-          return FeedbackForm(
-            onSubmit: onSubmit,
-            scrollController: scrollController,
-          );
-        },
+        feedbackBuilder:
+            (
+              BuildContext _,
+              OnSubmit onSubmit,
+              ScrollController? scrollController,
+            ) {
+              return FeedbackForm(
+                onSubmit: onSubmit,
+                scrollController: scrollController,
+              );
+            },
         child: App(routeMap: routeMap),
       ),
     ),

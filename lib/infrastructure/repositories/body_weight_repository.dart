@@ -22,8 +22,8 @@ class BodyWeightRepository implements IBodyWeightRepository {
   /// Retrieve all body weight entries, sorted by date.
   @override
   Future<List<BodyWeight>> getAllBodyWeightEntries() async {
-    final List<BodyWeightEntry> bodyWeightEntries =
-        await _localDataSource.getAllBodyWeightEntries();
+    final List<BodyWeightEntry> bodyWeightEntries = await _localDataSource
+        .getAllBodyWeightEntries();
     return bodyWeightEntries
         .map((BodyWeightEntry entry) => entry.toDomain())
         .toList();

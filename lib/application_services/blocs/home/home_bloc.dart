@@ -84,11 +84,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     if (userDetails.isNotEmpty) {
       try {
-        final List<BodyWeight> bodyWeightEntries =
-            await _bodyWeightRepository.getAllBodyWeightEntries();
+        final List<BodyWeight> bodyWeightEntries = await _bodyWeightRepository
+            .getAllBodyWeightEntries();
         double portionControl = constants.maxDailyFoodLimit;
-        final double totalConsumedYesterday =
-            await _foodWeightRepository.getTotalConsumedYesterday();
+        final double totalConsumedYesterday = await _foodWeightRepository
+            .getTotalConsumedYesterday();
         if (bodyWeightEntries.isNotEmpty) {
           final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
           final DateTime lastSavedBodyWeightDate =
@@ -99,24 +99,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               ? lastSavedBodyWeightEntry.weight
               : 0;
 
-          final bool isWeightIncreasingOrSame =
-              state.isWeightIncreasingOrSameFor(
-            bodyWeightEntries,
-          );
+          final bool isWeightIncreasingOrSame = state
+              .isWeightIncreasingOrSameFor(bodyWeightEntries);
 
           final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
             lastSavedBodyWeightEntry.weight,
           );
-          final bool isWeightDecreasingOrSame =
-              state.isWeightDecreasingOrSameFor(
-            bodyWeightEntries,
-          );
+          final bool isWeightDecreasingOrSame = state
+              .isWeightDecreasingOrSameFor(bodyWeightEntries);
           final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
             lastSavedBodyWeightEntry.weight,
           );
 
-          final double? savedPortionControl =
-              _userPreferencesRepository.getPortionControl();
+          final double? savedPortionControl = _userPreferencesRepository
+              .getPortionControl();
           if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
             if (savedPortionControl == null) {
               portionControl = totalConsumedYesterday;
@@ -180,7 +176,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         } else {
           emit(
             LoadingError(
-              errorMessage: 'Error: Entered body weight is below the '
+              errorMessage:
+                  'Error: Entered body weight is below the '
                   'biologically possible limit. Please verify your input.',
               userDetails: state.userDetails,
               bodyWeight: todayBodyWeight,
@@ -216,6 +213,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
     }
+    _triggerHomeWidgetUpdate();
   }
 
   FutureOr<void> _updateDateOfBirth(
@@ -277,10 +275,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _updateGender(
-    UpdateGender event,
-    Emitter<HomeState> emit,
-  ) {
+  FutureOr<void> _updateGender(UpdateGender event, Emitter<HomeState> emit) {
     final Gender gender = event.gender;
     emit(
       DetailsUpdateState(
@@ -396,14 +391,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       try {
         // Insert into the data store.
-        final bool isDetailsSaved =
-            await _userPreferencesRepository.saveUserDetails(
-          UserDetails(
-            heightInCm: height,
-            dateOfBirth: dateOfBirth,
-            gender: gender,
-          ),
-        );
+        final bool isDetailsSaved = await _userPreferencesRepository
+            .saveUserDetails(
+              UserDetails(
+                heightInCm: height,
+                dateOfBirth: dateOfBirth,
+                gender: gender,
+              ),
+            );
 
         if (isDetailsSaved) {
           if (state.bodyWeight > constants.minBodyWeight) {
@@ -516,8 +511,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             _userPreferencesRepository.isMealsConfirmedForToday;
 
         double portionControl = constants.maxDailyFoodLimit;
-        final double? savedPortionControl =
-            _userPreferencesRepository.getPortionControl();
+        final double? savedPortionControl = _userPreferencesRepository
+            .getPortionControl();
         if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
           if (savedPortionControl == null) {
             if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
@@ -674,6 +669,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
     }
+
+    _triggerHomeWidgetUpdate();
   }
 
   FutureOr<void> _deleteFoodEntry(
@@ -686,21 +683,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       await _foodWeightRepository
           .deleteFoodWeightEntry(event.foodEntryId)
           .whenComplete(() async {
-        final List<FoodWeight> updatedFoodWeightEntries =
-            await _foodWeightRepository.getTodayFoodEntries();
+            final List<FoodWeight> updatedFoodWeightEntries =
+                await _foodWeightRepository.getTodayFoodEntries();
 
-        emit(
-          FoodWeightSubmittedState(
-            bodyWeight: state.bodyWeight,
-            userDetails: state.userDetails,
-            bodyWeightEntries: state.bodyWeightEntries,
-            foodEntries: updatedFoodWeightEntries,
-            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
-            isConfirmedAllMealsLogged: isMealsConfirmed,
-            portionControl: state.portionControl,
-          ),
-        );
-      });
+            emit(
+              FoodWeightSubmittedState(
+                bodyWeight: state.bodyWeight,
+                userDetails: state.userDetails,
+                bodyWeightEntries: state.bodyWeightEntries,
+                foodEntries: updatedFoodWeightEntries,
+                yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+                isConfirmedAllMealsLogged: isMealsConfirmed,
+                portionControl: state.portionControl,
+              ),
+            );
+          });
     } catch (e) {
       // Handle errors (e.g. database issues).
       emit(
@@ -718,10 +715,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _setDetailsToEditMode(
-    EditDetails _,
-    Emitter<HomeState> emit,
-  ) {
+  FutureOr<void> _setDetailsToEditMode(EditDetails _, Emitter<HomeState> emit) {
     emit(
       DetailsUpdateState(
         bodyWeight: state.bodyWeight,
@@ -910,8 +904,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       // Construct the feedback text with details from `extra'.
       final StringBuffer feedbackBody = StringBuffer()
-        ..writeln('${type is FeedbackType ? translate('feedback.type') : ''}:'
-            ' ${type is FeedbackType ? type.value : ''}')
+        ..writeln(
+          '${type is FeedbackType ? translate('feedback.type') : ''}:'
+          ' ${type is FeedbackType ? type.value : ''}',
+        )
         ..writeln()
         ..writeln(feedback.text)
         ..writeln()
@@ -920,9 +916,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ..writeln('${translate('buildNumber')}: ${packageInfo.buildNumber}')
         ..writeln()
         ..writeln(
-            '${rating is FeedbackRating ? translate('feedback.rating') : ''}'
-            '${rating is FeedbackRating ? ':' : ''}'
-            ' ${rating is FeedbackRating ? rating.value : ''}');
+          '${rating is FeedbackRating ? translate('feedback.rating') : ''}'
+          '${rating is FeedbackRating ? ':' : ''}'
+          ' ${rating is FeedbackRating ? rating.value : ''}',
+        );
 
       try {
         if (kIsWeb) {
@@ -931,7 +928,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             scheme: 'mailto',
             path: constants.supportEmail,
             queryParameters: <String, String>{
-              'subject': '${translate('feedback.appFeedback')}: '
+              'subject':
+                  '${translate('feedback.appFeedback')}: '
                   '${packageInfo.appName}',
               'body': feedbackBody.toString(),
             },
@@ -946,7 +944,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           // TODO: move this thing to "data".
           final Resend resend = Resend.instance;
           await resend.sendEmail(
-            from: 'Do Not Reply ${constants.appName} '
+            from:
+                'Do Not Reply ${constants.appName} '
                 '<no-reply@${constants.resendEmailDomain}>',
             to: <String>[constants.supportEmail],
             subject:
@@ -982,8 +981,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     // Check if the platform is web OR macOS. If so, return early.
     // See issue: https://github.com/ABausG/home_widget/issues/137.
     if (!kIsWeb && !Platform.isMacOS) {
-      final BodyWeight todayBodyWeight =
-          await _bodyWeightRepository.getTodayBodyWeight();
+      final BodyWeight todayBodyWeight = await _bodyWeightRepository
+          .getTodayBodyWeight();
 
       final PortionControlSummary portionControlSummary = PortionControlSummary(
         weight: todayBodyWeight.weight,

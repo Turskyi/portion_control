@@ -69,10 +69,8 @@ sealed class HomeState {
 
   int get age => userDetails.age;
 
-  double get totalConsumedToday => foodEntries.fold(
-        0,
-        (double sum, FoodWeight entry) => sum + entry.weight,
-      );
+  double get totalConsumedToday =>
+      foodEntries.fold(0, (double sum, FoodWeight entry) => sum + entry.weight);
 
   bool get hasNoPortionControl =>
       (bodyWeightEntries.length == 1 && bodyWeightEntries.first.date.isToday) ||

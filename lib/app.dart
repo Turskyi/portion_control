@@ -16,8 +16,9 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Resend(apiKey: Env.resendApiKey);
-    final LocalizationDelegate localizationDelegate =
-        LocalizedApp.of(context).delegate;
+    final LocalizationDelegate localizationDelegate = LocalizedApp.of(
+      context,
+    ).delegate;
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
       child: MaterialApp(

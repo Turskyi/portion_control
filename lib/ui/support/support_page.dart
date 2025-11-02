@@ -126,28 +126,17 @@ class SupportPage extends StatelessWidget {
   }
 
   void _launchTelegramUrl() {
-    launchUrl(
-      Uri.parse(res.telegramUrl),
-      mode: LaunchMode.externalApplication,
-    );
+    launchUrl(Uri.parse(res.telegramUrl), mode: LaunchMode.externalApplication);
   }
 
   // Helper getter to create the main text content to avoid repetition.
   String get _mainSupportText {
     return '''
-${translate(
-      'support_page.welcome_message',
-      args: <String, Object?>{
-        'appName': res.appName,
-      },
-    )}
+${translate('support_page.welcome_message', args: <String, Object?>{'appName': res.appName})}
 
 ${translate('support_page.about_app_title')}
 
- ${translate(
-      'support_page.about_app_content',
-      args: <String, Object?>{'appName': res.appName},
-    )}
+ ${translate('support_page.about_app_content', args: <String, Object?>{'appName': res.appName})}
 
 ${translate('support_page.getting_started_title')}
 

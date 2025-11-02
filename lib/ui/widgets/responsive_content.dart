@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 
 class ResponsiveContent extends StatelessWidget {
-  const ResponsiveContent({
-    required this.child,
-    super.key,
-  });
+  const ResponsiveContent({required this.child, super.key});
 
   final Widget child;
 

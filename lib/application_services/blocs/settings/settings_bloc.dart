@@ -23,7 +23,7 @@ part 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsBloc(this._settingsRepository)
-      : super(SettingsInitial(language: _settingsRepository.getLanguage())) {
+    : super(SettingsInitial(language: _settingsRepository.getLanguage())) {
     on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
 
     on<BugReportPressedEvent>(_onFeedbackRequested);
@@ -108,7 +108,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           // TODO: move this thing to "data".
           final Resend resend = Resend.instance;
           await resend.sendEmail(
-            from: 'Do Not Reply ${constants.appName} '
+            from:
+                'Do Not Reply ${constants.appName} '
                 '<no-reply@${constants.resendEmailDomain}>',
             to: <String>[constants.supportEmail],
             subject:
@@ -122,7 +123,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
             queryParameters: <String, Object?>{
               constants.subjectParameter:
                   '${translate('feedback.app_feedback')}: '
-                      '${packageInfo.appName}',
+                  '${packageInfo.appName}',
               constants.bodyParameter: feedbackBody.toString(),
             },
           );

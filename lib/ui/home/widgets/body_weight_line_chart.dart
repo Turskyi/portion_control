@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 
 class BodyWeightLineChart extends StatelessWidget {
-  const BodyWeightLineChart({
-    required this.bodyWeightEntries,
-    super.key,
-  });
+  const BodyWeightLineChart({required this.bodyWeightEntries, super.key});
 
   final List<BodyWeight> bodyWeightEntries;
 
@@ -21,14 +18,11 @@ class BodyWeightLineChart extends StatelessWidget {
         LineChartData(
           lineBarsData: <LineChartBarData>[
             LineChartBarData(
-              spots: bodyWeightEntries.asMap().entries.map(
-                (MapEntry<int, BodyWeight> entry) {
-                  return FlSpot(
-                    entry.key.toDouble(),
-                    entry.value.weight,
-                  );
-                },
-              ).toList(),
+              spots: bodyWeightEntries.asMap().entries.map((
+                MapEntry<int, BodyWeight> entry,
+              ) {
+                return FlSpot(entry.key.toDouble(), entry.value.weight);
+              }).toList(),
               // Use theme color.
               color: colorScheme.primary,
               barWidth: 4,
@@ -63,9 +57,7 @@ class BodyWeightLineChart extends StatelessWidget {
               ),
             ),
             topTitles: const AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: false,
-              ),
+              sideTitles: SideTitles(showTitles: false),
             ),
           ),
           gridData: FlGridData(
@@ -91,10 +83,7 @@ class BodyWeightLineChart extends StatelessWidget {
           ),
           borderData: FlBorderData(
             show: true,
-            border: Border.all(
-              color: onTertiaryColor,
-              width: 0.4,
-            ),
+            border: Border.all(color: onTertiaryColor, width: 0.4),
           ),
         ),
       ),

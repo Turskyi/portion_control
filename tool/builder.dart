@@ -18,6 +18,6 @@ class CopyCompiledJs extends Builder {
 
   @override
   Map<String, List<String>> get buildExtensions => <String, List<String>>{
-        r'$package$': <String>['web/drift_worker.js'],
-      };
+    r'$package$': <String>['web/drift_worker.js'],
+  };
 }

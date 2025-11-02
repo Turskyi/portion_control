@@ -6,9 +6,7 @@ import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:url_launcher/url_launcher.dart';
 
 class PrivacyPolicyPageContent extends StatelessWidget {
-  const PrivacyPolicyPageContent({
-    super.key,
-  });
+  const PrivacyPolicyPageContent({super.key});
 
   @override
   Widget build(BuildContext context) {

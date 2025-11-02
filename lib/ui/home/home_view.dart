@@ -34,10 +34,7 @@ import 'package:portion_control/ui/widgets/fancy_loading_indicator.dart'
     show FancyLoadingIndicator;
 
 class HomeView extends StatelessWidget {
-  const HomeView({
-    required this.localDataSource,
-    super.key,
-  });
+  const HomeView({required this.localDataSource, super.key});
 
   final LocalDataSource localDataSource;
 
@@ -59,9 +56,7 @@ class HomeView extends StatelessWidget {
         ),
         BlocProvider<YesterdayEntriesBloc>(
           create: (BuildContext _) {
-            return YesterdayEntriesBloc(
-              FoodWeightRepository(localDataSource),
-            );
+            return YesterdayEntriesBloc(FoodWeightRepository(localDataSource));
           },
         ),
         BlocProvider<MenuBloc>(
@@ -109,9 +104,9 @@ class HomeView extends StatelessWidget {
     } else if (state is YesterdayEntriesError) {
       // Close the loading dialog
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(state.message)));
     }
   }
 

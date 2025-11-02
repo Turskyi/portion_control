@@ -32,7 +32,7 @@ const double minBodyWeight = 20.0;
 
 const int minAge = 18;
 
-const double maxDailyFoodLimit = 6000.0;
+const double maxDailyFoodLimit = 4000.0;
 
 /// The minimum daily portion control limit, in grams.
 ///

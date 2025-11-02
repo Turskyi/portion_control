@@ -48,12 +48,7 @@ class GenderSelectionWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          12.0,
-                          0,
-                          4,
-                          1,
-                        ),
+                        padding: const EdgeInsets.fromLTRB(12.0, 0, 4, 1),
                         child: Text(
                           translate('gender'),
                           style: TextStyle(
@@ -110,8 +105,9 @@ class GenderSelectionWidget extends StatelessWidget {
                       decoration: InputDecoration(
                         labelText: translate('gender'),
                         filled: true,
-                        fillColor:
-                            themeData.colorScheme.secondary.withOpacity(0.1),
+                        fillColor: themeData.colorScheme.secondary.withOpacity(
+                          0.1,
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(color: dividerColor),
@@ -122,9 +118,7 @@ class GenderSelectionWidget extends StatelessWidget {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
-                            color: themeData.primaryColor,
-                          ),
+                          borderSide: BorderSide(color: themeData.primaryColor),
                         ),
                       ),
                       items: Gender.values

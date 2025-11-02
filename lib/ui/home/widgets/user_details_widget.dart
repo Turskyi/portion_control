@@ -67,8 +67,9 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                       controller: _dateOfBirthTextEditingController
                         ..text = dateOfBirth,
                       readOnly: true,
-                      value:
-                          state is DetailsSubmittedState ? dateOfBirth : null,
+                      value: state is DetailsSubmittedState
+                          ? dateOfBirth
+                          : null,
                       onTap: () => _pickDate(
                         dateOfBirthText: dateOfBirth,
                         dateOfBirthDateTime: state.dateOfBirth,

@@ -87,10 +87,7 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
           )
         else ...<Widget>[
           if (widget.onEdit != null)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: widget.onEdit,
-            ),
+            IconButton(icon: const Icon(Icons.edit), onPressed: widget.onEdit),
           if (widget.onDelete != null)
             IconButton(
               icon: const Icon(Icons.delete),
