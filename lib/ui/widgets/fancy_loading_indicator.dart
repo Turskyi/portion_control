@@ -42,9 +42,9 @@ class _FancyLoadingIndicatorState extends State<FancyLoadingIndicator>
     return Center(
       child: AnimatedBuilder(
         animation: _controller,
-        builder: (_, __) => CircularProgressIndicator(
-          valueColor: _colorTween,
-        ),
+        builder: (BuildContext _, Widget? _) {
+          return CircularProgressIndicator(valueColor: _colorTween);
+        },
       ),
     );
   }

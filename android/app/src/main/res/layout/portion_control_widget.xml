@@ -4,10 +4,11 @@
     android:id="@+id/widget_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_widget_radial"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:background="@drawable/bg_widget_radial"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:previewImage="@drawable/example_appwidget_preview">
 
     <!-- Portion control (daily limit) -->
     <TextView
@@ -16,8 +17,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@android:color/black"
-        android:textStyle="bold"
         android:textSize="20sp"
+        android:textStyle="bold"
         tools:text="Limit: 1800 g" />
 
     <!-- Chart -->
@@ -27,8 +28,9 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
         android:contentDescription="@string/chart"
-        tools:src="@mipmap/ic_launcher_round" />
+        android:scaleType="fitCenter"
+        android:src="@drawable/example_appwidget_preview"
+        tools:src="@drawable/example_appwidget_preview" />
 
 </LinearLayout>

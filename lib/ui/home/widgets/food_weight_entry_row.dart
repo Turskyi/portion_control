@@ -25,6 +25,7 @@ class FoodWeightEntryRow extends StatefulWidget {
 
 class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
   late TextEditingController _controller;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -38,6 +39,9 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
     if (widget.value != oldWidget.value) {
       _controller.text = widget.value ?? '';
     }
+    if (widget.isEditState && !oldWidget.isEditState) {
+      _focusNode.requestFocus();
+    }
   }
 
   @override
@@ -47,11 +51,13 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
         Expanded(
           child: ValueListenableBuilder<TextEditingValue>(
             valueListenable: _controller,
-            builder: (BuildContext _, TextEditingValue value, Widget? __) {
+            builder: (BuildContext _, TextEditingValue value, Widget? _) {
               final String input = value.text;
               return TextFormField(
+                focusNode: _focusNode,
                 controller: _controller,
-                enabled: widget.isEditState,
+                readOnly: !widget.isEditState,
+                onTap: !widget.isEditState ? widget.onEdit : null,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: translate('hint.enter_food_weight'),
@@ -98,6 +104,7 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 

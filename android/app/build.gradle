@@ -42,6 +42,7 @@ android {
     }
 
     kotlinOptions {
+        //noinspection GrDeprecatedAPIUsage
         jvmTarget = JavaVersion.VERSION_1_8
     }
 

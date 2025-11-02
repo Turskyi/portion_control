@@ -32,7 +32,7 @@ class YesterdayFoodEntriesDialog extends StatelessWidget {
       child: GradientBackgroundScaffold(
         appBar: BlurredAppBar(title: translate('yesterday_entries.title')),
         body: ListView.separated(
-          separatorBuilder: (BuildContext _, int __) {
+          separatorBuilder: (BuildContext _, int _) {
             return const SizedBox(height: 16);
           },
           padding: EdgeInsets.fromLTRB(

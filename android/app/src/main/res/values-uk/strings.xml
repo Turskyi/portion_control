@@ -20,4 +20,5 @@
     <string name="limit_g">Контроль порцій: %1$s г</string>
     <string name="chart">Графік</string>
     <string name="portion_control_g">Контроль порцій: %1$s г</string>
+    <string name="portioncontrol">PortionControl</string>
 </resources>

@@ -51,7 +51,9 @@ Future<void> main() async {
   final Language savedLanguage = Language.fromIsoLanguageCode(savedIsoCode);
 
   final LocalizationDelegate localizationDelegate =
-      await localization.getLocalizationDelegate(localDataSource);
+      await localization.getLocalizationDelegate(
+    localDataSource,
+  );
 
   final Language currentLanguage = Language.fromIsoLanguageCode(
     localizationDelegate.currentLocale.languageCode,

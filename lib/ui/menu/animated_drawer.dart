@@ -17,10 +17,7 @@ import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
 
 class AnimatedDrawer extends StatefulWidget {
-  const AnimatedDrawer({
-    required this.localDataSource,
-    super.key,
-  });
+  const AnimatedDrawer({required this.localDataSource, super.key});
 
   final LocalDataSource localDataSource;
 
@@ -30,7 +27,9 @@ class AnimatedDrawer extends StatefulWidget {
 
 class _AnimatedDrawerState extends State<AnimatedDrawer>
     with SingleTickerProviderStateMixin {
-  bool _isRequestPinWidgetSupported = false;
+  final ValueNotifier<bool> _isRequestPinWidgetSupported = ValueNotifier<bool>(
+    false,
+  );
   late AnimationController _controller;
   late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
@@ -42,14 +41,18 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _slideAnimation = Tween<double>(begin: -1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _slideAnimation = Tween<double>(
+      begin: -1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
     _controller.forward();
-    _checkPinability();
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      _checkPinability();
+    }
   }
 
   @override
@@ -87,10 +90,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               builder: (BuildContext _, Widget? child) {
                 return Transform.translate(
                   offset: Offset(_slideAnimation.value * 100, 0),
-                  child: Opacity(
-                    opacity: _fadeAnimation.value,
-                    child: child,
-                  ),
+                  child: Opacity(opacity: _fadeAnimation.value, child: child),
                 );
               },
               child: ListView(
@@ -117,9 +117,9 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                   AnimatedDrawerItem(
                     icon: Icons.feedback,
                     text: translate('button.feedback'),
-                    onTap: () => context
-                        .read<MenuBloc>()
-                        .add(const BugReportPressedEvent()),
+                    onTap: () => context.read<MenuBloc>().add(
+                      const BugReportPressedEvent(),
+                    ),
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.support_agent,
@@ -131,13 +131,19 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                   // Only add the event if it's NOT web AND NOT macOS.
                   // For context, see issue:
                   // https://github.com/ABausG/home_widget/issues/137.
-                  if (!kIsWeb &&
-                      !Platform.isMacOS &&
-                      _isRequestPinWidgetSupported)
-                    AnimatedDrawerItem(
-                      icon: Icons.widgets_outlined,
-                      text: translate('pin_widget'),
-                      onTap: _pinWidget,
+                  if (!kIsWeb && !Platform.isMacOS)
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _isRequestPinWidgetSupported,
+                      builder: (BuildContext context, bool isSupported, _) {
+                        if (isSupported) {
+                          return AnimatedDrawerItem(
+                            icon: Icons.widgets_outlined,
+                            text: translate('pin_widget'),
+                            onTap: _pinWidget,
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
                     ),
                   if (!kIsWeb)
                     AnimatedDrawerItem(
@@ -157,6 +163,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
   @override
   void dispose() {
     _controller.dispose();
+    _isRequestPinWidgetSupported.dispose();
     super.dispose();
   }
 
@@ -216,8 +223,8 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
 
   void _changeLanguage(Language? newLanguage) {
     changeLocale(context, newLanguage?.isoLanguageCode)
-        // The returned value is always `null`.
-        .then((Object? _) {
+    // The returned value is always `null`.
+    .then((Object? _) {
       if (mounted && newLanguage != null) {
         context.read<MenuBloc>().add(ChangeLanguageEvent(newLanguage));
         Navigator.pop(context);
@@ -226,12 +233,27 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
   }
 
   Future<void> _checkPinability() async {
-    final bool? isRequestPinWidgetSupported =
-        await HomeWidget.isRequestPinWidgetSupported();
-    if (mounted) {
-      setState(() {
-        _isRequestPinWidgetSupported = isRequestPinWidgetSupported ?? false;
-      });
+    try {
+      final bool? isRequestPinWidgetSupported =
+          await HomeWidget.isRequestPinWidgetSupported();
+
+      if (mounted) {
+        _isRequestPinWidgetSupported.value =
+            isRequestPinWidgetSupported ?? false;
+      }
+    } catch (e, s) {
+      debugPrint(
+        'Error checking widget pinning support in `AnimatedDrawer` '
+        '($runtimeType): $e. '
+        'This might happen on platforms where '
+        '`HomeWidget.isRequestPinWidgetSupported()` is not implemented or '
+        'fails. '
+        'Defaulting to not showing the "Pin Widget" option.\n'
+        'Stacktrace: $s',
+      );
+      if (mounted) {
+        _isRequestPinWidgetSupported.value = false;
+      }
     }
   }
 }

@@ -8,6 +8,7 @@
     android:minHeight="180dp"
     android:previewImage="@drawable/example_appwidget_preview"
     android:previewLayout="@layout/portion_control_widget"
+    android:widgetLayout="@layout/portion_control_widget"
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="3"
     android:targetCellHeight="2"

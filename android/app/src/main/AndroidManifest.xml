@@ -29,7 +29,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="PortionControl">
+        android:label="@string/portioncontrol">
 
         <!-- suppress AndroidDomInspection -->
         <activity

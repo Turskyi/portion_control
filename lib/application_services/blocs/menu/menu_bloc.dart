@@ -191,7 +191,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   FutureOr<void> _openWebPage(
     OpenWebVersionEvent _,
-    Emitter<MenuState> __,
+    Emitter<MenuState> _,
   ) {
     String url = constants.baseUrl;
     if (state.isUkrainian) {
