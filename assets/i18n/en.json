@@ -120,6 +120,7 @@
   "food_entry": {
     "challenge_warning": "It seems like you’ve set a big challenge for yourself today. We’re not sure what your plans are, but we definitely suggest not overdoing it with that amount of food. 😅",
     "total_consumed_today_prefix": "Total consumed today: ",
+    "total_consumed_yesterday_prefix": "Total consumed yesterday: ",
     "grams_suffix": " g",
     "must_eat_at_least_prefix": "❗You must eat at least ",
     "can_eat_prefix": "You can eat ",

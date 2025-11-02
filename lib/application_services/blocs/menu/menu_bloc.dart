@@ -238,6 +238,11 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         _homeWidgetService.setAppGroupId(constants.appleAppGroupId);
 
         _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.locale.stringValue,
+          state.language.isoLanguageCode,
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
           HomeWidgetKey.weight.stringValue,
           portionControlSummary.weight.toString(),
         );

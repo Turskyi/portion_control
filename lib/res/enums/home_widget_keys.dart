@@ -4,6 +4,7 @@ enum HomeWidgetKey {
   portionControl,
   textLastUpdated,
   textRecommendation,
+  locale,
   image;
 
   String get stringValue {
@@ -18,6 +19,8 @@ enum HomeWidgetKey {
         return 'text_last_updated';
       case HomeWidgetKey.textRecommendation:
         return 'text_recommendation';
+      case HomeWidgetKey.locale:
+        return 'text_locale';
       case HomeWidgetKey.image:
         return 'image';
     }

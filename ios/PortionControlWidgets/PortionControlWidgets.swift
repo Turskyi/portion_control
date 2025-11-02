@@ -11,6 +11,46 @@ struct WidgetDataKeys {
     static let consumed = "text_consumed"
     static let recommendation = "text_recommendation"
     static let lastUpdated = "text_last_updated"
+    static  let locale = "text_locale"
+}
+
+// MARK: - Localization
+private struct LocalizedStrings {
+    let weightLabel: String
+    let consumedLabel: String
+    let limitLabel: String
+    let enterWeightHint: String
+    let enterFoodWeightHint: String
+    let defaultMessages: [String]
+    
+    init(locale: String?) {
+        switch locale {
+        case "uk":
+            weightLabel = "Вага:"
+            consumedLabel = "Спожито:"
+            limitLabel = "Ліміт:"
+            enterWeightHint = "👉 Введіть вагу перед першим прийомом їжі."
+            enterFoodWeightHint = "👉 Введіть вагу їжі."
+            defaultMessages = [
+                "🍽️ Ой! Немає даних про прийом їжі.",
+                "🤷 Схоже, цього разу нам не вдалося зареєструвати вашу порцію.",
+                "🥗 Немає рекомендацій? Довіряйте своїй інтуїції сьогодні!",
+                "📊 Дані взяли перерву — спробуйте ще раз незабаром!"
+            ]
+        default: // "en" and fallback
+            weightLabel = "Weight:"
+            consumedLabel = "Consumed:"
+            limitLabel = "Limit:"
+            enterWeightHint = "👉 Enter weight before your first meal."
+            enterFoodWeightHint = "👉 Enter food weight."
+            defaultMessages = [
+                "🍽️ Oops! No meal data available.",
+                "🤷 Looks like we couldn’t log your portion this time.",
+                "🥗 No recommendation? Trust your instincts today!",
+                "📊 Data’s taking a break — try again soon!"
+            ]
+        }
+    }
 }
 
 // MARK: - Timeline Provider
@@ -27,6 +67,7 @@ struct Provider: TimelineProvider {
             recommendation: "Looking good!",
             lastUpdated: "Just now",
             chartImage: nil,
+            locale: "en"
         )
     }
     
@@ -49,6 +90,7 @@ struct Provider: TimelineProvider {
         let recommendation = userDefaults?.string(forKey: WidgetDataKeys.recommendation)
         let lastUpdated = userDefaults?.string(forKey: WidgetDataKeys.lastUpdated)
         let imagePath = userDefaults?.string(forKey: WidgetDataKeys.imagePath)
+        let locale = userDefaults?.string(forKey: WidgetDataKeys.locale)
         
         var chartImage: UIImage?
         if let path = imagePath {
@@ -66,7 +108,8 @@ struct Provider: TimelineProvider {
             portionControl: portionControl,
             recommendation: recommendation,
             lastUpdated: lastUpdated,
-            chartImage: chartImage
+            chartImage: chartImage,
+            locale: locale
         )
     }
 }
@@ -80,29 +123,24 @@ struct PortionControlEntry: TimelineEntry {
     let recommendation: String?
     let lastUpdated: String?
     let chartImage: UIImage?
+    let locale: String?
 }
 
 // MARK: - Widget View
 struct PortionControlWidgetsEntryView: View {
     var entry: Provider.Entry
     
-    private let defaultMessages = [
-        "🍽️ Oops! No meal data available.",
-        "🤷 Looks like we couldn’t log your portion this time.",
-        "🥗 No recommendation? Trust your instincts today!",
-        "📊 Data’s taking a break — try again soon!"
-    ]
-    
     var body: some View {
+        let strings = LocalizedStrings(locale: entry.locale)
         let weightValue = Double(entry.weight ?? "0.0") ?? 0.0
         let consumedValue = Double(entry.consumed ?? "0.0") ?? 0.0
         
         var hintMessage: String? {
             if weightValue == 0.0 {
-                return "👉 Enter weight before your first meal."
+                return strings.enterWeightHint
             }
             if weightValue != 0.0 && consumedValue == 0.0 {
-                return "👉 Enter food weight."
+                return strings.enterFoodWeightHint
             }
             return nil
         }
@@ -113,7 +151,7 @@ struct PortionControlWidgetsEntryView: View {
             } else if let rec = entry.recommendation, !rec.isEmpty {
                 return rec
             } else {
-                return defaultMessages.randomElement()!
+                return strings.defaultMessages.randomElement()!
             }
         }()
         
@@ -157,17 +195,17 @@ struct PortionControlWidgetsEntryView: View {
                     VStack(alignment: .leading, spacing: 4) {
 
                         if weightValue != 0.0, let weight = entry.weight {
-                            Text("Weight: \(weight) kg")
+                            Text("\(strings.weightLabel) \(weight) kg")
                                 .font(.system(size: 18, weight: .bold))
                         }
                         
                         if consumedValue != 0.0, let consumed = entry.consumed {
-                            Text("Consumed: \(consumed) g")
+                            Text("\(strings.consumedLabel) \(consumed) g")
                                 .font(.system(size: 16))
                         }
                         
-                        if let portionControl = entry.portionControl, !portionControl.isEmpty {
-                            Text("Limit: \(portionControl) g")
+                        if weightValue != 0.0, let portionControl = entry.portionControl, !portionControl.isEmpty {
+                            Text("\(strings.limitLabel) \(portionControl) g")
                                 .font(.system(size: 15))
                         }
                     }
@@ -230,6 +268,7 @@ struct PortionControlWidgets: Widget {
         recommendation: "Looking good!",
         lastUpdated: "Just now",
         chartImage: nil,
+        locale: "en"
     )
     PortionControlEntry(
         date: .now,
@@ -239,5 +278,6 @@ struct PortionControlWidgets: Widget {
         recommendation: nil,
         lastUpdated: "Just now",
         chartImage: nil,
+        locale: "uk"
     )
 }

@@ -29,7 +29,7 @@ class SupportPage extends StatelessWidget {
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(
             horizontalIndent,
-            MediaQuery.of(context).padding.top + 72,
+            MediaQuery.paddingOf(context).top + 72,
             horizontalIndent,
             80.0,
           ),
