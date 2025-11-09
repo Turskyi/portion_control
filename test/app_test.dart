@@ -16,6 +16,7 @@ import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
 import 'package:portion_control/ui/home/home_page.dart';
+import 'package:portion_control/ui/onboarding/onboarding_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'helpers/translate_test_helper.dart';
@@ -68,7 +69,11 @@ void main() {
     ) async {
       // Create route map
       final Map<String, WidgetBuilder> testRoutes = <String, WidgetBuilder>{
-        '/': (_) => HomePage(localDataSource: localDataSource),
+        AppRoute.onboarding.path: (BuildContext _) {
+          return OnboardingScreen(localDataSource: localDataSource);
+        },
+        AppRoute.landing.path: (_) =>
+            HomePage(localDataSource: localDataSource),
         AppRoute.home.path: (_) => HomePage(localDataSource: localDataSource),
       };
 
@@ -134,7 +139,7 @@ void main() {
         reason: 'MaterialApp should be present',
       );
       expect(
-        find.byType(HomePage),
+        find.byType(OnboardingScreen),
         findsOneWidget,
         reason: 'HomePage should be present',
       );
