@@ -76,12 +76,19 @@ class FoodEntriesColumn extends StatelessWidget {
                 '${state.formattedTotalConsumedToday}$gramsSuffix',
                 style: textTheme.titleMedium,
               ),
-
-              Text(
-                '${translate('food_entry.total_consumed_yesterday_prefix')}'
-                '${state.formattedTotalConsumedYesterday}$gramsSuffix',
-                style: textTheme.titleMedium,
-              ),
+              if (state.formattedTotalConsumedYesterday == '0')
+                Text(
+                  translate(
+                    'food_entry.you_did_not_put_any_food_entries_yesterday',
+                  ),
+                  style: textTheme.titleMedium,
+                )
+              else
+                Text(
+                  '${translate('food_entry.total_consumed_yesterday_prefix')}'
+                  '${state.formattedTotalConsumedYesterday}$gramsSuffix',
+                  style: textTheme.titleMedium,
+                ),
               if (isWeightBelowHealthy &&
                   isWeightDecreasingOrSame &&
                   totalConsumedToday < portionControl &&

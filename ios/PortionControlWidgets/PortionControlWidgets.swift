@@ -55,7 +55,7 @@ private struct LocalizedStrings {
 
 // MARK: - Timeline Provider
 struct Provider: TimelineProvider {
-
+    
     let userDefaults = UserDefaults(suiteName: "group.dmytrowidget")
     
     func placeholder(in context: Context) -> PortionControlEntry {
@@ -136,7 +136,9 @@ struct PortionControlWidgetsEntryView: View {
         let consumedValue = Double(entry.consumed ?? "0.0") ?? 0.0
         
         var hintMessage: String? {
+            
             if weightValue == 0.0 {
+                
                 return strings.enterWeightHint
             }
             if weightValue != 0.0 && consumedValue == 0.0 {
@@ -151,8 +153,10 @@ struct PortionControlWidgetsEntryView: View {
             } else if let rec = entry.recommendation, !rec.isEmpty {
                 return rec
             } else {
+                
                 return strings.defaultMessages.randomElement()!
             }
+            
         }()
         
         ZStack {
@@ -166,7 +170,9 @@ struct PortionControlWidgetsEntryView: View {
                 startRadius: 5,
                 endRadius: 500
             )
-            .ignoresSafeArea()
+            .mask(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+            )
             
             // --- Background chart image or fallback ---
             if let uiImage = entry.chartImage {
@@ -193,9 +199,12 @@ struct PortionControlWidgetsEntryView: View {
             VStack {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 4) {
-
+                        
                         if weightValue != 0.0, let weight = entry.weight {
                             Text("\(strings.weightLabel) \(weight) kg")
+                                .font(.system(size: 18, weight: .bold))
+                        } else {
+                            Text("PortionControl")
                                 .font(.system(size: 18, weight: .bold))
                         }
                         
@@ -228,7 +237,7 @@ struct PortionControlWidgetsEntryView: View {
                         if let lastUpdated = entry.lastUpdated, !lastUpdated.isEmpty {
                             Text(lastUpdated)
                                 .font(.system(size: 12))
-            
+                            
                         }
                     }
                     .padding(8)

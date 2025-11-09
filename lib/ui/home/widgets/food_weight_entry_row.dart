@@ -30,6 +30,7 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
   @override
   void initState() {
     super.initState();
+
     _controller = TextEditingController(text: widget.value);
   }
 
@@ -53,6 +54,7 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
             valueListenable: _controller,
             builder: (BuildContext _, TextEditingValue value, Widget? _) {
               final String input = value.text;
+
               return TextFormField(
                 focusNode: _focusNode,
                 controller: _controller,

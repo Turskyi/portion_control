@@ -1144,7 +1144,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         if (state.bodyWeightEntries.length > 1) {
           // Line Chart of Body Weight trends for the last two weeks.
-          _homeWidgetService.renderFlutterWidget(
+          await _homeWidgetService.renderFlutterWidget(
             MediaQuery(
               data: const MediaQueryData(
                 // Logical pixels for the chart rendering.
