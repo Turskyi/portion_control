@@ -29,6 +29,7 @@ class LocalDataSource {
   static const String _mealsConfirmedKey = 'meals_confirmed';
   static const String _mealsConfirmedDateKey = 'meals_confirmed_date';
   static const String _portionControlKey = 'portion_control';
+  static const String _onboardingCompletedKey = 'onboarding_completed';
 
   double? getHeight() => _preferences.getDouble(_heightKey);
 
@@ -210,6 +211,14 @@ class LocalDataSource {
 
   Future<bool> savePortionControl(double portionControl) {
     return _preferences.setDouble(_portionControlKey, portionControl);
+  }
+
+  Future<bool> saveOnboardingCompleted() {
+    return _preferences.setBool(_onboardingCompletedKey, true);
+  }
+
+  bool isOnboardingCompleted() {
+    return _preferences.getBool(_onboardingCompletedKey) ?? false;
   }
 
   /// Insert or update a body weight entry for the same date.

@@ -3,15 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/env/env.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/router/navigator.dart';
 import 'package:resend/resend.dart';
 
 class App extends StatelessWidget {
-  const App({required this.routeMap, super.key});
+  const App({
+    required this.routeMap,
+    required this.localDataSource,
+    super.key,
+  });
 
   final Map<String, WidgetBuilder> routeMap;
+  final LocalDataSource localDataSource;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +51,9 @@ class App extends StatelessWidget {
             secondary: const Color(0xFFD47A9B),
           ),
         ),
-        initialRoute: kIsWeb ? AppRoute.landing.path : AppRoute.home.path,
+        initialRoute: localDataSource.isOnboardingCompleted()
+            ? (kIsWeb ? AppRoute.landing.path : AppRoute.home.path)
+            : AppRoute.onboarding.path,
         routes: routeMap,
       ),
     );

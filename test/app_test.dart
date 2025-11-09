@@ -110,7 +110,10 @@ void main() {
                   },
                 ),
               ],
-              child: App(routeMap: testRoutes),
+              child: App(
+                routeMap: testRoutes,
+                localDataSource: localDataSource,
+              ),
             ),
           ),
         ),

@@ -31,6 +31,7 @@
   "screen_size": "Screen size",
   "last_updated_on_label": "Last Updated on",
   "pin_widget": "Pin Widget",
+  "next": "Next",
   "privacy_policy": {
     "title": "Privacy Policy",
     "introduction_title": "Introduction",
@@ -227,5 +228,20 @@
     "october": "October",
     "november": "November",
     "december": "December"
+  },
+  "onboarding": {
+    "page1": {
+      "title": "Find Your Perfect Balance 🍽️",
+      "content": "Eat smarter — not less.\nTrack your meals, stay mindful, and feel your progress every day."
+    },
+    "page2": {
+      "title": "📊 Visualize Your Progress Effortlessly",
+      "content": "See how your daily portions and weight change over time with clean, simple charts — no calorie counting required."
+    },
+    "page3": {
+      "title": "🩷 Stay in Control Every Day",
+      "content": "Track your progress, follow your goals, and enjoy a healthier relationship with food.\nYour journey starts today — one portion at a time."
+    },
+    "tagline": "Your mindful eating companion — private, simple, and motivating."
   }
 }
