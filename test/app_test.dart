@@ -42,7 +42,7 @@ void main() {
 
     setUp(() async {
       TestWidgetsFlutterBinding.ensureInitialized();
-
+      SharedPreferences.setMockInitialValues(<String, Object>{});
       // Initialize mocks
       mockBodyWeightRepository = MockBodyWeightRepository();
       mockFoodWeightRepository = MockFoodWeightRepository();
