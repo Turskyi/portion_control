@@ -13,7 +13,6 @@ class DependenciesScope extends InheritedWidget {
     required this.dependencies,
     required super.child,
     super.key,
-
   });
 
   /// The dependencies

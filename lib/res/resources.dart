@@ -32,8 +32,8 @@ class Resources extends InheritedWidget {
   /// [Resources] widget to be always present in the [EthicalScannerApp].
   /// If the [Resources] widget is not found, a runtime exception is thrown.
   static Resources of(BuildContext context) {
-    Resources? resources =
-        context.dependOnInheritedWidgetOfExactType<Resources>();
+    Resources? resources = context
+        .dependOnInheritedWidgetOfExactType<Resources>();
     if (resources != null) {
       return resources;
     } else {

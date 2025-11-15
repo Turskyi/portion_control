@@ -7,6 +7,10 @@ import 'package:nested/nested.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
+import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
+import 'package:portion_control/di/dependencies.dart';
+import 'package:portion_control/di/dependencies_scope.dart';
+import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
@@ -70,7 +74,21 @@ void main() {
       // Create route map
       final Map<String, WidgetBuilder> testRoutes = <String, WidgetBuilder>{
         AppRoute.onboarding.path: (BuildContext _) {
-          return OnboardingScreen(localDataSource: localDataSource);
+          return BlocProvider<OnboardingBloc>(
+            create: (BuildContext context) {
+              final Dependencies dependencies = DependenciesScope.of(context);
+              final String savedIsoCode = localDataSource.getLanguageIsoCode();
+              final Language savedLanguage = Language.fromIsoLanguageCode(
+                savedIsoCode,
+              );
+
+              return OnboardingBloc(
+                dependencies.saveLanguageUseCase,
+                savedLanguage,
+              );
+            },
+            child: OnboardingScreen(localDataSource: localDataSource),
+          );
         },
         AppRoute.landing.path: (_) =>
             HomePage(localDataSource: localDataSource),
@@ -115,9 +133,12 @@ void main() {
                   },
                 ),
               ],
-              child: App(
-                routeMap: testRoutes,
-                localDataSource: localDataSource,
+              child: DependenciesScope(
+                dependencies: Dependencies(localDataSource),
+                child: App(
+                  routeMap: testRoutes,
+                  localDataSource: localDataSource,
+                ),
               ),
             ),
           ),
