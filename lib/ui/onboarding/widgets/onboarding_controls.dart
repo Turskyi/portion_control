@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class OnboardingControls extends StatelessWidget {
   const OnboardingControls({
@@ -22,12 +23,12 @@ class OnboardingControls extends StatelessWidget {
           if (currentPage != 2)
             ElevatedButton(
               onPressed: onNextPressed,
-              child: const Text('Next'),
+              child: Text(translate('next')),
             )
           else
             ElevatedButton(
               onPressed: onGetStartedPressed,
-              child: const Text('Get Started'),
+              child: Text(translate('get_started')),
             ),
         ],
       ),

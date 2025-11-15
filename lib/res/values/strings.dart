@@ -1,0 +1,3 @@
+class Strings {
+  const Strings();
+}

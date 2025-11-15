@@ -27,6 +27,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const String _languageValue = 'language';
+
   FeedbackController? _feedbackController;
 
   @override
@@ -79,7 +81,7 @@ class _HomePageState extends State<HomePage> {
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_horiz, color: colorScheme.primary),
                 onSelected: (String result) {
-                  if (result == 'language') {
+                  if (result == _languageValue) {
                     _showLanguageSelectionDialog();
                   } else if (result == AppRoute.privacyPolity.name) {
                     Navigator.pushNamed(context, AppRoute.privacyPolity.path);
@@ -108,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                   final double badgeHeight = 40.0;
                   return <PopupMenuEntry<String>>[
                     PopupMenuItem<String>(
-                      value: 'language',
+                      value: _languageValue,
                       child: Text(t('language')),
                     ),
                     const PopupMenuDivider(),

@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/app.dart';
+import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
+import 'package:portion_control/di/dependencies.dart';
+import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/di/injector.dart' as di;
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
@@ -79,8 +82,18 @@ Future<void> main() async {
     AppRoute.home.path: (BuildContext _) {
       return HomeView(localDataSource: localDataSource);
     },
-    AppRoute.onboarding.path: (BuildContext _) =>
-        OnboardingScreen(localDataSource: localDataSource),
+    AppRoute.onboarding.path: (BuildContext _) {
+      return BlocProvider<OnboardingBloc>(
+        create: (BuildContext context) {
+          final Dependencies dependencies = DependenciesScope.of(context);
+          return OnboardingBloc(
+            dependencies.saveLanguageUseCase,
+            savedLanguage,
+          );
+        },
+        child: OnboardingScreen(localDataSource: localDataSource),
+      );
+    },
     AppRoute.privacyPolity.path: (BuildContext _) => const PrivacyPolicyPage(),
     AppRoute.about.path: (BuildContext _) => const AboutPage(),
     AppRoute.support.path: (BuildContext _) => const SupportPage(),
@@ -101,9 +114,12 @@ Future<void> main() async {
                 scrollController: scrollController,
               );
             },
-        child: App(
-          routeMap: routeMap,
-          localDataSource: localDataSource,
+        child: DependenciesScope(
+          dependencies: Dependencies(localDataSource),
+          child: App(
+            routeMap: routeMap,
+            localDataSource: localDataSource,
+          ),
         ),
       ),
     ),
