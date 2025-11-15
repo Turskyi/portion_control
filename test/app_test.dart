@@ -24,6 +24,7 @@ import 'package:portion_control/ui/landing/landing_page.dart';
 import 'package:portion_control/ui/onboarding/onboarding_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'helpers/test_database.dart' as test_database;
 import 'helpers/translate_test_helper.dart';
 import 'mock_interactors.dart';
 import 'mock_repositories.dart';
@@ -39,10 +40,13 @@ void main() {
     late LocalizationDelegate localizationDelegate;
     late SettingsRepository settingsRepository;
     late HomeWidgetService mockHomeWidgetService;
+    late AppDatabase database;
 
     setUp(() async {
       TestWidgetsFlutterBinding.ensureInitialized();
+      database = await test_database.init();
       SharedPreferences.setMockInitialValues(<String, Object>{});
+
       // Initialize mocks
       mockBodyWeightRepository = MockBodyWeightRepository();
       mockFoodWeightRepository = MockFoodWeightRepository();
@@ -51,13 +55,11 @@ void main() {
       mockHomeWidgetService = MockHomeWidgetService();
 
       // Set up SharedPreferences
-      SharedPreferences.setMockInitialValues(<String, Object>{});
       final SharedPreferences preferences =
           await SharedPreferences.getInstance();
 
       // Initialize database and data source
-      final AppDatabase appDatabase = AppDatabase();
-      localDataSource = LocalDataSource(preferences, appDatabase);
+      localDataSource = LocalDataSource(preferences, database);
 
       // Set up localization
       await setUpFlutterTranslateForTests();
@@ -67,6 +69,10 @@ void main() {
 
       // Initialize repositories
       settingsRepository = SettingsRepository(localDataSource);
+    });
+
+    tearDown(() async {
+      await database.close();
     });
 
     testWidgets(
