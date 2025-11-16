@@ -14,8 +14,6 @@ import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
-import 'package:portion_control/localization/localization_delegate_getter.dart'
-    as localization;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
@@ -62,10 +60,7 @@ void main() {
       localDataSource = LocalDataSource(preferences, database);
 
       // Set up localization
-      await setUpFlutterTranslateForTests();
-      localizationDelegate = await localization.getLocalizationDelegate(
-        localDataSource,
-      );
+      localizationDelegate = await setUpFlutterTranslateForTests();
 
       // Initialize repositories
       settingsRepository = SettingsRepository(localDataSource);

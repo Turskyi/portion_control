@@ -1,13 +1,70 @@
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+// This is a 1x1 transparent PNG. It's a standard technique to mock images in tests.
+final Uint8List kTransparentImage = Uint8List.fromList(<int>[
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+  0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+  0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
+  0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
+  0x42, 0x60, 0x82,
+]);
 
 Future<LocalizationDelegate> setUpFlutterTranslateForTests({
   Locale startLocale = const Locale('en'),
 }) async {
   SharedPreferences.setMockInitialValues(<String, Object>{});
+
+  final TestWidgetsFlutterBinding binding =
+      TestWidgetsFlutterBinding.ensureInitialized();
+
+  // The asset manifest must contain a list of variant maps for each asset.
+  final Map<String, dynamic> manifest = <String, dynamic>{
+    'assets/i18n/en.json': <Map<String, String>>[
+      {'asset': 'assets/i18n/en.json'},
+    ],
+    'assets/i18n/uk.json': <Map<String, String>>[
+      {'asset': 'assets/i18n/uk.json'},
+    ],
+    'assets/images/onboarding_plate.png': <Map<String, String>>[
+      {'asset': 'assets/images/onboarding_plate.png'},
+    ],
+  };
+
+  binding.defaultBinaryMessenger.setMockMessageHandler('flutter/assets',
+      (ByteData? message) async {
+    if (message == null) {
+      return null;
+    }
+    final String key = utf8.decode(message.buffer.asUint8List());
+
+    if (key == 'AssetManifest.json') {
+      return ByteData.sublistView(utf8.encode(json.encode(manifest)));
+    }
+
+    if (key == 'AssetManifest.bin') {
+      final ByteData? manifestData =
+          const StandardMessageCodec().encodeMessage(manifest);
+      return manifestData;
+    }
+
+    if (key == 'assets/i18n/en.json') {
+      return ByteData.sublistView(utf8.encode(json.encode(_enTestTranslations)));
+    }
+    if (key == 'assets/i18n/uk.json') {
+      return ByteData.sublistView(utf8.encode(json.encode(_ukTestTranslations)));
+    }
+    if (key == 'assets/images/onboarding_plate.png') {
+      return ByteData.sublistView(kTransparentImage);
+    }
+    return null;
+  });
 
   final LocalizationDelegate delegate = await LocalizationDelegate.create(
     fallbackLocale: Language.en.isoLanguageCode,
@@ -17,25 +74,6 @@ Future<LocalizationDelegate> setUpFlutterTranslateForTests({
     ],
   );
 
-  // Manually load translations for the starting locale into the static
-  // Localization instance.
-  // This is the key to bypassing the file loading for the actual translation
-  // content.
-  if (startLocale.languageCode == Language.en.isoLanguageCode) {
-    Localization.load(_enTestTranslations);
-  } else if (startLocale.languageCode == Language.uk.isoLanguageCode) {
-    Localization.load(_ukTestTranslations);
-  } else {
-    // Load fallback or throw error if startLocale is not one of your test
-    // locales.
-    Localization.load(_enTestTranslations);
-  }
-
-  // Ensure the delegate's internal state reflects this locale.
-  // The call to Localization.load above primes the static instance.
-  // The changeLocale method in the delegate will use this primed instance
-  // if its internal logic calls Localization.instance.
-  // Or, more directly, it also calls Localization.load itself.
   await delegate.changeLocale(startLocale);
 
   return delegate;
