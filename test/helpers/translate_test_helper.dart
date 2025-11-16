@@ -7,7 +7,8 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// This is a 1x1 transparent PNG. It's a standard technique to mock images in tests.
+/// This is a 1x1 transparent PNG. It's a standard technique to mock images in
+/// tests.
 final Uint8List kTransparentImage = Uint8List.fromList(<int>[
   0x89,
   0x50,
@@ -89,13 +90,13 @@ Future<LocalizationDelegate> setUpFlutterTranslateForTests({
   // The asset manifest must contain a list of variant maps for each asset.
   final Map<String, dynamic> manifest = <String, dynamic>{
     'assets/i18n/en.json': <Map<String, String>>[
-      {'asset': 'assets/i18n/en.json'},
+      <String, String>{'asset': 'assets/i18n/en.json'},
     ],
     'assets/i18n/uk.json': <Map<String, String>>[
-      {'asset': 'assets/i18n/uk.json'},
+      <String, String>{'asset': 'assets/i18n/uk.json'},
     ],
     'assets/images/onboarding_plate.png': <Map<String, String>>[
-      {'asset': 'assets/images/onboarding_plate.png'},
+      <String, String>{'asset': 'assets/images/onboarding_plate.png'},
     ],
   };
 
