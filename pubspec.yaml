@@ -105,16 +105,8 @@ flutter:
   # Assets of the application.
   assets:
     # strings
-    - assets/i18n/en.json
-    - assets/i18n/uk.json
-    - assets/images/app_store_badge.png
-    - assets/images/logo.png
-    - assets/images/mac_os_badge.png
-    - assets/images/onboarding_chart.png
-    - assets/images/onboarding_journey.png
-    - assets/images/onboarding_plate.png
-    - assets/images/play_store_badge.png
-    - assets/images/test_flight_badge.png
+    - assets/i18n/
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

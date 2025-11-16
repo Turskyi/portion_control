@@ -178,7 +178,7 @@ struct PortionControlWidgetsEntryView: View {
             if let uiImage = entry.chartImage {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .clipped()
                     .padding([.leading], 8)
