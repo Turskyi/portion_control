@@ -17,3 +17,4 @@ key.properties
 /keystore/
 /app/google-services.json
 /key.properties
+/build/

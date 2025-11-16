@@ -34,3 +34,11 @@ class ChangeLanguageEvent extends MenuEvent {
 
   final Language language;
 }
+
+class OpenWebVersionEvent extends MenuEvent {
+  const OpenWebVersionEvent();
+}
+
+class PinWidgetEvent extends MenuEvent {
+  const PinWidgetEvent();
+}

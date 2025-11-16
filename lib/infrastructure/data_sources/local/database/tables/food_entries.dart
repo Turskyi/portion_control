@@ -13,6 +13,6 @@ class FoodEntries extends Table {
 
   /// Index `date` for faster lookups
   List<Set<Column<Object>>> get indexes => <Set<Column<Object>>>[
-        <Column<Object>>{date},
-      ];
+    <Column<Object>>{date},
+  ];
 }

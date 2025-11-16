@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
-import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
 import 'package:portion_control/ui/home/widgets/food_entries_column.dart';
@@ -41,7 +40,7 @@ class _HomePageContentState extends State<HomePageContent> {
         final TextTheme textTheme = themeData.textTheme;
         final TextStyle? titleMedium = textTheme.titleMedium;
         final double weight = state.bodyWeight;
-        final double height = state.height;
+        final double height = state.heightInCm;
         final List<FoodWeight> foodEntries = state.foodEntries;
         final double horizontalIndent = 12.0;
 
@@ -86,9 +85,7 @@ class _HomePageContentState extends State<HomePageContent> {
               if (state.bodyWeightEntries.length > 1)
                 // Line Chart of Body Weight trends for the last two weeks.
                 BodyWeightLineChart(
-                  bodyWeightEntries: state.bodyWeightEntries
-                      .takeLast(DateTime.daysPerWeek * 2)
-                      .toList(),
+                  bodyWeightEntries: state.lastTwoWeeksBodyWeightEntries,
                 ),
               if (state is BodyWeightSubmittedState)
                 HealthyWeightRecommendations(height: height, weight: weight),

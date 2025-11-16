@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appwidget_text">PortionControl</string>
+    <string name="add_widget">Додати віджет</string>
+    <string name="app_widget_description">Швидко переглядайте та реєструйте щоденні порції їжі та вагу прямо з головного екрана.</string>
+    <string name="image">Зображення</string>
+    <string name="portioncontrol_at_glance">PortionControl зблизька</string>
+    <string name="oops_no_meal_data_available">🍽️ Ой! Дані про прийом їжі недоступні.</string>
+    <string name="looks_like_we_couldn_t_log_your_portion_this_time">🤷 Схоже, цього разу нам не вдалося зареєструвати вашу порцію.</string>
+    <string name="no_recommendation_trust_your_instincts_today">🥗 Немає рекомендацій? Довіряйте своїм інстинктам сьогодні!</string>
+    <string name="data_s_taking_a_break_try_again_soon">📊 Дані на перерві - спробуйте знову незабаром!</string>
+    <string name="tracking_paused_try_again_later">🚀 Відстеження призупинено, спробуйте пізніше!</string>
+    <string name="no_portions_logged_rest_day">😴 Порції не зареєстровано - день відпочинку?</string>
+    <string name="no_entry_available">❌ Запис недоступний</string>
+    <string name="no_portion_info_right_now">🤔 Наразі інформації про порції немає</string>
+    <string name="enter_weight_before_your_first_meal">👉 Введіть вагу перед першим прийомом їжі.</string>
+    <string name="enter_food_weight">👉 Введіть вагу їжі.</string>
+    <string name="weight_kg">Вага: %1$s кг</string>
+    <string name="consumed_g">Спожито: %1$s г</string>
+    <string name="limit_g">Контроль порцій: %1$s г</string>
+    <string name="chart">Графік</string>
+    <string name="portion_control_g">Контроль порцій: %1$s г</string>
+    <string name="portioncontrol">PortionControl</string>
+</resources>

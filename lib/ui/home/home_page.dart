@@ -18,10 +18,7 @@ import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    required this.localDataSource,
-    super.key,
-  });
+  const HomePage({required this.localDataSource, super.key});
 
   final LocalDataSource localDataSource;
 
@@ -30,6 +27,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static const String _languageValue = 'language';
+
   FeedbackController? _feedbackController;
 
   @override
@@ -56,9 +55,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: LayoutBuilder(
         builder: (BuildContext _, BoxConstraints constraints) {
@@ -84,7 +81,7 @@ class _HomePageState extends State<HomePage> {
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_horiz, color: colorScheme.primary),
                 onSelected: (String result) {
-                  if (result == 'language') {
+                  if (result == _languageValue) {
                     _showLanguageSelectionDialog();
                   } else if (result == AppRoute.privacyPolity.name) {
                     Navigator.pushNamed(context, AppRoute.privacyPolity.path);
@@ -113,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                   final double badgeHeight = 40.0;
                   return <PopupMenuEntry<String>>[
                     PopupMenuItem<String>(
-                      value: 'language',
+                      value: _languageValue,
                       child: Text(t('language')),
                     ),
                     const PopupMenuDivider(),
@@ -207,78 +204,69 @@ class _HomePageState extends State<HomePage> {
               ),
             ]
           : kIsWeb
-              ? <Widget>[
-                  Semantics(
-                    label: t('language'),
-                    button: true,
-                    child: TextButton.icon(
-                      onPressed: _showLanguageSelectionDialog,
-                      icon: Icon(
-                        Icons.language,
-                        size: titleMediumSize,
-                      ),
-                      label: Text(t('language')),
-                    ),
+          ? <Widget>[
+              Semantics(
+                label: t('language'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: _showLanguageSelectionDialog,
+                  icon: Icon(Icons.language, size: titleMediumSize),
+                  label: Text(t('language')),
+                ),
+              ),
+              Semantics(
+                label: translate('semantic_label.privacy_policy_button'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+                  },
+                  icon: Icon(
+                    Icons.privacy_tip,
+                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
                   ),
-                  Semantics(
-                    label: translate('semantic_label.privacy_policy_button'),
-                    button: true,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoute.privacyPolity.path,
-                        );
-                      },
-                      icon: Icon(
-                        Icons.privacy_tip,
-                        size: Theme.of(context).textTheme.titleMedium?.fontSize,
-                      ),
-                      label: Text(translate('button.privacy_policy')),
-                    ),
+                  label: Text(translate('button.privacy_policy')),
+                ),
+              ),
+              Semantics(
+                label: translate('semantic_label.about_us_button'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.about.path);
+                  },
+                  icon: Icon(
+                    Icons.group,
+                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
                   ),
-                  Semantics(
-                    label: translate('semantic_label.about_us_button'),
-                    button: true,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRoute.about.path);
-                      },
-                      icon: Icon(
-                        Icons.group,
-                        size: Theme.of(context).textTheme.titleMedium?.fontSize,
-                      ),
-                      label: Text(translate('button.about_us')),
-                    ),
+                  label: Text(translate('button.about_us')),
+                ),
+              ),
+              Semantics(
+                label: t('landing_page.menu_item_support'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.support.path);
+                  },
+                  icon: Icon(Icons.support_agent, size: titleMediumSize),
+                  label: Text(t('landing_page.menu_item_support')),
+                ),
+              ),
+              Semantics(
+                label: translate('semantic_label.feedback_button'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () => _showFeedbackDialog(context),
+                  icon: Icon(
+                    Icons.feedback,
+                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
                   ),
-                  Semantics(
-                    label: t('landing_page.menu_item_support'),
-                    button: true,
-                    child: TextButton.icon(
-                      onPressed: () {
-                        Navigator.pushNamed(context, AppRoute.support.path);
-                      },
-                      icon: Icon(
-                        Icons.support_agent,
-                        size: titleMediumSize,
-                      ),
-                      label: Text(t('landing_page.menu_item_support')),
-                    ),
-                  ),
-                  Semantics(
-                    label: translate('semantic_label.feedback_button'),
-                    button: true,
-                    child: TextButton.icon(
-                      onPressed: () => _showFeedbackDialog(context),
-                      icon: Icon(
-                        Icons.feedback,
-                        size: Theme.of(context).textTheme.titleMedium?.fontSize,
-                      ),
-                      label: Text(translate('button.feedback')),
-                    ),
-                  ),
-                ]
-              : null,
+                  label: Text(translate('button.feedback')),
+                ),
+              ),
+            ]
+          : null,
     );
   }
 
@@ -302,11 +290,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showFeedbackUi() {
-    _feedbackController?.show(
-      (UserFeedback feedback) {
-        context.read<MenuBloc>().add(MenuSubmitFeedbackEvent(feedback));
-      },
-    );
+    _feedbackController?.show((UserFeedback feedback) {
+      context.read<MenuBloc>().add(MenuSubmitFeedbackEvent(feedback));
+    });
     _feedbackController?.addListener(_onFeedbackChanged);
   }
 
@@ -369,12 +355,12 @@ class _HomePageState extends State<HomePage> {
 
   void _changeLanguage(Language? newLanguage) {
     changeLocale(context, newLanguage?.isoLanguageCode)
-        // The returned value is always `null`.
-        .then((Object? _) {
+    // The returned value is always `null`.
+    .then((Object? _) {
       if (mounted && newLanguage != null) {
-        context
-            .read<SettingsBloc>()
-            .add(SettingsChangeLanguageEvent(newLanguage));
+        context.read<SettingsBloc>().add(
+          SettingsChangeLanguageEvent(newLanguage),
+        );
         Navigator.pop(context);
       }
     });

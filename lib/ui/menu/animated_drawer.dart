@@ -1,20 +1,23 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
+import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
+import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
-import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AnimatedDrawer extends StatefulWidget {
-  const AnimatedDrawer({
-    required this.localDataSource,
-    super.key,
-  });
+  const AnimatedDrawer({required this.localDataSource, super.key});
 
   final LocalDataSource localDataSource;
 
@@ -24,6 +27,9 @@ class AnimatedDrawer extends StatefulWidget {
 
 class _AnimatedDrawerState extends State<AnimatedDrawer>
     with SingleTickerProviderStateMixin {
+  final ValueNotifier<bool> _isRequestPinWidgetSupported = ValueNotifier<bool>(
+    false,
+  );
   late AnimationController _controller;
   late Animation<double> _slideAnimation;
   late Animation<double> _fadeAnimation;
@@ -35,13 +41,18 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _slideAnimation = Tween<double>(begin: -1.0, end: 0.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _slideAnimation = Tween<double>(
+      begin: -1.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
     _controller.forward();
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      _checkPinability();
+    }
   }
 
   @override
@@ -79,10 +90,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               builder: (BuildContext _, Widget? child) {
                 return Transform.translate(
                   offset: Offset(_slideAnimation.value * 100, 0),
-                  child: Opacity(
-                    opacity: _fadeAnimation.value,
-                    child: child,
-                  ),
+                  child: Opacity(opacity: _fadeAnimation.value, child: child),
                 );
               },
               child: ListView(
@@ -109,9 +117,9 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                   AnimatedDrawerItem(
                     icon: Icons.feedback,
                     text: translate('button.feedback'),
-                    onTap: () => context
-                        .read<MenuBloc>()
-                        .add(const BugReportPressedEvent()),
+                    onTap: () => context.read<MenuBloc>().add(
+                      const BugReportPressedEvent(),
+                    ),
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.support_agent,
@@ -120,11 +128,29 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                       Navigator.pushNamed(context, AppRoute.support.path);
                     },
                   ),
-                  AnimatedDrawerItem(
-                    icon: Icons.web,
-                    text: translate('open_web_version'),
-                    onTap: () => launchUrl(Uri.parse(constants.baseUrl)),
-                  ),
+                  // Only add the event if it's NOT web AND NOT macOS.
+                  // For context, see issue:
+                  // https://github.com/ABausG/home_widget/issues/137.
+                  if (!kIsWeb && !Platform.isMacOS)
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _isRequestPinWidgetSupported,
+                      builder: (BuildContext context, bool isSupported, _) {
+                        if (isSupported) {
+                          return AnimatedDrawerItem(
+                            icon: Icons.widgets_outlined,
+                            text: translate('pin_widget'),
+                            onTap: _pinWidget,
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  if (!kIsWeb)
+                    AnimatedDrawerItem(
+                      icon: Icons.web,
+                      text: translate('open_web_version'),
+                      onTap: _openWebVersion,
+                    ),
                 ],
               ),
             ),
@@ -137,7 +163,16 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
   @override
   void dispose() {
     _controller.dispose();
+    _isRequestPinWidgetSupported.dispose();
     super.dispose();
+  }
+
+  void _openWebVersion() {
+    context.read<MenuBloc>().add(const OpenWebVersionEvent());
+  }
+
+  void _pinWidget() {
+    context.read<MenuBloc>().add(const PinWidgetEvent());
   }
 
   void _showLanguageSelectionDialog() {
@@ -146,8 +181,15 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
       builder: (BuildContext context) {
         return BlocProvider<MenuBloc>(
           create: (BuildContext _) {
-            return MenuBloc(SettingsRepository(widget.localDataSource))
-              ..add(const LoadingInitialMenuStateEvent());
+            final LocalDataSource localDataSource = widget.localDataSource;
+            return MenuBloc(
+              SettingsRepository(widget.localDataSource),
+              const HomeWidgetServiceImpl(),
+              BodyWeightRepository(localDataSource),
+              FoodWeightRepository(localDataSource),
+              UserPreferencesRepository(localDataSource),
+              localDataSource,
+            )..add(const LoadingInitialMenuStateEvent());
           },
           child: BlocBuilder<MenuBloc, MenuState>(
             builder: (BuildContext _, MenuState state) {
@@ -181,12 +223,37 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
 
   void _changeLanguage(Language? newLanguage) {
     changeLocale(context, newLanguage?.isoLanguageCode)
-        // The returned value is always `null`.
-        .then((Object? _) {
+    // The returned value is always `null`.
+    .then((Object? _) {
       if (mounted && newLanguage != null) {
         context.read<MenuBloc>().add(ChangeLanguageEvent(newLanguage));
         Navigator.pop(context);
       }
     });
+  }
+
+  Future<void> _checkPinability() async {
+    try {
+      final bool? isRequestPinWidgetSupported =
+          await HomeWidget.isRequestPinWidgetSupported();
+
+      if (mounted) {
+        _isRequestPinWidgetSupported.value =
+            isRequestPinWidgetSupported ?? false;
+      }
+    } catch (e, s) {
+      debugPrint(
+        'Error checking widget pinning support in `AnimatedDrawer` '
+        '($runtimeType): $e. '
+        'This might happen on platforms where '
+        '`HomeWidget.isRequestPinWidgetSupported()` is not implemented or '
+        'fails. '
+        'Defaulting to not showing the "Pin Widget" option.\n'
+        'Stacktrace: $s',
+      );
+      if (mounted) {
+        _isRequestPinWidgetSupported.value = false;
+      }
+    }
   }
 }

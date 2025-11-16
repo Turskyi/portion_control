@@ -7,11 +7,11 @@ Future<LocalizationDelegate> getLocalizationDelegate(
 ) async {
   final LocalizationDelegate localizationDelegate =
       await LocalizationDelegate.create(
-    fallbackLocale: localDataSource.getLanguageIsoCode(),
-    supportedLocales: Language.values
-        .map((Language language) => language.isoLanguageCode)
-        .toList(),
-  );
+        fallbackLocale: localDataSource.getLanguageIsoCode(),
+        supportedLocales: Language.values
+            .map((Language language) => language.isoLanguageCode)
+            .toList(),
+      );
 
   return localizationDelegate;
 }

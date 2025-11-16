@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?><!--suppress AndroidDomInspection -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_widget_radial"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:previewImage="@drawable/example_appwidget_preview">
+
+    <!-- Portion control (daily limit) -->
+    <TextView
+        android:id="@+id/text_portion_control"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="Limit: 1800 g" />
+
+    <!-- Chart -->
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/chart"
+        android:scaleType="fitCenter"
+        android:src="@drawable/example_appwidget_preview"
+        tools:src="@drawable/example_appwidget_preview" />
+
+</LinearLayout>

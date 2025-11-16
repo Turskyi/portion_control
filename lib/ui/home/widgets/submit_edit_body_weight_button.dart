@@ -8,19 +8,14 @@ import 'package:portion_control/ui/widgets/responsive_button.dart';
 
 /// Submit/Edit Body Weight Button with animation.
 class SubmitEditBodyWeightButton extends StatelessWidget {
-  const SubmitEditBodyWeightButton({
-    super.key,
-  });
+  const SubmitEditBodyWeightButton({super.key});
 
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
       // Animation duration.
       duration: const Duration(milliseconds: 300),
-      transitionBuilder: (
-        Widget child,
-        Animation<double> animation,
-      ) {
+      transitionBuilder: (Widget child, Animation<double> animation) {
         // Define the transition effect.
         return ScaleTransition(scale: animation, child: child);
       },
@@ -32,7 +27,7 @@ class SubmitEditBodyWeightButton extends StatelessWidget {
             builder: (BuildContext context, StateSetter setState) {
               return BlocListener<MenuBloc, MenuState>(
                 listenWhen: _shouldRebuildOnLanguageChange,
-                listener: (BuildContext _, MenuState __) {
+                listener: (BuildContext _, MenuState _) {
                   setState(() {});
                 },
                 child: ResponsiveButton(
@@ -45,14 +40,13 @@ class SubmitEditBodyWeightButton extends StatelessWidget {
                   onPressed: state.bodyWeight < constants.minBodyWeight
                       ? null
                       : state is BodyWeightSubmittedState
-                          ? () => context
-                              .read<HomeBloc>()
-                              .add(const EditBodyWeight())
-                          : () {
-                              context
-                                  .read<HomeBloc>()
-                                  .add(SubmitBodyWeight(state.bodyWeight));
-                            },
+                      ? () =>
+                            context.read<HomeBloc>().add(const EditBodyWeight())
+                      : () {
+                          context.read<HomeBloc>().add(
+                            SubmitBodyWeight(state.bodyWeight),
+                          );
+                        },
                 ),
               );
             },

@@ -3,6 +3,7 @@ plugins {
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
 
 def keyProperties = new Properties()
@@ -41,6 +42,7 @@ android {
     }
 
     kotlinOptions {
+        //noinspection GrDeprecatedAPIUsage
         jvmTarget = JavaVersion.VERSION_1_8
     }
 
@@ -56,6 +58,11 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
         }
+    }
+
+    buildFeatures {
+        compose true
+        viewBinding true
     }
 
     signingConfigs {
@@ -107,7 +114,9 @@ android {
             // This helps protect the code from reverse engineering and
             // improves the app's efficiency.
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt',
+            ),
                     'proguard-rules.pro'
             signingConfig = signingConfigs.production
         }
@@ -119,4 +128,8 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation 'androidx.glance:glance-appwidget:1.1.1'
 }

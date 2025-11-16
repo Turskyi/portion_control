@@ -1,4 +1,5 @@
 const String baseUrl = 'https://portion-control-tracker.web.app';
+const String ukrainianWebVersion = 'https://uk.portion-control.turskyi.com';
 const String companyDomain = 'turskyi.com';
 const String supportEmailPrefix = 'support@';
 const String supportEmail = '$supportEmailPrefix$companyDomain';
@@ -11,7 +12,7 @@ const String appStoreUrl = 'https://apps.apple.com/app/id6743641654';
 const String testFlightUrl = 'https://testflight.apple.com/join/aJkP43FB';
 
 const String macOsUrl =
-    'https://github.com/Turskyi/portion_control/releases/download/1.0.5/PortionControl.zip';
+    'https://apps.apple.com/ca/app/portion-control/id6743641654';
 
 const String imagePath = 'assets/images/';
 
@@ -31,8 +32,25 @@ const double minBodyWeight = 20.0;
 
 const int minAge = 18;
 
-const double maxDailyFoodLimit = 6000.0;
+const double maxDailyFoodLimit = 4000.0;
 
+/// The minimum daily portion control limit, in grams.
+///
+/// This safeguard exists to prevent the app from recommending
+/// dangerously low food intake.
+///
+/// The value of `1499 g` is derived from the widely accepted
+/// minimum safe caloric intake for adults (≈1500 kcal/day)
+/// recommended by public health authorities such as WHO and CDC.
+///
+/// Because the app tracks food weight in grams rather than
+/// calories, this constant acts as a conservative proxy: it ensures
+/// that even with low-calorie-density foods (for example,
+/// vegetables), users are not advised to eat below this threshold.
+///
+/// This is a general safety floor and does not replace personalized
+/// medical advice. Users with special dietary needs should consult
+/// a healthcare professional.
 const double safeMinimumFoodIntakeG = 1499.0;
 
 /// When to switch to wide layout.
@@ -56,3 +74,24 @@ const String resendEmailDomain = 'kima.website';
 const String subjectParameter = 'subject';
 
 const String bodyParameter = 'body';
+
+const String appleAppGroupId = 'group.dmytrowidget';
+const String iOSWidgetName = 'PortionControlWidgets';
+const String androidWidgetName = 'PortionControlWidget';
+
+/// BMI classification thresholds (kg/m²).
+/// Source: https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index
+/// Marks end of underweight / start of healthy.
+const double bmiUnderweightThreshold = 18.5;
+
+/// Marks end of healthy.
+const double bmiHealthyUpperThreshold = 24.9;
+
+/// Marks start of overweight.
+const double bmiOverweightLowerThreshold = 25.0;
+
+/// Marks end of overweight.
+const double bmiOverweightUpperThreshold = 29.9;
+
+/// Marks start of obese.
+const double bmiObeseLowerThreshold = 30.0;

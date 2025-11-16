@@ -1,13 +1,139 @@
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+/// This is a 1x1 transparent PNG. It's a standard technique to mock images in
+/// tests.
+final Uint8List kTransparentImage = Uint8List.fromList(<int>[
+  0x89,
+  0x50,
+  0x4E,
+  0x47,
+  0x0D,
+  0x0A,
+  0x1A,
+  0x0A,
+  0x00,
+  0x00,
+  0x00,
+  0x0D,
+  0x49,
+  0x48,
+  0x44,
+  0x52,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x00,
+  0x01,
+  0x08,
+  0x06,
+  0x00,
+  0x00,
+  0x00,
+  0x1F,
+  0x15,
+  0xC4,
+  0x89,
+  0x00,
+  0x00,
+  0x00,
+  0x0A,
+  0x49,
+  0x44,
+  0x41,
+  0x54,
+  0x78,
+  0x9C,
+  0x63,
+  0x00,
+  0x01,
+  0x00,
+  0x00,
+  0x05,
+  0x00,
+  0x01,
+  0x0D,
+  0x0A,
+  0x2D,
+  0xB4,
+  0x00,
+  0x00,
+  0x00,
+  0x00,
+  0x49,
+  0x45,
+  0x4E,
+  0x44,
+  0xAE,
+  0x42,
+  0x60,
+  0x82,
+]);
 
 Future<LocalizationDelegate> setUpFlutterTranslateForTests({
   Locale startLocale = const Locale('en'),
 }) async {
   SharedPreferences.setMockInitialValues(<String, Object>{});
+
+  final TestWidgetsFlutterBinding binding =
+      TestWidgetsFlutterBinding.ensureInitialized();
+
+  // The asset manifest must contain a list of variant maps for each asset.
+  final Map<String, dynamic> manifest = <String, dynamic>{
+    'assets/i18n/en.json': <Map<String, String>>[
+      <String, String>{'asset': 'assets/i18n/en.json'},
+    ],
+    'assets/i18n/uk.json': <Map<String, String>>[
+      <String, String>{'asset': 'assets/i18n/uk.json'},
+    ],
+    'assets/images/onboarding_plate.png': <Map<String, String>>[
+      <String, String>{'asset': 'assets/images/onboarding_plate.png'},
+    ],
+  };
+
+  binding.defaultBinaryMessenger.setMockMessageHandler('flutter/assets', (
+    ByteData? message,
+  ) async {
+    if (message == null) {
+      return null;
+    }
+    final String key = utf8.decode(message.buffer.asUint8List());
+
+    if (key == 'AssetManifest.json') {
+      return ByteData.sublistView(utf8.encode(json.encode(manifest)));
+    }
+
+    if (key == 'AssetManifest.bin') {
+      final ByteData? manifestData = const StandardMessageCodec().encodeMessage(
+        manifest,
+      );
+      return manifestData;
+    }
+
+    if (key == 'assets/i18n/en.json') {
+      return ByteData.sublistView(
+        utf8.encode(json.encode(_enTestTranslations)),
+      );
+    }
+    if (key == 'assets/i18n/uk.json') {
+      return ByteData.sublistView(
+        utf8.encode(json.encode(_ukTestTranslations)),
+      );
+    }
+    if (key == 'assets/images/onboarding_plate.png') {
+      return ByteData.sublistView(kTransparentImage);
+    }
+    return null;
+  });
 
   final LocalizationDelegate delegate = await LocalizationDelegate.create(
     fallbackLocale: Language.en.isoLanguageCode,
@@ -17,25 +143,6 @@ Future<LocalizationDelegate> setUpFlutterTranslateForTests({
     ],
   );
 
-  // Manually load translations for the starting locale into the static
-  // Localization instance.
-  // This is the key to bypassing the file loading for the actual translation
-  // content.
-  if (startLocale.languageCode == Language.en.isoLanguageCode) {
-    Localization.load(_enTestTranslations);
-  } else if (startLocale.languageCode == Language.uk.isoLanguageCode) {
-    Localization.load(_ukTestTranslations);
-  } else {
-    // Load fallback or throw error if startLocale is not one of your test
-    // locales.
-    Localization.load(_enTestTranslations);
-  }
-
-  // Ensure the delegate's internal state reflects this locale.
-  // The call to Localization.load above primes the static instance.
-  // The changeLocale method in the delegate will use this primed instance
-  // if its internal logic calls Localization.instance.
-  // Or, more directly, it also calls Localization.load itself.
   await delegate.changeLocale(startLocale);
 
   return delegate;
@@ -107,10 +214,11 @@ const Map<String, Object?> _enTestTranslations = <String, Object?>{
   'error': <String, String>{
     'please_check_internet':
         'An error occurred. Please check your internet connection and try '
-            'again.',
+        'again.',
     'unexpected_error': 'An unexpected error occurred. Please try again.',
     'oops': 'Oops! Something went wrong. Please try again later.',
-    'cors': 'Error: Local Environment Setup Required\nTo run this application '
+    'cors':
+        'Error: Local Environment Setup Required\nTo run this application '
         'locally on web, please use the following command:\nflutter run -d '
         'chrome --web-browser-flag "--disable-web-security"\nThis step is '
         'necessary to bypass CORS restrictions during local development. '
@@ -131,7 +239,7 @@ const Map<String, Object?> _enTestTranslations = <String, Object?>{
         'Use imperial measurements for temperature units.',
     'feedback_subtitle':
         'Let us know your thoughts and suggestions. You can also report any '
-            'issues with the app’s content.',
+        'issues with the app’s content.',
     'support_subtitle':
         'Visit our support page for help and frequently asked questions.',
   },
@@ -143,56 +251,56 @@ const Map<String, Object?> _enTestTranslations = <String, Object?>{
     'view_privacy_policy': 'View Privacy Policy',
     'support_description':
         'Having trouble? Need help or want to suggest a feature? Join the '
-            'community or contact the developer directly.',
+        'community or contact the developer directly.',
     'contact_support': 'Contact Support',
   },
   'privacy': <String, String>{
     'policy_intro':
         "Your privacy is important to us. It is {appName}'s policy to respect "
-            'your privacy and comply with any applicable law and regulation '
-            'regarding any personal information we may collect about you, '
-            'including across our app, «{appName}», and its associated '
-            'services.',
+        'your privacy and comply with any applicable law and regulation '
+        'regarding any personal information we may collect about you, '
+        'including across our app, «{appName}», and its associated '
+        'services.',
     'information_we_collect': 'Information We Collect',
     'no_personal_data_collection':
         'We do not collect any personal information such as name, email '
-            'address, or phone number.',
+        'address, or phone number.',
     'third_party_services_info':
         '«{appName}» uses third-party services that may collect information '
-            'used to identify you. These services include Firebase Crashlytics '
-            'and Google Analytics. The data collected by these services is '
-            'used to improve app stability and user experience. You can find '
-            'more information about their privacy practices at their '
-            'respective websites.',
+        'used to identify you. These services include Firebase Crashlytics '
+        'and Google Analytics. The data collected by these services is '
+        'used to improve app stability and user experience. You can find '
+        'more information about their privacy practices at their '
+        'respective websites.',
     'consent_agreement':
         'By using our services, you consent to the collection and use of your '
-            'information as described in this privacy policy.',
+        'information as described in this privacy policy.',
     'security_measures': 'Security Measures',
     'security_measures_description':
         'We take reasonable measures to protect your information from '
-            'unauthorized access, disclosure, or modification.',
+        'unauthorized access, disclosure, or modification.',
     'children_description':
         'Our services are not directed towards children under the age of '
-            '{age}. We do not knowingly collect personal information from '
-            'children under {age}. While we strive to minimize data '
-            'collection, third-party services we use (such as Firebase '
-            'Crashlytics and Google Analytics) may collect some data. However, '
-            'this data is collected anonymously and is not linked to any '
-            'personal information. If you believe that a child under {age} has '
-            'provided us with personal information, please contact us, and we '
-            'will investigate the matter.',
+        '{age}. We do not knowingly collect personal information from '
+        'children under {age}. While we strive to minimize data '
+        'collection, third-party services we use (such as Firebase '
+        'Crashlytics and Google Analytics) may collect some data. However, '
+        'this data is collected anonymously and is not linked to any '
+        'personal information. If you believe that a child under {age} has '
+        'provided us with personal information, please contact us, and we '
+        'will investigate the matter.',
     'crashlytics_description':
         '«{appName}» uses Firebase Crashlytics, a service by Google, to '
-            'collect crash reports anonymously to help us improve app '
-            'stability and fix bugs. The data collected by Crashlytics does '
-            'not include any personal information.',
+        'collect crash reports anonymously to help us improve app '
+        'stability and fix bugs. The data collected by Crashlytics does '
+        'not include any personal information.',
     'updates_and_notifications_description':
         'This privacy policy may be updated periodically. Any changes to the '
-            'policy will be communicated to you through app updates or '
-            'notifications.',
+        'policy will be communicated to you through app updates or '
+        'notifications.',
     'contact_us_invitation':
         'For any questions or concerns regarding your privacy, you may contact '
-            'us using the following details:',
+        'us using the following details:',
   },
   'support': <String, String>{
     'title': 'Support',
@@ -240,7 +348,8 @@ const Map<String, Object?> _ukTestTranslations = <String, Object?>{
   'could_not_launch': 'Не вдалося відкрити',
   'faq': 'Часті запитання',
   'contact_support': 'Звернутися до служби підтримки',
-  'legal_and_app_info_title': '📄 Правова інформація та інформація про '
+  'legal_and_app_info_title':
+      '📄 Правова інформація та інформація про '
       'програму',
   'developer': 'Розробник',
   'developer_name': 'Дмитро Турський',

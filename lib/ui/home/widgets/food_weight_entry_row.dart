@@ -25,10 +25,12 @@ class FoodWeightEntryRow extends StatefulWidget {
 
 class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
   late TextEditingController _controller;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
+
     _controller = TextEditingController(text: widget.value);
   }
 
@@ -37,6 +39,9 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
     super.didUpdateWidget(oldWidget);
     if (widget.value != oldWidget.value) {
       _controller.text = widget.value ?? '';
+    }
+    if (widget.isEditState && !oldWidget.isEditState) {
+      _focusNode.requestFocus();
     }
   }
 
@@ -47,11 +52,14 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
         Expanded(
           child: ValueListenableBuilder<TextEditingValue>(
             valueListenable: _controller,
-            builder: (BuildContext _, TextEditingValue value, Widget? __) {
+            builder: (BuildContext _, TextEditingValue value, Widget? _) {
               final String input = value.text;
+
               return TextFormField(
+                focusNode: _focusNode,
                 controller: _controller,
-                enabled: widget.isEditState,
+                readOnly: !widget.isEditState,
+                onTap: !widget.isEditState ? widget.onEdit : null,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: translate('hint.enter_food_weight'),
@@ -81,10 +89,7 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
           )
         else ...<Widget>[
           if (widget.onEdit != null)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: widget.onEdit,
-            ),
+            IconButton(icon: const Icon(Icons.edit), onPressed: widget.onEdit),
           if (widget.onDelete != null)
             IconButton(
               icon: const Icon(Icons.delete),
@@ -98,6 +103,7 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 

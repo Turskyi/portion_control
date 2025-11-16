@@ -23,7 +23,7 @@ part 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsBloc(this._settingsRepository)
-      : super(SettingsInitial(language: _settingsRepository.getLanguage())) {
+    : super(SettingsInitial(language: _settingsRepository.getLanguage())) {
     on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
 
     on<BugReportPressedEvent>(_onFeedbackRequested);
@@ -64,7 +64,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
                 TargetPlatform.macOS => translate('macos'),
                 TargetPlatform.windows => translate('windows'),
                 TargetPlatform.linux => translate('linux'),
-                _ => translate('unknown'),
+                TargetPlatform _ => translate('unknown'),
               };
 
         final Map<String, Object?>? extra = feedback.extra;
@@ -108,7 +108,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           // TODO: move this thing to "data".
           final Resend resend = Resend.instance;
           await resend.sendEmail(
-            from: 'Do Not Reply ${constants.appName} '
+            from:
+                'Do Not Reply ${constants.appName} '
                 '<no-reply@${constants.resendEmailDomain}>',
             to: <String>[constants.supportEmail],
             subject:
@@ -122,7 +123,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
             queryParameters: <String, Object?>{
               constants.subjectParameter:
                   '${translate('feedback.app_feedback')}: '
-                      '${packageInfo.appName}',
+                  '${packageInfo.appName}',
               constants.bodyParameter: feedbackBody.toString(),
             },
           );
@@ -199,14 +200,6 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(FeedbackState(language: state.language, errorMessage: errorMessage));
   }
 
-  Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {
-    final Directory output = await getTemporaryDirectory();
-    final String screenshotFilePath = '${output.path}/feedback.png';
-    final File screenshotFile = File(screenshotFilePath);
-    await screenshotFile.writeAsBytes(feedbackScreenshot);
-    return screenshotFilePath;
-  }
-
   FutureOr<void> _onFeedbackDialogDismissed(
     ClosingFeedbackEvent _,
     Emitter<SettingsState> emit,
@@ -236,5 +229,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         //TODO: no sure what to do.
       }
     }
+  }
+
+  Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {
+    final Directory output = await getTemporaryDirectory();
+    final String screenshotFilePath = '${output.path}/feedback.png';
+    final File screenshotFile = File(screenshotFilePath);
+    await screenshotFile.writeAsBytes(feedbackScreenshot);
+    return screenshotFilePath;
   }
 }

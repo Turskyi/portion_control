@@ -4,23 +4,30 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:portion_control/domain/enums/feedback_rating.dart';
 import 'package:portion_control/domain/enums/feedback_type.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
+import 'package:portion_control/domain/models/portion_control_summary.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/services/interactors/i_clear_tracking_data_use_case.dart';
 import 'package:portion_control/domain/services/repositories/i_body_weight_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
+import 'package:portion_control/extensions/list_extension.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/res/enums/home_widget_keys.dart';
+import 'package:portion_control/services/home_widget_service.dart';
+import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
+import 'package:resend/resend.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'home_event.dart';
@@ -32,7 +39,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     this._bodyWeightRepository,
     this._foodWeightRepository,
     this._clearTrackingDataUseCase,
-  ) : super(const HomeLoading()) {
+    this._homeWidgetService,
+    this._localDataSource,
+  ) : super(HomeLoading(language: _localDataSource.getLanguage())) {
     on<LoadEntries>(_loadEntries);
     on<UpdateHeight>(_updateHeight);
     on<UpdateDateOfBirth>(_updateDateOfBirth);
@@ -53,12 +62,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeClosingFeedbackEvent>(_onFeedbackDialogDismissed);
     on<HomeSubmitFeedbackEvent>(_sendUserFeedback);
     on<ErrorEvent>(_handleError);
+    on<UpdateDeviceHomeWidgetEvent>(_updateDeviceHomeWidget);
   }
 
   final IUserPreferencesRepository _userPreferencesRepository;
   final IBodyWeightRepository _bodyWeightRepository;
   final IFoodWeightRepository _foodWeightRepository;
   final IClearTrackingDataUseCase _clearTrackingDataUseCase;
+  final HomeWidgetService _homeWidgetService;
+  final LocalDataSource _localDataSource;
 
   // Store the previous state.
   HomeState? _previousState;
@@ -68,15 +80,51 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
-    double todayBodyWeight = 0;
+    final Language language = _localDataSource.getLanguage();
 
     if (userDetails.isNotEmpty) {
+      emit(
+        LoadingTodayBodyWeightState(
+          userDetails: userDetails,
+          bodyWeight: state.bodyWeight,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
+          yesterdayConsumedTotal: state.totalConsumedYesterday,
+          language: language,
+        ),
+      );
+      final BodyWeight todayBodyWeightEntry = await _bodyWeightRepository
+          .getTodayBodyWeight();
+      double todayBodyWeight = todayBodyWeightEntry.weight;
+      emit(
+        LoadingConsumedYesterdayState(
+          userDetails: userDetails,
+          bodyWeight: todayBodyWeight,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
+          yesterdayConsumedTotal: state.totalConsumedYesterday,
+          language: language,
+        ),
+      );
+      final double totalConsumedYesterday = await _foodWeightRepository
+          .getTotalConsumedYesterday();
+
+      emit(
+        LoadingBodyWeightEntriesState(
+          userDetails: userDetails,
+          bodyWeight: todayBodyWeight,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
+          yesterdayConsumedTotal: totalConsumedYesterday,
+          language: language,
+        ),
+      );
       try {
-        final List<BodyWeight> bodyWeightEntries =
-            await _bodyWeightRepository.getAllBodyWeightEntries();
+        final List<BodyWeight> bodyWeightEntries = await _bodyWeightRepository
+            .getAllBodyWeightEntries();
+
         double portionControl = constants.maxDailyFoodLimit;
-        final double totalConsumedYesterday =
-            await _foodWeightRepository.getTotalConsumedYesterday();
+
         if (bodyWeightEntries.isNotEmpty) {
           final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
           final DateTime lastSavedBodyWeightDate =
@@ -87,27 +135,29 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               ? lastSavedBodyWeightEntry.weight
               : 0;
 
-          final bool isWeightIncreasingOrSame =
-              state.isWeightIncreasingOrSameFor(
-            bodyWeightEntries,
-          );
+          final bool isWeightIncreasingOrSame = state
+              .isWeightIncreasingOrSameFor(bodyWeightEntries);
 
           final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
             lastSavedBodyWeightEntry.weight,
           );
-          final bool isWeightDecreasingOrSame =
-              state.isWeightDecreasingOrSameFor(
-            bodyWeightEntries,
-          );
+          final bool isWeightDecreasingOrSame = state
+              .isWeightDecreasingOrSameFor(bodyWeightEntries);
           final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
             lastSavedBodyWeightEntry.weight,
           );
 
-          final double? savedPortionControl =
-              _userPreferencesRepository.getPortionControl();
+          final double? savedPortionControl = _userPreferencesRepository
+              .getPortionControl();
+
           if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
             if (savedPortionControl == null) {
-              portionControl = totalConsumedYesterday;
+              if (totalConsumedYesterday >= constants.safeMinimumFoodIntakeG &&
+                  totalConsumedYesterday < constants.maxDailyFoodLimit) {
+                portionControl = totalConsumedYesterday;
+              } else {
+                portionControl = constants.safeMinimumFoodIntakeG;
+              }
             } else if (savedPortionControl < totalConsumedYesterday) {
               portionControl = savedPortionControl;
             } else if (savedPortionControl > totalConsumedYesterday) {
@@ -133,6 +183,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               bodyWeightEntries: bodyWeightEntries,
               foodEntries: state.foodEntries,
               yesterdayConsumedTotal: totalConsumedYesterday,
+              language: language,
             ),
           );
         } else if (todayBodyWeight > constants.minBodyWeight) {
@@ -150,6 +201,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 yesterdayConsumedTotal: totalConsumedYesterday,
                 isConfirmedAllMealsLogged: isMealsConfirmed,
                 portionControl: portionControl,
+                language: language,
               ),
             );
           } else {
@@ -162,20 +214,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 yesterdayConsumedTotal: totalConsumedYesterday,
                 isConfirmedAllMealsLogged: isMealsConfirmed,
                 portionControl: portionControl,
+                language: language,
               ),
             );
           }
         } else {
           emit(
             LoadingError(
-              errorMessage: 'Error: Entered body weight is below the '
+              errorMessage:
+                  'Error: Entered body weight is below the '
                   'biologically possible limit. Please verify your input.',
               userDetails: state.userDetails,
               bodyWeight: todayBodyWeight,
               bodyWeightEntries: state.bodyWeightEntries,
               foodEntries: state.foodEntries,
-              yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+              yesterdayConsumedTotal: totalConsumedYesterday,
               portionControl: state.portionControl,
+              language: language,
             ),
           );
         }
@@ -187,8 +242,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             bodyWeight: todayBodyWeight,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
-            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+            yesterdayConsumedTotal: totalConsumedYesterday,
             portionControl: state.portionControl,
+            language: language,
           ),
         );
       }
@@ -196,20 +252,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(
         HomeLoaded(
           userDetails: state.userDetails,
-          bodyWeight: todayBodyWeight,
+          bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
-          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          yesterdayConsumedTotal: state.totalConsumedYesterday,
           portionControl: state.portionControl,
+          language: language,
         ),
       );
     }
+    _triggerHomeWidgetUpdate();
   }
 
   FutureOr<void> _updateDateOfBirth(
     UpdateDateOfBirth event,
     Emitter<HomeState> emit,
   ) {
+    final Language language = _localDataSource.getLanguage();
     final DateTime dateOfBirth = event.dateOfBirth;
     //Let's not allow minors to mess with their health.
     if (dateOfBirth.isOlderThanMinimumAge) {
@@ -220,6 +279,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     } else {
@@ -231,24 +291,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     }
   }
 
-  FutureOr<void> _updateHeight(
+  Future<void> _updateHeight(
     UpdateHeight event,
     Emitter<HomeState> emit,
-  ) {
+  ) async {
     final double? height = double.tryParse(event.height);
+    final Language language = _localDataSource.getLanguage();
     if (height != null) {
       emit(
         DetailsUpdateState(
-          userDetails: state.userDetails.copyWith(height: height),
+          userDetails: state.userDetails.copyWith(heightInCm: height),
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     } else {
@@ -260,16 +323,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     }
   }
 
-  FutureOr<void> _updateGender(
-    UpdateGender event,
-    Emitter<HomeState> emit,
-  ) {
+  FutureOr<void> _updateGender(UpdateGender event, Emitter<HomeState> emit) {
     final Gender gender = event.gender;
+    final Language language = _localDataSource.getLanguage();
     emit(
       DetailsUpdateState(
         userDetails: state.userDetails.copyWith(gender: gender),
@@ -277,15 +339,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         bodyWeightEntries: state.bodyWeightEntries,
         foodEntries: state.foodEntries,
         yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+        language: language,
       ),
     );
   }
 
-  FutureOr<void> _updateBodyWeightState(
+  Future<void> _updateBodyWeightState(
     UpdateBodyWeight event,
     Emitter<HomeState> emit,
-  ) {
+  ) async {
     final double? bodyWeight = double.tryParse(event.bodyWeight);
+    final Language language = _localDataSource.getLanguage();
     if (bodyWeight != null) {
       emit(
         BodyWeightUpdatedState(
@@ -294,17 +358,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     } else {
       emit(
         BodyWeightError(
-          errorMessage: 'Invalid body weight',
+          errorMessage: translate('error.invalid_body_weight'),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     }
@@ -314,6 +380,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     UpdateFoodWeight event,
     Emitter<HomeState> emit,
   ) {
+    final Language language = _localDataSource.getLanguage();
     final double? foodWeight = double.tryParse(event.foodWeight);
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
@@ -333,6 +400,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
+          language: language,
         ),
       );
     } else {
@@ -346,6 +414,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
+          language: language,
         ),
       );
     }
@@ -355,8 +424,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     SubmitDetails _,
     Emitter<HomeState> emit,
   ) async {
+    final Language language = _localDataSource.getLanguage();
     if (state.isNotEmptyDetails) {
-      final double height = state.height;
+      final double height = state.heightInCm;
       final DateTime? dateOfBirth = state.dateOfBirth;
       final Gender gender = state.gender;
 
@@ -364,14 +434,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           height > constants.maxUserHeight) {
         emit(
           DetailsError(
-            errorMessage:
-                'Height must be between ${constants.minUserHeight} cm and '
-                '${constants.maxUserHeight} cm.',
+            errorMessage: translate(
+              'error.height_range',
+              args: <String, Object?>{
+                'minHeight': constants.minUserHeight,
+                'maxHeight': constants.maxUserHeight,
+              },
+            ),
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+            language: language,
           ),
         );
         // Exit early if height validation fails.
@@ -380,10 +455,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       try {
         // Insert into the data store.
-        final bool isDetailsSaved =
-            await _userPreferencesRepository.saveUserDetails(
-          UserDetails(height: height, dateOfBirth: dateOfBirth, gender: gender),
-        );
+        final bool isDetailsSaved = await _userPreferencesRepository
+            .saveUserDetails(
+              UserDetails(
+                heightInCm: height,
+                dateOfBirth: dateOfBirth,
+                gender: gender,
+              ),
+            );
 
         if (isDetailsSaved) {
           if (state.bodyWeight > constants.minBodyWeight) {
@@ -398,6 +477,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 yesterdayConsumedTotal: state.yesterdayConsumedTotal,
                 isConfirmedAllMealsLogged: isMealsConfirmed,
                 portionControl: state.portionControl,
+                language: language,
               ),
             );
           } else {
@@ -407,18 +487,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 userDetails: state.userDetails,
                 bodyWeightEntries: state.bodyWeightEntries,
                 foodEntries: state.foodEntries,
+                language: language,
               ),
             );
           }
         } else {
           emit(
             DetailsError(
-              errorMessage: 'Failed to submit user details',
+              errorMessage: translate('error.failed_to_submit_user_details'),
               bodyWeight: state.bodyWeight,
               userDetails: state.userDetails,
               bodyWeightEntries: state.bodyWeightEntries,
               foodEntries: state.foodEntries,
               yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+              language: language,
             ),
           );
         }
@@ -426,24 +508,34 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         // Handle errors (e.g. data store issues).
         emit(
           DetailsError(
-            errorMessage: 'Failed to submit details: $e',
+            errorMessage: translate(
+              'error.failed_to_submit_details',
+              args: <String, Object?>{'errorDetails': '$e'},
+            ),
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+            language: language,
           ),
         );
       }
+
+      // Only add the event if it's NOT web AND NOT macOS.
+      // For context, see issue:
+      // https://github.com/ABausG/home_widget/issues/137.
+      await _triggerHomeWidgetUpdate();
     } else {
       emit(
         DetailsError(
-          errorMessage: 'Details cannot be empty',
+          errorMessage: translate('error.details_cannot_be_empty'),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     }
@@ -453,6 +545,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     SubmitBodyWeight event,
     Emitter<HomeState> emit,
   ) async {
+    final Language language = _localDataSource.getLanguage();
     if (event.bodyWeight > constants.minBodyWeight) {
       final double bodyWeight = state.bodyWeight;
 
@@ -488,8 +581,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             _userPreferencesRepository.isMealsConfirmedForToday;
 
         double portionControl = constants.maxDailyFoodLimit;
-        final double? savedPortionControl =
-            _userPreferencesRepository.getPortionControl();
+        final double? savedPortionControl = _userPreferencesRepository
+            .getPortionControl();
         if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
           if (savedPortionControl == null) {
             if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
@@ -541,6 +634,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             yesterdayConsumedTotal: totalConsumedYesterday,
             isConfirmedAllMealsLogged: isMealsConfirmed,
             portionControl: portionControl,
+            language: language,
           ),
         );
       } catch (error, stackTrace) {
@@ -549,26 +643,37 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         debugPrint('Stack trace: $stackTrace');
         emit(
           BodyWeightError(
-            errorMessage: 'Failed to submit body weight: $error',
+            errorMessage: translate(
+              'error.failed_to_submit_body_weight',
+              args: <String, Object?>{'errorDetails': '$error'},
+            ),
             bodyWeight: state.bodyWeight,
             userDetails: state.userDetails,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+            language: language,
           ),
         );
       }
+
+      // Only add the event if it's NOT web AND NOT macOS.
+      // For context, see issue:
+      // https://github.com/ABausG/home_widget/issues/137.
+      await _triggerHomeWidgetUpdate();
     } else {
       emit(
         BodyWeightError(
-          errorMessage:
-              'Body weight should not be below the ${constants.minBodyWeight} '
-              'kg',
+          errorMessage: translate(
+            'error.body_weight_too_low',
+            args: <String, Object?>{'minBodyWeight': constants.minBodyWeight},
+          ),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     }
@@ -578,6 +683,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     AddFoodEntry event,
     Emitter<HomeState> emit,
   ) async {
+    final Language language = _localDataSource.getLanguage();
     final double? foodWeight = double.tryParse(event.foodWeight);
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
@@ -602,6 +708,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             isConfirmedAllMealsLogged: isMealsConfirmed,
             portionControl: state.portionControl,
+            language: language,
           ),
         );
       } catch (error, stackTrace) {
@@ -620,6 +727,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             isConfirmedAllMealsLogged: isMealsConfirmed,
             portionControl: state.portionControl,
+            language: language,
           ),
         );
       }
@@ -634,36 +742,41 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
+          language: language,
         ),
       );
     }
+
+    _triggerHomeWidgetUpdate();
   }
 
   FutureOr<void> _deleteFoodEntry(
     DeleteFoodEntry event,
     Emitter<HomeState> emit,
   ) async {
+    final Language language = _localDataSource.getLanguage();
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
     try {
       await _foodWeightRepository
           .deleteFoodWeightEntry(event.foodEntryId)
           .whenComplete(() async {
-        final List<FoodWeight> updatedFoodWeightEntries =
-            await _foodWeightRepository.getTodayFoodEntries();
+            final List<FoodWeight> updatedFoodWeightEntries =
+                await _foodWeightRepository.getTodayFoodEntries();
 
-        emit(
-          FoodWeightSubmittedState(
-            bodyWeight: state.bodyWeight,
-            userDetails: state.userDetails,
-            bodyWeightEntries: state.bodyWeightEntries,
-            foodEntries: updatedFoodWeightEntries,
-            yesterdayConsumedTotal: state.yesterdayConsumedTotal,
-            isConfirmedAllMealsLogged: isMealsConfirmed,
-            portionControl: state.portionControl,
-          ),
-        );
-      });
+            emit(
+              FoodWeightSubmittedState(
+                bodyWeight: state.bodyWeight,
+                userDetails: state.userDetails,
+                bodyWeightEntries: state.bodyWeightEntries,
+                foodEntries: updatedFoodWeightEntries,
+                yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+                isConfirmedAllMealsLogged: isMealsConfirmed,
+                portionControl: state.portionControl,
+                language: language,
+              ),
+            );
+          });
     } catch (e) {
       // Handle errors (e.g. database issues).
       emit(
@@ -676,21 +789,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
+          language: language,
         ),
       );
     }
+    _triggerHomeWidgetUpdate();
   }
 
-  FutureOr<void> _setDetailsToEditMode(
+  Future<void> _setDetailsToEditMode(
     EditDetails _,
     Emitter<HomeState> emit,
-  ) {
+  ) async {
+    final Language language = _localDataSource.getLanguage();
+    final double yesterdayConsumedTotal = await _foodWeightRepository
+        .getTotalConsumedYesterday();
     emit(
       DetailsUpdateState(
         bodyWeight: state.bodyWeight,
         userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,
         foodEntries: state.foodEntries,
+        language: language,
+        yesterdayConsumedTotal: yesterdayConsumedTotal,
       ),
     );
   }
@@ -699,12 +819,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     EditBodyWeight _,
     Emitter<HomeState> emit,
   ) {
+    final Language language = _localDataSource.getLanguage();
     emit(
       BodyWeightUpdatedState(
         bodyWeight: state.bodyWeight,
         userDetails: state.userDetails,
         bodyWeightEntries: state.bodyWeightEntries,
         foodEntries: state.foodEntries,
+        language: language,
       ),
     );
   }
@@ -715,6 +837,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) {
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
+    final Language language = _localDataSource.getLanguage();
     emit(
       FoodWeightUpdateState(
         foodEntryId: event.foodEntryId,
@@ -725,6 +848,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         foodEntries: state.foodEntries,
         isConfirmedAllMealsLogged: isMealsConfirmed,
         portionControl: state.portionControl,
+        language: language,
       ),
     );
   }
@@ -733,6 +857,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ClearUserData _,
     Emitter<HomeState> emit,
   ) async {
+    final Language language = _localDataSource.getLanguage();
     try {
       await _clearTrackingDataUseCase.execute();
       emit(
@@ -741,6 +866,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           userDetails: state.userDetails,
           bodyWeightEntries: const <BodyWeight>[],
           foodEntries: const <FoodWeight>[],
+          language: language,
+          yesterdayConsumedTotal: 0,
         ),
       );
     } catch (error) {
@@ -752,6 +879,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     }
@@ -761,6 +889,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ResetFoodEntries _,
     Emitter<HomeState> emit,
   ) async {
+    final Language language = _localDataSource.getLanguage();
     try {
       await _foodWeightRepository.clearAllTrackingData();
       emit(
@@ -772,6 +901,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           yesterdayConsumedTotal: 0,
           isConfirmedAllMealsLogged: false,
           portionControl: state.portionControl,
+          language: language,
         ),
       );
     } catch (error) {
@@ -783,6 +913,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          language: language,
         ),
       );
     }
@@ -792,7 +923,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ConfirmMealsLogged _,
     Emitter<HomeState> emit,
   ) async {
-    bool isSaved = await _userPreferencesRepository.saveMealsConfirmed();
+    final Language language = _localDataSource.getLanguage();
+    final bool isSaved = await _userPreferencesRepository.saveMealsConfirmed();
     if (isSaved) {
       emit(
         BodyWeightSubmittedState(
@@ -803,6 +935,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: isSaved,
           portionControl: state.portionControl,
+          language: language,
         ),
       );
     } else {
@@ -816,6 +949,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           isConfirmedAllMealsLogged: false,
           portionControl: state.portionControl,
+          language: language,
         ),
       );
     }
@@ -825,6 +959,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     HomeBugReportPressedEvent _,
     Emitter<HomeState> emit,
   ) {
+    final Language language = _localDataSource.getLanguage();
     _previousState = state;
     emit(
       HomeFeedbackState(
@@ -834,6 +969,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         bodyWeightEntries: state.bodyWeightEntries,
         foodEntries: state.foodEntries,
         portionControl: state.portionControl,
+        language: language,
       ),
     );
   }
@@ -862,23 +998,32 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     HomeSubmitFeedbackEvent event,
     Emitter<HomeState> emit,
   ) async {
-    emit(const HomeLoading());
+    final Language language = _localDataSource.getLanguage();
+    emit(
+      FeedbackHomeLoading(
+        language: language,
+        userDetails: state.userDetails,
+        bodyWeight: state.bodyWeight,
+        bodyWeightEntries: state.bodyWeightEntries,
+        foodEntries: state.foodEntries,
+        yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+        portionControl: state.portionControl,
+      ),
+    );
     final UserFeedback feedback = event.feedback;
     try {
-      final String screenshotFilePath = await _writeImageToStorage(
-        feedback.screenshot,
-      );
-
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-      final Map<String, dynamic>? extra = feedback.extra;
-      final dynamic rating = extra?['rating'];
-      final dynamic type = extra?['feedback_type'];
+      final Map<String, Object?>? extra = feedback.extra;
+      final Object? rating = extra?['rating'];
+      final Object? type = extra?['feedback_type'];
 
       // Construct the feedback text with details from `extra'.
       final StringBuffer feedbackBody = StringBuffer()
-        ..writeln('${type is FeedbackType ? translate('feedback.type') : ''}:'
-            ' ${type is FeedbackType ? type.value : ''}')
+        ..writeln(
+          '${type is FeedbackType ? translate('feedback.type') : ''}:'
+          ' ${type is FeedbackType ? type.value : ''}',
+        )
         ..writeln()
         ..writeln(feedback.text)
         ..writeln()
@@ -887,21 +1032,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ..writeln('${translate('buildNumber')}: ${packageInfo.buildNumber}')
         ..writeln()
         ..writeln(
-            '${rating is FeedbackRating ? translate('feedback.rating') : ''}'
-            '${rating is FeedbackRating ? ':' : ''}'
-            ' ${rating is FeedbackRating ? rating.value : ''}');
-
-      final List<String> attachmentPaths = screenshotFilePath.isNotEmpty
-          ? <String>[screenshotFilePath]
-          : <String>[];
-
-      final Email email = Email(
-        body: feedbackBody.toString(),
-        subject: '${translate('feedback.appFeedback')}: '
-            '${packageInfo.appName}',
-        recipients: <String>[constants.supportEmail],
-        attachmentPaths: attachmentPaths,
-      );
+          '${rating is FeedbackRating ? translate('feedback.rating') : ''}'
+          '${rating is FeedbackRating ? ':' : ''}'
+          ' ${rating is FeedbackRating ? rating.value : ''}',
+        );
 
       try {
         if (kIsWeb) {
@@ -910,7 +1044,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             scheme: 'mailto',
             path: constants.supportEmail,
             queryParameters: <String, String>{
-              'subject': '${translate('feedback.appFeedback')}: '
+              'subject':
+                  '${translate('feedback.appFeedback')}: '
                   '${packageInfo.appName}',
               'body': feedbackBody.toString(),
             },
@@ -922,7 +1057,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             add(ErrorEvent(translate('error.unexpectedError')));
           }
         } else {
-          await FlutterEmailSender.send(email);
+          // TODO: move this thing to "data".
+          final Resend resend = Resend.instance;
+          await resend.sendEmail(
+            from:
+                'Do Not Reply ${constants.appName} '
+                '<no-reply@${constants.resendEmailDomain}>',
+            to: <String>[constants.supportEmail],
+            subject:
+                '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
+            text: feedbackBody.toString(),
+          );
         }
       } catch (error, stackTrace) {
         debugPrint(
@@ -945,16 +1090,136 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {
-    if (kIsWeb) {
-      // No file storage on web.
-      return '';
+  FutureOr<void> _updateDeviceHomeWidget(
+    UpdateDeviceHomeWidgetEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    // Check if the platform is web OR macOS. If so, return early.
+    // See issue: https://github.com/ABausG/home_widget/issues/137.
+    if (!kIsWeb && !Platform.isMacOS) {
+      final BodyWeight todayBodyWeight = await _bodyWeightRepository
+          .getTodayBodyWeight();
+
+      final PortionControlSummary portionControlSummary = PortionControlSummary(
+        weight: todayBodyWeight.weight,
+        consumed: state.totalConsumedToday,
+        portionControl: state.portionControl,
+        recommendation: state.bmiMessage,
+        formattedLastUpdatedDateTime: _formattedLastUpdatedDateTime,
+      );
+
+      try {
+        _homeWidgetService.setAppGroupId(constants.appleAppGroupId);
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.locale.stringValue,
+          state.language.isoLanguageCode,
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.weight.stringValue,
+          portionControlSummary.weight.toString(),
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.consumed.stringValue,
+          portionControlSummary.consumed.toString(),
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.portionControl.stringValue,
+          portionControlSummary.portionControl.toString(),
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.textLastUpdated.stringValue,
+          '${translate('last_updated_on_label')}\n'
+          '${portionControlSummary.formattedLastUpdatedDateTime}',
+        );
+
+        _homeWidgetService.saveWidgetData<String>(
+          HomeWidgetKey.textRecommendation.stringValue,
+          portionControlSummary.recommendation,
+        );
+
+        if (state.bodyWeightEntries.length > 1) {
+          // Line Chart of Body Weight trends for the last two weeks.
+          await _homeWidgetService.renderFlutterWidget(
+            MediaQuery(
+              data: const MediaQueryData(
+                // Logical pixels for the chart rendering.
+                size: Size(400, 200),
+              ),
+              child: BodyWeightLineChart(
+                bodyWeightEntries: state.lastTwoWeeksBodyWeightEntries,
+              ),
+            ),
+            // This is the logical size for the home_widget plugin.
+            logicalSize: const Size(400, 200),
+            key: HomeWidgetKey.image.stringValue,
+          );
+        }
+
+        _homeWidgetService.updateWidget(
+          name: 'PortionControlWidget',
+          iOSName: constants.iOSWidgetName,
+          androidName: constants.androidWidgetName,
+        );
+        if (Platform.isAndroid) {
+          _homeWidgetService.updateWidget(
+            qualifiedAndroidName:
+                'com.turskyi.portion_control.glance.HomeWidgetReceiver',
+          );
+        }
+      } catch (e) {
+        debugPrint('Failed to update home screen widget: $e');
+      }
     } else {
-      final Directory output = await getTemporaryDirectory();
-      final String screenshotFilePath = '${output.path}/feedback.png';
-      final File screenshotFile = File(screenshotFilePath);
-      await screenshotFile.writeAsBytes(feedbackScreenshot);
-      return screenshotFilePath;
+      debugPrint(
+        'Home screen widget update skipped, '
+        'because it is not supported on this platform.',
+      );
+    }
+  }
+
+  String get _formattedLastUpdatedDateTime {
+    final DateTime now = DateTime.now();
+    final DateTime lastUpdatedDateTime = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+    );
+    final String languageIsoCode = _localDataSource.getLanguageIsoCode();
+    try {
+      final DateFormat formatter = DateFormat(
+        'MMM dd, EEEE \'-\' hh:mm a',
+        languageIsoCode,
+      );
+      return formatter.format(lastUpdatedDateTime);
+    } catch (e, stackTrace) {
+      // We will get here if user does not have any of the app supported
+      // languages on his device.
+      debugPrint(
+        'Error in `Weather.formattedLastUpdatedDateTime`:\n'
+        'Failed to format date with locale "$languageIsoCode".\n'
+        'Falling back to default locale formatting.\n'
+        'Error: $e\n'
+        'StackTrace: $stackTrace',
+      );
+
+      final DateFormat formatter = DateFormat('MMM dd, EEEE \'at\' hh:mm a');
+      return formatter.format(lastUpdatedDateTime);
+    }
+  }
+
+  Future<void> _triggerHomeWidgetUpdate() async {
+    // Only add the event if it's NOT web AND NOT macOS.
+    // For context, see issue:
+    // https://github.com/ABausG/home_widget/issues/137.
+    if (!kIsWeb && !Platform.isMacOS) {
+      add(const UpdateDeviceHomeWidgetEvent());
     }
   }
 }

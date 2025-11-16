@@ -27,12 +27,8 @@ sealed class MenuState {
 final class MenuInitial extends MenuState {
   const MenuInitial({super.language});
 
-  MenuInitial copyWith({
-    Language? language,
-  }) =>
-      MenuInitial(
-        language: language ?? this.language,
-      );
+  MenuInitial copyWith({Language? language}) =>
+      MenuInitial(language: language ?? this.language);
 
   @override
   String toString() => 'MenuInitial(language: $language)';
@@ -41,9 +37,7 @@ final class MenuInitial extends MenuState {
 final class MenuFeedbackState extends MenuState {
   const MenuFeedbackState({required super.language});
 
-  MenuFeedbackState copyWith({
-    Language? language,
-  }) {
+  MenuFeedbackState copyWith({Language? language}) {
     return MenuFeedbackState(language: language ?? this.language);
   }
 
@@ -54,12 +48,8 @@ final class MenuFeedbackState extends MenuState {
 final class MenuFeedbackSent extends MenuState {
   const MenuFeedbackSent({required super.language});
 
-  MenuFeedbackSent copyWith({
-    Language? language,
-  }) {
-    return MenuFeedbackSent(
-      language: language ?? this.language,
-    );
+  MenuFeedbackSent copyWith({Language? language}) {
+    return MenuFeedbackSent(language: language ?? this.language);
   }
 
   @override
@@ -69,12 +59,8 @@ final class MenuFeedbackSent extends MenuState {
 final class LoadingMenuState extends MenuState {
   const LoadingMenuState({super.language});
 
-  LoadingMenuState copyWith({
-    Language? language,
-  }) =>
-      LoadingMenuState(
-        language: language ?? this.language,
-      );
+  LoadingMenuState copyWith({Language? language}) =>
+      LoadingMenuState(language: language ?? this.language);
 
   @override
   String toString() => 'LoadingMenuState(language: $language)';

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appwidget_text">PortionControl</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">Quickly view and log your daily food portions and weight directly from your home screen.</string>
+    <string name="image">Image</string>
+    <string name="portioncontrol_at_glance">PortionControl at glance</string>
+    <string name="oops_no_meal_data_available">🍽️ Oops! No meal data available.</string>
+    <string name="looks_like_we_couldn_t_log_your_portion_this_time">🤷 Looks like we couldn’t log your portion this time.</string>
+    <string name="no_recommendation_trust_your_instincts_today">🥗 No recommendation? Trust your instincts today!</string>
+    <string name="data_s_taking_a_break_try_again_soon">📊 Data’s taking a break - try again soon!</string>
+    <string name="tracking_paused_try_again_later">🚀 Tracking paused, try again later!</string>
+    <string name="no_portions_logged_rest_day">😴 No portions logged - rest day?</string>
+    <string name="no_entry_available">❌ No entry available</string>
+    <string name="no_portion_info_right_now">🤔 No portion info right now</string>
+    <string name="enter_weight_before_your_first_meal">👉 Enter weight before your first meal.</string>
+    <string name="enter_food_weight">👉 Enter food weight.</string>
+    <string name="weight_kg">Weight: %1$s kg</string>
+    <string name="consumed_g">Consumed: %1$s g</string>
+    <string name="limit_g">Portion Control: %1$s g</string>
+    <string name="chart">Chart</string>
+    <string name="portion_control_g">Portion Control: %1$s g</string>
+    <string name="portioncontrol">PortionControl</string>
+</resources>

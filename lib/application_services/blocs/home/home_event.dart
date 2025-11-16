@@ -34,10 +34,7 @@ final class UpdateBodyWeight extends HomeEvent {
 }
 
 final class UpdateFoodWeight extends HomeEvent {
-  const UpdateFoodWeight({
-    required this.foodEntryId,
-    required this.foodWeight,
-  });
+  const UpdateFoodWeight({required this.foodEntryId, required this.foodWeight});
 
   final String foodWeight;
   final int foodEntryId;
@@ -111,4 +108,8 @@ final class ErrorEvent extends HomeEvent {
   const ErrorEvent(this.error);
 
   final String error;
+}
+
+final class UpdateDeviceHomeWidgetEvent extends HomeEvent {
+  const UpdateDeviceHomeWidgetEvent();
 }

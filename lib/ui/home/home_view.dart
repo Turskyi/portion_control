@@ -26,6 +26,7 @@ import 'package:portion_control/infrastructure/repositories/tracking_repository.
     show TrackingRepository;
 import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart'
     show UserPreferencesRepository;
+import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/home/home_page.dart';
 import 'package:portion_control/ui/home/widgets/yesterday_food_entries_dialog.dart'
     show YesterdayFoodEntriesDialog;
@@ -33,10 +34,7 @@ import 'package:portion_control/ui/widgets/fancy_loading_indicator.dart'
     show FancyLoadingIndicator;
 
 class HomeView extends StatelessWidget {
-  const HomeView({
-    required this.localDataSource,
-    super.key,
-  });
+  const HomeView({required this.localDataSource, super.key});
 
   final LocalDataSource localDataSource;
 
@@ -51,20 +49,26 @@ class HomeView extends StatelessWidget {
               BodyWeightRepository(localDataSource),
               FoodWeightRepository(localDataSource),
               ClearTrackingDataUseCase(TrackingRepository(localDataSource)),
+              const HomeWidgetServiceImpl(),
+              localDataSource,
             )..add(const LoadEntries());
           },
         ),
         BlocProvider<YesterdayEntriesBloc>(
           create: (BuildContext _) {
-            return YesterdayEntriesBloc(
-              FoodWeightRepository(localDataSource),
-            );
+            return YesterdayEntriesBloc(FoodWeightRepository(localDataSource));
           },
         ),
         BlocProvider<MenuBloc>(
           create: (BuildContext _) {
-            return MenuBloc(SettingsRepository(localDataSource))
-              ..add(const LoadingInitialMenuStateEvent());
+            return MenuBloc(
+              SettingsRepository(localDataSource),
+              const HomeWidgetServiceImpl(),
+              BodyWeightRepository(localDataSource),
+              FoodWeightRepository(localDataSource),
+              UserPreferencesRepository(localDataSource),
+              localDataSource,
+            )..add(const LoadingInitialMenuStateEvent());
           },
         ),
         BlocProvider<SettingsBloc>(
@@ -100,9 +104,9 @@ class HomeView extends StatelessWidget {
     } else if (state is YesterdayEntriesError) {
       // Close the loading dialog
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(state.message)));
     }
   }
 

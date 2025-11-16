@@ -32,7 +32,7 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
         final double bodyWeight = state.bodyWeight;
         final Gender gender = state.gender;
         final String dateOfBirth = state.dateOfBirth?.toReadableDate() ?? '';
-        final double height = state.height;
+        final double height = state.heightInCm;
         final String title = state is BodyWeightSubmittedState
             ? t('user_details_widget.title_your_details')
             : t('user_details_widget.title_enter_your_details');
@@ -67,8 +67,9 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                       controller: _dateOfBirthTextEditingController
                         ..text = dateOfBirth,
                       readOnly: true,
-                      value:
-                          state is DetailsSubmittedState ? dateOfBirth : null,
+                      value: state is DetailsSubmittedState
+                          ? dateOfBirth
+                          : null,
                       onTap: () => _pickDate(
                         dateOfBirthText: dateOfBirth,
                         dateOfBirthDateTime: state.dateOfBirth,

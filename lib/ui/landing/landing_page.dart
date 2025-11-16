@@ -14,10 +14,7 @@ import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LandingPage extends StatelessWidget {
-  const LandingPage({
-    required this.localDataSource,
-    super.key,
-  });
+  const LandingPage({required this.localDataSource, super.key});
 
   final LocalDataSource localDataSource;
 
@@ -39,9 +36,9 @@ class LandingPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               GlowingAnimatedBox(
-                onTap: () => Navigator.of(context).pushReplacementNamed(
-                  AppRoute.home.path,
-                ),
+                onTap: () => Navigator.of(
+                  context,
+                ).pushReplacementNamed(AppRoute.home.path),
               ),
               const SizedBox(height: 4),
               Text(
@@ -55,7 +52,8 @@ class LandingPage extends StatelessWidget {
               SizedBox(
                 height: 50,
                 child: DefaultTextStyle(
-                  style: Theme.of(context).textTheme.bodyLarge ??
+                  style:
+                      Theme.of(context).textTheme.bodyLarge ??
                       const TextStyle(),
                   child: AnimatedTextKit(
                     repeatForever: true,
@@ -231,10 +229,7 @@ class LandingPage extends StatelessWidget {
                 button: true,
                 child: TextButton.icon(
                   onPressed: () => _showLanguageSelectionDialog(context),
-                  icon: Icon(
-                    Icons.language,
-                    size: titleMediumSize,
-                  ),
+                  icon: Icon(Icons.language, size: titleMediumSize),
                   label: Text(t('language')),
                 ),
               ),
@@ -245,10 +240,7 @@ class LandingPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushNamed(context, AppRoute.privacyPolity.path);
                   },
-                  icon: Icon(
-                    Icons.privacy_tip,
-                    size: titleMediumSize,
-                  ),
+                  icon: Icon(Icons.privacy_tip, size: titleMediumSize),
                   label: Text(t('landing_page.menu_item_privacy_policy')),
                 ),
               ),
@@ -259,10 +251,7 @@ class LandingPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushNamed(context, AppRoute.about.path);
                   },
-                  icon: Icon(
-                    Icons.group,
-                    size: titleMediumSize,
-                  ),
+                  icon: Icon(Icons.group, size: titleMediumSize),
                   label: Text(t('landing_page.menu_item_about')),
                 ),
               ),
@@ -273,10 +262,7 @@ class LandingPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushNamed(context, AppRoute.support.path);
                   },
-                  icon: Icon(
-                    Icons.support_agent,
-                    size: titleMediumSize,
-                  ),
+                  icon: Icon(Icons.support_agent, size: titleMediumSize),
                   label: Text(t('landing_page.menu_item_support')),
                 ),
               ),
@@ -431,12 +417,12 @@ class LandingPage extends StatelessWidget {
     required Language newLanguage,
   }) {
     changeLocale(context, newLanguage.isoLanguageCode)
-        // The returned value is always `null`.
-        .then((Object? _) {
+    // The returned value is always `null`.
+    .then((Object? _) {
       if (context.mounted) {
-        context
-            .read<SettingsBloc>()
-            .add(SettingsChangeLanguageEvent(newLanguage));
+        context.read<SettingsBloc>().add(
+          SettingsChangeLanguageEvent(newLanguage),
+        );
         Navigator.pop(context);
       }
     });

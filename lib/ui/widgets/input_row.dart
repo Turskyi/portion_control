@@ -105,9 +105,7 @@ class InputRow extends StatelessWidget {
                         decimal: true,
                       ),
                       inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'[0-9.]'),
-                        ),
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                         // Prevent multiple dots.
                         TextInputFormatter.withFunction((
                           TextEditingValue oldValue,
@@ -137,10 +135,7 @@ class InputRow extends StatelessWidget {
         const SizedBox(width: 8),
         Padding(
           padding: const EdgeInsets.only(top: 12),
-          child: Text(
-            unit,
-            style: TextStyle(fontSize: bodyLargeFontSize),
-          ),
+          child: Text(unit, style: TextStyle(fontSize: bodyLargeFontSize)),
         ),
       ],
     );

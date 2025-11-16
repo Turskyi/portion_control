@@ -29,6 +29,10 @@
   "build_number": "Build number",
   "platform": "Platform",
   "screen_size": "Screen size",
+  "last_updated_on_label": "Last Updated on",
+  "pin_widget": "Pin Widget",
+  "next": "Next",
+  "get_started": "Get Started",
   "privacy_policy": {
     "title": "Privacy Policy",
     "introduction_title": "Introduction",
@@ -59,7 +63,14 @@
     "oops": "Oops! Something went wrong. Please try again later.",
     "cors": "Error: Local Environment Setup Required\nTo run this application locally on web, please use the following command:\nflutter run -d chrome --web-browser-flag \"--disable-web-security\"\nThis step is necessary to bypass CORS restrictions during local development. Please note that this flag should only be used in a development environment and never in production.",
     "launch_email_failed": "Could not launch the email application.",
-    "unexpected_error": "An unexpected error occurred. Please try again."
+    "unexpected_error": "An unexpected error occurred. Please try again.",
+    "height_range": "Height must be between {minHeight} cm and {maxHeight} cm.",
+    "details_cannot_be_empty": "Details cannot be empty.",
+    "failed_to_submit_details": "Failed to submit details: {errorDetails}",
+    "failed_to_submit_user_details": "Failed to submit user details.",
+    "invalid_body_weight": "Invalid body weight.",
+    "body_weight_too_low": "Body weight should not be below {minBodyWeight} kg.",
+    "failed_to_submit_body_weight": "Failed to submit body weight: {errorDetails}."
   },
   "about_us": {
     "title": "About Us",
@@ -111,10 +122,12 @@
   "food_entry": {
     "challenge_warning": "It seems like you’ve set a big challenge for yourself today. We’re not sure what your plans are, but we definitely suggest not overdoing it with that amount of food. 😅",
     "total_consumed_today_prefix": "Total consumed today: ",
+    "total_consumed_yesterday_prefix": "Total consumed yesterday: ",
     "grams_suffix": " g",
     "must_eat_at_least_prefix": "❗You must eat at least ",
     "can_eat_prefix": "You can eat ",
-    "more_today_suffix": " more today"
+    "more_today_suffix": " more today",
+    "you_did_not_put_any_food_entries_yesterday": "You did not put any food entries yesterday."
   },
   "healthy_weight": {
     "your_bmi_prefix": "Your Body Mass Index (BMI): ",
@@ -129,7 +142,8 @@
   "home_page": {
     "enter_weight_instruction": "👉 Enter weight before your first meal.",
     "body_weight_label": "Body weight",
-    "kg_unit": "kg"
+    "kg_unit": "kg",
+    "previous_portion_control": "⚖️ Previous portion control: {adjustedPortion} g"
   },
   "portion_control_status": {
     "no_portion_control_today": "🍽️ No portion control today!\n📝 Log everything you eat to track how it affects your weight.",
@@ -215,5 +229,20 @@
     "october": "October",
     "november": "November",
     "december": "December"
+  },
+  "onboarding": {
+    "page1": {
+      "title": "Find Your Perfect Balance 🍽️",
+      "content": "Eat smarter — not less.\nTrack your meals, stay mindful, and feel your progress every day."
+    },
+    "page2": {
+      "title": "📊 Visualize Your Progress Effortlessly",
+      "content": "See how your daily portions and weight change over time with clean, simple charts - no calorie counting required."
+    },
+    "page3": {
+      "title": "🩷 Stay in Control Every Day",
+      "content": "Track your progress, follow your goals, and enjoy a healthier relationship with food.\nYour journey starts today - one portion at a time."
+    },
+    "tagline": "Your mindful eating companion - private, simple, and motivating."
   }
 }

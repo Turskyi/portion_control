@@ -29,6 +29,7 @@ class LocalDataSource {
   static const String _mealsConfirmedKey = 'meals_confirmed';
   static const String _mealsConfirmedDateKey = 'meals_confirmed_date';
   static const String _portionControlKey = 'portion_control';
+  static const String _onboardingCompletedKey = 'onboarding_completed';
 
   double? getHeight() => _preferences.getDouble(_heightKey);
 
@@ -107,8 +108,9 @@ class LocalDataSource {
       (Language lang) => lang.isoLanguageCode == languageIsoCode,
     );
 
-    final String safeLanguageCode =
-        isSupported ? languageIsoCode : Language.en.isoLanguageCode;
+    final String safeLanguageCode = isSupported
+        ? languageIsoCode
+        : Language.en.isoLanguageCode;
 
     return _preferences.setString(
       Settings.languageIsoCode.key,
@@ -121,7 +123,8 @@ class LocalDataSource {
       Settings.languageIsoCode.key,
     );
 
-    final bool isSavedLanguageSupported = savedLanguageIsoCode != null &&
+    final bool isSavedLanguageSupported =
+        savedLanguageIsoCode != null &&
         Language.values.any(
           (Language lang) => lang.isoLanguageCode == savedLanguageIsoCode,
         );
@@ -129,9 +132,10 @@ class LocalDataSource {
     final String systemLanguageCode =
         PlatformDispatcher.instance.locale.languageCode;
 
-    String defaultLanguageCode = Language.values.any(
-      (Language lang) => lang.isoLanguageCode == systemLanguageCode,
-    )
+    String defaultLanguageCode =
+        Language.values.any(
+          (Language lang) => lang.isoLanguageCode == systemLanguageCode,
+        )
         ? systemLanguageCode
         : Language.en.isoLanguageCode;
 
@@ -185,8 +189,9 @@ class LocalDataSource {
   bool get isMealsConfirmedForToday {
     final bool? isConfirmed = _preferences.getBool(_mealsConfirmedKey);
 
-    final String? savedDateString =
-        _preferences.getString(_mealsConfirmedDateKey);
+    final String? savedDateString = _preferences.getString(
+      _mealsConfirmedDateKey,
+    );
 
     if (isConfirmed == true && savedDateString != null) {
       final DateTime savedDate = DateTime.parse(savedDateString);
@@ -208,6 +213,14 @@ class LocalDataSource {
     return _preferences.setDouble(_portionControlKey, portionControl);
   }
 
+  Future<bool> saveOnboardingCompleted() {
+    return _preferences.setBool(_onboardingCompletedKey, true);
+  }
+
+  bool isOnboardingCompleted() {
+    return _preferences.getBool(_onboardingCompletedKey) ?? false;
+  }
+
   /// Insert or update a body weight entry for the same date.
   /// Returns the `rowid` of the inserted row.
   Future<int> insertOrUpdateBodyWeight(double weight, DateTime date) {
@@ -221,9 +234,9 @@ class LocalDataSource {
 
   /// Delete a body weight entry by id.
   Future<int> deleteBodyWeightEntry(int id) {
-    return (_appDatabase.delete(_appDatabase.bodyWeightEntries)
-          ..where(($BodyWeightEntriesTable tbl) => tbl.id.equals(id)))
-        .go();
+    return (_appDatabase.delete(
+      _appDatabase.bodyWeightEntries,
+    )..where(($BodyWeightEntriesTable tbl) => tbl.id.equals(id))).go();
   }
 
   /// Update a body weight entry by id.
@@ -233,14 +246,14 @@ class LocalDataSource {
     required DateTime date,
   }) async {
     final int updatedRows =
-        await (_appDatabase.update(_appDatabase.bodyWeightEntries)
-              ..where(($BodyWeightEntriesTable tbl) => tbl.id.equals(id)))
-            .write(
-      BodyWeightEntriesCompanion(
-        weight: Value<double>(weight),
-        date: Value<DateTime>(date),
-      ),
-    );
+        await (_appDatabase.update(
+          _appDatabase.bodyWeightEntries,
+        )..where(($BodyWeightEntriesTable tbl) => tbl.id.equals(id))).write(
+          BodyWeightEntriesCompanion(
+            weight: Value<double>(weight),
+            date: Value<DateTime>(date),
+          ),
+        );
     // Return true if any row was updated.
     return updatedRows > 0;
   }
@@ -248,8 +261,8 @@ class LocalDataSource {
   Future<int> clearAllTrackingData() => _appDatabase.clearBodyWeightEntries();
 
   Future<BodyWeight> getTodayBodyWeight() async {
-    final BodyWeightEntry? bodyWeightEntry =
-        await _appDatabase.getTodayBodyWeight();
+    final BodyWeightEntry? bodyWeightEntry = await _appDatabase
+        .getTodayBodyWeight();
     if (bodyWeightEntry != null) {
       return bodyWeightEntry.toDomain();
     }
@@ -271,8 +284,9 @@ class LocalDataSource {
 
   /// Retrieve food weight entries from today.
   Future<List<FoodWeight>> getTodayFoodEntries() async {
-    final List<FoodEntry> foodEntries =
-        await _appDatabase.getFoodEntriesByDate(DateTime.now());
+    final List<FoodEntry> foodEntries = await _appDatabase.getFoodEntriesByDate(
+      DateTime.now(),
+    );
 
     return foodEntries
         .map((FoodEntry weightEntry) => weightEntry.toDomain())
@@ -281,8 +295,9 @@ class LocalDataSource {
 
   /// Retrieve food weight entries by a specific date.
   Future<List<FoodWeight>> getFoodEntriesByDate(DateTime date) async {
-    final List<FoodEntry> foodEntries =
-        await _appDatabase.getFoodEntriesByDate(date);
+    final List<FoodEntry> foodEntries = await _appDatabase.getFoodEntriesByDate(
+      date,
+    );
     return foodEntries
         .map((FoodEntry weightEntry) => weightEntry.toDomain())
         .toList();
@@ -307,8 +322,8 @@ class LocalDataSource {
   }
 
   Future<List<FoodWeight>> fetchYesterdayEntries() async {
-    final List<FoodEntry> foodEntries =
-        await _appDatabase.fetchYesterdayEntries();
+    final List<FoodEntry> foodEntries = await _appDatabase
+        .fetchYesterdayEntries();
     return foodEntries
         .map((FoodEntry weightEntry) => weightEntry.toDomain())
         .toList();
@@ -357,11 +372,20 @@ class LocalDataSource {
   String _translateError(String key, String locale) {
     final Map<String, Map<String, String>> localizedErrors =
         <String, Map<String, String>>{
-      'error.save_asset_image_failed': <String, String>{
-        'en': 'Failed to save asset image',
-        'uk': 'Не вдалося зберегти зображення',
-      },
-    };
+          'error.save_asset_image_failed': <String, String>{
+            'en': 'Failed to save asset image',
+            'uk': 'Не вдалося зберегти зображення',
+          },
+        };
     return localizedErrors[key]?[locale] ?? key;
+  }
+
+  Future<BodyWeight> getLastBodyWeight() async {
+    final BodyWeightEntry? bodyWeightEntry = await _appDatabase
+        .getLastBodyWeight();
+    if (bodyWeightEntry != null) {
+      return bodyWeightEntry.toDomain();
+    }
+    return BodyWeight.empty();
   }
 }

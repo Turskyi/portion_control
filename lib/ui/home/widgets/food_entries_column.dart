@@ -38,7 +38,8 @@ class FoodEntriesColumn extends StatelessWidget {
               return FoodWeightEntryRow(
                 value: '${entry.weight}',
                 time: entry.time,
-                isEditState: state is FoodWeightUpdateState &&
+                isEditState:
+                    state is FoodWeightUpdateState &&
                     state.foodEntryId == entry.id,
                 onEdit: () {
                   context.read<HomeBloc>().add(EditFoodEntry(entry.id));
@@ -48,11 +49,8 @@ class FoodEntriesColumn extends StatelessWidget {
                 },
                 onSave: (String value) {
                   context.read<HomeBloc>().add(
-                        UpdateFoodWeight(
-                          foodEntryId: entry.id,
-                          foodWeight: value,
-                        ),
-                      );
+                    UpdateFoodWeight(foodEntryId: entry.id, foodWeight: value),
+                  );
                 },
               );
             }),
@@ -78,24 +76,35 @@ class FoodEntriesColumn extends StatelessWidget {
                 '${state.formattedTotalConsumedToday}$gramsSuffix',
                 style: textTheme.titleMedium,
               ),
+              if (state.formattedTotalConsumedYesterday == '0')
+                Text(
+                  translate(
+                    'food_entry.you_did_not_put_any_food_entries_yesterday',
+                  ),
+                  style: textTheme.titleMedium,
+                )
+              else
+                Text(
+                  '${translate('food_entry.total_consumed_yesterday_prefix')}'
+                  '${state.formattedTotalConsumedYesterday}$gramsSuffix',
+                  style: textTheme.titleMedium,
+                ),
               if (isWeightBelowHealthy &&
                   isWeightDecreasingOrSame &&
                   totalConsumedToday < portionControl &&
                   portionControl != constants.maxDailyFoodLimit &&
                   portionControl != constants.safeMinimumFoodIntakeG)
                 Text(
-                  '${translate(
-                    'food_entry.must_eat_at_least_prefix',
-                  )}${state.formattedRemainingFood}$gramsSuffix'
+                  '${translate('food_entry.must_eat_at_least_prefix')}'
+                  '${state.formattedRemainingFood}$gramsSuffix'
                   '$moreTodaySuffix',
                   style: textTheme.bodyMedium,
                 )
               else if (totalConsumedToday < portionControl &&
                   portionControl != constants.maxDailyFoodLimit)
                 Text(
-                  '${translate(
-                    'food_entry.can_eat_prefix',
-                  )}${state.formattedRemainingFood}'
+                  '${translate('food_entry.can_eat_prefix')}'
+                  '${state.formattedRemainingFood}'
                   '$gramsSuffix$moreTodaySuffix',
                   style: textTheme.bodyMedium,
                 ),

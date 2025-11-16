@@ -25,25 +25,20 @@ class AppDatabase extends _$AppDatabase {
     final DateTime normalizedDate = DateTime(date.year, date.month, date.day);
 
     // Check if an entry for the same date already exists.
-    final BodyWeightEntry? existingEntry = await (select(bodyWeightEntries)
-          ..where(
-            ($BodyWeightEntriesTable entry) =>
-                entry.date.equals(normalizedDate),
-          ))
-        .getSingleOrNull();
-
-    if (existingEntry != null) {
-      // If an entry exists, update it.
-      return (update(bodyWeightEntries)
-            ..where(
+    final BodyWeightEntry? existingEntry =
+        await (select(bodyWeightEntries)..where(
               ($BodyWeightEntriesTable entry) =>
                   entry.date.equals(normalizedDate),
             ))
-          .write(
-        BodyWeightEntriesCompanion(
-          weight: Value<double>(weight),
-        ),
-      );
+            .getSingleOrNull();
+
+    if (existingEntry != null) {
+      // If an entry exists, update it.
+      return (update(bodyWeightEntries)..where(
+            ($BodyWeightEntriesTable entry) =>
+                entry.date.equals(normalizedDate),
+          ))
+          .write(BodyWeightEntriesCompanion(weight: Value<double>(weight)));
     } else {
       // If no entry exists, insert a new one.
       return into(bodyWeightEntries).insert(
@@ -75,29 +70,24 @@ class AppDatabase extends _$AppDatabase {
   Future<int> updateFoodEntry({required int id, required double weight}) {
     return (update(foodEntries)
           ..where(($FoodEntriesTable tbl) => tbl.id.equals(id)))
-        .write(
-      FoodEntriesCompanion(
-        weight: Value<double>(weight),
-      ),
-    );
+        .write(FoodEntriesCompanion(weight: Value<double>(weight)));
   }
 
   Future<int> deleteFoodEntry(int id) {
-    return (delete(foodEntries)
-          ..where(($FoodEntriesTable tbl) => tbl.id.equals(id)))
-        .go();
+    return (delete(
+      foodEntries,
+    )..where(($FoodEntriesTable tbl) => tbl.id.equals(id))).go();
   }
 
   Future<List<FoodEntry>> getFoodEntriesByDate(DateTime date) {
     final DateTime startOfDay = DateTime(date.year, date.month, date.day);
     final DateTime endOfDay = startOfDay.add(const Duration(days: 1));
 
-    return (select(foodEntries)
-          ..where(
-            ($FoodEntriesTable tbl) =>
-                tbl.date.isBiggerOrEqualValue(startOfDay) &
-                tbl.date.isSmallerThanValue(endOfDay),
-          ))
+    return (select(foodEntries)..where(
+          ($FoodEntriesTable tbl) =>
+              tbl.date.isBiggerOrEqualValue(startOfDay) &
+              tbl.date.isSmallerThanValue(endOfDay),
+        ))
         .get();
   }
 
@@ -106,11 +96,11 @@ class AppDatabase extends _$AppDatabase {
     final DateTime startOfDay = DateTime(today.year, today.month, today.day);
 
     final SimpleSelectStatement<$BodyWeightEntriesTable, BodyWeightEntry>
-        query = select(bodyWeightEntries)
-          ..where(
-            ($BodyWeightEntriesTable tbl) =>
-                tbl.date.isBiggerOrEqualValue(startOfDay),
-          );
+    query = select(bodyWeightEntries)
+      ..where(
+        ($BodyWeightEntriesTable tbl) =>
+            tbl.date.isBiggerOrEqualValue(startOfDay),
+      );
 
     return query.get().then((List<BodyWeightEntry> entries) => entries.length);
   }
@@ -121,13 +111,13 @@ class AppDatabase extends _$AppDatabase {
     final DateTime yesterdayEnd = yesterdayStart.add(const Duration(days: 1));
 
     try {
-      final List<FoodEntry> result = await (select(foodEntries)
-            ..where(
-              ($FoodEntriesTable tbl) =>
-                  tbl.date.isBiggerOrEqualValue(yesterdayStart) &
-                  tbl.date.isSmallerThanValue(yesterdayEnd),
-            ))
-          .get();
+      final List<FoodEntry> result =
+          await (select(foodEntries)..where(
+                ($FoodEntriesTable tbl) =>
+                    tbl.date.isBiggerOrEqualValue(yesterdayStart) &
+                    tbl.date.isSmallerThanValue(yesterdayEnd),
+              ))
+              .get();
 
       return result.fold<double>(
         0.0,
@@ -155,12 +145,11 @@ class AppDatabase extends _$AppDatabase {
     final DateTime startOfDay = DateTime(today.year, today.month, today.day);
     final DateTime endOfDay = startOfDay.add(const Duration(days: 1));
 
-    return (select(bodyWeightEntries)
-          ..where(
-            ($BodyWeightEntriesTable table) =>
-                table.date.isBiggerOrEqualValue(startOfDay) &
-                table.date.isSmallerThanValue(endOfDay),
-          ))
+    return (select(bodyWeightEntries)..where(
+          ($BodyWeightEntriesTable table) =>
+              table.date.isBiggerOrEqualValue(startOfDay) &
+              table.date.isSmallerThanValue(endOfDay),
+        ))
         .getSingleOrNull();
   }
 
@@ -171,12 +160,11 @@ class AppDatabase extends _$AppDatabase {
     final DateTime yesterdayEnd = yesterdayStart.add(const Duration(days: 1));
 
     try {
-      return await (select(foodEntries)
-            ..where(
-              ($FoodEntriesTable tbl) =>
-                  tbl.date.isBiggerOrEqualValue(yesterdayStart) &
-                  tbl.date.isSmallerThanValue(yesterdayEnd),
-            ))
+      return await (select(foodEntries)..where(
+            ($FoodEntriesTable tbl) =>
+                tbl.date.isBiggerOrEqualValue(yesterdayStart) &
+                tbl.date.isSmallerThanValue(yesterdayEnd),
+          ))
           .get();
     } catch (error, stackTrace) {
       debugPrint('Error while fetching yesterday\'s entries: $error.');
@@ -205,5 +193,10 @@ class AppDatabase extends _$AppDatabase {
         },
       ),
     );
+  }
+
+  Future<BodyWeightEntry?> getLastBodyWeight() async {
+    final List<BodyWeightEntry> entries = await getAllBodyWeightEntries();
+    return entries.isNotEmpty ? entries.last : null;
   }
 }

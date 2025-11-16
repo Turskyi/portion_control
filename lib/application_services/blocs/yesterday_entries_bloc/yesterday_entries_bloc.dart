@@ -9,7 +9,7 @@ part 'yesterday_entries_state.dart';
 class YesterdayEntriesBloc
     extends Bloc<YesterdayEntriesEvent, YesterdayEntriesState> {
   YesterdayEntriesBloc(this._foodRepository)
-      : super(const YesterdayEntriesInitial()) {
+    : super(const YesterdayEntriesInitial()) {
     on<LoadYesterdayEntries>(_onLoadYesterdayEntries);
   }
 
@@ -21,8 +21,8 @@ class YesterdayEntriesBloc
   ) async {
     emit(const YesterdayEntriesLoading());
     try {
-      final List<FoodWeight> foodEntries =
-          await _foodRepository.fetchYesterdayEntries();
+      final List<FoodWeight> foodEntries = await _foodRepository
+          .fetchYesterdayEntries();
       emit(YesterdayEntriesLoaded(foodEntries));
     } catch (e) {
       debugPrint('Error loading yesterday entries: $e');
