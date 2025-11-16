@@ -56,7 +56,10 @@ dependencies:
     sdk: flutter
   # flutter_translate: Attempting to use "^4.1.0" resulted in a version solving conflict
   # because portion_control depends on `intl` ^0.20.2.
-  flutter_translate: any
+  flutter_translate:
+    git:
+      url: https://github.com/Javernaver/flutter_translate.git
+      ref: master
   home_widget: ^0.8.1
   intl: ^0.20.2
   # meta: Attempting to use "^1.17.0" resulted in a version solving conflict
@@ -74,7 +77,7 @@ dependencies:
 
 dev_dependencies:
   build_runner: any
-  build_web_compilers: ^4.4.1
+  build_web_compilers: ^4.4.2
   drift_dev: ^2.29.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -102,8 +105,16 @@ flutter:
   # Assets of the application.
   assets:
     # strings
-    - assets/i18n/
-    - assets/images/
+    - assets/i18n/en.json
+    - assets/i18n/uk.json
+    - assets/images/app_store_badge.png
+    - assets/images/logo.png
+    - assets/images/mac_os_badge.png
+    - assets/images/onboarding_chart.png
+    - assets/images/onboarding_journey.png
+    - assets/images/onboarding_plate.png
+    - assets/images/play_store_badge.png
+    - assets/images/test_flight_badge.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
