@@ -21,7 +21,7 @@ Future<void> injectDependencies() async {
 ///   according to the user's device preferences if specific app-defined locale
 ///   data is missing.
 Future<void> _initializeAllDateFormatting() async {
-  for (Language lang in Language.values) {
+  for (final Language lang in Language.values) {
     try {
       await initializeDateFormatting(lang.isoLanguageCode, null);
     } catch (e, stackTrace) {

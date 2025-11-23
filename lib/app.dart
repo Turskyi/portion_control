@@ -28,6 +28,11 @@ class App extends StatelessWidget {
     final LocalizationDelegate localizationDelegate = LocalizedApp.of(
       context,
     ).delegate;
+    final String initialRoute = kIsWeb
+        ? AppRoute.landing.path
+        : localDataSource.isOnboardingCompleted()
+        ? AppRoute.home.path
+        : AppRoute.onboarding.path;
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
       child: Resources(
@@ -57,9 +62,7 @@ class App extends StatelessWidget {
               secondary: const Color(0xFFD47A9B),
             ),
           ),
-          initialRoute: localDataSource.isOnboardingCompleted()
-              ? (kIsWeb ? AppRoute.landing.path : AppRoute.home.path)
-              : AppRoute.onboarding.path,
+          initialRoute: initialRoute,
           routes: routeMap,
         ),
       ),

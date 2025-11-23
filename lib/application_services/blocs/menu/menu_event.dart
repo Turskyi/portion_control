@@ -10,9 +10,13 @@ final class BugReportPressedEvent extends MenuEvent {
 }
 
 final class MenuSubmitFeedbackEvent extends MenuEvent {
-  const MenuSubmitFeedbackEvent(this.feedback);
+  const MenuSubmitFeedbackEvent({
+    required this.feedback,
+    this.submissionType = FeedbackSubmissionType.manual,
+  });
 
   final UserFeedback feedback;
+  final FeedbackSubmissionType submissionType;
 }
 
 final class MenuClosingFeedbackEvent extends MenuEvent {

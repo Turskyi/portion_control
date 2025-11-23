@@ -57,55 +57,13 @@ class _HomePageState extends State<HomePage> {
         automaticallyImplyLeading: false,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: LayoutBuilder(
-        builder: (BuildContext _, BoxConstraints constraints) {
-          if (constraints.maxWidth > constants.wideScreenThreshold) {
-            // Wide screen layout.
-            return const Align(
-              alignment: AlignmentDirectional.topCenter,
-              child: SizedBox(
-                // Fixed width for wide screens.
-                width: constants.wideScreenContentWidth,
-                child: HomePageContent(),
-              ),
-            );
-          } else {
-            // Narrow screen layout.
-            return const HomePageContent();
-          }
-        },
-      ),
+      body: const HomePageContent(),
       persistentFooterAlignment: AlignmentDirectional.center,
       persistentFooterButtons: kIsWeb && context.isNarrowScreen
           ? <Widget>[
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_horiz, color: colorScheme.primary),
-                onSelected: (String result) {
-                  if (result == _languageValue) {
-                    _showLanguageSelectionDialog();
-                  } else if (result == AppRoute.privacyPolity.name) {
-                    Navigator.pushNamed(context, AppRoute.privacyPolity.path);
-                  } else if (result == AppRoute.about.name) {
-                    Navigator.pushNamed(context, AppRoute.about.path);
-                  } else if (result == AppRoute.support.name) {
-                    Navigator.pushNamed(context, AppRoute.support.path);
-                  } else if (result == constants.googlePlayUrl) {
-                    launchUrl(
-                      Uri.parse(constants.googlePlayUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  } else if (result == constants.testFlightUrl) {
-                    launchUrl(
-                      Uri.parse(constants.testFlightUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  } else if (result == constants.macOsUrl) {
-                    launchUrl(
-                      Uri.parse(constants.macOsUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  }
-                },
+                onSelected: _handlePopupMenuSelection,
                 itemBuilder: (BuildContext _) {
                   final double badgeHeight = 40.0;
                   return <PopupMenuEntry<String>>[
@@ -270,6 +228,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _handlePopupMenuSelection(String result) {
+    if (result == _languageValue) {
+      _showLanguageSelectionDialog();
+    } else if (result == AppRoute.privacyPolity.name) {
+      Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+    } else if (result == AppRoute.about.name) {
+      Navigator.pushNamed(context, AppRoute.about.path);
+    } else if (result == AppRoute.support.name) {
+      Navigator.pushNamed(context, AppRoute.support.path);
+    } else if (result == constants.googlePlayUrl) {
+      launchUrl(
+        Uri.parse(constants.googlePlayUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } else if (result == constants.testFlightUrl) {
+      launchUrl(
+        Uri.parse(constants.testFlightUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } else if (result == constants.macOsUrl) {
+      launchUrl(
+        Uri.parse(constants.macOsUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
   @override
   void dispose() {
     _feedbackController?.removeListener(_onFeedbackChanged);
@@ -278,7 +263,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _menuStateListener(BuildContext _, MenuState state) {
-    if (state is FeedbackState) {
+    if (state is MenuFeedbackState) {
       _showFeedbackUi();
     } else if (state is MenuFeedbackSent) {
       _notifyFeedbackSent();
@@ -291,7 +276,7 @@ class _HomePageState extends State<HomePage> {
 
   void _showFeedbackUi() {
     _feedbackController?.show((UserFeedback feedback) {
-      context.read<MenuBloc>().add(MenuSubmitFeedbackEvent(feedback));
+      context.read<MenuBloc>().add(MenuSubmitFeedbackEvent(feedback: feedback));
     });
     _feedbackController?.addListener(_onFeedbackChanged);
   }
@@ -338,7 +323,7 @@ class _HomePageState extends State<HomePage> {
                       onChanged: _changeLanguage,
                     ),
                     RadioListTile<Language>(
-                      title: const Text('Українська'),
+                      title: Text(translate('ukrainian')),
                       value: Language.uk,
                       groupValue: currentLanguage,
                       onChanged: _changeLanguage,

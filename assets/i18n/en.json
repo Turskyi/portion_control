@@ -237,7 +237,8 @@
     },
     "page2": {
       "title": "📊 Visualize Your Progress Effortlessly",
-      "content": "See how your daily portions and weight change over time with clean, simple charts - no calorie counting required."
+      "content": "See how your daily portions and weight change over time with clean, simple charts - no calorie counting required.",
+      "onboarding_chart": "en_onboarding_chart.png"
     },
     "page3": {
       "title": "🩷 Stay in Control Every Day",

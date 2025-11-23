@@ -71,10 +71,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   imageAsset: '${constants.imagePath}onboarding_plate.png',
                   isAnimated: true,
                 ),
-                const OnboardingPage(
+                OnboardingPage(
                   titleKey: 'onboarding.page2.title',
                   contentKey: 'onboarding.page2.content',
-                  imageAsset: '${constants.imagePath}onboarding_chart.png',
+                  imageAsset:
+                      '${constants.imagePath}${translate(
+                        'onboarding.page2.onboarding_chart',
+                      )}',
                 ),
                 const OnboardingPage(
                   titleKey: 'onboarding.page3.title',

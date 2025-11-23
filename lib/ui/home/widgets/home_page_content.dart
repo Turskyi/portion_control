@@ -44,14 +44,10 @@ class _HomePageContentState extends State<HomePageContent> {
         final List<FoodWeight> foodEntries = state.foodEntries;
         final double horizontalIndent = 12.0;
 
-        return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            horizontalIndent,
-            MediaQuery.of(context).padding.top,
-            horizontalIndent,
-            80.0,
-          ),
-          controller: _scrollController,
+        final double screenWidth = MediaQuery.sizeOf(context).width;
+        final bool isWideScreen = screenWidth > constants.wideScreenThreshold;
+        final SizedBox contentColumn = SizedBox(
+          width: isWideScreen ? constants.wideScreenContentWidth : null,
           child: Column(
             spacing: 16.0,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,19 +72,21 @@ class _HomePageContentState extends State<HomePageContent> {
                   initialValue:
                       '${weight > constants.minBodyWeight ? weight : ''}',
                   value: state is BodyWeightSubmittedState ? '$weight' : null,
-                  onChanged: (String value) {
-                    context.read<HomeBloc>().add(UpdateBodyWeight(value));
-                  },
+                  onChanged: _updateBodyWeight,
                 ),
               if (state is DetailsSubmittedState)
                 const SubmitEditBodyWeightButton(),
               if (state.bodyWeightEntries.length > 1)
-                // Line Chart of Body Weight trends for the last two weeks.
+                // Line Chart of Body Weight trends for the last two
+                // weeks.
                 BodyWeightLineChart(
                   bodyWeightEntries: state.lastTwoWeeksBodyWeightEntries,
                 ),
               if (state is BodyWeightSubmittedState)
-                HealthyWeightRecommendations(height: height, weight: weight),
+                HealthyWeightRecommendations(
+                  height: height,
+                  weight: weight,
+                ),
               if (state is BodyWeightSubmittedState)
                 const PortionControlMessage(),
               if (state is BodyWeightSubmittedState)
@@ -97,7 +95,28 @@ class _HomePageContentState extends State<HomePageContent> {
             ],
           ),
         );
+        return SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            horizontalIndent,
+            MediaQuery.paddingOf(context).top,
+            horizontalIndent,
+            80.0,
+          ),
+          controller: _scrollController,
+          child: isWideScreen
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[contentColumn],
+                )
+              : contentColumn,
+        );
       },
+    );
+  }
+
+  void _updateBodyWeight(String value) {
+    context.read<HomeBloc>().add(
+      UpdateBodyWeight(value),
     );
   }
 
@@ -153,8 +172,9 @@ class _HomePageContentState extends State<HomePageContent> {
 
   void _showFeedbackUi() {
     _feedbackController?.show(
-      (UserFeedback feedback) =>
-          context.read<HomeBloc>().add(HomeSubmitFeedbackEvent(feedback)),
+      (UserFeedback feedback) {
+        context.read<HomeBloc>().add(HomeSubmitFeedbackEvent(feedback));
+      },
     );
     _feedbackController?.addListener(_onFeedbackChanged);
   }
