@@ -21,6 +21,7 @@ import 'package:portion_control/ui/home/home_view.dart' show HomeView;
 import 'package:portion_control/ui/landing/landing_page.dart';
 import 'package:portion_control/ui/onboarding/onboarding_screen.dart';
 import 'package:portion_control/ui/privacy/privacy_policy_page.dart';
+import 'package:portion_control/ui/recipes/weight_loss_recipes_page.dart';
 import 'package:portion_control/ui/support/support_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -97,6 +98,7 @@ Future<void> main() async {
     AppRoute.privacyPolity.path: (BuildContext _) => const PrivacyPolicyPage(),
     AppRoute.about.path: (BuildContext _) => const AboutPage(),
     AppRoute.support.path: (BuildContext _) => const SupportPage(),
+    AppRoute.recipes.path: (BuildContext _) => const WeightLossRecipesPage(),
   };
 
   runApp(

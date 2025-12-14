@@ -10,7 +10,6 @@ class PrivacyPolicyPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double horizontalIndent = 16.0;
     final ThemeData themeData = Theme.of(context);
     final Color linkColor = themeData.colorScheme.primary;
     final TextTheme textTheme = themeData.textTheme;
@@ -25,9 +24,9 @@ class PrivacyPolicyPageContent extends StatelessWidget {
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
-        horizontalIndent,
-        MediaQuery.of(context).padding.top,
-        horizontalIndent,
+        constants.kHorizontalIndent,
+        MediaQuery.paddingOf(context).top,
+        constants.kHorizontalIndent,
         80.0,
       ),
       child: Column(

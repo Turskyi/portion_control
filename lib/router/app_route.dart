@@ -3,6 +3,7 @@ enum AppRoute {
   landing('/'),
   home('/home'),
   about('/about'),
+  recipes('/recipes'),
   support('/support'),
   privacyPolity('/privacy-policy');
 

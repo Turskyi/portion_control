@@ -100,3 +100,4 @@ const String doNotReplySenderName = 'Do Not Reply';
 const String feedbackEmailSender =
     '$doNotReplySenderName $appName <no-reply@$resendEmailDomain>';
 const String feedbackScreenshotFileName = 'feedback.png';
+final double kHorizontalIndent = 16.0;

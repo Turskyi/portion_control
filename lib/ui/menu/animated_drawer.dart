@@ -96,11 +96,6 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               child: ListView(
                 children: <Widget>[
                   AnimatedDrawerItem(
-                    icon: Icons.language,
-                    text: translate('language'),
-                    onTap: _showLanguageSelectionDialog,
-                  ),
-                  AnimatedDrawerItem(
                     icon: Icons.privacy_tip,
                     text: translate('privacy_policy.title'),
                     onTap: () {
@@ -115,18 +110,37 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                     },
                   ),
                   AnimatedDrawerItem(
-                    icon: Icons.feedback,
-                    text: translate('button.feedback'),
-                    onTap: () => context.read<MenuBloc>().add(
-                      const BugReportPressedEvent(),
-                    ),
-                  ),
-                  AnimatedDrawerItem(
                     icon: Icons.support_agent,
                     text: translate('support.title'),
                     onTap: () {
                       Navigator.pushNamed(context, AppRoute.support.path);
                     },
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.menu_book,
+                    text: translate('recipes_page.title'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.recipes.path);
+                    },
+                  ),
+                  if (!kIsWeb)
+                    AnimatedDrawerItem(
+                      icon: Icons.web,
+                      text: translate('open_web_version'),
+                      onTap: _openWebVersion,
+                    ),
+                  const Divider(),
+                  AnimatedDrawerItem(
+                    icon: Icons.language,
+                    text: translate('language'),
+                    onTap: _showLanguageSelectionDialog,
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.feedback,
+                    text: translate('button.feedback'),
+                    onTap: () => context.read<MenuBloc>().add(
+                      const BugReportPressedEvent(),
+                    ),
                   ),
                   // Only add the event if it's NOT web AND NOT macOS.
                   // For context, see issue:
@@ -144,12 +158,6 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         }
                         return const SizedBox.shrink();
                       },
-                    ),
-                  if (!kIsWeb)
-                    AnimatedDrawerItem(
-                      icon: Icons.web,
-                      text: translate('open_web_version'),
-                      onTap: _openWebVersion,
                     ),
                 ],
               ),
