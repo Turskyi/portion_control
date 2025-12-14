@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class DayCard extends StatelessWidget {
   const DayCard({
-    required this.meals,
     this.title,
+    this.meals = const <String>[],
     this.dayTitle,
     this.total,
     super.key,
