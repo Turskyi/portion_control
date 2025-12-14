@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class DayCard extends StatelessWidget {
   const DayCard({
-    super.key,
+    required this.meals,
     this.title,
     this.dayTitle,
-    required this.meals,
     this.total,
+    super.key,
   });
 
   final String? title;
@@ -16,7 +16,7 @@ class DayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
@@ -24,7 +24,7 @@ class DayCard extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             if (title != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
@@ -41,7 +41,7 @@ class DayCard extends StatelessWidget {
                   style: textTheme.titleMedium,
                 ),
               ),
-            for (final meal in meals)
+            for (final String meal in meals)
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Text(
