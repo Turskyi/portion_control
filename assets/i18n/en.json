@@ -33,6 +33,7 @@
   "pin_widget": "Pin Widget",
   "next": "Next",
   "get_started": "Get Started",
+  "coming_soon": "Coming soon!",
   "privacy_policy": {
     "title": "Privacy Policy",
     "introduction_title": "Introduction",
@@ -103,7 +104,8 @@
   "semantic_label": {
     "privacy_policy_button": "Navigate to Privacy Policy page",
     "about_us_button": "Navigate to About Us page",
-    "feedback_button": "Open feedback form"
+    "feedback_button": "Open feedback form",
+    "daily_food_log_history": "Navigate to Daily Food Log History page"
   },
   "meal_confirmation": {
     "yesterday_consumed_prefix": " 🍽️ Yesterday, you consumed (logged) ",
@@ -198,6 +200,9 @@
     "semantics_label_google_play": "Google Play Store",
     "semantics_label_testflight": "TestFlight",
     "semantics_label_macos": "MacOS"
+  },
+  "daily_food_log_history": {
+    "title": "Daily Food Log History"
   },
   "user_details_widget": {
     "title_your_details": "Your Details",

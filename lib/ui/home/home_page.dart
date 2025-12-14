@@ -73,6 +73,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const PopupMenuDivider(),
                     PopupMenuItem<String>(
+                      value: AppRoute.dailyFoodLogHistory.name,
+                      child: Text(t('daily_food_log_history.title')),
+                    ),
+                    PopupMenuItem<String>(
                       value: AppRoute.privacyPolity.name,
                       child: Text(t('landing_page.menu_item_privacy_policy')),
                     ),
@@ -83,6 +87,10 @@ class _HomePageState extends State<HomePage> {
                     PopupMenuItem<String>(
                       value: AppRoute.support.name,
                       child: Text(t('landing_page.menu_item_support')),
+                    ),
+                    PopupMenuItem<String>(
+                      value: AppRoute.recipes.name,
+                      child: Text(t('recipes_page.title')),
                     ),
                     const PopupMenuDivider(),
                     PopupMenuItem<String>(
@@ -173,6 +181,20 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Semantics(
+                label: t('semantic_label.daily_food_log_history'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoute.dailyFoodLogHistory.path,
+                    );
+                  },
+                  icon: Icon(Icons.history, size: titleMediumSize),
+                  label: Text(t('daily_food_log_history.title')),
+                ),
+              ),
+              Semantics(
                 label: translate('semantic_label.privacy_policy_button'),
                 button: true,
                 child: TextButton.icon(
@@ -181,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                   },
                   icon: Icon(
                     Icons.privacy_tip,
-                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                    size: titleMediumSize,
                   ),
                   label: Text(translate('button.privacy_policy')),
                 ),
@@ -195,9 +217,23 @@ class _HomePageState extends State<HomePage> {
                   },
                   icon: Icon(
                     Icons.group,
-                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                    size: titleMediumSize,
                   ),
                   label: Text(translate('button.about_us')),
+                ),
+              ),
+              Semantics(
+                label: translate('semantic_label.recipes_button'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.recipes.path);
+                  },
+                  icon: Icon(
+                    Icons.restaurant_menu,
+                    size: titleMediumSize,
+                  ),
+                  label: Text(translate('recipes_page.title')),
                 ),
               ),
               Semantics(
@@ -233,10 +269,14 @@ class _HomePageState extends State<HomePage> {
       _showLanguageSelectionDialog();
     } else if (result == AppRoute.privacyPolity.name) {
       Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+    } else if (result == AppRoute.dailyFoodLogHistory.name) {
+      Navigator.pushNamed(context, AppRoute.dailyFoodLogHistory.path);
     } else if (result == AppRoute.about.name) {
       Navigator.pushNamed(context, AppRoute.about.path);
     } else if (result == AppRoute.support.name) {
       Navigator.pushNamed(context, AppRoute.support.path);
+    } else if (result == AppRoute.recipes.name) {
+      Navigator.pushNamed(context, AppRoute.recipes.path);
     } else if (result == constants.googlePlayUrl) {
       launchUrl(
         Uri.parse(constants.googlePlayUrl),

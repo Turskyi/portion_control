@@ -165,13 +165,23 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                       Navigator.pushNamed(context, AppRoute.recipes.path);
                     },
                   ),
+                  AnimatedDrawerItem(
+                    icon: Icons.history,
+                    text: translate('daily_food_log_history.title'),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoute.dailyFoodLogHistory.path,
+                      );
+                    },
+                  ),
+                  const Divider(),
                   if (!kIsWeb)
                     AnimatedDrawerItem(
                       icon: Icons.web,
                       text: translate('open_web_version'),
                       onTap: _openWebVersion,
                     ),
-                  const Divider(),
                   AnimatedDrawerItem(
                     icon: Icons.language,
                     text: translate('language'),
@@ -293,13 +303,13 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
       }
     } catch (e, s) {
       debugPrint(
-        'Error checking widget pinning support in `AnimatedDrawer` '
-        '($runtimeType): $e. '
-        'This might happen on platforms where '
-        '`HomeWidget.isRequestPinWidgetSupported()` is not implemented or '
-        'fails. '
-        'Defaulting to not showing the "Pin Widget" option.\n'
-        'Stacktrace: $s',
+        '''
+        Error checking widget pinning support in `AnimatedDrawer` 
+        ($runtimeType): $e. This might happen on platforms where 
+        `HomeWidget.isRequestPinWidgetSupported()` is not implemented or fails. 
+        Defaulting to not showing the "Pin Widget" option.
+        Stacktrace: $s
+        ''',
       );
       if (mounted) {
         _isRequestPinWidgetSupported.value = false;
