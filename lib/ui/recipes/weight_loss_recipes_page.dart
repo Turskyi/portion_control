@@ -22,6 +22,16 @@ class WeightLossRecipesPage extends StatelessWidget {
           80.0,
         ),
         children: <Widget>[
+          Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                translate('recipes_page.disclaimer'),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ),
           DayCard(
             title: translate('recipes_page.week_1'),
             dayTitle: translate('recipes_page.day_1'),
