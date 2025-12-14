@@ -28,6 +28,11 @@ class FoodWeightRepository implements IFoodWeightRepository {
     return _localDataSource.getFoodEntriesByDate(date);
   }
 
+  @override
+  Future<List<FoodWeight>> getAllFoodEntries() {
+    return _localDataSource.getAllFoodEntries();
+  }
+
   /// Delete a food weight entry by [id].
   @override
   Future<int> deleteFoodWeightEntry(int id) {

@@ -45,6 +45,7 @@ dependencies:
   drift: ^2.30.0
   drift_flutter: ^0.2.8
   envied: ^1.3.2
+  equatable: ^2.0.7
   feedback: ^3.2.0
   fl_chart: ^1.1.1
   flutter:

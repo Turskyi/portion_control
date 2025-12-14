@@ -64,6 +64,15 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
+  /// Retrieve all food entries, sorted by date.
+  Future<List<FoodEntry>> getAllFoodEntries() {
+    return (select(foodEntries)
+          ..orderBy(<OrderClauseGenerator<$FoodEntriesTable>>[
+            ($FoodEntriesTable t) => OrderingTerm(expression: t.date),
+          ]))
+        .get();
+  }
+
   Future<int> insertFoodEntry(FoodEntriesCompanion entry) {
     return into(foodEntries).insert(entry);
   }
@@ -178,28 +187,6 @@ class AppDatabase extends _$AppDatabase {
     }
   }
 
-  static QueryExecutor _openConnection() {
-    return driftDatabase(
-      name: 'portion_control_db',
-      native: const DriftNativeOptions(
-        databaseDirectory: getApplicationSupportDirectory,
-      ),
-      web: DriftWebOptions(
-        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
-        driftWorker: Uri.parse('drift_worker.js'),
-        onResult: (WasmDatabaseResult result) {
-          if (result.missingFeatures.isNotEmpty && kDebugMode) {
-            debugPrint(
-              'Using ${result.chosenImplementation} due to '
-              'unsupported browser features: '
-              '${result.missingFeatures}',
-            );
-          }
-        },
-      ),
-    );
-  }
-
   Future<BodyWeightEntry?> getLastBodyWeight() async {
     final List<BodyWeightEntry> entries = await getAllBodyWeightEntries();
     return entries.isNotEmpty ? entries.last : null;
@@ -250,5 +237,27 @@ class AppDatabase extends _$AppDatabase {
     }
 
     return streak;
+  }
+
+  static QueryExecutor _openConnection() {
+    return driftDatabase(
+      name: 'portion_control_db',
+      native: const DriftNativeOptions(
+        databaseDirectory: getApplicationSupportDirectory,
+      ),
+      web: DriftWebOptions(
+        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+        driftWorker: Uri.parse('drift_worker.js'),
+        onResult: (WasmDatabaseResult result) {
+          if (result.missingFeatures.isNotEmpty && kDebugMode) {
+            debugPrint(
+              'Using ${result.chosenImplementation} due to '
+              'unsupported browser features: '
+              '${result.missingFeatures}',
+            );
+          }
+        },
+      ),
+    );
   }
 }

@@ -29,6 +29,8 @@ abstract interface class IFoodWeightRepository {
 
   Future<double> getTotalConsumedYesterday();
 
+  Future<List<FoodWeight>> getAllFoodEntries();
+
   Future<int> clearAllTrackingData();
 
   Future<List<FoodWeight>> fetchYesterdayEntries();

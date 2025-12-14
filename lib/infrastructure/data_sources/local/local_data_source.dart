@@ -232,6 +232,12 @@ class LocalDataSource {
     return _appDatabase.getAllBodyWeightEntries();
   }
 
+  /// Retrieve all food entries, sorted by date.
+  Future<List<FoodWeight>> getAllFoodEntries() async {
+    final List<FoodEntry> foodEntries = await _appDatabase.getAllFoodEntries();
+    return foodEntries.map((FoodEntry entry) => entry.toDomain()).toList();
+  }
+
   /// Delete a body weight entry by id.
   Future<int> deleteBodyWeightEntry(int id) {
     return (_appDatabase.delete(
