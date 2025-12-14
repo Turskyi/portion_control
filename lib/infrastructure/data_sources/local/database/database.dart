@@ -11,6 +11,11 @@ part 'database.g.dart';
 
 @DriftDatabase(tables: <Type>[BodyWeightEntries, FoodEntries])
 class AppDatabase extends _$AppDatabase {
+  /// The database class for the application.
+  ///
+  /// This class is named `AppDatabase` to follow the convention in the official
+  /// Drift example, even though the filename is `database.dart`.
+  /// See: https://github.com/simolus3/drift/tree/develop/examples/app/lib/
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   AppDatabase.forTesting(DatabaseConnection super.connection);
@@ -198,5 +203,52 @@ class AppDatabase extends _$AppDatabase {
   Future<BodyWeightEntry?> getLastBodyWeight() async {
     final List<BodyWeightEntry> entries = await getAllBodyWeightEntries();
     return entries.isNotEmpty ? entries.last : null;
+  }
+
+  /// Returns the number of consecutive days with at least one body weight
+  /// entry.
+  ///
+  /// The streak is calculated backwards starting from **today if present,
+  /// otherwise from yesterday**. The streak stops at the first missing day.
+  ///
+  /// This means:
+  /// - If the user logged weight yesterday but not yet today, the streak is
+  /// preserved.
+  /// - If the user skipped yesterday, the streak resets to 0.
+  Future<int> getBodyWeightStreak() async {
+    final List<BodyWeightEntry> entries = await getAllBodyWeightEntries();
+
+    if (entries.isEmpty) {
+      return 0;
+    }
+
+    // Normalize all entry dates to day precision
+    final Set<DateTime> entryDays = entries.map(
+      (BodyWeightEntry entry) {
+        return DateTime(entry.date.year, entry.date.month, entry.date.day);
+      },
+    ).toSet();
+
+    DateTime today = DateTime.now();
+    today = DateTime(today.year, today.month, today.day);
+
+    // Start from today if present, otherwise from yesterday
+    DateTime dayCursor = entryDays.contains(today)
+        ? today
+        : today.subtract(const Duration(days: 1));
+
+    // If neither today nor yesterday has an entry, streak is broken.
+    if (!entryDays.contains(dayCursor)) {
+      return 0;
+    }
+
+    int streak = 0;
+
+    while (entryDays.contains(dayCursor)) {
+      streak++;
+      dayCursor = dayCursor.subtract(const Duration(days: 1));
+    }
+
+    return streak;
   }
 }

@@ -75,12 +75,54 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
             ),
             child: Align(
               alignment: Alignment.bottomLeft,
-              child: Text(
-                translate('menu'),
-                style: textTheme.headlineSmall?.copyWith(
-                  color: colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    translate('menu'),
+                    style: textTheme.headlineSmall?.copyWith(
+                      color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  BlocBuilder<MenuBloc, MenuState>(
+                    builder: (BuildContext context, MenuState state) {
+                      if (state is LoadingMenuState) {
+                        return SizedBox(
+                          height: textTheme.bodyMedium?.fontSize,
+                          width: textTheme.bodyMedium?.fontSize,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              colorScheme.onPrimary,
+                            ),
+                          ),
+                        );
+                      } else {
+                        final int streakDays = state.streakDays;
+                        // The `flutter_translate` package automatically handles
+                        // pluralization rules based on the provided numeric
+                        // value.
+                        // When `streakDays` is 0, it correctly maps to the
+                        // "zero" key in the localization files without needing
+                        // explicit handling in the code.
+                        final String streakText = translatePlural(
+                          'streak',
+                          streakDays,
+                          args: <String, Object?>{'count': streakDays},
+                        );
+                        return Text(
+                          streakText,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onPrimary.withOpacity(0.85),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
           ),

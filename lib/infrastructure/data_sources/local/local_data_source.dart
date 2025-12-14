@@ -388,4 +388,8 @@ class LocalDataSource {
     }
     return BodyWeight.empty();
   }
+
+  Future<int> getBodyWeightStreak() {
+    return _appDatabase.getBodyWeightStreak();
+  }
 }

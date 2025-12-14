@@ -43,7 +43,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     this._foodWeightRepository,
     this._userPreferencesRepository,
     this._localDataSource,
-  ) : super(const LoadingMenuState()) {
+  ) : super(const LoadingMenuState(streakDays: 0)) {
     on<LoadingInitialMenuStateEvent>(_loadInitialMenuState);
     on<BugReportPressedEvent>(_onFeedbackRequested);
     on<MenuClosingFeedbackEvent>(_onFeedbackDialogDismissed);
@@ -65,21 +65,28 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     BugReportPressedEvent _,
     Emitter<MenuState> emit,
   ) {
-    emit(MenuFeedbackState(language: state.language));
+    emit(
+      MenuFeedbackState(
+        language: state.language,
+        streakDays: state.streakDays,
+      ),
+    );
   }
 
   FutureOr<void> _onFeedbackDialogDismissed(
     MenuClosingFeedbackEvent _,
     Emitter<MenuState> emit,
   ) {
-    emit(MenuInitial(language: state.language));
+    emit(MenuInitial(language: state.language, streakDays: state.streakDays));
   }
 
   FutureOr<void> _sendUserFeedback(
     MenuSubmitFeedbackEvent event,
     Emitter<MenuState> emit,
   ) async {
-    emit(LoadingMenuState(language: state.language));
+    emit(
+      LoadingMenuState(language: state.language, streakDays: state.streakDays),
+    );
     final UserFeedback feedback = event.feedback;
     try {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -198,7 +205,12 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
             );
           }
         }
-        emit(MenuFeedbackSent(language: state.language));
+        emit(
+          MenuFeedbackSent(
+            language: state.language,
+            streakDays: state.streakDays,
+          ),
+        );
       } catch (error, stackTrace) {
         debugPrint(
           'Error in $runtimeType in `onError`: $error.\n'
@@ -213,21 +225,22 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       );
       add(MenuErrorEvent(translate('error.unexpectedError')));
     }
-    emit(MenuInitial(language: state.language));
+    emit(MenuInitial(language: state.language, streakDays: state.streakDays));
   }
 
-  FutureOr<void> _loadInitialMenuState(
+  Future<void> _loadInitialMenuState(
     LoadingInitialMenuStateEvent _,
     Emitter<MenuState> emit,
-  ) {
+  ) async {
     final Language savedLanguage = _settingsRepository.getLanguage();
-    emit(MenuInitial(language: savedLanguage));
+    final int streakDays = await _bodyWeightRepository.getBodyWeightStreak();
+    emit(MenuInitial(language: savedLanguage, streakDays: streakDays));
   }
 
   FutureOr<void> _handleError(MenuErrorEvent event, Emitter<MenuState> emit) {
     debugPrint('MenuErrorEvent: ${event.error}');
     //TODO: add ErrorMenuState and use it instead.
-    emit(const MenuInitial());
+    emit(MenuInitial(streakDays: state.streakDays));
   }
 
   FutureOr<void> _changeLanguage(
@@ -246,7 +259,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         if (state is MenuInitial) {
           emit(state.copyWith(language: language));
         } else {
-          MenuInitial(language: language);
+          MenuInitial(language: language, streakDays: state.streakDays);
         }
       } else {
         //TODO: not sure what to do.
@@ -294,7 +307,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         weight: todayBodyWeight.weight,
         consumed: totalConsumedToday,
         portionControl: portionControl,
-        recommendation: await _getMmiMessage(),
+        recommendation: await _getBmiMessage(),
         formattedLastUpdatedDateTime: _formattedLastUpdatedDateTime,
       );
 
@@ -459,7 +472,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         bodyWeightEntries[bodyWeightEntries.length - 2].weight;
   }
 
-  Future<String> _getMmiMessage() async {
+  Future<String> _getBmiMessage() async {
     final double bmi = await _getBmi();
     if (bmi < constants.bmiUnderweightThreshold) {
       return translate('healthy_weight.underweight_message');
