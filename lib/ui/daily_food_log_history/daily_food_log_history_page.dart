@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/daily_food_log_history/daily_food_log_history_bloc.dart';
-import 'package:portion_control/domain/models/food_weight.dart';
+import 'package:portion_control/domain/models/day_food_log.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/ui/daily_food_log_history/widgets/day_log_card.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 
@@ -16,18 +18,24 @@ class DailyFoodLogHistoryPage extends StatelessWidget {
         title: translate('daily_food_log_history.title'),
       ),
       body: BlocBuilder<DailyFoodLogHistoryBloc, DailyFoodLogHistoryState>(
-        builder: (BuildContext _, DailyFoodLogHistoryState state) {
+        builder: (BuildContext context, DailyFoodLogHistoryState state) {
           if (state is DailyFoodLogHistoryLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is DailyFoodLogHistoryLoaded) {
-            return ListView.builder(
-              itemCount: state.foodLogs.length,
+            return ListView.separated(
+              padding: EdgeInsets.fromLTRB(
+                constants.kHorizontalIndent,
+                MediaQuery.paddingOf(context).top + 12.0,
+                constants.kHorizontalIndent,
+                80.0,
+              ),
+              itemCount: state.days.length,
+              separatorBuilder: (BuildContext _, int _) {
+                return const SizedBox(height: 12);
+              },
               itemBuilder: (BuildContext _, int index) {
-                final FoodWeight foodLog = state.foodLogs[index];
-                return ListTile(
-                  title: Text(foodLog.date.toString()),
-                  subtitle: Text(foodLog.weight.toString()),
-                );
+                final DayFoodLog day = state.days[index];
+                return DayLogCard(day: day);
               },
             );
           } else if (state is DailyFoodLogHistoryError) {

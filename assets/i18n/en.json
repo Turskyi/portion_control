@@ -34,6 +34,35 @@
   "next": "Next",
   "get_started": "Get Started",
   "coming_soon": "Coming soon!",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "no_meals_logged": "No meals logged",
+  "total:": "Total",
+  "limit": "Limit",
+  "measurement": {
+    "grams_value": "{value} g"
+  },
+  "meal_type": {
+    "breakfast": "Breakfast",
+    "second_breakfast": "Second Breakfast",
+    "lunch": "Lunch",
+    "snack": "Snack",
+    "dinner": "Dinner"
+  },
+  "month_abbr": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "May",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Dec"
+  },
   "privacy_policy": {
     "title": "Privacy Policy",
     "introduction_title": "Introduction",
@@ -59,6 +88,7 @@
     "failed_short": "Oops! Something went wrong."
   },
   "error": {
+    "failed_to_load_food_log_history": "Failed to load food log history.",
     "pleaseCheckInternet": "An error occurred. Please check your internet connection and try again.",
     "unexpectedError": "An unexpected error occurred. Please try again.",
     "oops": "Oops! Something went wrong. Please try again later.",
@@ -202,7 +232,12 @@
     "semantics_label_macos": "MacOS"
   },
   "daily_food_log_history": {
-    "title": "Daily Food Log History"
+    "title": "Daily Food Log History",
+    "over_limit": "Over limit",
+    "within_limit": "Within limit",
+    "no_meals_logged": "No meals logged for this day",
+    "total_consumed": "Total: {value} g",
+    "daily_limit": "Limit: {value} g"
   },
   "user_details_widget": {
     "title_your_details": "Your Details",

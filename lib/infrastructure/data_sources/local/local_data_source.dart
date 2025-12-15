@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
+import 'package:portion_control/domain/models/day_food_log.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/data_mappers/body_weight_entries_mapper.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/data_mappers/food_entries_mapper.dart';
@@ -205,7 +206,7 @@ class LocalDataSource {
     return false;
   }
 
-  double? getPortionControl() {
+  double? getLastPortionControl() {
     return _preferences.getDouble(_portionControlKey);
   }
 
@@ -397,5 +398,53 @@ class LocalDataSource {
 
   Future<int> getBodyWeightStreak() {
     return _appDatabase.getBodyWeightStreak();
+  }
+
+  Future<List<DayFoodLog>> getDailyFoodLogHistory() async {
+    final List<FoodEntry> foodEntries = await _appDatabase.getAllFoodEntries();
+
+    if (foodEntries.isEmpty) {
+      return <DayFoodLog>[];
+    }
+
+    final Map<DateTime, List<FoodEntry>> grouped =
+        <DateTime, List<FoodEntry>>{};
+
+    for (final FoodEntry entry in foodEntries) {
+      final DateTime day = DateTime(
+        entry.date.year,
+        entry.date.month,
+        entry.date.day,
+      );
+
+      grouped.putIfAbsent(day, () => <FoodEntry>[]).add(entry);
+    }
+
+    final double dailyLimit = getLastPortionControl() ?? 0;
+
+    final List<DayFoodLog> result = grouped.entries.map((
+      MapEntry<DateTime, List<FoodEntry>> mapEntry,
+    ) {
+      final double total = mapEntry.value.fold(
+        0.0,
+        (double sum, FoodEntry item) => sum + item.weight,
+      );
+
+      return DayFoodLog(
+        date: mapEntry.key,
+        totalConsumed: total,
+        dailyLimit: dailyLimit,
+        entries: mapEntry.value.map((FoodEntry entry) {
+          return FoodWeight(
+            id: entry.id,
+            weight: entry.weight,
+            dateTime: entry.date,
+          );
+        }).toList(),
+      );
+    }).toList();
+
+    result.sort((DayFoodLog a, DayFoodLog b) => b.date.compareTo(a.date));
+    return result;
   }
 }

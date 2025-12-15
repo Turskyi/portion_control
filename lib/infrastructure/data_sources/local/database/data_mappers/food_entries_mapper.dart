@@ -9,7 +9,7 @@ extension FoodEntriesMapper on FoodEntry {
       // `weight` is the value in the data row.
       weight: weight,
       // `date` is the value in the data row.
-      date: date,
+      dateTime: date,
     );
   }
 }

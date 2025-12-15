@@ -34,6 +34,35 @@
   "next": "Далі",
   "get_started": "Почати",
   "coming_soon": "Незабаром!",
+  "today": "Сьогодні",
+  "yesterday": "Вчора",
+  "no_meals_logged": "Немає записів про прийоми їжі",
+  "total:": "Всього",
+  "limit": "Ліміт",
+  "measurement": {
+    "grams_value": "{value} г"
+  },
+  "meal_type": {
+    "breakfast": "Сніданок",
+    "second_breakfast": "Другий сніданок",
+    "lunch": "Обід",
+    "snack": "Перекус",
+    "dinner": "Вечеря"
+  },
+  "month_abbr": {
+    "jan": "Січ",
+    "feb": "Лют",
+    "mar": "Бер",
+    "apr": "Кві",
+    "may": "Тра",
+    "jun": "Чер",
+    "jul": "Лип",
+    "aug": "Сер",
+    "sep": "Вер",
+    "oct": "Жов",
+    "nov": "Лис",
+    "dec": "Гру"
+  },
   "privacy_policy": {
     "title": "Політика конфіденційності",
     "introduction_title": "Вступ",
@@ -60,6 +89,7 @@
     "failed_short": "Ой! Щось пішло не так."
   },
   "error": {
+    "failed_to_load_food_log_history": "Не вдалося завантажити історію записів їжі.",
     "pleaseCheckInternet": "Виникла помилка. Будьласка, перевірте підключення до Інтернету та спробуйте ще раз.",
     "unexpectedError": "Виникла неочікувана помилка. Будь ласка, спробуйте ще раз.",
     "oops": "Ой лишенько! Щось пішло не так. Будь ласка, спробуйте пізніше.",
@@ -204,7 +234,12 @@
     "semantics_label_macos": "Макось"
   },
   "daily_food_log_history": {
-    "title": "Історія щоденних записів їжі"
+    "title": "Історія щоденних записів їжі",
+    "over_limit": "Ліміт перевищено",
+    "within_limit": "В межах ліміту",
+    "no_meals_logged": "Немає записів про прийоми їжі за цей день",
+    "total_consumed": "Всього: {value} г",
+    "daily_limit": "Ліміт: {value} г"
   },
   "user_details_widget": {
     "title_your_details": "Ваші дані",

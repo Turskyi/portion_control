@@ -1,3 +1,4 @@
+import 'package:portion_control/domain/models/day_food_log.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 
 abstract interface class IFoodWeightRepository {
@@ -34,4 +35,6 @@ abstract interface class IFoodWeightRepository {
   Future<int> clearAllTrackingData();
 
   Future<List<FoodWeight>> fetchYesterdayEntries();
+
+  Future<List<DayFoodLog>> getDailyFoodLogHistory();
 }

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:portion_control/domain/models/food_weight.dart';
+import 'package:flutter_translate/flutter_translate.dart';
+import 'package:portion_control/domain/models/day_food_log.dart';
 import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
 
 part 'daily_food_log_history_event.dart';
@@ -14,14 +15,17 @@ class DailyFoodLogHistoryBloc
       LoadDailyFoodLogHistoryEvent _,
       Emitter<DailyFoodLogHistoryState> emit,
     ) async {
-      emit(DailyFoodLogHistoryLoading());
+      emit(DailyFoodLogHistoryLoading(days: state.days));
       try {
-        final List<FoodWeight> foodLogs = await _foodWeightRepository
-            .getAllFoodEntries();
-        emit(DailyFoodLogHistoryLoaded(foodLogs));
+        final List<DayFoodLog> foodLogs = await _foodWeightRepository
+            .getDailyFoodLogHistory();
+        emit(DailyFoodLogHistoryLoaded(days: foodLogs));
       } catch (e) {
         emit(
-          const DailyFoodLogHistoryError('Failed to load food log history.'),
+          DailyFoodLogHistoryError(
+            message: translate('error.failed_to_load_food_log_history'),
+            days: state.days,
+          ),
         );
       }
     });

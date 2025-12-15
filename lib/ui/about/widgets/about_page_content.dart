@@ -9,7 +9,6 @@ class AboutPageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double horizontalIndent = 16.0;
     final ThemeData themeData = Theme.of(context);
     final Color linkColor = themeData.colorScheme.primary;
     final TextTheme textTheme = themeData.textTheme;
@@ -18,9 +17,9 @@ class AboutPageContent extends StatelessWidget {
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
-        horizontalIndent,
+        res.kHorizontalIndent,
         MediaQuery.paddingOf(context).top + 12.0,
-        horizontalIndent,
+        res.kHorizontalIndent,
         80.0,
       ),
       child: Column(

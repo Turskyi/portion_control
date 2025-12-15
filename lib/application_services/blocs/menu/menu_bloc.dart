@@ -414,7 +414,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       );
 
       final double? savedPortionControl = _userPreferencesRepository
-          .getPortionControl();
+          .getLastPortionControl();
 
       if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
         if (savedPortionControl == null) {

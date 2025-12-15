@@ -79,8 +79,8 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
   }
 
   @override
-  double? getPortionControl() {
-    return _localDataSource.getPortionControl();
+  double? getLastPortionControl() {
+    return _localDataSource.getLastPortionControl();
   }
 
   @override

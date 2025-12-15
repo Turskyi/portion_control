@@ -148,7 +148,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           );
 
           final double? savedPortionControl = _userPreferencesRepository
-              .getPortionControl();
+              .getLastPortionControl();
 
           if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
             if (savedPortionControl == null) {
@@ -582,7 +582,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         double portionControl = constants.maxDailyFoodLimit;
         final double? savedPortionControl = _userPreferencesRepository
-            .getPortionControl();
+            .getLastPortionControl();
         if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
           if (savedPortionControl == null) {
             if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&

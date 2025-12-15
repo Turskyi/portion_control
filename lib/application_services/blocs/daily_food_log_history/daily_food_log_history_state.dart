@@ -1,30 +1,37 @@
 part of 'daily_food_log_history_bloc.dart';
 
 abstract class DailyFoodLogHistoryState extends Equatable {
-  const DailyFoodLogHistoryState();
+  const DailyFoodLogHistoryState({required this.days});
+
+  final List<DayFoodLog> days;
 
   @override
-  List<Object> get props => <Object>[];
+  List<Object> get props => <Object>[days];
 }
 
-class DailyFoodLogHistoryInitial extends DailyFoodLogHistoryState {}
+class DailyFoodLogHistoryInitial extends DailyFoodLogHistoryState {
+  DailyFoodLogHistoryInitial() : super(days: <DayFoodLog>[]);
+}
 
-class DailyFoodLogHistoryLoading extends DailyFoodLogHistoryState {}
+class DailyFoodLogHistoryLoading extends DailyFoodLogHistoryState {
+  const DailyFoodLogHistoryLoading({required super.days});
+}
 
 class DailyFoodLogHistoryLoaded extends DailyFoodLogHistoryState {
-  const DailyFoodLogHistoryLoaded(this.foodLogs);
+  const DailyFoodLogHistoryLoaded({required super.days});
 
-  final List<FoodWeight> foodLogs;
-
-  @override
-  List<Object> get props => <Object>[foodLogs];
+  // The list of days is already in the base class,
+  // so no need to redeclare it here.
 }
 
 class DailyFoodLogHistoryError extends DailyFoodLogHistoryState {
-  const DailyFoodLogHistoryError(this.message);
+  const DailyFoodLogHistoryError({
+    required this.message,
+    required super.days,
+  });
 
   final String message;
 
   @override
-  List<Object> get props => <Object>[message];
+  List<Object> get props => <Object>[message, days];
 }
