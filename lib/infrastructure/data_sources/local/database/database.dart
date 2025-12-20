@@ -6,10 +6,14 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/tables/body_weight_entries.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/tables/food_entries.dart';
+import 'package:portion_control/infrastructure/data_sources/local/database/tables/portion_control_entries.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: <Type>[BodyWeightEntries, FoodEntries])
+@DriftDatabase(
+  tables: <Type>[BodyWeightEntries, FoodEntries, PortionControlEntries],
+)
 class AppDatabase extends _$AppDatabase {
   /// The database class for the application.
   ///
@@ -21,7 +25,21 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(DatabaseConnection super.connection);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator migrator) async {
+        await migrator.createAll();
+      },
+      onUpgrade: (Migrator migrator, int from, int to) async {
+        if (from < 2) {
+          await migrator.createTable(portionControlEntries);
+        }
+      },
+    );
+  }
 
   /// Insert or update a body weight entry for the same date.
   /// Returns the `rowid` of the inserted row.
@@ -239,6 +257,104 @@ class AppDatabase extends _$AppDatabase {
     return streak;
   }
 
+  Future<double> getMaxConsumptionWhenWeightDecreased() async {
+    final List<BodyWeightEntry> bodyWeights = await getAllBodyWeightEntries();
+    if (bodyWeights.length < 2) {
+      return constants.maxDailyFoodLimit;
+    }
+
+    final List<FoodEntry> foodEntries = await getAllFoodEntries();
+    if (foodEntries.isEmpty) {
+      return constants.maxDailyFoodLimit;
+    }
+
+    // Map date to total consumption.
+    final Map<DateTime, double> dailyConsumption = <DateTime, double>{};
+    for (final FoodEntry entry in foodEntries) {
+      final DateTime date = DateTime(
+        entry.date.year,
+        entry.date.month,
+        entry.date.day,
+      );
+      dailyConsumption[date] = (dailyConsumption[date] ?? 0.0) + entry.weight;
+    }
+
+    double maxConsumption = constants.maxDailyFoodLimit;
+
+    for (int i = 1; i < bodyWeights.length; i++) {
+      final BodyWeightEntry current = bodyWeights[i];
+      final BodyWeightEntry previous = bodyWeights[i - 1];
+
+      // Check if weight decreased.
+      if (current.weight < previous.weight) {
+        // Find consumption for the day before the weight measurement
+        // Assuming weight is measured in the morning.
+        final DateTime weightDate = current.date;
+        final DateTime consumptionDate = DateTime(
+          weightDate.year,
+          weightDate.month,
+          weightDate.day,
+        ).subtract(const Duration(days: 1));
+
+        final double? consumption = dailyConsumption[consumptionDate];
+        if (consumption != null && consumption > maxConsumption) {
+          maxConsumption = consumption;
+        }
+      }
+    }
+    return maxConsumption;
+  }
+
+  Future<void> insertPortionControl({
+    required double value,
+    required DateTime date,
+  }) async {
+    await into(portionControlEntries).insert(
+      PortionControlEntriesCompanion.insert(
+        value: value,
+        date: date,
+      ),
+      mode: InsertMode.insertOrReplace,
+    );
+  }
+
+  Future<double?> getLatestPortionControl() async {
+    final PortionControlEntry? row =
+        await (select(portionControlEntries)
+              ..orderBy(<OrderClauseGenerator<$PortionControlEntriesTable>>[
+                ($PortionControlEntriesTable t) => OrderingTerm(
+                  expression: t.date,
+                  mode: OrderingMode.desc,
+                ),
+              ])
+              ..limit(1))
+            .getSingleOrNull();
+
+    return row?.value;
+  }
+
+  Future<double?> getPortionControlForDate(DateTime day) async {
+    final DateTime start = DateTime(day.year, day.month, day.day);
+    final DateTime end = start.add(const Duration(days: 1));
+
+    final PortionControlEntry? row =
+        await (select(portionControlEntries)
+              ..where(
+                ($PortionControlEntriesTable t) =>
+                    t.date.isSmallerThanValue(end),
+              )
+              ..orderBy(<OrderClauseGenerator<$PortionControlEntriesTable>>[
+                ($PortionControlEntriesTable t) => OrderingTerm(
+                  expression: t.date,
+                  mode: OrderingMode.desc,
+                ),
+              ])
+              ..limit(1))
+            .getSingleOrNull();
+
+    return row?.value;
+  }
+
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'portion_control_db',
@@ -259,5 +375,9 @@ class AppDatabase extends _$AppDatabase {
         },
       ),
     );
+  }
+
+  Future<List<PortionControlEntry>> getAllPortionControls() {
+    return select(portionControlEntries).get();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/domain/models/day_food_log.dart';
@@ -21,6 +22,7 @@ class DailyFoodLogHistoryBloc
             .getDailyFoodLogHistory();
         emit(DailyFoodLogHistoryLoaded(days: foodLogs));
       } catch (e) {
+        debugPrint('Error loading food log history: $e');
         emit(
           DailyFoodLogHistoryError(
             message: translate('error.failed_to_load_food_log_history'),

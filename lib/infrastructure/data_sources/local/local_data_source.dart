@@ -29,7 +29,7 @@ class LocalDataSource {
   static const String _dateOfBirthKey = 'user_date_of_birth';
   static const String _mealsConfirmedKey = 'meals_confirmed';
   static const String _mealsConfirmedDateKey = 'meals_confirmed_date';
-  static const String _portionControlKey = 'portion_control';
+  static const String _lastPortionControlKey = 'portion_control';
   static const String _onboardingCompletedKey = 'onboarding_completed';
 
   double? getHeight() => _preferences.getDouble(_heightKey);
@@ -207,11 +207,21 @@ class LocalDataSource {
   }
 
   double? getLastPortionControl() {
-    return _preferences.getDouble(_portionControlKey);
+    return _preferences.getDouble(_lastPortionControlKey);
   }
 
   Future<bool> savePortionControl(double portionControl) {
-    return _preferences.setDouble(_portionControlKey, portionControl);
+    _appDatabase
+        .insertPortionControl(
+          value: portionControl,
+          date: DateTime.now(),
+        )
+        .catchError((Object error, StackTrace stackTrace) {
+          debugPrint('Error while saving portion control to database: $error');
+          debugPrint('Stack trace: $stackTrace');
+        });
+
+    return _preferences.setDouble(_lastPortionControlKey, portionControl);
   }
 
   Future<bool> saveOnboardingCompleted() {
@@ -420,18 +430,32 @@ class LocalDataSource {
       grouped.putIfAbsent(day, () => <FoodEntry>[]).add(entry);
     }
 
-    final double dailyLimit = getLastPortionControl() ?? 0;
+    final double defaultLimit =
+        getLastPortionControl() ??
+        await _appDatabase.getMaxConsumptionWhenWeightDecreased();
+
+    final List<PortionControlEntry> portionControls = await _appDatabase
+        .getAllPortionControls();
+
+    final Map<DateTime, double> portionControlByDay = <DateTime, double>{
+      for (final PortionControlEntry pc in portionControls)
+        DateTime(pc.date.year, pc.date.month, pc.date.day): pc.value,
+    };
 
     final List<DayFoodLog> result = grouped.entries.map((
       MapEntry<DateTime, List<FoodEntry>> mapEntry,
     ) {
+      final DateTime day = mapEntry.key;
+
+      final double dailyLimit = portionControlByDay[day] ?? defaultLimit;
+
       final double total = mapEntry.value.fold(
         0.0,
         (double sum, FoodEntry item) => sum + item.weight,
       );
 
       return DayFoodLog(
-        date: mapEntry.key,
+        date: day,
         totalConsumed: total,
         dailyLimit: dailyLimit,
         entries: mapEntry.value.map((FoodEntry entry) {
@@ -444,7 +468,16 @@ class LocalDataSource {
       );
     }).toList();
 
-    result.sort((DayFoodLog a, DayFoodLog b) => b.date.compareTo(a.date));
+    result.sort((DayFoodLog currentLog, DayFoodLog nextLog) {
+      return nextLog.date.compareTo(currentLog.date);
+    });
     return result;
+  }
+
+  Future<void> insertPortionControl({
+    required double value,
+    required DateTime date,
+  }) {
+    return _appDatabase.insertPortionControl(value: value, date: date);
   }
 }

@@ -247,7 +247,9 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               const HomeWidgetServiceImpl(),
               BodyWeightRepository(localDataSource),
               FoodWeightRepository(localDataSource),
-              UserPreferencesRepository(localDataSource),
+              UserPreferencesRepository(
+                localDataSource,
+              ),
               localDataSource,
             )..add(const LoadingInitialMenuStateEvent());
           },

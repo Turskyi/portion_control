@@ -986,7 +986,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> _handleError(ErrorEvent event, Emitter<HomeState> emit) {
-    debugPrint('ErrorEvent: ${event.error}');
+    debugPrint('ErrorEvent error: ${event.error}');
     if (_previousState != null) {
       emit(_previousState!);
     } else {

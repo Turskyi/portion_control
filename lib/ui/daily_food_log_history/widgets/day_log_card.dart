@@ -61,7 +61,7 @@ class DayLogCard extends StatelessWidget {
             Text(
               translate(
                 'daily_food_log_history.daily_limit',
-                args: <String, dynamic>{'value': day.dailyLimit},
+                args: <String, Object?>{'value': day.dailyLimit},
               ),
             ),
             const SizedBox(height: 8),
@@ -70,12 +70,12 @@ class DayLogCard extends StatelessWidget {
             ...day.entries.asMap().entries.map(
               (MapEntry<int, FoodWeight> entry) {
                 final int index = entry.key;
-                final FoodWeight e = entry.value;
+                final FoodWeight value = entry.value;
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      e.getMealName(
+                      value.getMealName(
                         index: index,
                         totalEntries: day.entries.length,
                       ),
@@ -83,7 +83,7 @@ class DayLogCard extends StatelessWidget {
                     Text(
                       translate(
                         'measurement.grams_value',
-                        args: <String, dynamic>{'value': e.weight},
+                        args: <String, Object?>{'value': value.weight},
                       ),
                     ),
                   ],

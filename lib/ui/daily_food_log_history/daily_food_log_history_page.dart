@@ -25,7 +25,7 @@ class DailyFoodLogHistoryPage extends StatelessWidget {
             return ListView.separated(
               padding: EdgeInsets.fromLTRB(
                 constants.kHorizontalIndent,
-                MediaQuery.paddingOf(context).top + 12.0,
+                MediaQuery.paddingOf(context).top + 24.0,
                 constants.kHorizontalIndent,
                 80.0,
               ),
