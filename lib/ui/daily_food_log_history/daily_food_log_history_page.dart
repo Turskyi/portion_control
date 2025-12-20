@@ -22,11 +22,16 @@ class DailyFoodLogHistoryPage extends StatelessWidget {
           if (state is DailyFoodLogHistoryLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is DailyFoodLogHistoryLoaded) {
+            final double screenWidth = MediaQuery.sizeOf(context).width;
+            final bool isWide = screenWidth > constants.wideScreenThreshold;
+            final double horizontalPadding = isWide
+                ? (screenWidth - constants.wideScreenContentWidth) / 2
+                : constants.kHorizontalIndent;
             return ListView.separated(
               padding: EdgeInsets.fromLTRB(
-                constants.kHorizontalIndent,
+                horizontalPadding,
                 MediaQuery.paddingOf(context).top + 24.0,
-                constants.kHorizontalIndent,
+                horizontalPadding,
                 80.0,
               ),
               itemCount: state.days.length,

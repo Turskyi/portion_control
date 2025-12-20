@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_translate/flutter_translate.dart';
 
 class FoodWeight {
   const FoodWeight({
@@ -30,25 +29,6 @@ class FoodWeight {
       dateTime: dateTime ?? this.dateTime,
     );
   }
-
-  String getMealName({
-    required int index,
-    required int totalEntries,
-  }) {
-    //TODO: consider account for a dateTime too.
-    // Clamp index to available meal slots
-    final int safeIndex = index.clamp(0, _mealOrder.length - 1);
-
-    return translate('meal_type.${_mealOrder[safeIndex]}');
-  }
-
-  static final List<String> _mealOrder = <String>[
-    'breakfast',
-    'second_breakfast',
-    'lunch',
-    'snack',
-    'dinner',
-  ];
 
   @override
   String toString() {

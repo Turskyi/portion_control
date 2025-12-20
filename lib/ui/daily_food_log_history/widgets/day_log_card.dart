@@ -75,9 +75,9 @@ class DayLogCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      value.getMealName(
+                      _getMealName(
                         index: index,
-                        totalEntries: day.entries.length,
+                        entries: day.entries,
                       ),
                     ),
                     Text(
@@ -98,5 +98,96 @@ class DayLogCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  static final List<String> _mealOrder = <String>[
+    'breakfast',
+    'second_breakfast',
+    'lunch',
+    'snack',
+    'dinner',
+  ];
+
+  String _getMealName({
+    required int index,
+    required List<FoodWeight> entries,
+  }) {
+    String t(String key) => translate('meal_type.$key');
+
+    if (entries.length == 5) {
+      // Clamp index to available meal slots.
+      final int safeIndex = index.clamp(0, _mealOrder.length - 1);
+      return t(_mealOrder[safeIndex]);
+    } else if (entries.length == 4) {
+      if (index == 0) {
+        return t('breakfast');
+      } else if (index == 1) {
+        return t('second_breakfast');
+      } else if (index == 2) {
+        return t('lunch');
+      } else {
+        return t('dinner');
+      }
+    } else if (entries.length == 3) {
+      if (index == 0) {
+        return t('breakfast');
+      } else if (index == 1) {
+        return t('lunch');
+      } else {
+        return t('dinner');
+      }
+    } else if (entries.length > 5) {
+      // Get indices sorted by weight (descending).
+      final List<int> sortedIndices =
+          List<int>.generate(
+            entries.length,
+            (int i) => i,
+          )..sort(
+            (int a, int b) => entries[b].weight.compareTo(entries[a].weight),
+          );
+
+      // Top 3 largest meals (by weight) become Breakfast, Lunch, Dinner.
+      // We sort their indices to assign them chronologically.
+      final List<int> topThreeIndices = sortedIndices.take(3).toList()..sort();
+      final int fourthLargestIndex = sortedIndices[3];
+
+      if (topThreeIndices.contains(index)) {
+        final int position = topThreeIndices.indexOf(index);
+        if (position == 0) return t('breakfast');
+        if (position == 1) return t('lunch');
+        return t('dinner');
+      } else if (index == fourthLargestIndex) {
+        return t('second_breakfast');
+      } else {
+        return t('snack');
+      }
+    } else {
+      // Fallback based on time of day.
+      String getType(int hour) {
+        if (hour < 11) {
+          return 'breakfast';
+        } else if (hour < 16) {
+          return 'lunch';
+        } else {
+          return 'dinner';
+        }
+      }
+
+      final String currentType = getType(entries[index].dateTime.hour);
+
+      if (entries.length == 2) {
+        final int otherIndex = index == 0 ? 1 : 0;
+        final String otherType = getType(entries[otherIndex].dateTime.hour);
+
+        if (currentType == otherType) {
+          if (currentType == 'breakfast') {
+            return index == 0 ? t('breakfast') : t('lunch');
+          } else {
+            return index == 0 ? t(currentType) : t('dinner');
+          }
+        }
+      }
+      return t(currentType);
+    }
   }
 }
