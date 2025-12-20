@@ -39,6 +39,7 @@
   "no_meals_logged": "No meals logged",
   "total:": "Total",
   "limit": "Limit",
+  "learn_more": "Learn more",
   "measurement": {
     "grams_value": "{value} g"
   },
@@ -546,6 +547,21 @@
       "one": "{count} day",
       "other": "{count} days"
     }
+  },
+  "educational_content": {
+    "title": "Educational Content",
+    "what_is_portion_control_title": "What is portion control?",
+    "what_is_portion_control_content": "Portion control means managing how much you eat by measuring food weight in grams. It’s a simple, practical way to avoid overeating without counting calories.",
+    "why_grams_title": "Why grams matter more than calories?",
+    "why_grams_content": "Grams describe the actual amount you put on your plate. Calories can vary widely between foods; weighing in grams keeps tracking consistent and makes portion adjustments practical.",
+    "how_to_weigh_title": "How to weigh food correctly?",
+    "how_to_weigh_content": "Use a digital kitchen scale. Place an empty plate or bowl on the scale and tare (zero) it, then add food and record the grams. For mixed dishes, weigh components separately when possible.",
+    "note_title": "A note on calories and food choices",
+    "note_content": "{appName} focuses on grams to simplify portion control. However, some foods are calorie‑dense and will impact weight even in small amounts, while others are low in calories and allow larger volumes without the same impact. Use grams for consistent tracking, but prefer lower calorie‑density foods if you want to eat larger portions.",
+    "high_calorie_title": "Foods high in calories",
+    "high_calorie_list": "Examples: oils, butter, nuts and nut butters, fatty cuts of meat, cheese, chocolate and sweets, pastries, and processed snacks. These are calorie‑dense — small amounts add up quickly.",
+    "low_calorie_title": "Lower calorie / low‑density foods",
+    "low_calorie_list": "Examples: leafy greens, cucumbers, zucchini, celery, broth‑based soups, berries, melon. These let you eat more volume for fewer calories."
   },
   "streak": {
     "zero": "Start your first day today",

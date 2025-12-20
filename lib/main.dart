@@ -21,6 +21,7 @@ import 'package:portion_control/localization/localization_delegate_getter.dart'
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/about/about_page.dart';
 import 'package:portion_control/ui/daily_food_log_history/daily_food_log_history_page.dart';
+import 'package:portion_control/ui/educational/educational_content_page.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
 import 'package:portion_control/ui/home/home_view.dart' show HomeView;
 import 'package:portion_control/ui/landing/landing_page.dart';
@@ -105,6 +106,8 @@ Future<void> main() async {
     AppRoute.about.path: (BuildContext _) => const AboutPage(),
     AppRoute.support.path: (BuildContext _) => const SupportPage(),
     AppRoute.recipes.path: (BuildContext _) => const WeightLossRecipesPage(),
+    AppRoute.educationalContent.path: (BuildContext _) =>
+        const EducationalContentPage(),
     AppRoute.dailyFoodLogHistory.path: (BuildContext _) {
       return BlocProvider<DailyFoodLogHistoryBloc>(
         create: (BuildContext _) {

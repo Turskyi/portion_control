@@ -166,6 +166,16 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                     },
                   ),
                   AnimatedDrawerItem(
+                    icon: Icons.school,
+                    text: translate('educational_content.title'),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoute.educationalContent.path,
+                      );
+                    },
+                  ),
+                  AnimatedDrawerItem(
                     icon: Icons.history,
                     text: translate('daily_food_log_history.title'),
                     onTap: () {

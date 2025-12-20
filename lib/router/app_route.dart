@@ -4,6 +4,7 @@ enum AppRoute {
   home('/home'),
   about('/about'),
   recipes('/recipes'),
+  educationalContent('/educational-content'),
   support('/support'),
   stats('/stats'),
   privacyPolity('/privacy-policy'),

@@ -100,7 +100,22 @@ class _HomePageContentState extends State<HomePageContent> {
                   weight: weight,
                 ),
               if (state is BodyWeightSubmittedState)
-                const PortionControlMessage(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Expanded(child: PortionControlMessage()),
+                    IconButton(
+                      icon: const Icon(Icons.info_outline),
+                      tooltip: translate('learn_more'),
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoute.educationalContent.path,
+                        );
+                      },
+                    ),
+                  ],
+                ),
               if (state is BodyWeightSubmittedState)
                 FoodEntriesColumn(foodEntries: foodEntries),
               if (state is HomeLoading) const FancyLoadingIndicator(),
