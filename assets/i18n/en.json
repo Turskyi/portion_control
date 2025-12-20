@@ -535,6 +535,16 @@
     "notes_week_5_title": "Optional additions for Days 32, 33, 34 and 35",
     "notes_week_5_sweets": "Once a day, you can have one of the following: dark chocolate (30 g); marmalade, pastila, or marshmallow (50 g); halva (50 g); fruit jelly (100 g); ice cream (70 g); 2 coconut and almond candies; 2 glasses of dry wine (300 ml); or galette cookies (40 g)."
   },
+  "stats": {
+    "title": "Stats",
+    "average_daily_intake": "Average Daily Intake",
+    "weekly_weight_change": "Weekly Weight Change",
+    "limit_exceeded_count": "Limit Exceeded Count",
+    "days": {
+      "one": "{count} day",
+      "other": "{count} days"
+    }
+  },
   "streak": {
     "zero": "Start your first day today",
     "one": "{count} day in a row",

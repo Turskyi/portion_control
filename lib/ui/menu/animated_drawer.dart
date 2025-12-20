@@ -175,6 +175,13 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                       );
                     },
                   ),
+                  AnimatedDrawerItem(
+                    icon: Icons.bar_chart,
+                    text: translate('stats.title'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.stats.path);
+                    },
+                  ),
                   const Divider(),
                   if (!kIsWeb)
                     AnimatedDrawerItem(

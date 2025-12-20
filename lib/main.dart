@@ -6,12 +6,14 @@ import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/daily_food_log_history/daily_food_log_history_bloc.dart';
 import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
+import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/di/injector.dart' as di;
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
+import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
 import 'package:portion_control/localization/localization_delegate_getter.dart'
@@ -25,6 +27,7 @@ import 'package:portion_control/ui/landing/landing_page.dart';
 import 'package:portion_control/ui/onboarding/onboarding_screen.dart';
 import 'package:portion_control/ui/privacy/privacy_policy_page.dart';
 import 'package:portion_control/ui/recipes/weight_loss_recipes_page.dart';
+import 'package:portion_control/ui/stats/stats_page.dart';
 import 'package:portion_control/ui/support/support_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -110,6 +113,17 @@ Future<void> main() async {
           )..add(LoadDailyFoodLogHistoryEvent());
         },
         child: const DailyFoodLogHistoryPage(),
+      );
+    },
+    AppRoute.stats.path: (BuildContext _) {
+      return BlocProvider<StatsBloc>(
+        create: (BuildContext _) {
+          return StatsBloc(
+            FoodWeightRepository(localDataSource),
+            BodyWeightRepository(localDataSource),
+          )..add(const LoadStatsEvent());
+        },
+        child: const StatsPage(),
       );
     },
   };

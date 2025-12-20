@@ -5,6 +5,7 @@ enum AppRoute {
   about('/about'),
   recipes('/recipes'),
   support('/support'),
+  stats('/stats'),
   privacyPolity('/privacy-policy'),
   dailyFoodLogHistory('/daily-food-log-history');
 
