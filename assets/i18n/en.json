@@ -540,6 +540,8 @@
     "average_daily_intake": "Average Daily Intake",
     "weekly_weight_change": "Weekly Weight Change",
     "limit_exceeded_count": "Limit Exceeded Count",
+    "weekly_intake_trend": "Your daily food intake over the last 7 days.",
+    "body_weight_trend": "Your weight over the last 14 days.",
     "days": {
       "one": "{count} day",
       "other": "{count} days"

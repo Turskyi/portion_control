@@ -5,6 +5,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
 import 'package:portion_control/ui/home/widgets/food_entries_column.dart';
 import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.dart';
@@ -79,8 +80,19 @@ class _HomePageContentState extends State<HomePageContent> {
               if (state.bodyWeightEntries.length > 1)
                 // Line Chart of Body Weight trends for the last two
                 // weeks.
-                BodyWeightLineChart(
-                  bodyWeightEntries: state.lastTwoWeeksBodyWeightEntries,
+                Stack(
+                  children: <Widget>[
+                    BodyWeightLineChart(
+                      bodyWeightEntries: state.lastTwoWeeksBodyWeightEntries,
+                    ),
+                    Positioned.fill(
+                      child: RawMaterialButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoute.stats.path);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               if (state is BodyWeightSubmittedState)
                 HealthyWeightRecommendations(

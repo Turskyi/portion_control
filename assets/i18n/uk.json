@@ -542,6 +542,8 @@
     "average_daily_intake": "Середнє щоденне споживання",
     "weekly_weight_change": "Зміна ваги за тиждень",
     "limit_exceeded_count": "Кількість перевищень ліміту",
+    "weekly_intake_trend": "Ваша щоденна кількість їжі за останні 7 днів.",
+    "body_weight_trend": "Ваша вага за останні 14 днів.",
     "days": {
       "one": "{count} день",
       "few": "{count} дні",

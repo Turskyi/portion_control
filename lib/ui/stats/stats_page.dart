@@ -4,7 +4,9 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
 import 'package:portion_control/application_services/blocs/stats/stats_state.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
 import 'package:portion_control/ui/stats/widgets/stat_card.dart';
+import 'package:portion_control/ui/stats/widgets/weekly_intake_chart.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 
@@ -29,7 +31,8 @@ class StatsPage extends StatelessWidget {
             final double horizontalPadding = isWide
                 ? (screenWidth - constants.wideScreenContentWidth) / 2
                 : constants.kHorizontalIndent;
-            return Padding(
+            final TextTheme textTheme = Theme.of(context).textTheme;
+            return SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
                 horizontalPadding,
                 MediaQuery.paddingOf(context).top + 24.0,
@@ -38,6 +41,35 @@ class StatsPage extends StatelessWidget {
               ),
               child: Column(
                 children: <Widget>[
+                  if (state.lastTwoWeeksBodyWeightEntries.length > 1)
+                    Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 16, 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              translate('stats.body_weight_trend'),
+                              style: textTheme.titleMedium,
+                            ),
+                            const SizedBox(height: 24),
+                            BodyWeightLineChart(
+                              bodyWeightEntries:
+                                  state.lastTwoWeeksBodyWeightEntries,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  WeeklyIntakeChart(
+                    lastSevenDaysIntake: state.lastSevenDaysIntake,
+                  ),
+                  const SizedBox(height: 16),
                   StatCard(
                     title: translate('stats.average_daily_intake'),
                     value:

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/stats/stats_state.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
@@ -31,7 +30,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
       final List<BodyWeight> weightLogs = await _bodyWeightRepository
           .getAllBodyWeightEntries();
 
-      // 1. Average Daily Intake.
+      // 1. Average Daily Intake
       double averageDailyIntake = 0;
       if (foodLogs.isNotEmpty) {
         final double totalIntake = foodLogs.fold(
@@ -41,7 +40,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         averageDailyIntake = totalIntake / foodLogs.length;
       }
 
-      // 2. Weight Change per Week.
+      // 2. Weight Change per Week
       double weeklyWeightChange = 0;
       if (weightLogs.length >= 2) {
         final BodyWeight currentWeight = weightLogs.last;
@@ -68,7 +67,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         weeklyWeightChange = currentWeight.weight - pastWeight.weight;
       }
 
-      // 3. How often limit was exceeded.
+      // 3. How often limit was exceeded
       int limitExceededCount = 0;
       for (final DayFoodLog log in foodLogs) {
         // Assuming dailyLimit 0 means no limit or not set, so we skip it.
@@ -86,10 +85,13 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
           averageDailyIntake: averageDailyIntake,
           weeklyWeightChange: weeklyWeightChange,
           limitExceededCount: limitExceededCount,
+          lastSevenDaysIntake: foodLogs.take(DateTime.daysPerWeek).toList(),
+          lastTwoWeeksBodyWeightEntries: weightLogs
+              .take(DateTime.daysPerWeek * 2)
+              .toList(),
         ),
       );
     } catch (e) {
-      debugPrint('Error loading stats: $e');
       emit(StatsError(e.toString()));
     }
   }
