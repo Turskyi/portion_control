@@ -175,7 +175,9 @@
     "enter_weight_instruction": "👉 Enter weight before your first meal.",
     "body_weight_label": "Body weight",
     "kg_unit": "kg",
-    "previous_portion_control": "⚖️ Previous portion control: {adjustedPortion} g"
+    "previous_portion_control": "⚖️ Previous portion control: {adjustedPortion} g",
+    "next_recipe": "Next recipe",
+    "meal_inspiration_optional": "Meal inspiration · optional"
   },
   "portion_control_status": {
     "no_portion_control_today": "🍽️ No portion control today!\n📝 Log everything you eat to track how it affects your weight.",

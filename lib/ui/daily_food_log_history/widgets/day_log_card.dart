@@ -164,9 +164,9 @@ class DayLogCard extends StatelessWidget {
     } else {
       // Fallback based on time of day.
       String getType(int hour) {
-        if (hour < 11) {
+        if (hour < 12) {
           return 'breakfast';
-        } else if (hour < 16) {
+        } else if (hour < 17) {
           return 'lunch';
         } else {
           return 'dinner';

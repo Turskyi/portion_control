@@ -9,6 +9,7 @@ import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
 import 'package:portion_control/ui/home/widgets/food_entries_column.dart';
 import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.dart';
 import 'package:portion_control/ui/home/widgets/portion_control_message.dart';
+import 'package:portion_control/ui/home/widgets/random_recipe_card.dart';
 import 'package:portion_control/ui/home/widgets/submit_edit_body_weight_button.dart';
 import 'package:portion_control/ui/home/widgets/user_details_widget.dart';
 import 'package:portion_control/ui/widgets/fancy_loading_indicator.dart';
@@ -42,7 +43,6 @@ class _HomePageContentState extends State<HomePageContent> {
         final double weight = state.bodyWeight;
         final double height = state.heightInCm;
         final List<FoodWeight> foodEntries = state.foodEntries;
-        final double horizontalIndent = 12.0;
 
         final double screenWidth = MediaQuery.sizeOf(context).width;
         final bool isWideScreen = screenWidth > constants.wideScreenThreshold;
@@ -92,14 +92,15 @@ class _HomePageContentState extends State<HomePageContent> {
               if (state is BodyWeightSubmittedState)
                 FoodEntriesColumn(foodEntries: foodEntries),
               if (state is HomeLoading) const FancyLoadingIndicator(),
+              if (state is BodyWeightSubmittedState) const RandomRecipeCard(),
             ],
           ),
         );
         return SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(
-            horizontalIndent,
+            constants.kHorizontalIndent,
             MediaQuery.paddingOf(context).top,
-            horizontalIndent,
+            constants.kHorizontalIndent,
             80.0,
           ),
           controller: _scrollController,
