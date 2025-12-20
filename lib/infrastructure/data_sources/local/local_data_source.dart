@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -31,6 +31,8 @@ class LocalDataSource {
   static const String _mealsConfirmedDateKey = 'meals_confirmed_date';
   static const String _lastPortionControlKey = 'portion_control';
   static const String _onboardingCompletedKey = 'onboarding_completed';
+  static const String _weightReminderEnabledKey = 'weight_reminder_enabled';
+  static const String _weightReminderTimeKey = 'weight_reminder_time';
 
   double? getHeight() => _preferences.getDouble(_heightKey);
 
@@ -230,6 +232,37 @@ class LocalDataSource {
 
   bool isOnboardingCompleted() {
     return _preferences.getBool(_onboardingCompletedKey) ?? false;
+  }
+
+  /// Reminder settings for logging body weight.
+  bool isWeightReminderEnabled() =>
+      _preferences.getBool(_weightReminderEnabledKey) ?? false;
+
+  Future<bool> saveWeightReminderEnabled(bool enabled) {
+    return _preferences.setBool(_weightReminderEnabledKey, enabled);
+  }
+
+  /// Store reminder time as "HH:mm" string. Returns TimeOfDay or null if not
+  /// set.
+  TimeOfDay? getWeightReminderTime() {
+    final String? timeString = _preferences.getString(_weightReminderTimeKey);
+    if (timeString == null) return null;
+    try {
+      final List<String> parts = timeString.split(':');
+      final int hour = int.parse(parts[0]);
+      final int minute = int.parse(parts[1]);
+      return TimeOfDay(hour: hour, minute: minute);
+    } catch (e) {
+      debugPrint('Error parsing weight reminder time: $e');
+      return null;
+    }
+  }
+
+  Future<bool> saveWeightReminderTime(TimeOfDay time) {
+    final String value =
+        '${time.hour.toString().padLeft(2, '0')}:'
+        '${time.minute.toString().padLeft(2, '0')}';
+    return _preferences.setString(_weightReminderTimeKey, value);
   }
 
   /// Insert or update a body weight entry for the same date.

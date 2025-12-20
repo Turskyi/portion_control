@@ -53,6 +53,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   flutter_email_sender: ^8.0.0
   flutter_html: ^3.0.0
+  flutter_local_notifications: ^19.5.0
   flutter_localizations:
     sdk: flutter
   # flutter_translate: Attempting to use "^4.1.0" resulted in a version solving conflict
@@ -74,6 +75,7 @@ dependencies:
   resend: ^1.0.0
   shared_preferences: ^2.5.4
   smooth_page_indicator: ^2.0.1
+  timezone: ^0.10.1
   url_launcher: ^6.3.2
 
 dev_dependencies:

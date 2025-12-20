@@ -234,6 +234,11 @@
     "semantics_label_testflight": "TestFlight",
     "semantics_label_macos": "MacOS"
   },
+  "reminders": {
+    "title": "Reminders",
+    "log_weight_each_morning": "Remind me to log weight each morning",
+    "pick_time": "Reminder time"
+  },
   "daily_food_log_history": {
     "title": "Daily Food Log History",
     "over_limit": "Over limit",

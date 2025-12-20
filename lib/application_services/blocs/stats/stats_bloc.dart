@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:portion_control/application_services/blocs/stats/stats_state.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
@@ -92,6 +93,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         ),
       );
     } catch (e) {
+      debugPrint('Error in _onLoadStats: $e');
       emit(StatsError(e.toString()));
     }
   }

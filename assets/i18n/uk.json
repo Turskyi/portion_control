@@ -236,6 +236,11 @@
     "semantics_label_testflight": "ТестФлайт",
     "semantics_label_macos": "Макось"
   },
+  "reminders": {
+    "title": "Сповіщення",
+    "log_weight_each_morning": "Нагадувати щоранку записати вагу",
+    "pick_time": "Час нагадування"
+  },
   "daily_food_log_history": {
     "title": "Історія щоденних записів їжі",
     "over_limit": "Ліміт перевищено",

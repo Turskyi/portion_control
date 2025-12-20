@@ -235,6 +235,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           );
         }
       } catch (e) {
+        debugPrint('Error in _loadEntries: $e');
         emit(
           LoadingError(
             errorMessage: '$e',
@@ -505,6 +506,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           );
         }
       } catch (e) {
+        debugPrint('Error in _submitDetails: $e');
         // Handle errors (e.g. data store issues).
         emit(
           DetailsError(
@@ -778,6 +780,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             );
           });
     } catch (e) {
+      debugPrint('Error in _deleteFoodEntry: $e');
       // Handle errors (e.g. database issues).
       emit(
         FoodWeightError(

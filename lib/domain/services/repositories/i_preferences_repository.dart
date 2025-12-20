@@ -35,4 +35,14 @@ abstract interface class IUserPreferencesRepository {
   double? getLastPortionControl();
 
   Future<bool> savePortionControl(double height);
+
+  /// Reminder settings for logging weight.
+  bool isWeightReminderEnabled();
+
+  Future<bool> saveWeightReminderEnabled(bool enabled);
+
+  /// Returns stored reminder time in "HH:mm" format, or null if not set.
+  String? getWeightReminderTimeString();
+
+  Future<bool> saveWeightReminderTimeString(String timeString);
 }

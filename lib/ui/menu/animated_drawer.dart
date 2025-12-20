@@ -14,6 +14,7 @@ import 'package:portion_control/infrastructure/repositories/settings_repository.
 import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/services/home_widget_service.dart';
+import 'package:portion_control/ui/menu/reminder_dialog.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
 
 class AnimatedDrawer extends StatefulWidget {
@@ -203,6 +204,20 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                     icon: Icons.language,
                     text: translate('language'),
                     onTap: _showLanguageSelectionDialog,
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.notifications,
+                    text: translate('reminders.title'),
+                    onTap: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext _) {
+                          return ReminderDialog(
+                            localDataSource: widget.localDataSource,
+                          );
+                        },
+                      );
+                    },
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.feedback,
