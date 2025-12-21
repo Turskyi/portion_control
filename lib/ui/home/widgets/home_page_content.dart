@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,10 +47,7 @@ class _HomePageContentState extends State<HomePageContent> {
         final double height = state.heightInCm;
         final List<FoodWeight> foodEntries = state.foodEntries;
 
-        final double screenWidth = MediaQuery.sizeOf(context).width;
-        final bool isWideScreen = screenWidth > constants.wideScreenThreshold;
         final SizedBox contentColumn = SizedBox(
-          width: isWideScreen ? constants.wideScreenContentWidth : null,
           child: Column(
             spacing: 16.0,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,21 +130,31 @@ class _HomePageContentState extends State<HomePageContent> {
             80.0,
           ),
           controller: _scrollController,
-          child: isWideScreen
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[contentColumn],
-                )
-              : contentColumn,
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final double maxWidthAvailable = constraints.maxWidth;
+              final double width = math.min(
+                constants.wideScreenContentWidth,
+                maxWidthAvailable.isFinite
+                    ? maxWidthAvailable
+                    : constants.wideScreenContentWidth,
+              );
+
+              return Center(
+                child: SizedBox(
+                  width: width,
+                  child: contentColumn,
+                ),
+              );
+            },
+          ),
         );
       },
     );
   }
 
   void _updateBodyWeight(String value) {
-    context.read<HomeBloc>().add(
-      UpdateBodyWeight(value),
-    );
+    context.read<HomeBloc>().add(UpdateBodyWeight(value));
   }
 
   @override
