@@ -60,7 +60,7 @@ class BodyWeightLineChart extends StatelessWidget {
                   show: true,
                   drawVerticalLine: true,
                   drawHorizontalLine: true,
-                  getDrawingHorizontalLine: (_) {
+                  getDrawingHorizontalLine: (double _) {
                     return FlLine(
                       color: onTertiaryColor,
                       strokeWidth: 1,

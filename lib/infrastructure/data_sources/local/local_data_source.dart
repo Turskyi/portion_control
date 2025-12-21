@@ -1,14 +1,15 @@
 import 'dart:io';
 
 import 'package:drift/drift.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
+import 'package:portion_control/domain/models/day_food_log.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/data_mappers/body_weight_entries_mapper.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/data_mappers/food_entries_mapper.dart';
@@ -28,8 +29,10 @@ class LocalDataSource {
   static const String _dateOfBirthKey = 'user_date_of_birth';
   static const String _mealsConfirmedKey = 'meals_confirmed';
   static const String _mealsConfirmedDateKey = 'meals_confirmed_date';
-  static const String _portionControlKey = 'portion_control';
+  static const String _lastPortionControlKey = 'portion_control';
   static const String _onboardingCompletedKey = 'onboarding_completed';
+  static const String _weightReminderEnabledKey = 'weight_reminder_enabled';
+  static const String _weightReminderTimeKey = 'weight_reminder_time';
 
   double? getHeight() => _preferences.getDouble(_heightKey);
 
@@ -205,12 +208,22 @@ class LocalDataSource {
     return false;
   }
 
-  double? getPortionControl() {
-    return _preferences.getDouble(_portionControlKey);
+  double? getLastPortionControl() {
+    return _preferences.getDouble(_lastPortionControlKey);
   }
 
   Future<bool> savePortionControl(double portionControl) {
-    return _preferences.setDouble(_portionControlKey, portionControl);
+    _appDatabase
+        .insertPortionControl(
+          value: portionControl,
+          date: DateTime.now(),
+        )
+        .catchError((Object error, StackTrace stackTrace) {
+          debugPrint('Error while saving portion control to database: $error');
+          debugPrint('Stack trace: $stackTrace');
+        });
+
+    return _preferences.setDouble(_lastPortionControlKey, portionControl);
   }
 
   Future<bool> saveOnboardingCompleted() {
@@ -219,6 +232,37 @@ class LocalDataSource {
 
   bool isOnboardingCompleted() {
     return _preferences.getBool(_onboardingCompletedKey) ?? false;
+  }
+
+  /// Reminder settings for logging body weight.
+  bool isWeightReminderEnabled() =>
+      _preferences.getBool(_weightReminderEnabledKey) ?? false;
+
+  Future<bool> saveWeightReminderEnabled(bool enabled) {
+    return _preferences.setBool(_weightReminderEnabledKey, enabled);
+  }
+
+  /// Store reminder time as "HH:mm" string. Returns TimeOfDay or null if not
+  /// set.
+  TimeOfDay? getWeightReminderTime() {
+    final String? timeString = _preferences.getString(_weightReminderTimeKey);
+    if (timeString == null) return null;
+    try {
+      final List<String> parts = timeString.split(':');
+      final int hour = int.parse(parts[0]);
+      final int minute = int.parse(parts[1]);
+      return TimeOfDay(hour: hour, minute: minute);
+    } catch (e) {
+      debugPrint('Error parsing weight reminder time: $e');
+      return null;
+    }
+  }
+
+  Future<bool> saveWeightReminderTime(TimeOfDay time) {
+    final String value =
+        '${time.hour.toString().padLeft(2, '0')}:'
+        '${time.minute.toString().padLeft(2, '0')}';
+    return _preferences.setString(_weightReminderTimeKey, value);
   }
 
   /// Insert or update a body weight entry for the same date.
@@ -230,6 +274,12 @@ class LocalDataSource {
   /// Retrieve all body weight entries, sorted by date.
   Future<List<BodyWeightEntry>> getAllBodyWeightEntries() {
     return _appDatabase.getAllBodyWeightEntries();
+  }
+
+  /// Retrieve all food entries, sorted by date.
+  Future<List<FoodWeight>> getAllFoodEntries() async {
+    final List<FoodEntry> foodEntries = await _appDatabase.getAllFoodEntries();
+    return foodEntries.map((FoodEntry entry) => entry.toDomain()).toList();
   }
 
   /// Delete a body weight entry by id.
@@ -387,5 +437,80 @@ class LocalDataSource {
       return bodyWeightEntry.toDomain();
     }
     return BodyWeight.empty();
+  }
+
+  Future<int> getBodyWeightStreak() {
+    return _appDatabase.getBodyWeightStreak();
+  }
+
+  Future<List<DayFoodLog>> getDailyFoodLogHistory() async {
+    final List<FoodEntry> foodEntries = await _appDatabase.getAllFoodEntries();
+
+    if (foodEntries.isEmpty) {
+      return <DayFoodLog>[];
+    }
+
+    final Map<DateTime, List<FoodEntry>> grouped =
+        <DateTime, List<FoodEntry>>{};
+
+    for (final FoodEntry entry in foodEntries) {
+      final DateTime day = DateTime(
+        entry.date.year,
+        entry.date.month,
+        entry.date.day,
+      );
+
+      grouped.putIfAbsent(day, () => <FoodEntry>[]).add(entry);
+    }
+
+    final double defaultLimit =
+        getLastPortionControl() ??
+        await _appDatabase.getMaxConsumptionWhenWeightDecreased();
+
+    final List<PortionControlEntry> portionControls = await _appDatabase
+        .getAllPortionControls();
+
+    final Map<DateTime, double> portionControlByDay = <DateTime, double>{
+      for (final PortionControlEntry pc in portionControls)
+        DateTime(pc.date.year, pc.date.month, pc.date.day): pc.value,
+    };
+
+    final List<DayFoodLog> result = grouped.entries.map((
+      MapEntry<DateTime, List<FoodEntry>> mapEntry,
+    ) {
+      final DateTime day = mapEntry.key;
+
+      final double dailyLimit = portionControlByDay[day] ?? defaultLimit;
+
+      final double total = mapEntry.value.fold(
+        0.0,
+        (double sum, FoodEntry item) => sum + item.weight,
+      );
+
+      return DayFoodLog(
+        date: day,
+        totalConsumed: total,
+        dailyLimit: dailyLimit,
+        entries: mapEntry.value.map((FoodEntry entry) {
+          return FoodWeight(
+            id: entry.id,
+            weight: entry.weight,
+            dateTime: entry.date,
+          );
+        }).toList(),
+      );
+    }).toList();
+
+    result.sort((DayFoodLog currentLog, DayFoodLog nextLog) {
+      return nextLog.date.compareTo(currentLog.date);
+    });
+    return result;
+  }
+
+  Future<void> insertPortionControl({
+    required double value,
+    required DateTime date,
+  }) {
+    return _appDatabase.insertPortionControl(value: value, date: date);
   }
 }

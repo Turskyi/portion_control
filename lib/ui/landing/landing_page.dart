@@ -86,7 +86,11 @@ class LandingPage extends StatelessWidget {
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoute.home.path);
+                  final String routeName =
+                      localDataSource.isOnboardingCompleted()
+                      ? AppRoute.home.path
+                      : AppRoute.onboarding.path;
+                  Navigator.of(context).pushNamed(routeName);
                 },
                 child: Text(t('landing_page.get_started_button')),
               ),

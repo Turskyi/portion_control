@@ -164,8 +164,9 @@ sealed class HomeState {
   String get formattedTotalConsumedYesterday =>
       totalConsumedYesterday.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
 
-  String get formattedPortionControl =>
-      adjustedPortion.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+  String get formattedPortionControl {
+    return adjustedPortion.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+  }
 
   /// Formats the safe minimum food intake constant consistently with
   /// [formattedPortionControl].
@@ -173,11 +174,15 @@ sealed class HomeState {
       .toStringAsFixed(1)
       .replaceAll(RegExp(r'\.0$'), '');
 
-  String get formattedAdjustedPortion =>
-      adjustedPortion.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+  String get formattedAdjustedPortion {
+    return adjustedPortion.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+  }
 
-  String get formattedYesterdayConsumedTotal =>
-      yesterdayConsumedTotal.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+  String get formattedYesterdayConsumedTotal {
+    return yesterdayConsumedTotal
+        .toStringAsFixed(1)
+        .replaceAll(RegExp(r'\.0$'), '');
+  }
 
   String get previousPortionControlInfo {
     return (yesterdayConsumedTotal != adjustedPortion &&
@@ -213,8 +218,9 @@ sealed class HomeState {
     }
   }
 
-  List<BodyWeight> get lastTwoWeeksBodyWeightEntries =>
-      bodyWeightEntries.takeLast(DateTime.daysPerWeek * 2).toList();
+  List<BodyWeight> get lastTwoWeeksBodyWeightEntries {
+    return bodyWeightEntries.takeLast(DateTime.daysPerWeek * 2).toList();
+  }
 }
 
 class HomeLoading extends HomeState {

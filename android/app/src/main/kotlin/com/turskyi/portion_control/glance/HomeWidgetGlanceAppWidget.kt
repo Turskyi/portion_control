@@ -45,7 +45,7 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
         const val KEY_LAST_UPDATED = "text_last_updated"
     }
 
-    override val stateDefinition: GlanceStateDefinition<*>?
+    override val stateDefinition: GlanceStateDefinition<*>
         get() = HomeWidgetGlanceStateDefinition()
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {

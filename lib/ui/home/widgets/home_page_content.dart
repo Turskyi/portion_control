@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,10 +7,12 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
 import 'package:portion_control/ui/home/widgets/food_entries_column.dart';
 import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.dart';
 import 'package:portion_control/ui/home/widgets/portion_control_message.dart';
+import 'package:portion_control/ui/home/widgets/random_recipe_card.dart';
 import 'package:portion_control/ui/home/widgets/submit_edit_body_weight_button.dart';
 import 'package:portion_control/ui/home/widgets/user_details_widget.dart';
 import 'package:portion_control/ui/widgets/fancy_loading_indicator.dart';
@@ -42,16 +46,8 @@ class _HomePageContentState extends State<HomePageContent> {
         final double weight = state.bodyWeight;
         final double height = state.heightInCm;
         final List<FoodWeight> foodEntries = state.foodEntries;
-        final double horizontalIndent = 12.0;
 
-        return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            horizontalIndent,
-            MediaQuery.of(context).padding.top,
-            horizontalIndent,
-            80.0,
-          ),
-          controller: _scrollController,
+        final SizedBox contentColumn = SizedBox(
           child: Column(
             spacing: 16.0,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,29 +72,89 @@ class _HomePageContentState extends State<HomePageContent> {
                   initialValue:
                       '${weight > constants.minBodyWeight ? weight : ''}',
                   value: state is BodyWeightSubmittedState ? '$weight' : null,
-                  onChanged: (String value) {
-                    context.read<HomeBloc>().add(UpdateBodyWeight(value));
-                  },
+                  onChanged: _updateBodyWeight,
                 ),
               if (state is DetailsSubmittedState)
                 const SubmitEditBodyWeightButton(),
               if (state.bodyWeightEntries.length > 1)
-                // Line Chart of Body Weight trends for the last two weeks.
-                BodyWeightLineChart(
-                  bodyWeightEntries: state.lastTwoWeeksBodyWeightEntries,
+                // Line Chart of Body Weight trends for the last two
+                // weeks.
+                Stack(
+                  children: <Widget>[
+                    BodyWeightLineChart(
+                      bodyWeightEntries: state.lastTwoWeeksBodyWeightEntries,
+                    ),
+                    Positioned.fill(
+                      child: RawMaterialButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoute.stats.path);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               if (state is BodyWeightSubmittedState)
-                HealthyWeightRecommendations(height: height, weight: weight),
+                HealthyWeightRecommendations(
+                  height: height,
+                  weight: weight,
+                ),
               if (state is BodyWeightSubmittedState)
-                const PortionControlMessage(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Expanded(child: PortionControlMessage()),
+                    IconButton(
+                      icon: const Icon(Icons.info_outline),
+                      tooltip: translate('learn_more'),
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoute.educationalContent.path,
+                        );
+                      },
+                    ),
+                  ],
+                ),
               if (state is BodyWeightSubmittedState)
                 FoodEntriesColumn(foodEntries: foodEntries),
               if (state is HomeLoading) const FancyLoadingIndicator(),
+              if (state is BodyWeightSubmittedState) const RandomRecipeCard(),
             ],
+          ),
+        );
+        return SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            constants.kHorizontalIndent,
+            MediaQuery.paddingOf(context).top,
+            constants.kHorizontalIndent,
+            80.0,
+          ),
+          controller: _scrollController,
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final double maxWidthAvailable = constraints.maxWidth;
+              final double width = math.min(
+                constants.wideScreenContentWidth,
+                maxWidthAvailable.isFinite
+                    ? maxWidthAvailable
+                    : constants.wideScreenContentWidth,
+              );
+
+              return Center(
+                child: SizedBox(
+                  width: width,
+                  child: contentColumn,
+                ),
+              );
+            },
           ),
         );
       },
     );
+  }
+
+  void _updateBodyWeight(String value) {
+    context.read<HomeBloc>().add(UpdateBodyWeight(value));
   }
 
   @override
@@ -153,8 +209,9 @@ class _HomePageContentState extends State<HomePageContent> {
 
   void _showFeedbackUi() {
     _feedbackController?.show(
-      (UserFeedback feedback) =>
-          context.read<HomeBloc>().add(HomeSubmitFeedbackEvent(feedback)),
+      (UserFeedback feedback) {
+        context.read<HomeBloc>().add(HomeSubmitFeedbackEvent(feedback));
+      },
     );
     _feedbackController?.addListener(_onFeedbackChanged);
   }

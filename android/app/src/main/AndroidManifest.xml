@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.turskyi.portion_control"
-    android:versionCode="7"
-    android:versionName="1.0.7">
+    android:versionCode="8"
+    android:versionName="1.0.8">
 
     <!--
      Required to query activities that can process text, see:

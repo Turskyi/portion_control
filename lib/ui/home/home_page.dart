@@ -57,55 +57,13 @@ class _HomePageState extends State<HomePage> {
         automaticallyImplyLeading: false,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: LayoutBuilder(
-        builder: (BuildContext _, BoxConstraints constraints) {
-          if (constraints.maxWidth > constants.wideScreenThreshold) {
-            // Wide screen layout.
-            return const Align(
-              alignment: AlignmentDirectional.topCenter,
-              child: SizedBox(
-                // Fixed width for wide screens.
-                width: constants.wideScreenContentWidth,
-                child: HomePageContent(),
-              ),
-            );
-          } else {
-            // Narrow screen layout.
-            return const HomePageContent();
-          }
-        },
-      ),
+      body: const HomePageContent(),
       persistentFooterAlignment: AlignmentDirectional.center,
       persistentFooterButtons: kIsWeb && context.isNarrowScreen
           ? <Widget>[
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_horiz, color: colorScheme.primary),
-                onSelected: (String result) {
-                  if (result == _languageValue) {
-                    _showLanguageSelectionDialog();
-                  } else if (result == AppRoute.privacyPolity.name) {
-                    Navigator.pushNamed(context, AppRoute.privacyPolity.path);
-                  } else if (result == AppRoute.about.name) {
-                    Navigator.pushNamed(context, AppRoute.about.path);
-                  } else if (result == AppRoute.support.name) {
-                    Navigator.pushNamed(context, AppRoute.support.path);
-                  } else if (result == constants.googlePlayUrl) {
-                    launchUrl(
-                      Uri.parse(constants.googlePlayUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  } else if (result == constants.testFlightUrl) {
-                    launchUrl(
-                      Uri.parse(constants.testFlightUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  } else if (result == constants.macOsUrl) {
-                    launchUrl(
-                      Uri.parse(constants.macOsUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  }
-                },
+                onSelected: _handlePopupMenuSelection,
                 itemBuilder: (BuildContext _) {
                   final double badgeHeight = 40.0;
                   return <PopupMenuEntry<String>>[
@@ -114,6 +72,10 @@ class _HomePageState extends State<HomePage> {
                       child: Text(t('language')),
                     ),
                     const PopupMenuDivider(),
+                    PopupMenuItem<String>(
+                      value: AppRoute.dailyFoodLogHistory.name,
+                      child: Text(t('daily_food_log_history.title')),
+                    ),
                     PopupMenuItem<String>(
                       value: AppRoute.privacyPolity.name,
                       child: Text(t('landing_page.menu_item_privacy_policy')),
@@ -125,6 +87,10 @@ class _HomePageState extends State<HomePage> {
                     PopupMenuItem<String>(
                       value: AppRoute.support.name,
                       child: Text(t('landing_page.menu_item_support')),
+                    ),
+                    PopupMenuItem<String>(
+                      value: AppRoute.recipes.name,
+                      child: Text(t('recipes_page.title')),
                     ),
                     const PopupMenuDivider(),
                     PopupMenuItem<String>(
@@ -215,6 +181,20 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Semantics(
+                label: t('semantic_label.daily_food_log_history'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoute.dailyFoodLogHistory.path,
+                    );
+                  },
+                  icon: Icon(Icons.history, size: titleMediumSize),
+                  label: Text(t('daily_food_log_history.title')),
+                ),
+              ),
+              Semantics(
                 label: translate('semantic_label.privacy_policy_button'),
                 button: true,
                 child: TextButton.icon(
@@ -223,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                   },
                   icon: Icon(
                     Icons.privacy_tip,
-                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                    size: titleMediumSize,
                   ),
                   label: Text(translate('button.privacy_policy')),
                 ),
@@ -237,9 +217,23 @@ class _HomePageState extends State<HomePage> {
                   },
                   icon: Icon(
                     Icons.group,
-                    size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                    size: titleMediumSize,
                   ),
                   label: Text(translate('button.about_us')),
+                ),
+              ),
+              Semantics(
+                label: translate('semantic_label.recipes_button'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.recipes.path);
+                  },
+                  icon: Icon(
+                    Icons.restaurant_menu,
+                    size: titleMediumSize,
+                  ),
+                  label: Text(translate('recipes_page.title')),
                 ),
               ),
               Semantics(
@@ -270,6 +264,37 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _handlePopupMenuSelection(String result) {
+    if (result == _languageValue) {
+      _showLanguageSelectionDialog();
+    } else if (result == AppRoute.privacyPolity.name) {
+      Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+    } else if (result == AppRoute.dailyFoodLogHistory.name) {
+      Navigator.pushNamed(context, AppRoute.dailyFoodLogHistory.path);
+    } else if (result == AppRoute.about.name) {
+      Navigator.pushNamed(context, AppRoute.about.path);
+    } else if (result == AppRoute.support.name) {
+      Navigator.pushNamed(context, AppRoute.support.path);
+    } else if (result == AppRoute.recipes.name) {
+      Navigator.pushNamed(context, AppRoute.recipes.path);
+    } else if (result == constants.googlePlayUrl) {
+      launchUrl(
+        Uri.parse(constants.googlePlayUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } else if (result == constants.testFlightUrl) {
+      launchUrl(
+        Uri.parse(constants.testFlightUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } else if (result == constants.macOsUrl) {
+      launchUrl(
+        Uri.parse(constants.macOsUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
   @override
   void dispose() {
     _feedbackController?.removeListener(_onFeedbackChanged);
@@ -278,7 +303,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _menuStateListener(BuildContext _, MenuState state) {
-    if (state is FeedbackState) {
+    if (state is MenuFeedbackState) {
       _showFeedbackUi();
     } else if (state is MenuFeedbackSent) {
       _notifyFeedbackSent();
@@ -291,7 +316,7 @@ class _HomePageState extends State<HomePage> {
 
   void _showFeedbackUi() {
     _feedbackController?.show((UserFeedback feedback) {
-      context.read<MenuBloc>().add(MenuSubmitFeedbackEvent(feedback));
+      context.read<MenuBloc>().add(MenuSubmitFeedbackEvent(feedback: feedback));
     });
     _feedbackController?.addListener(_onFeedbackChanged);
   }
@@ -338,7 +363,7 @@ class _HomePageState extends State<HomePage> {
                       onChanged: _changeLanguage,
                     ),
                     RadioListTile<Language>(
-                      title: const Text('Українська'),
+                      title: Text(translate('ukrainian')),
                       value: Language.uk,
                       groupValue: currentLanguage,
                       onChanged: _changeLanguage,

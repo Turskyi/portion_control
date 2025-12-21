@@ -1,3 +1,4 @@
+import 'package:portion_control/domain/models/day_food_log.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
@@ -26,6 +27,11 @@ class FoodWeightRepository implements IFoodWeightRepository {
   @override
   Future<List<FoodWeight>> getFoodEntriesByDate(DateTime date) {
     return _localDataSource.getFoodEntriesByDate(date);
+  }
+
+  @override
+  Future<List<FoodWeight>> getAllFoodEntries() {
+    return _localDataSource.getAllFoodEntries();
   }
 
   /// Delete a food weight entry by [id].
@@ -57,5 +63,10 @@ class FoodWeightRepository implements IFoodWeightRepository {
   @override
   Future<List<FoodWeight>> fetchYesterdayEntries() {
     return _localDataSource.fetchYesterdayEntries();
+  }
+
+  @override
+  Future<List<DayFoodLog>> getDailyFoodLogHistory() {
+    return _localDataSource.getDailyFoodLogHistory();
   }
 }

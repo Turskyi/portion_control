@@ -3,8 +3,12 @@ enum AppRoute {
   landing('/'),
   home('/home'),
   about('/about'),
+  recipes('/recipes'),
+  educationalContent('/educational-content'),
   support('/support'),
-  privacyPolity('/privacy-policy');
+  stats('/stats'),
+  privacyPolity('/privacy-policy'),
+  dailyFoodLogHistory('/daily-food-log-history');
 
   const AppRoute(this.path);
 

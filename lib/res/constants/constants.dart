@@ -95,3 +95,9 @@ const double bmiOverweightUpperThreshold = 29.9;
 
 /// Marks start of obese.
 const double bmiObeseLowerThreshold = 30.0;
+
+const String doNotReplySenderName = 'Do Not Reply';
+const String feedbackEmailSender =
+    '$doNotReplySenderName $appName <no-reply@$resendEmailDomain>';
+const String feedbackScreenshotFileName = 'feedback.png';
+final double kHorizontalIndent = 12.0;

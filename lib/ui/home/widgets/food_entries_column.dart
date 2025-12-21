@@ -4,6 +4,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/home/widgets/food_weight_entry_row.dart';
 
 class FoodEntriesColumn extends StatelessWidget {
@@ -77,11 +78,19 @@ class FoodEntriesColumn extends StatelessWidget {
                 style: textTheme.titleMedium,
               ),
               if (state.formattedTotalConsumedYesterday == '0')
-                Text(
-                  translate(
-                    'food_entry.you_did_not_put_any_food_entries_yesterday',
+                TextButton(
+                  child: Text(
+                    translate(
+                      'food_entry.you_did_not_put_any_food_entries_yesterday',
+                    ),
+                    style: textTheme.titleMedium,
                   ),
-                  style: textTheme.titleMedium,
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoute.dailyFoodLogHistory.path,
+                    );
+                  },
                 )
               else
                 Text(

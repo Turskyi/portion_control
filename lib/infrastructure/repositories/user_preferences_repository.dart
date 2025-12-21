@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
@@ -79,12 +80,46 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
   }
 
   @override
-  double? getPortionControl() {
-    return _localDataSource.getPortionControl();
+  double? getLastPortionControl() {
+    return _localDataSource.getLastPortionControl();
   }
 
   @override
   Future<bool> savePortionControl(double portionControl) {
     return _localDataSource.savePortionControl(portionControl);
+  }
+
+  // Reminder API.
+  @override
+  bool isWeightReminderEnabled() => _localDataSource.isWeightReminderEnabled();
+
+  @override
+  Future<bool> saveWeightReminderEnabled(bool enabled) =>
+      _localDataSource.saveWeightReminderEnabled(enabled);
+
+  @override
+  String? getWeightReminderTimeString() {
+    final TimeOfDay? time = _localDataSource.getWeightReminderTime();
+    if (time == null) return null;
+    return '${time.hour.toString().padLeft(2, '0')}:'
+        '${time.minute.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Future<bool> saveWeightReminderTimeString(String timeString) {
+    try {
+      final List<String> parts = timeString.split(':');
+      final int hour = int.parse(parts[0]);
+      final int minute = int.parse(parts[1]);
+      return _localDataSource.saveWeightReminderTime(
+        TimeOfDay(
+          hour: hour,
+          minute: minute,
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error in saveWeightReminderTimeString: $e');
+      return Future<bool>.value(false);
+    }
   }
 }

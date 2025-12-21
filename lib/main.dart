@@ -3,24 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/app.dart';
+import 'package:portion_control/application_services/blocs/daily_food_log_history/daily_food_log_history_bloc.dart';
 import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
+import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/di/injector.dart' as di;
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
+import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
+import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
 import 'package:portion_control/localization/localization_delegate_getter.dart'
     as localization;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/about/about_page.dart';
+import 'package:portion_control/ui/daily_food_log_history/daily_food_log_history_page.dart';
+import 'package:portion_control/ui/educational/educational_content_page.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
 import 'package:portion_control/ui/home/home_view.dart' show HomeView;
 import 'package:portion_control/ui/landing/landing_page.dart';
 import 'package:portion_control/ui/onboarding/onboarding_screen.dart';
 import 'package:portion_control/ui/privacy/privacy_policy_page.dart';
+import 'package:portion_control/ui/recipes/weight_loss_recipes_page.dart';
+import 'package:portion_control/ui/stats/stats_page.dart';
 import 'package:portion_control/ui/support/support_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -97,6 +105,30 @@ Future<void> main() async {
     AppRoute.privacyPolity.path: (BuildContext _) => const PrivacyPolicyPage(),
     AppRoute.about.path: (BuildContext _) => const AboutPage(),
     AppRoute.support.path: (BuildContext _) => const SupportPage(),
+    AppRoute.recipes.path: (BuildContext _) => const WeightLossRecipesPage(),
+    AppRoute.educationalContent.path: (BuildContext _) =>
+        const EducationalContentPage(),
+    AppRoute.dailyFoodLogHistory.path: (BuildContext _) {
+      return BlocProvider<DailyFoodLogHistoryBloc>(
+        create: (BuildContext _) {
+          return DailyFoodLogHistoryBloc(
+            FoodWeightRepository(localDataSource),
+          )..add(LoadDailyFoodLogHistoryEvent());
+        },
+        child: const DailyFoodLogHistoryPage(),
+      );
+    },
+    AppRoute.stats.path: (BuildContext _) {
+      return BlocProvider<StatsBloc>(
+        create: (BuildContext _) {
+          return StatsBloc(
+            FoodWeightRepository(localDataSource),
+            BodyWeightRepository(localDataSource),
+          )..add(const LoadStatsEvent());
+        },
+        child: const StatsPage(),
+      );
+    },
   };
 
   runApp(

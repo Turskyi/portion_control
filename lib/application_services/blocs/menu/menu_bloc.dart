@@ -5,13 +5,17 @@ import 'package:bloc/bloc.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path_provider/path_provider.dart' as path;
 import 'package:portion_control/domain/enums/feedback_rating.dart';
+import 'package:portion_control/domain/enums/feedback_submission_type.dart';
 import 'package:portion_control/domain/enums/feedback_type.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
+import 'package:portion_control/domain/models/exceptions/email_launch_exception.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/models/portion_control_summary.dart';
 import 'package:portion_control/domain/models/user_details.dart';
@@ -39,7 +43,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     this._foodWeightRepository,
     this._userPreferencesRepository,
     this._localDataSource,
-  ) : super(const LoadingMenuState()) {
+  ) : super(const LoadingMenuState(streakDays: 0)) {
     on<LoadingInitialMenuStateEvent>(_loadInitialMenuState);
     on<BugReportPressedEvent>(_onFeedbackRequested);
     on<MenuClosingFeedbackEvent>(_onFeedbackDialogDismissed);
@@ -61,80 +65,152 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     BugReportPressedEvent _,
     Emitter<MenuState> emit,
   ) {
-    emit(MenuFeedbackState(language: state.language));
+    emit(
+      MenuFeedbackState(
+        language: state.language,
+        streakDays: state.streakDays,
+      ),
+    );
   }
 
   FutureOr<void> _onFeedbackDialogDismissed(
     MenuClosingFeedbackEvent _,
     Emitter<MenuState> emit,
   ) {
-    emit(MenuInitial(language: state.language));
+    emit(MenuInitial(language: state.language, streakDays: state.streakDays));
   }
 
   FutureOr<void> _sendUserFeedback(
     MenuSubmitFeedbackEvent event,
     Emitter<MenuState> emit,
   ) async {
-    emit(LoadingMenuState(language: state.language));
+    emit(
+      LoadingMenuState(language: state.language, streakDays: state.streakDays),
+    );
     final UserFeedback feedback = event.feedback;
     try {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
-      final Map<String, dynamic>? extra = feedback.extra;
-      final dynamic rating = extra?['rating'];
-      final dynamic type = extra?['feedback_type'];
+      final String platform = kIsWeb
+          ? translate('web')
+          : switch (defaultTargetPlatform) {
+              TargetPlatform.android => translate('android'),
+              TargetPlatform.iOS => translate('ios'),
+              TargetPlatform.macOS => translate('macos'),
+              TargetPlatform.windows => translate('windows'),
+              TargetPlatform.linux => translate('linux'),
+              TargetPlatform _ => translate('unknown'),
+            };
+
+      final Map<String, Object?>? extra = feedback.extra;
+      final Object? rating = extra?[constants.ratingProperty];
+      final Object? type = extra?[constants.feedbackTypeProperty];
+      final Object? screenSize = extra?[constants.screenSizeProperty];
+      final String feedbackText = feedback.text;
+
+      // `extra?[constants.feedbackTextProperty]` is usually same as
+      // `feedback.text`.
+      final Object feedbackExtraText =
+          extra?[constants.feedbackTextProperty] ?? feedbackText;
+
+      final bool isFeedbackType = type is FeedbackType;
+      final bool isFeedbackRating = rating is FeedbackRating;
 
       // Construct the feedback text with details from `extra'.
       final StringBuffer feedbackBody = StringBuffer()
         ..writeln(
-          '${type is FeedbackType ? translate('feedback.type') : ''}:'
-          ' ${type is FeedbackType ? type.value : ''}',
+          '${isFeedbackType ? translate('feedback.type') : ''}:'
+          ' ${isFeedbackType ? type.value : ''}',
+        )
+        ..writeln(feedbackText.isEmpty ? feedbackExtraText : feedbackText)
+        ..writeln(
+          '${isFeedbackRating ? translate('feedback.rating') : ''}'
+          '${isFeedbackRating ? ':' : ''}'
+          ' ${isFeedbackRating ? rating.value : ''}',
         )
         ..writeln()
-        ..writeln(feedback.text)
+        ..writeln('${translate('app_id')}: ${packageInfo.packageName}')
+        ..writeln('${translate('app_version')}: ${packageInfo.version}')
+        ..writeln('${translate('build_number')}: ${packageInfo.buildNumber}')
         ..writeln()
-        ..writeln('${translate('appId')}: ${packageInfo.packageName}')
-        ..writeln('${translate('appVersion')}: ${packageInfo.version}')
-        ..writeln('${translate('buildNumber')}: ${packageInfo.buildNumber}')
-        ..writeln()
-        ..writeln(
-          '${rating is FeedbackRating ? translate('feedback.rating') : ''}'
-          '${rating is FeedbackRating ? ':' : ''}'
-          ' ${rating is FeedbackRating ? rating.value : ''}',
-        );
+        ..writeln('${translate('platform')}: $platform');
+
+      if (screenSize != null) {
+        feedbackBody.writeln('${translate('screen_size')}: $screenSize');
+      }
+
+      feedbackBody.writeln();
 
       try {
-        if (kIsWeb) {
-          // Handle email sending on the web using a `mailto` link.
-          final Uri emailLaunchUri = Uri(
-            scheme: 'mailto',
-            path: constants.supportEmail,
-            queryParameters: <String, String>{
-              'subject':
-                  '${translate('feedback.appFeedback')}: '
-                  '${packageInfo.appName}',
-              'body': feedbackBody.toString(),
-            },
-          );
-
-          if (await canLaunchUrl(emailLaunchUri)) {
-            await launchUrl(emailLaunchUri);
-          } else {
-            add(MenuErrorEvent(translate('error.unexpectedError')));
-          }
-        } else {
+        if (event.submissionType.isAutomatic) {
           // TODO: move this thing to "data".
           final Resend resend = Resend.instance;
           await resend.sendEmail(
-            from:
-                'Do Not Reply ${constants.appName} '
-                '<no-reply@${constants.resendEmailDomain}>',
+            from: constants.feedbackEmailSender,
             to: <String>[constants.supportEmail],
             subject:
                 '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
             text: feedbackBody.toString(),
           );
+        } else if (kIsWeb || Platform.isMacOS) {
+          // Handle email sending on the web and MacOS using a `mailto` link.
+          final Uri emailLaunchUri = Uri(
+            scheme: constants.mailToScheme,
+            path: constants.supportEmail,
+            queryParameters: <String, String>{
+              constants.subjectParameter:
+                  '${translate('feedback.app_feedback')}: '
+                  '${packageInfo.appName}',
+              constants.bodyParameter: feedbackBody.toString(),
+            },
+          );
+
+          try {
+            if (await canLaunchUrl(emailLaunchUri)) {
+              await launchUrl(emailLaunchUri);
+              debugPrint(
+                'Menu Feedback email launched successfully via url_launcher.',
+              );
+            } else {
+              throw const EmailLaunchException('error.launch_email_failed');
+            }
+          } catch (urlLauncherError, urlLauncherStackTrace) {
+            final String urlLauncherErrorMessage =
+                'Error launching email via url_launcher: $urlLauncherError';
+            debugPrint(
+              '$urlLauncherErrorMessage\nStackTrace: $urlLauncherStackTrace',
+            );
+
+            final String errorMessage = translate('error.launch_email_failed');
+
+            add(MenuErrorEvent(errorMessage));
+          }
+        } else {
+          final String screenshotFilePath = await _writeImageToStorage(
+            feedback.screenshot,
+          );
+          final Email email = Email(
+            subject:
+                '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
+            body: feedbackBody.toString(),
+            recipients: <String>[constants.supportEmail],
+            attachmentPaths: <String>[screenshotFilePath],
+          );
+          try {
+            await FlutterEmailSender.send(email);
+          } catch (e, stackTrace) {
+            debugPrint(
+              'Warning: an error occurred in $this: $e;\n'
+              'StackTrace: $stackTrace',
+            );
+          }
         }
+        emit(
+          MenuFeedbackSent(
+            language: state.language,
+            streakDays: state.streakDays,
+          ),
+        );
       } catch (error, stackTrace) {
         debugPrint(
           'Error in $runtimeType in `onError`: $error.\n'
@@ -149,21 +225,22 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       );
       add(MenuErrorEvent(translate('error.unexpectedError')));
     }
-    emit(MenuInitial(language: state.language));
+    emit(MenuInitial(language: state.language, streakDays: state.streakDays));
   }
 
-  FutureOr<void> _loadInitialMenuState(
+  Future<void> _loadInitialMenuState(
     LoadingInitialMenuStateEvent _,
     Emitter<MenuState> emit,
-  ) {
+  ) async {
     final Language savedLanguage = _settingsRepository.getLanguage();
-    emit(MenuInitial(language: savedLanguage));
+    final int streakDays = await _bodyWeightRepository.getBodyWeightStreak();
+    emit(MenuInitial(language: savedLanguage, streakDays: streakDays));
   }
 
   FutureOr<void> _handleError(MenuErrorEvent event, Emitter<MenuState> emit) {
     debugPrint('MenuErrorEvent: ${event.error}');
     //TODO: add ErrorMenuState and use it instead.
-    emit(const MenuInitial());
+    emit(MenuInitial(streakDays: state.streakDays));
   }
 
   FutureOr<void> _changeLanguage(
@@ -182,7 +259,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         if (state is MenuInitial) {
           emit(state.copyWith(language: language));
         } else {
-          MenuInitial(language: language);
+          MenuInitial(language: language, streakDays: state.streakDays);
         }
       } else {
         //TODO: not sure what to do.
@@ -230,7 +307,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         weight: todayBodyWeight.weight,
         consumed: totalConsumedToday,
         portionControl: portionControl,
-        recommendation: await _getMmiMessage(),
+        recommendation: await _getBmiMessage(),
         formattedLastUpdatedDateTime: _formattedLastUpdatedDateTime,
       );
 
@@ -337,7 +414,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       );
 
       final double? savedPortionControl = _userPreferencesRepository
-          .getPortionControl();
+          .getLastPortionControl();
 
       if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
         if (savedPortionControl == null) {
@@ -395,7 +472,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         bodyWeightEntries[bodyWeightEntries.length - 2].weight;
   }
 
-  Future<String> _getMmiMessage() async {
+  Future<String> _getBmiMessage() async {
     final double bmi = await _getBmi();
     if (bmi < constants.bmiUnderweightThreshold) {
       return translate('healthy_weight.underweight_message');
@@ -478,5 +555,14 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     final double heightInMeters = userDetails.heightInCm / 100;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi < constants.minHealthyBmi;
+  }
+
+  Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {
+    final Directory output = await path.getTemporaryDirectory();
+    final String screenshotFilePath =
+        '${output.path}/${constants.feedbackScreenshotFileName}';
+    final File screenshotFile = File(screenshotFilePath);
+    await screenshotFile.writeAsBytes(feedbackScreenshot);
+    return screenshotFilePath;
   }
 }

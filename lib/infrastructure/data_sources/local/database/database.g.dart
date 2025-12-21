@@ -500,12 +500,267 @@ class FoodEntriesCompanion extends UpdateCompanion<FoodEntry> {
   }
 }
 
+class $PortionControlEntriesTable extends PortionControlEntries
+    with TableInfo<$PortionControlEntriesTable, PortionControlEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PortionControlEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedColumn<double> value = GeneratedColumn<double>(
+    'value',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, date, value];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'portion_control_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PortionControlEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+        _valueMeta,
+        value.isAcceptableOrUnknown(data['value']!, _valueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PortionControlEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PortionControlEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+      value: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}value'],
+      )!,
+    );
+  }
+
+  @override
+  $PortionControlEntriesTable createAlias(String alias) {
+    return $PortionControlEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class PortionControlEntry extends DataClass
+    implements Insertable<PortionControlEntry> {
+  final int id;
+
+  /// When this portion control value became active.
+  final DateTime date;
+
+  /// Portion control value in grams.
+  final double value;
+  const PortionControlEntry({
+    required this.id,
+    required this.date,
+    required this.value,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['date'] = Variable<DateTime>(date);
+    map['value'] = Variable<double>(value);
+    return map;
+  }
+
+  PortionControlEntriesCompanion toCompanion(bool nullToAbsent) {
+    return PortionControlEntriesCompanion(
+      id: Value(id),
+      date: Value(date),
+      value: Value(value),
+    );
+  }
+
+  factory PortionControlEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PortionControlEntry(
+      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      value: serializer.fromJson<double>(json['value']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<DateTime>(date),
+      'value': serializer.toJson<double>(value),
+    };
+  }
+
+  PortionControlEntry copyWith({int? id, DateTime? date, double? value}) =>
+      PortionControlEntry(
+        id: id ?? this.id,
+        date: date ?? this.date,
+        value: value ?? this.value,
+      );
+  PortionControlEntry copyWithCompanion(PortionControlEntriesCompanion data) {
+    return PortionControlEntry(
+      id: data.id.present ? data.id.value : this.id,
+      date: data.date.present ? data.date.value : this.date,
+      value: data.value.present ? data.value.value : this.value,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PortionControlEntry(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, date, value);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PortionControlEntry &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.value == this.value);
+}
+
+class PortionControlEntriesCompanion
+    extends UpdateCompanion<PortionControlEntry> {
+  final Value<int> id;
+  final Value<DateTime> date;
+  final Value<double> value;
+  const PortionControlEntriesCompanion({
+    this.id = const Value.absent(),
+    this.date = const Value.absent(),
+    this.value = const Value.absent(),
+  });
+  PortionControlEntriesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime date,
+    required double value,
+  }) : date = Value(date),
+       value = Value(value);
+  static Insertable<PortionControlEntry> custom({
+    Expression<int>? id,
+    Expression<DateTime>? date,
+    Expression<double>? value,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (date != null) 'date': date,
+      if (value != null) 'value': value,
+    });
+  }
+
+  PortionControlEntriesCompanion copyWith({
+    Value<int>? id,
+    Value<DateTime>? date,
+    Value<double>? value,
+  }) {
+    return PortionControlEntriesCompanion(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      value: value ?? this.value,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (value.present) {
+      map['value'] = Variable<double>(value.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PortionControlEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $BodyWeightEntriesTable bodyWeightEntries =
       $BodyWeightEntriesTable(this);
   late final $FoodEntriesTable foodEntries = $FoodEntriesTable(this);
+  late final $PortionControlEntriesTable portionControlEntries =
+      $PortionControlEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -513,6 +768,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     bodyWeightEntries,
     foodEntries,
+    portionControlEntries,
   ];
 }
 
@@ -830,6 +1086,181 @@ typedef $$FoodEntriesTableProcessedTableManager =
       FoodEntry,
       PrefetchHooks Function()
     >;
+typedef $$PortionControlEntriesTableCreateCompanionBuilder =
+    PortionControlEntriesCompanion Function({
+      Value<int> id,
+      required DateTime date,
+      required double value,
+    });
+typedef $$PortionControlEntriesTableUpdateCompanionBuilder =
+    PortionControlEntriesCompanion Function({
+      Value<int> id,
+      Value<DateTime> date,
+      Value<double> value,
+    });
+
+class $$PortionControlEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $PortionControlEntriesTable> {
+  $$PortionControlEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PortionControlEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $PortionControlEntriesTable> {
+  $$PortionControlEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PortionControlEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PortionControlEntriesTable> {
+  $$PortionControlEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<double> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
+}
+
+class $$PortionControlEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PortionControlEntriesTable,
+          PortionControlEntry,
+          $$PortionControlEntriesTableFilterComposer,
+          $$PortionControlEntriesTableOrderingComposer,
+          $$PortionControlEntriesTableAnnotationComposer,
+          $$PortionControlEntriesTableCreateCompanionBuilder,
+          $$PortionControlEntriesTableUpdateCompanionBuilder,
+          (
+            PortionControlEntry,
+            BaseReferences<
+              _$AppDatabase,
+              $PortionControlEntriesTable,
+              PortionControlEntry
+            >,
+          ),
+          PortionControlEntry,
+          PrefetchHooks Function()
+        > {
+  $$PortionControlEntriesTableTableManager(
+    _$AppDatabase db,
+    $PortionControlEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PortionControlEntriesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$PortionControlEntriesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$PortionControlEntriesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+                Value<double> value = const Value.absent(),
+              }) => PortionControlEntriesCompanion(
+                id: id,
+                date: date,
+                value: value,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required DateTime date,
+                required double value,
+              }) => PortionControlEntriesCompanion.insert(
+                id: id,
+                date: date,
+                value: value,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PortionControlEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PortionControlEntriesTable,
+      PortionControlEntry,
+      $$PortionControlEntriesTableFilterComposer,
+      $$PortionControlEntriesTableOrderingComposer,
+      $$PortionControlEntriesTableAnnotationComposer,
+      $$PortionControlEntriesTableCreateCompanionBuilder,
+      $$PortionControlEntriesTableUpdateCompanionBuilder,
+      (
+        PortionControlEntry,
+        BaseReferences<
+          _$AppDatabase,
+          $PortionControlEntriesTable,
+          PortionControlEntry
+        >,
+      ),
+      PortionControlEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -838,4 +1269,6 @@ class $AppDatabaseManager {
       $$BodyWeightEntriesTableTableManager(_db, _db.bodyWeightEntries);
   $$FoodEntriesTableTableManager get foodEntries =>
       $$FoodEntriesTableTableManager(_db, _db.foodEntries);
+  $$PortionControlEntriesTableTableManager get portionControlEntries =>
+      $$PortionControlEntriesTableTableManager(_db, _db.portionControlEntries);
 }

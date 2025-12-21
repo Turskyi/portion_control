@@ -61,4 +61,9 @@ class BodyWeightRepository implements IBodyWeightRepository {
   Future<BodyWeight> getLastBodyWeight() {
     return _localDataSource.getLastBodyWeight();
   }
+
+  @override
+  Future<int> getBodyWeightStreak() {
+    return _localDataSource.getBodyWeightStreak();
+  }
 }

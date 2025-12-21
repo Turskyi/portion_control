@@ -14,6 +14,7 @@ import 'package:portion_control/infrastructure/repositories/settings_repository.
 import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/services/home_widget_service.dart';
+import 'package:portion_control/ui/menu/reminder_dialog.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
 
 class AnimatedDrawer extends StatefulWidget {
@@ -75,12 +76,54 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
             ),
             child: Align(
               alignment: Alignment.bottomLeft,
-              child: Text(
-                translate('menu'),
-                style: textTheme.headlineSmall?.copyWith(
-                  color: colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    translate('menu'),
+                    style: textTheme.headlineSmall?.copyWith(
+                      color: colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  BlocBuilder<MenuBloc, MenuState>(
+                    builder: (BuildContext context, MenuState state) {
+                      if (state is LoadingMenuState) {
+                        return SizedBox(
+                          height: textTheme.bodyMedium?.fontSize,
+                          width: textTheme.bodyMedium?.fontSize,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              colorScheme.onPrimary,
+                            ),
+                          ),
+                        );
+                      } else {
+                        final int streakDays = state.streakDays;
+                        // The `flutter_translate` package automatically handles
+                        // pluralization rules based on the provided numeric
+                        // value.
+                        // When `streakDays` is 0, it correctly maps to the
+                        // "zero" key in the localization files without needing
+                        // explicit handling in the code.
+                        final String streakText = translatePlural(
+                          'streak',
+                          streakDays,
+                          args: <String, Object?>{'count': streakDays},
+                        );
+                        return Text(
+                          streakText,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onPrimary.withOpacity(0.85),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ],
               ),
             ),
           ),
@@ -96,11 +139,6 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               child: ListView(
                 children: <Widget>[
                   AnimatedDrawerItem(
-                    icon: Icons.language,
-                    text: translate('language'),
-                    onTap: _showLanguageSelectionDialog,
-                  ),
-                  AnimatedDrawerItem(
                     icon: Icons.privacy_tip,
                     text: translate('privacy_policy.title'),
                     onTap: () {
@@ -115,18 +153,78 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                     },
                   ),
                   AnimatedDrawerItem(
-                    icon: Icons.feedback,
-                    text: translate('button.feedback'),
-                    onTap: () => context.read<MenuBloc>().add(
-                      const BugReportPressedEvent(),
-                    ),
-                  ),
-                  AnimatedDrawerItem(
                     icon: Icons.support_agent,
                     text: translate('support.title'),
                     onTap: () {
                       Navigator.pushNamed(context, AppRoute.support.path);
                     },
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.menu_book,
+                    text: translate('recipes_page.title'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.recipes.path);
+                    },
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.school,
+                    text: translate('educational_content.title'),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoute.educationalContent.path,
+                      );
+                    },
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.history,
+                    text: translate('daily_food_log_history.title'),
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoute.dailyFoodLogHistory.path,
+                      );
+                    },
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.bar_chart,
+                    text: translate('stats.title'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoute.stats.path);
+                    },
+                  ),
+                  const Divider(),
+                  if (!kIsWeb)
+                    AnimatedDrawerItem(
+                      icon: Icons.web,
+                      text: translate('open_web_version'),
+                      onTap: _openWebVersion,
+                    ),
+                  AnimatedDrawerItem(
+                    icon: Icons.language,
+                    text: translate('language'),
+                    onTap: _showLanguageSelectionDialog,
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.notifications,
+                    text: translate('reminders.title'),
+                    onTap: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext _) {
+                          return ReminderDialog(
+                            localDataSource: widget.localDataSource,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  AnimatedDrawerItem(
+                    icon: Icons.feedback,
+                    text: translate('button.feedback'),
+                    onTap: () => context.read<MenuBloc>().add(
+                      const BugReportPressedEvent(),
+                    ),
                   ),
                   // Only add the event if it's NOT web AND NOT macOS.
                   // For context, see issue:
@@ -144,12 +242,6 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         }
                         return const SizedBox.shrink();
                       },
-                    ),
-                  if (!kIsWeb)
-                    AnimatedDrawerItem(
-                      icon: Icons.web,
-                      text: translate('open_web_version'),
-                      onTap: _openWebVersion,
                     ),
                 ],
               ),
@@ -187,7 +279,9 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               const HomeWidgetServiceImpl(),
               BodyWeightRepository(localDataSource),
               FoodWeightRepository(localDataSource),
-              UserPreferencesRepository(localDataSource),
+              UserPreferencesRepository(
+                localDataSource,
+              ),
               localDataSource,
             )..add(const LoadingInitialMenuStateEvent());
           },
@@ -243,13 +337,13 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
       }
     } catch (e, s) {
       debugPrint(
-        'Error checking widget pinning support in `AnimatedDrawer` '
-        '($runtimeType): $e. '
-        'This might happen on platforms where '
-        '`HomeWidget.isRequestPinWidgetSupported()` is not implemented or '
-        'fails. '
-        'Defaulting to not showing the "Pin Widget" option.\n'
-        'Stacktrace: $s',
+        '''
+        Error checking widget pinning support in `AnimatedDrawer` 
+        ($runtimeType): $e. This might happen on platforms where 
+        `HomeWidget.isRequestPinWidgetSupported()` is not implemented or fails. 
+        Defaulting to not showing the "Pin Widget" option.
+        Stacktrace: $s
+        ''',
       );
       if (mounted) {
         _isRequestPinWidgetSupported.value = false;

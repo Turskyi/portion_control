@@ -148,7 +148,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           );
 
           final double? savedPortionControl = _userPreferencesRepository
-              .getPortionControl();
+              .getLastPortionControl();
 
           if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
             if (savedPortionControl == null) {
@@ -235,6 +235,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           );
         }
       } catch (e) {
+        debugPrint('Error in _loadEntries: $e');
         emit(
           LoadingError(
             errorMessage: '$e',
@@ -505,6 +506,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           );
         }
       } catch (e) {
+        debugPrint('Error in _submitDetails: $e');
         // Handle errors (e.g. data store issues).
         emit(
           DetailsError(
@@ -582,7 +584,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         double portionControl = constants.maxDailyFoodLimit;
         final double? savedPortionControl = _userPreferencesRepository
-            .getPortionControl();
+            .getLastPortionControl();
         if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
           if (savedPortionControl == null) {
             if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
@@ -778,6 +780,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             );
           });
     } catch (e) {
+      debugPrint('Error in _deleteFoodEntry: $e');
       // Handle errors (e.g. database issues).
       emit(
         FoodWeightError(
@@ -986,7 +989,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   FutureOr<void> _handleError(ErrorEvent event, Emitter<HomeState> emit) {
-    debugPrint('ErrorEvent: ${event.error}');
+    debugPrint('ErrorEvent error: ${event.error}');
     if (_previousState != null) {
       emit(_previousState!);
     } else {
