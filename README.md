@@ -35,8 +35,6 @@ relationship between food consumption and weight changes.
   meal.
 - **Simple Interface**: The app focuses on simplicity, with no complex meal
   logging or calorie counting.
-- **Recommendation Section** (Placeholder): A placeholder section that can later
-  offer recommendations based on input data.
 
 ## Getting Started
 
@@ -48,7 +46,7 @@ Before you begin, make sure you have the following installed:
 
 1. **Flutter SDK**: You can follow the installation instructions on the
    [Flutter website](https://docs.flutter.dev/get-started/install).
-2. **Android Studio** or **Visual Studio Code**: Preferred IDE for Flutter
+2. **Android Studio** and **Visual Studio Code**: IDE for Flutter
    development.
 3. **Dart SDK**: It comes bundled with Flutter, but ensure you&#39;re on the
    latest
@@ -68,6 +66,14 @@ Navigate to the project directory:
 cd portion_control
 ```
 
+Create a `.env` file and add the following content:
+
+```env
+RESEND_API_KEY="re_abcdefg12345"
+```
+
+You can get a free API key from [https://resend.com](https://resend.com).
+
 Install dependencies:
 
 ```bash
@@ -77,6 +83,7 @@ flutter pub get
 ### Create generated files:
 
 ```bash
+dart run build_runner clean
 dart run build_runner build --delete-conflicting-outputs
 ```
 
@@ -96,10 +103,19 @@ Here&apos;s a breakdown of the main components in this Flutter app:
 
 ```
 lib/
-│
-├── main.dart      # Main entry point of the app, sets up the theme and routing.
-└── ui/
-    home_page.dart # Home page layout and UI components.
+├── application_services/
+├── di/
+├── domain/
+├── env/
+├── extensions/
+├── infrastructure/
+├── localization/
+├── res/
+├── router/
+├── services/
+├── ui/
+├── app.dart
+└── main.dart
 ```
 
 ## Code Explanation
@@ -143,16 +159,7 @@ flutter test
 
 ## Roadmap
 
-This project is under active development. Future improvements and features will
-include:
-
-- **Functional Input Fields**: input fields for body weight and food portions.
-- **Submit Button Logic**: functionality of the submit button to store and
-  track weight changes.
-- **Recommendation Engine**: Based on entered data, provide recommendations or
-  trends to the user.
-- **Graphs/Charts**: Display weight change over time using graphs.
-- **Notifications**: Remind users to track their weight and food portions daily.
+This project is under active development.
 
 ## Contributing
 
@@ -160,10 +167,18 @@ We welcome contributions from the community!
 To contribute:
 
 1. Fork this repository.
-2. Create a new branch (`git checkout -b feature-name`).
-3. Commit your changes (`git commit -am 'Add feature'`).
-4. Push to the branch (`git push origin feature-name`).
-5. Create a new Pull Request.
+2. Create a `.env` file and add the following content:
+
+   ```env
+   RESEND_API_KEY="re_abcdefg12345"
+   ```
+
+   You can get a free API key from [https://resend.com](https://resend.com).
+
+3. Create a new branch (`git checkout -b feature-name`).
+4. Commit your changes (`git commit -am 'Add feature'`).
+5. Push to the branch (`git push origin feature-name`).
+6. Create a new Pull Request.
 
 Please ensure your code follows the existing style guidelines and includes
 tests where applicable.
@@ -387,7 +402,7 @@ Boundary conditions are hard to keep track of. Put the processing for them in
 one place.
 
 ```
-BAD: 
+BAD:
 if(level + 1 < tags.length) {
   parts = Parse(body, tags, level + 1, offset + endTag);
   body = null;
@@ -421,7 +436,13 @@ For any inquiries, please contact
 
 ## Download
 
-<a href="https://play.google.com/store/apps/details?id=com.turskyi.portion_control" target="_blank">
-<img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width=240  alt="google play badge"/>
-</a>
+<!--suppress HtmlDeprecatedAttribute -->
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=com.turskyi.portion_control" target="_blank">
+    <img src="https://play.google.com/intl/en_gb/badges/static/images/badges/en_badge_web_generic.png" width="280" style="vertical-align: middle;" alt="google play badge"/>
+  </a>
+  <a href="https://apps.apple.com/ca/app/portion-control/id6743641654" target="_blank">
+    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" height="80" style="vertical-align: middle;" alt="app store badge"/>
+  </a>
+</p>
 

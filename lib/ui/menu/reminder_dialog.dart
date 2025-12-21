@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/services/reminder_service.dart';
@@ -90,9 +91,12 @@ class _ReminderDialogState extends State<ReminderDialog> {
     );
 
     if (_enabled) {
-      await ReminderService.instance.scheduleDailyWeightReminder(
-        time: _time,
-      );
+      if (await Permission.notification.request().isGranted &&
+          await Permission.scheduleExactAlarm.request().isGranted) {
+        await ReminderService.instance.scheduleDailyWeightReminder(
+          time: _time,
+        );
+      }
     } else {
       await ReminderService.instance.cancelWeightReminder();
     }

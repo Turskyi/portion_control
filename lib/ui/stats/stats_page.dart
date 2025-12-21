@@ -66,10 +66,12 @@ class StatsPage extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 16),
-                  WeeklyIntakeChart(
-                    lastSevenDaysIntake: state.lastSevenDaysIntake,
-                  ),
-                  const SizedBox(height: 16),
+                  if (state.lastSevenDaysIntake.length > 1)
+                    WeeklyIntakeChart(
+                      lastSevenDaysIntake: state.lastSevenDaysIntake,
+                    ),
+                  if (state.lastSevenDaysIntake.length > 1)
+                    const SizedBox(height: 16),
                   StatCard(
                     title: translate('stats.average_daily_intake'),
                     value:

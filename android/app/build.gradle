@@ -32,13 +32,10 @@ def signingKeyReleaseKeyPassword = keyProperties.getProperty('production.SIGNING
 android {
     namespace = rootProject.applicationId
     compileSdk = flutter.compileSdkVersion
-    //TODO: change back to dynamic "flutter.ndkVersion" version, when the
-    // error "Your project is configured with Android NDK 26.1.10909125, but
-    // the following plugin(s) depend on a different Android NDK version..." is
-    // gone.
-    ndkVersion = "27.0.12077973"
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        coreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -133,6 +130,7 @@ flutter {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
     implementation 'androidx.glance:glance-appwidget:1.1.1'
     implementation 'com.google.firebase:firebase-analytics:23.0.0'
     implementation 'com.google.firebase:firebase-crashlytics:20.0.3'

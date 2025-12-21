@@ -67,6 +67,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           DrawerHeader(
+            margin: EdgeInsets.zero,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: <Color>[colorScheme.primary, colorScheme.secondary],
@@ -137,6 +138,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                 );
               },
               child: ListView(
+                padding: EdgeInsets.zero,
                 children: <Widget>[
                   AnimatedDrawerItem(
                     icon: Icons.privacy_tip,
@@ -243,6 +245,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         return const SizedBox.shrink();
                       },
                     ),
+                  const SizedBox(height: 28),
                 ],
               ),
             ),
