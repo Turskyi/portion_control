@@ -83,7 +83,8 @@ class StatsPage extends StatelessWidget {
                   StatCard(
                     title: translate('stats.weekly_weight_change'),
                     value:
-                        '${state.weeklyWeightChange > 0 ? '+' : ''}${state.weeklyWeightChange.toStringAsFixed(1)} '
+                        '${state.weeklyWeightChange > 0 ? '+' : ''}'
+                        '${state.weeklyWeightChange.toStringAsFixed(1)} '
                         '${translate('home_page.kg_unit')}',
                     icon: state.weeklyWeightChange > 0
                         ? Icons.trending_up

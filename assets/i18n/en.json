@@ -67,7 +67,7 @@
   "privacy_policy": {
     "title": "Privacy Policy",
     "introduction_title": "Introduction",
-    "content_html": "<p><b>Introduction</b></p><p>{appName} respects your privacy and is committed to protecting it. This Privacy Policy explains how we collect, use, and safeguard your data.</p><p><b>Information We Collect</b></p><ul><li>Personal Data: We do not collect personally identifiable information.</li><li>Health and Fitness Data: The app stores your body weight and food weight entries locally on your device.</li><li>App Usage Data: We may collect anonymous usage analytics to improve user experience.</li></ul><p><b>Data Storage and Security</b></p><ul><li>Your data is stored securely on your device.</li><li>We do not transmit personal data to external servers.</li></ul><p><b>Third-Party Services</b></p><ul><li>The app uses Firebase Analytics for anonymous usage insights, compliant with industry standards, and does not include personally identifiable information.</li></ul><p><b>Children’s Privacy</b></p><ul><li>This app is not intended for use by children under 13 years old.</li><li>We do not specifically design {appName} for children, as tracking food intake may not be suitable for their growth and nutritional needs.</li><li>While the app does not collect personal data, it may use Firebase Analytics for anonymous usage insights.</li><li>Parents and guardians should be aware that this app is intended for adults managing their portion sizes.</li></ul><p><b>User Rights</b></p><ul><li>You can delete your data at any time by uninstalling the app.</li><li>No registration is required to use {appName}.</li></ul><p><b>Changes to This Policy</b></p><p>We may update this Privacy Policy as needed. Continued use of the app implies acceptance of any changes.</p>",
+    "content_html": "<p><b>Introduction</b></p><p>{appName} respects your privacy and is committed to protecting it. This Privacy Policy explains how we collect, use, and safeguard your data.</p><p><b>Information We Collect</b></p><ul><li>Personal Data: We do not collect personally identifiable information.</li><li>Health and Fitness Data: The app stores your body weight and food weight entries locally on your device.</li><li>App Usage Data: We may collect anonymous usage analytics to improve user experience.</li></ul><p><b>Data Storage and Security</b></p><ul><li>Your data is stored securely on your device.</li><li>We do not transmit personal data to external servers.</li></ul><p><b>Note:</b> Your entries are stored locally on your device and may be removed if you uninstall the app or clear app data. The app focuses on recent trends and remains useful when used regularly.</p><p><b>Third-Party Services</b></p><ul><li>The app uses Firebase Analytics for anonymous usage insights, compliant with industry standards, and does not include personally identifiable information.</li></ul><p><b>Children’s Privacy</b></p><ul><li>This app is not intended for use by children under 13 years old.</li><li>We do not specifically design {appName} for children, as tracking food intake may not be suitable for their growth and nutritional needs.</li><li>While the app does not collect personal data, it may use Firebase Analytics for anonymous usage insights.</li><li>Parents and guardians should be aware that this app is intended for adults managing their portion sizes.</li></ul><p><b>User Rights</b></p><ul><li>You can delete your data at any time by uninstalling the app.</li><li>No registration is required to use {appName}.</li></ul><p><b>Changes to This Policy</b></p><p>We may update this Privacy Policy as needed. Continued use of the app implies acceptance of any changes.</p>",
     "contact_us_prompt": "If you have any questions or concerns about this Privacy Policy or your personal data, feel free to contact us at:"
   },
   "support": {
@@ -206,7 +206,7 @@
     "getting_started_item2": "- Use a food scale to log each meal in grams.",
     "getting_started_item3": "- The app will suggest portion guidelines to help you manage your intake.",
     "common_questions_title": "Common Questions",
-    "faq1_data_sync": "- Q: Is my data synced or backed up?\n  A: No, all data is stored locally on your device.",
+    "faq1_data_sync": "- Q: Is my data synced or backed up?\n  A: No — your data is stored only on your device and may be removed if you uninstall the app or clear app data. The app is designed to highlight recent trends (for example, yesterday’s intake versus today’s weight), so regular use preserves most of its functionality.",
     "faq2_forgot_meal": "- Q: I forgot to log a meal. What should I do?\n  A: While the app allows you to edit or add missed meals later, we strongly recommend choosing to start the day from scratch. Accurate tracking is essential for building a reliable portion control baseline, and incomplete records can lead to misleading results.",
     "faq3_children": "- Q: Is this app suitable for children?\n  A: No. This app is designed for adults.",
     "faq4_calories": "- Q: Does the app count calories?\n  A: No. This app tracks food weight in grams, not calories.",
@@ -220,6 +220,11 @@
     "telegram_link_text": "Join the community chat",
     "developer_website_label": "Developer Website: ",
     "developer_website_link_text": "https://turskyi.com/#/support"
+  },
+  "data_storage": {
+    "title": "Local-only storage",
+    "message": "Your data is stored locally on this device. If you uninstall the app or clear app data, saved entries may be removed. The app focuses on recent trends, so continuing to use it provides the most value.",
+    "export_button": "Learn more"
   },
   "landing_page": {
     "app_name": "Portion Control",
@@ -291,6 +296,10 @@
     "page3": {
       "title": "🩷 Stay in Control Every Day",
       "content": "Track your progress, follow your goals, and enjoy a healthier relationship with food.\nYour journey starts today - one portion at a time."
+    },
+    "page4": {
+      "title": "🔒 Your data stays on your device",
+      "content": "Your entries are stored only on this device. If you uninstall the app or clear app data, previously saved entries may be removed. The app focuses on recent trends and remains useful when used regularly."
     },
     "tagline": "Your mindful eating companion - private, simple, and motivating."
   },

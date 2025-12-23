@@ -4,12 +4,14 @@ import 'package:flutter_translate/flutter_translate.dart';
 class OnboardingControls extends StatelessWidget {
   const OnboardingControls({
     required this.currentPage,
+    required this.totalPages,
     required this.onNextPressed,
     required this.onGetStartedPressed,
     super.key,
   });
 
   final int currentPage;
+  final int totalPages;
   final VoidCallback onNextPressed;
   final VoidCallback onGetStartedPressed;
 
@@ -20,7 +22,7 @@ class OnboardingControls extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          if (currentPage != 2)
+          if (currentPage != totalPages - 1)
             ElevatedButton(
               onPressed: onNextPressed,
               child: Text(translate('next')),
