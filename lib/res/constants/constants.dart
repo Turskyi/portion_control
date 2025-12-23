@@ -3,7 +3,7 @@ const String ukrainianWebVersion = 'https://uk.portion-control.turskyi.com';
 const String companyDomain = 'turskyi.com';
 const String supportEmailPrefix = 'support@';
 const String supportEmail = '$supportEmailPrefix$companyDomain';
-const String appName = 'PortionControl';
+const String appName = 'Portion Control';
 const String googlePlayUrl =
     'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
 
@@ -100,4 +100,6 @@ const String doNotReplySenderName = 'Do Not Reply';
 const String feedbackEmailSender =
     '$doNotReplySenderName $appName <no-reply@$resendEmailDomain>';
 const String feedbackScreenshotFileName = 'feedback.png';
-final double kHorizontalIndent = 12.0;
+const double kHorizontalIndent = 12.0;
+
+const String kLanguageValue = 'language';

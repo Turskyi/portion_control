@@ -7,6 +7,7 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Turskyi/portion_control)
 [![Deploy to Firebase Hosting on merge](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-merge.yml)
 [![Deploy to Firebase Hosting on PR](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-pull-request.yml/badge.svg)](https://github.com/Turskyi/portion_control/actions/workflows/firebase-hosting-pull-request.yml)
+[![wakatime](https://wakatime.com/badge/user/f9df5074-b4ea-4c17-b001-fff428ab82aa/project/f2a257e8-361a-4986-8bdf-2cb2a69c765d.svg)](https://wakatime.com/badge/user/f9df5074-b4ea-4c17-b001-fff428ab82aa/project/f2a257e8-361a-4986-8bdf-2cb2a69c765d)
 <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Turskyi/portion_control">
 
 # PortionControl

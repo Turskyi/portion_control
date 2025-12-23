@@ -52,9 +52,7 @@ class LandingPage extends StatelessWidget {
               SizedBox(
                 height: 50,
                 child: DefaultTextStyle(
-                  style:
-                      Theme.of(context).textTheme.bodyLarge ??
-                      const TextStyle(),
+                  style: textTheme.bodyLarge ?? const TextStyle(),
                   child: AnimatedTextKit(
                     repeatForever: true,
                     animatedTexts: <AnimatedText>[
@@ -85,13 +83,7 @@ class LandingPage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: () {
-                  final String routeName =
-                      localDataSource.isOnboardingCompleted()
-                      ? AppRoute.home.path
-                      : AppRoute.onboarding.path;
-                  Navigator.of(context).pushNamed(routeName);
-                },
+                onPressed: () => _navigateToNextScreen(context),
                 child: Text(t('landing_page.get_started_button')),
               ),
             ],
@@ -104,30 +96,7 @@ class LandingPage extends StatelessWidget {
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_horiz, color: colorScheme.primary),
                 onSelected: (String result) {
-                  if (result == 'language') {
-                    _showLanguageSelectionDialog(context);
-                  } else if (result == AppRoute.privacyPolity.name) {
-                    Navigator.pushNamed(context, AppRoute.privacyPolity.path);
-                  } else if (result == AppRoute.about.name) {
-                    Navigator.pushNamed(context, AppRoute.about.path);
-                  } else if (result == AppRoute.support.name) {
-                    Navigator.pushNamed(context, AppRoute.support.path);
-                  } else if (result == constants.googlePlayUrl) {
-                    launchUrl(
-                      Uri.parse(constants.googlePlayUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  } else if (result == constants.testFlightUrl) {
-                    launchUrl(
-                      Uri.parse(constants.testFlightUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  } else if (result == constants.macOsUrl) {
-                    launchUrl(
-                      Uri.parse(constants.macOsUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  }
+                  _onMenuItemSelected(context: context, result: result);
                 },
                 itemBuilder: (BuildContext _) {
                   final double badgeHeight = 40.0;
@@ -343,29 +312,66 @@ class LandingPage extends StatelessWidget {
     );
   }
 
-  void _launchMacOsUrl() {
-    launchUrl(
+  Future<void> _navigateToNextScreen(BuildContext context) {
+    final String routeName = localDataSource.isOnboardingCompleted()
+        ? AppRoute.home.path
+        : AppRoute.onboarding.path;
+    return Navigator.of(context).pushNamed<void>(routeName);
+  }
+
+  void _onMenuItemSelected({
+    required BuildContext context,
+    required String result,
+  }) {
+    if (result == constants.kLanguageValue) {
+      _showLanguageSelectionDialog(context);
+    } else if (result == AppRoute.privacyPolity.name) {
+      Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+    } else if (result == AppRoute.about.name) {
+      Navigator.pushNamed(context, AppRoute.about.path);
+    } else if (result == AppRoute.support.name) {
+      Navigator.pushNamed(context, AppRoute.support.path);
+    } else if (result == constants.googlePlayUrl) {
+      launchUrl(
+        Uri.parse(constants.googlePlayUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } else if (result == constants.testFlightUrl) {
+      launchUrl(
+        Uri.parse(constants.testFlightUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } else if (result == constants.macOsUrl) {
+      launchUrl(
+        Uri.parse(constants.macOsUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
+  Future<bool> _launchMacOsUrl() {
+    return launchUrl(
       Uri.parse(constants.macOsUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
-  void _launchGooglePlayUrl() {
-    launchUrl(
+  Future<bool> _launchGooglePlayUrl() {
+    return launchUrl(
       Uri.parse(constants.googlePlayUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
-  void _launchTestFlightUrl() {
-    launchUrl(
+  Future<bool> _launchTestFlightUrl() {
+    return launchUrl(
       Uri.parse(constants.testFlightUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
-  void _showLanguageSelectionDialog(BuildContext context) {
-    showDialog(
+  Future<void> _showLanguageSelectionDialog(BuildContext context) {
+    return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return BlocProvider<SettingsBloc>(
@@ -375,6 +381,9 @@ class LandingPage extends StatelessWidget {
           child: BlocBuilder<SettingsBloc, SettingsState>(
             builder: (BuildContext context, SettingsState state) {
               final Language currentLanguage = state.language;
+              final TextStyle? headlineMedium = Theme.of(
+                context,
+              ).textTheme.headlineMedium;
               return AlertDialog(
                 title: Text(translate('select_language')),
                 content: Column(
@@ -384,6 +393,10 @@ class LandingPage extends StatelessWidget {
                       title: Text(translate('english')),
                       value: Language.en,
                       groupValue: currentLanguage,
+                      secondary: Text(
+                        Language.en.flag,
+                        style: headlineMedium,
+                      ),
                       onChanged: (Language? newLanguage) {
                         if (newLanguage != null) {
                           _changeLanguage(
@@ -394,9 +407,13 @@ class LandingPage extends StatelessWidget {
                       },
                     ),
                     RadioListTile<Language>(
-                      title: const Text('Українська'),
+                      title: Text(translate('ukrainian')),
                       value: Language.uk,
                       groupValue: currentLanguage,
+                      secondary: Text(
+                        Language.uk.flag,
+                        style: headlineMedium,
+                      ),
                       onChanged: (Language? newLanguage) {
                         if (newLanguage != null) {
                           _changeLanguage(
@@ -416,11 +433,11 @@ class LandingPage extends StatelessWidget {
     );
   }
 
-  void _changeLanguage({
+  Future<void> _changeLanguage({
     required BuildContext context,
     required Language newLanguage,
   }) {
-    changeLocale(context, newLanguage.isoLanguageCode)
+    return changeLocale(context, newLanguage.isoLanguageCode)
     // The returned value is always `null`.
     .then((Object? _) {
       if (context.mounted) {

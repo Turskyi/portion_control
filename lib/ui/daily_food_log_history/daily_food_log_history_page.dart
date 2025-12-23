@@ -22,7 +22,15 @@ class DailyFoodLogHistoryPage extends StatelessWidget {
           if (state is DailyFoodLogHistoryLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is DailyFoodLogHistoryLoaded) {
-            final double screenWidth = MediaQuery.sizeOf(context).width;
+            if (state.days.isEmpty) {
+              return Center(
+                child: Text(
+                  translate('no_meals_logged'),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              );
+            }
+            final double screenWidth = MediaQuery.widthOf(context);
             final bool isWide = screenWidth > constants.wideScreenThreshold;
             final double horizontalPadding = isWide
                 ? (screenWidth - constants.wideScreenContentWidth) / 2
