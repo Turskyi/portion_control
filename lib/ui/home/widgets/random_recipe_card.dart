@@ -25,11 +25,11 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
     final int hour = now.hour;
 
     // Determine meal type based on time of day.
-    if (hour < 10) {
+    if (hour <= 10 && hour > 3) {
       _mealType = 'breakfast';
-    } else if (hour < 12) {
+    } else if (hour < 12 && hour >= 10) {
       _mealType = 'second_breakfast';
-    } else if (hour < 15) {
+    } else if (hour < 15 && hour >= 12) {
       _mealType = 'lunch';
     } else if (hour < 18) {
       _mealType = 'snack';
