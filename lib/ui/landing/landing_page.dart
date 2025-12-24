@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -24,7 +25,9 @@ class LandingPage extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final ColorScheme colorScheme = theme.colorScheme;
     final double? titleMediumSize = textTheme.titleMedium?.fontSize;
-
+    final Color splashColor = colorScheme.primary.withOpacity(
+      0.2,
+    );
     // Helper for translation.
     String t(String key) => translate(key);
     return GradientBackgroundScaffold(
@@ -100,9 +103,13 @@ class LandingPage extends StatelessWidget {
                 },
                 itemBuilder: (BuildContext _) {
                   final double badgeHeight = 40.0;
+
+                  final bool showGooglePlayLink =
+                      kIsWeb || defaultTargetPlatform == TargetPlatform.android;
+
                   return <PopupMenuEntry<String>>[
                     PopupMenuItem<String>(
-                      value: 'language',
+                      value: constants.kLanguageValue,
                       child: Text(t('language')),
                     ),
                     const PopupMenuDivider(),
@@ -119,79 +126,87 @@ class LandingPage extends StatelessWidget {
                       child: Text(t('landing_page.menu_item_support')),
                     ),
                     const PopupMenuDivider(),
-                    PopupMenuItem<String>(
-                      value: constants.googlePlayUrl,
-                      child: Semantics(
-                        label: t('landing_page.semantics_label_google_play'),
-                        button: true,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Material(
-                            // Ensures the background remains unchanged.
-                            color: Colors.transparent,
-                            child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
-                              onTap: _launchGooglePlayUrl,
-                              child: Ink.image(
-                                image: const AssetImage(
-                                  '${constants.imagePath}play_store_badge.png',
+                    if (showGooglePlayLink)
+                      PopupMenuItem<String>(
+                        value: constants.googlePlayUrl,
+                        child: Semantics(
+                          label: t('landing_page.semantics_label_google_play'),
+                          button: true,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Material(
+                              // Ensures the background remains unchanged.
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: splashColor,
+                                onTap: _launchGooglePlayUrl,
+                                child: Ink.image(
+                                  image: const AssetImage(
+                                    '${constants.imagePath}'
+                                    'play_store_badge.png',
+                                  ),
+                                  height: badgeHeight,
+                                  fit: BoxFit.fitHeight,
                                 ),
-                                height: badgeHeight,
-                                fit: BoxFit.fitHeight,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: constants.testFlightUrl,
-                      child: Semantics(
-                        label: t('landing_page.semantics_label_testflight'),
-                        button: true,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Material(
-                            // Ensures the background remains unchanged.
-                            color: Colors.transparent,
-                            child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
-                              onTap: _launchTestFlightUrl,
-                              child: Ink.image(
-                                image: const AssetImage(
-                                  '${constants.imagePath}test_flight_badge.png',
+                    if (kIsWeb ||
+                        defaultTargetPlatform != TargetPlatform.android)
+                      PopupMenuItem<String>(
+                        value: constants.testFlightUrl,
+                        child: Semantics(
+                          label: t('landing_page.semantics_label_testflight'),
+                          button: true,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Material(
+                              // Ensures the background remains unchanged.
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: splashColor,
+                                onTap: _launchTestFlightUrl,
+                                child: Ink.image(
+                                  image: const AssetImage(
+                                    '${constants.imagePath}'
+                                    'test_flight_badge.png',
+                                  ),
+                                  height: badgeHeight,
                                 ),
-                                height: badgeHeight,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: constants.macOsUrl,
-                      child: Semantics(
-                        label: t('landing_page.semantics_label_macos'),
-                        button: true,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Material(
-                            // Ensures the background remains unchanged.
-                            color: Colors.transparent,
-                            child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
-                              onTap: _launchMacOsUrl,
-                              child: Ink.image(
-                                image: const AssetImage(
-                                  '${constants.imagePath}mac_os_badge.png',
+                    if (kIsWeb ||
+                        defaultTargetPlatform == TargetPlatform.macOS ||
+                        defaultTargetPlatform == TargetPlatform.iOS)
+                      PopupMenuItem<String>(
+                        value: constants.macOsUrl,
+                        child: Semantics(
+                          label: t('landing_page.semantics_label_macos'),
+                          button: true,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Material(
+                              // Ensures the background remains unchanged.
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: splashColor,
+                                onTap: _launchMacOsUrl,
+                                child: Ink.image(
+                                  image: const AssetImage(
+                                    '${constants.imagePath}mac_os_badge.png',
+                                  ),
+                                  height: badgeHeight,
                                 ),
-                                height: badgeHeight,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
                   ];
                 },
               ),
@@ -248,7 +263,7 @@ class LandingPage extends StatelessWidget {
                     // Ensures the background remains unchanged.
                     color: Colors.transparent,
                     child: InkWell(
-                      splashColor: colorScheme.primary.withOpacity(0.2),
+                      splashColor: splashColor,
                       onTap: _launchGooglePlayUrl,
                       child: Ink.image(
                         image: const AssetImage(
