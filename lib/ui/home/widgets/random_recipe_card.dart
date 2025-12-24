@@ -37,8 +37,9 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
       _mealType = 'dinner';
     }
 
-    // List of days in the meal plan (1 to 35)
-    final int day = Random().nextInt(35) + 1;
+    // List of days in the meal plan, from 1 to 154, taken from
+    // assets/i18n/en.json.
+    final int day = Random().nextInt(154) + 1;
     _recipeKey = 'recipes_page.day_${day}_$_mealType';
   }
 
