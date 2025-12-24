@@ -118,6 +118,17 @@
     "intro": "For any questions or feedback, feel free to contact us at:",
     "email_label": "Email: "
   },
+  "health_information": {
+    "title": "Health information and sources",
+    "disclaimer": "This app provides general information about BMI and portion control and is not a substitute for professional medical advice. Always consult a qualified healthcare provider before making medical decisions.",
+    "sources_label": "Sources"
+  },
+  "health_sources": {
+    "who": "WHO — Obesity and overweight",
+    "who_url": "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
+    "cdc": "CDC — About Adult BMI",
+    "cdc_url": "https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/index.html"
+  },
   "button": {
     "privacy_policy": "Privacy Policy",
     "about_us": "About Us",
@@ -170,7 +181,14 @@
     "underweight_message": "You are underweight. 🥦💪 \nYou may need to eat more to maintain health.",
     "healthy_message": "You are in the healthy weight range. 🎉💚 \nKeep it up!",
     "overweight_message": "You are above the recommended weight range. 🍔⚠️\nSmall lifestyle adjustments can support long-term well-being.",
-    "obese_message": "You are in the obese range. 🍩🚨\nManaging portions could help stabilize your weight."
+    "obese_message": "You are in the obese range. 🍩🚨\nManaging portions could help stabilize your weight.",
+    "bmi_info_button_tooltip": "More info",
+    "bmi_sources_title": "BMI information and sources",
+    "bmi_sources_description": "BMI and weight categories are based on the World Health Organization (WHO) and the U.S. Centers for Disease Control and Prevention (CDC).",
+    "bmi_source_who": "WHO - Obesity and overweight",
+    "bmi_source_who_url": "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
+    "bmi_source_cdc": "CDC - About Adult BMI",
+    "bmi_source_cdc_url": "https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/index.html"
   },
   "home_page": {
     "enter_weight_instruction": "👉 Enter weight before your first meal.",
@@ -195,6 +213,10 @@
   "dialog": {
     "reset_data_title": "Reset Data",
     "reset_data_content": "Changing your details will affect your tracking. Do you want to start fresh and reset all data?"
+  },
+  "app": {
+    "medical_disclaimer_short": "This app is not medical advice and is not a substitute for professional medical care.",
+    "medical_disclaimer_full": "This app provides general information about BMI and portion control and is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider before making medical decisions."
   },
   "support_page": {
     "title": "Support",
@@ -304,7 +326,10 @@
     "tagline": "Your mindful eating companion - private, simple, and motivating."
   },
   "recipes_page": {
-    "disclaimer": "⚠️ Disclaimer: This meal plan is provided as a general example and inspiration only. It is based on commonly used weight‑loss meal structures and is not personalized. Use it if you need ideas for what to cook, but do not treat it as a medical or professional nutrition program. For a personalized plan tailored to your health needs, always consult a certified dietitian or healthcare professional.",
+    "disclaimer": "⚠️ Disclaimer: This meal plan is provided as a general example and inspiration only. It is based on commonly used weight‑loss meal structures and is not personalized. Use it if you need ideas for what to cook, but do not treat it as a medical or professional nutrition program. This is not medical advice and is not a substitute for professional medical care. Always consult a qualified healthcare provider before making any medical decisions.",
+    "disclaimer_info_tooltip": "More info",
+    "disclaimer_full_title": "Meal plan disclaimer",
+    "disclaimer_full": "This meal plan is provided as a general example and inspiration only. It is not medical advice and is not a substitute for professional medical care. It is not personalized to your health needs. Always consult a qualified healthcare provider or registered dietitian before making medical or diet changes.",
     "title": "Weight Loss Meal Plan",
     "week_1": "Week 1",
     "day_1": "Day 1",
@@ -564,8 +589,12 @@
   },
   "educational_content": {
     "title": "Educational Content",
+    "disclaimer_short": "⚠️ Note: The information in this section is general and educational only. It is not medical advice.",
+    "disclaimer_more_info_tooltip": "More info",
+    "disclaimer_full_title": "Educational content disclaimer",
+    "disclaimer_full": "The content is provided for educational purposes only and is not medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider before making medical decisions.",
     "what_is_portion_control_title": "What is portion control?",
-    "what_is_portion_control_content": "Portion control means managing how much you eat by measuring food weight in grams. It’s a simple, practical way to avoid overeating without counting calories.",
+    "what_is_portion_control_content": "Portion control is an approach to mindful eating based on measuring food weight in grams. In this app, portion control is represented as a numeric reference calculated from past food logs and body-weight entries. The app displays this information for self-observation only and does not provide recommendations or medical advice.",
     "why_grams_title": "Why grams matter more than calories?",
     "why_grams_content": "Grams describe the actual amount you put on your plate. Calories can vary widely between foods; weighing in grams keeps tracking consistent and makes portion adjustments practical.",
     "how_to_weigh_title": "How to weigh food correctly?",

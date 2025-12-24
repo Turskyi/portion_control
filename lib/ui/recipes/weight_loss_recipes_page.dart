@@ -1,9 +1,11 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/ui/recipes/widgets/day_card.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WeightLossRecipesPage extends StatelessWidget {
   const WeightLossRecipesPage({super.key});
@@ -26,9 +28,20 @@ class WeightLossRecipesPage extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 16),
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Text(
-                translate('recipes_page.disclaimer'),
-                style: Theme.of(context).textTheme.bodyMedium,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      translate('recipes_page.disclaimer'),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.info_outline),
+                    tooltip: translate('recipes_page.disclaimer_info_tooltip'),
+                    onPressed: () => _showDisclaimerDialog(context),
+                  ),
+                ],
               ),
             ),
           ),
@@ -437,6 +450,86 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _showDisclaimerDialog(BuildContext context) {
+    final Uri whoUri = Uri.parse(
+      translate('health_sources.who_url'),
+    );
+    final Uri cdcUri = Uri.parse(
+      translate('health_sources.cdc_url'),
+    );
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            translate('recipes_page.disclaimer_full_title'),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text.rich(
+                  TextSpan(
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium,
+                    children: <InlineSpan>[
+                      TextSpan(
+                        text:
+                            '${translate(
+                              'recipes_page.disclaimer_full',
+                            )} ',
+                      ),
+                      TextSpan(
+                        text: translate('health_sources.who'),
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(
+                            whoUri,
+                            mode: LaunchMode.externalApplication,
+                          ),
+                      ),
+                      const TextSpan(text: ' · '),
+                      TextSpan(
+                        text: translate('health_sources.cdc'),
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrl(
+                            cdcUri,
+                            mode: LaunchMode.externalApplication,
+                          ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: Navigator.of(context).pop,
+              child: Text(
+                MaterialLocalizations.of(
+                  context,
+                ).closeButtonLabel,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
