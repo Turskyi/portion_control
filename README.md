@@ -88,6 +88,44 @@ dart run build_runner clean
 dart run build_runner build --delete-conflicting-outputs
 ```
 
+#### Post-clone required files (important)
+
+After cloning the repository, some files are not versioned but are required for
+the app to run. Add the following files before building or running the app:
+
+1. `android/key.properties` with the following content (fill values as needed):
+
+```properties
+# dev debug environment variables
+dev.SIGNING_KEY_DEBUG_PATH=../keystore/portion_control_debug.keystore
+dev.SIGNING_KEY_DEBUG_PASSWORD=
+dev.SIGNING_KEY_DEBUG_KEY=portion_control_debug
+dev.SIGNING_KEY_DEBUG_KEY_PASSWORD=
+# production release environment variables
+production.SIGNING_KEY_RELEASE_PATH=../keystore/portion_control_release.keystore
+production.SIGNING_KEY_RELEASE_PASSWORD=
+production.SIGNING_KEY_RELEASE_KEY=portion_control_release
+production.SIGNING_KEY_RELEASE_KEY_PASSWORD=
+
+FIREBASE_ANDROID_APP_ID=
+
+FIREBASE_TOKEN=
+CODECOV_TOKEN=
+GOOGLE_SERVICES=
+RELEASE_KEYSTORE=
+DEBUG_KEYSTORE=
+KEY_PROPERTIES=
+```
+
+2. `android/keystore/portion_control_debug.keystore` (create or obtain the debug keystore)
+3. `android/keystore/portion_control_release.keystore` (create or obtain the release keystore)
+4. `android/app/google-services.json` (Firebase Android configuration file)
+
+**Notes:**
+
+- Keep these files out of version control.
+- Fill in passwords and IDs (e.g., Firebase App ID, tokens) in `android/key.properties` as appropriate.
+
 ### Running the App
 
 To run the app, use the following command in your terminal:
@@ -175,6 +213,10 @@ To contribute:
    ```
 
    You can get a free API key from [https://resend.com](https://resend.com).
+
+   **Also:** after cloning the repository add the unversioned files required to
+   run the app (see **"Post-clone required files"** in the **Getting Started**
+   section for details).
 
 3. Create a new branch (`git checkout -b feature-name`).
 4. Commit your changes (`git commit -am 'Add feature'`).
@@ -446,4 +488,3 @@ For any inquiries, please contact
     <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" height="80" style="vertical-align: middle;" alt="app store badge"/>
   </a>
 </p>
-
