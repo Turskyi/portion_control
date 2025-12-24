@@ -171,10 +171,10 @@ class _HomePageContentState extends State<HomePageContent> {
             builder: (BuildContext context, BoxConstraints constraints) {
               final double maxWidthAvailable = constraints.maxWidth;
               final double width = math.min(
-                constants.wideScreenContentWidth,
+                constants.kWideScreenContentWidth,
                 maxWidthAvailable.isFinite
                     ? maxWidthAvailable
-                    : constants.wideScreenContentWidth,
+                    : constants.kWideScreenContentWidth,
               );
 
               return Center(

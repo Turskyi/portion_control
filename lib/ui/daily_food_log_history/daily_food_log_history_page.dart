@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -30,11 +32,18 @@ class DailyFoodLogHistoryPage extends StatelessWidget {
                 ),
               );
             }
+
             final double screenWidth = MediaQuery.widthOf(context);
             final bool isWide = screenWidth > constants.wideScreenThreshold;
+
+            // Ensure padding is never negative using math.max
             final double horizontalPadding = isWide
-                ? (screenWidth - constants.wideScreenContentWidth) / 2
+                ? math.max(
+                    0.0,
+                    (screenWidth - constants.kWideScreenContentWidth) / 2,
+                  )
                 : constants.kHorizontalIndent;
+
             return ListView.separated(
               padding: EdgeInsets.fromLTRB(
                 horizontalPadding,

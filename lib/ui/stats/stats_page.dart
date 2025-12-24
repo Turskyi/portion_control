@@ -26,10 +26,10 @@ class StatsPage extends StatelessWidget {
           } else if (state is StatsError) {
             return Center(child: Text(state.message));
           } else if (state is StatsLoaded) {
-            final double screenWidth = MediaQuery.sizeOf(context).width;
-            final bool isWide = screenWidth > constants.wideScreenThreshold;
-            final double horizontalPadding = isWide
-                ? (screenWidth - constants.wideScreenContentWidth) / 2
+            final double screenWidth = MediaQuery.widthOf(context);
+            final double horizontalPadding =
+                screenWidth > constants.kWideScreenContentWidth
+                ? (screenWidth - constants.kWideScreenContentWidth) / 2
                 : constants.kHorizontalIndent;
             final TextTheme textTheme = Theme.of(context).textTheme;
             return SingleChildScrollView(

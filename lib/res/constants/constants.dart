@@ -57,7 +57,7 @@ const double safeMinimumFoodIntakeG = 1499.0;
 const double wideScreenThreshold = 600.0;
 
 // Max content width for wide layout.
-const double wideScreenContentWidth = 800.0;
+const double kWideScreenContentWidth = 800.0;
 
 const String mailToScheme = 'mailto';
 
