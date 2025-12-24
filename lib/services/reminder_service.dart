@@ -47,8 +47,9 @@ class ReminderService {
     // Initialize timezone data
     tzdata.initializeTimeZones();
     try {
-      final String timeZoneName = await FlutterTimezone.getLocalTimezone()
-          .then((info) => info.identifier);
+      final String timeZoneName = await FlutterTimezone.getLocalTimezone().then(
+        (info) => info.identifier,
+      );
       debugPrint('ReminderService: Detected timezone: $timeZoneName');
       tz.setLocalLocation(tz.getLocation(timeZoneName));
     } catch (e, s) {
@@ -66,7 +67,8 @@ class ReminderService {
     if (Platform.isIOS) {
       final bool? result = await _plugin
           .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
+            IOSFlutterLocalNotificationsPlugin
+          >()
           ?.requestPermissions(
             alert: true,
             badge: true,
@@ -76,7 +78,8 @@ class ReminderService {
     } else if (Platform.isMacOS) {
       final bool? result = await _plugin
           .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
+            MacOSFlutterLocalNotificationsPlugin
+          >()
           ?.requestPermissions(
             alert: true,
             badge: true,
@@ -85,11 +88,13 @@ class ReminderService {
       return result ?? false;
     } else if (Platform.isAndroid) {
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-          _plugin.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+          _plugin
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
 
-      final bool? granted =
-          await androidImplementation?.requestNotificationsPermission();
+      final bool? granted = await androidImplementation
+          ?.requestNotificationsPermission();
       return granted ?? false;
     }
     return false;
