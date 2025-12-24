@@ -849,6 +849,83 @@ class WeightLossRecipesPage extends StatelessWidget {
               translate('recipes_page.notes_week_10_sweets'),
             ],
           ),
+          const SizedBox(height: 16),
+          DayCard(
+            title: translate('recipes_page.week_11'),
+            dayTitle: translate('recipes_page.day_71'),
+            meals: <String>[
+              translate('recipes_page.day_71_breakfast'),
+              translate('recipes_page.day_71_second_breakfast'),
+              translate('recipes_page.day_71_lunch'),
+            ],
+            total: translate('recipes_page.day_71_total'),
+          ),
+          DayCard(
+            dayTitle: translate('recipes_page.day_72'),
+            meals: <String>[
+              translate('recipes_page.day_72_diet'),
+            ],
+            total: translate('recipes_page.day_72_total'),
+          ),
+          DayCard(
+            dayTitle: translate('recipes_page.day_73'),
+            meals: <String>[
+              translate('recipes_page.day_73_breakfast'),
+              translate('recipes_page.day_73_second_breakfast'),
+              translate('recipes_page.day_73_lunch'),
+              translate('recipes_page.day_73_snack'),
+              translate('recipes_page.day_73_dinner'),
+            ],
+            total: translate('recipes_page.day_73_total'),
+          ),
+          DayCard(
+            dayTitle: translate('recipes_page.day_74'),
+            meals: <String>[
+              translate('recipes_page.day_74_breakfast'),
+              translate('recipes_page.day_74_second_breakfast'),
+              translate('recipes_page.day_74_lunch'),
+              translate('recipes_page.day_74_snack'),
+              translate('recipes_page.day_74_dinner'),
+            ],
+            total: translate('recipes_page.day_74_total'),
+          ),
+          DayCard(
+            dayTitle: translate('recipes_page.day_75'),
+            meals: <String>[
+              translate('recipes_page.day_75_breakfast'),
+              translate('recipes_page.day_75_lunch'),
+              translate('recipes_page.day_75_snack'),
+              translate('recipes_page.day_75_dinner'),
+            ],
+            total: translate('recipes_page.day_75_total'),
+          ),
+          DayCard(
+            dayTitle: translate('recipes_page.day_76'),
+            meals: <String>[
+              translate('recipes_page.day_76_breakfast'),
+              translate('recipes_page.day_76_lunch'),
+              translate('recipes_page.day_76_snack'),
+              translate('recipes_page.day_76_dinner'),
+            ],
+            total: translate('recipes_page.day_76_total'),
+          ),
+          DayCard(
+            dayTitle: translate('recipes_page.day_77'),
+            meals: <String>[
+              translate('recipes_page.day_77_breakfast'),
+              translate('recipes_page.day_77_second_breakfast'),
+              translate('recipes_page.day_77_lunch'),
+              translate('recipes_page.day_77_snack'),
+              translate('recipes_page.day_77_dinner'),
+            ],
+            total: translate('recipes_page.day_77_total'),
+          ),
+          DayCard(
+            title: translate('recipes_page.notes_week_11_title'),
+            meals: <String>[
+              translate('recipes_page.notes_week_11_sweets'),
+            ],
+          ),
         ],
       ),
     );
