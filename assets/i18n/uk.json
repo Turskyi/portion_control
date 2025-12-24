@@ -266,7 +266,10 @@
   "reminders": {
     "title": "Сповіщення",
     "log_weight_each_morning": "Нагадувати щоранку записати вагу",
-    "pick_time": "Час нагадування"
+    "pick_time": "Час нагадування",
+    "daily_reminders_description": "Щоденні нагадування записати вагу",
+    "daily_reminder_body": "Не забудьте записати свою вагу сьогодні!",
+    "channel_name": "Нагадування про вагу"
   },
   "daily_food_log_history": {
     "title": "Історія щоденних записів їжі",

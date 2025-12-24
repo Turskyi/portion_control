@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
@@ -48,7 +49,7 @@ class ReminderService {
     tzdata.initializeTimeZones();
     try {
       final String timeZoneName = await FlutterTimezone.getLocalTimezone().then(
-        (info) => info.identifier,
+        (TimezoneInfo info) => info.identifier,
       );
       debugPrint('ReminderService: Detected timezone: $timeZoneName');
       tz.setLocalLocation(tz.getLocation(timeZoneName));
@@ -124,14 +125,18 @@ class ReminderService {
     }
 
     debugPrint(
-      'ReminderService: Scheduling notification for $scheduled (local). Now is $now',
+      'ReminderService: Scheduling notification for $scheduled (local). '
+      'Now is $now',
     );
 
     final AndroidNotificationDetails androidDetails =
-        const AndroidNotificationDetails(
-          'weight_reminder_channel_v2', // Bumped version to force update
-          'Weight reminders',
-          channelDescription: 'Daily reminders to log body weight',
+        AndroidNotificationDetails(
+          // NEVER translate the ID
+          'weight_reminder_channel_v2',
+          translate('reminders.channel_name'),
+          channelDescription: translate(
+            'reminders.daily_reminders_description',
+          ),
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',

@@ -103,6 +103,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
       if (granted) {
         await ReminderService.instance.scheduleDailyWeightReminder(
           time: _time,
+          body: translate('reminders.daily_reminder_body'),
         );
       }
     } else {

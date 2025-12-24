@@ -264,7 +264,10 @@
   "reminders": {
     "title": "Reminders",
     "log_weight_each_morning": "Remind me to log weight each morning",
-    "pick_time": "Reminder time"
+    "pick_time": "Reminder time",
+    "daily_reminders_description": "Daily reminders to log body weight",
+    "daily_reminder_body": "Don't forget to log your weight today!",
+    "channel_name": "Weight reminders"
   },
   "daily_food_log_history": {
     "title": "Daily Food Log History",
