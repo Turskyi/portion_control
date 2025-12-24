@@ -1,6 +1,8 @@
 PODS:
   - flutter_local_notifications (0.0.1):
     - FlutterMacOS
+  - flutter_timezone (0.1.0):
+    - FlutterMacOS
   - FlutterMacOS (1.0.0)
   - package_info_plus (0.0.1):
     - FlutterMacOS
@@ -40,6 +42,7 @@ PODS:
 
 DEPENDENCIES:
   - flutter_local_notifications (from `Flutter/ephemeral/.symlinks/plugins/flutter_local_notifications/macos`)
+  - flutter_timezone (from `Flutter/ephemeral/.symlinks/plugins/flutter_timezone/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
@@ -54,6 +57,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   flutter_local_notifications:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_local_notifications/macos
+  flutter_timezone:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_timezone/macos
   FlutterMacOS:
     :path: Flutter/ephemeral
   package_info_plus:
@@ -69,6 +74,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   flutter_local_notifications: 4ccab5b7a22835214a6672e3f9c5e8ae207dab36
+  flutter_timezone: 6b906d1740654acb16e50b639835628fea851037
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   package_info_plus: 12f1c5c2cfe8727ca46cbd0b26677728972d9a5b
   path_provider_foundation: 0b743cbb62d8e47eab856f09262bb8c1ddcfe6ba
@@ -77,6 +83,6 @@ SPEC CHECKSUMS:
   sqlite3_flutter_libs: 86f82662868ee26ff3451f73cac9c5fc2a1f57fa
   url_launcher_macos: 175a54c831f4375a6cf895875f716ee5af3888ce
 
-PODFILE CHECKSUM: 9ebaf0ce3d369aaa26a9ea0e159195ed94724cf3
+PODFILE CHECKSUM: a9276febe4c74a4b6b40336856d7d2b884d4ec3c
 
 COCOAPODS: 1.16.2
