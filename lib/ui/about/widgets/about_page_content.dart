@@ -112,7 +112,7 @@ class AboutPageContent extends StatelessWidget {
 
   void _launchEmailClient() {
     final Uri emailLaunchUri = Uri(
-      scheme: res.mailToScheme,
+      scheme: res.kMailToScheme,
       path: '${res.supportEmailPrefix}${res.companyDomain}',
     );
     launchUrl(emailLaunchUri);

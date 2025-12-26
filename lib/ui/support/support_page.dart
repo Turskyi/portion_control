@@ -63,7 +63,7 @@ class SupportPage extends StatelessWidget {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           final Uri emailLaunchUri = Uri(
-                            scheme: res.mailToScheme,
+                            scheme: res.kMailToScheme,
                             path:
                                 '${res.supportEmailPrefix}${res.companyDomain}',
                           );

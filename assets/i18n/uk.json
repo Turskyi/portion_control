@@ -75,6 +75,7 @@
   },
   "feedback": {
     "app_feedback": "Відгук про додаток",
+    "appFeedback": "Відгук про додаток",
     "whatKind": "Який тип відгуку ви хочете надіслати?",
     "whatIsYourFeedback": "Який ваш відгук?",
     "howDoesThisFeel": "Які це викликає у вас почуття?",
@@ -103,7 +104,9 @@
     "failed_to_submit_user_details": "Не вдалося надіслати дані користувача.",
     "invalid_body_weight": "Недійсна вага тіла.",
     "body_weight_too_low": "Вага тіла не повинна бути нижчою за {minBodyWeight} кг.",
-    "failed_to_submit_body_weight": "Не вдалося надіслати вагу тіла: {errorDetails}."
+    "failed_to_submit_body_weight": "Не вдалося надіслати вагу тіла: {errorDetails}.",
+    "invalid_height": "Некоректний формат зросту",
+    "invalid_food_weight": "Некоректна вага їжі"
   },
   "about_us": {
     "title": "Про нас",

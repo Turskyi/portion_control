@@ -155,13 +155,13 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         } else if (kIsWeb || Platform.isMacOS) {
           // Handle email sending on the web and MacOS using a `mailto` link.
           final Uri emailLaunchUri = Uri(
-            scheme: constants.mailToScheme,
+            scheme: constants.kMailToScheme,
             path: constants.supportEmail,
             queryParameters: <String, String>{
-              constants.subjectParameter:
+              constants.kSubjectParameter:
                   '${translate('feedback.app_feedback')}: '
                   '${packageInfo.appName}',
-              constants.bodyParameter: feedbackBody.toString(),
+              constants.kBodyParameter: feedbackBody.toString(),
             },
           );
 
@@ -281,7 +281,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   ) async {
     await _homeWidgetService.requestPinWidget(
       name: 'PortionControlWidget',
-      androidName: constants.androidWidgetName,
+      androidName: constants.kAndroidWidgetName,
       qualifiedAndroidName:
           'com.turskyi.portion_control.glance.HomeWidgetReceiver',
     );
@@ -370,7 +370,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         _homeWidgetService.updateWidget(
           name: 'PortionControlWidget',
           iOSName: constants.iOSWidgetName,
-          androidName: constants.androidWidgetName,
+          androidName: constants.kAndroidWidgetName,
         );
         if (Platform.isAndroid) {
           _homeWidgetService.updateWidget(

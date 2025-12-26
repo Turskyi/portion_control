@@ -59,7 +59,7 @@ const double wideScreenThreshold = 600.0;
 // Max content width for wide layout.
 const double kWideScreenContentWidth = 800.0;
 
-const String mailToScheme = 'mailto';
+const String kMailToScheme = 'mailto';
 
 const String telegramUrl = 'https://t.me/+Zmd6QYP3iXc2MjZi';
 
@@ -71,13 +71,13 @@ const String screenSizeProperty = 'screenSize';
 // Expires Mar 13, 2026.
 const String resendEmailDomain = 'kima.website';
 
-const String subjectParameter = 'subject';
+const String kSubjectParameter = 'subject';
 
-const String bodyParameter = 'body';
+const String kBodyParameter = 'body';
 
 const String appleAppGroupId = 'group.dmytrowidget';
 const String iOSWidgetName = 'PortionControlWidgets';
-const String androidWidgetName = 'PortionControlWidget';
+const String kAndroidWidgetName = 'PortionControlWidget';
 
 /// BMI classification thresholds (kg/m²).
 /// Source: https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index

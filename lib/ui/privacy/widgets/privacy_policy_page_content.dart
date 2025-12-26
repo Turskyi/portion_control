@@ -70,7 +70,7 @@ class PrivacyPolicyPageContent extends StatelessWidget {
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       final Uri emailLaunchUri = Uri(
-                        scheme: constants.mailToScheme,
+                        scheme: constants.kMailToScheme,
                         path: 'privacy@${constants.companyDomain}',
                       );
                       launchUrl(emailLaunchUri);

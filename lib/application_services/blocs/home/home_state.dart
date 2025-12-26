@@ -229,6 +229,7 @@ class HomeLoading extends HomeState {
     super.userDetails = const UserDetails(
       heightInCm: 0,
       gender: Gender.preferNotToSay,
+      dateOfBirth: null,
     ),
     super.bodyWeight = 0,
     super.yesterdayConsumedTotal = 0,

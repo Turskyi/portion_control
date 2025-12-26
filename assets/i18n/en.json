@@ -75,6 +75,7 @@
   },
   "feedback": {
     "app_feedback": "App Feedback",
+    "appFeedback": "App Feedback",
     "whatKind": "What kind of feedback do you want to give?",
     "whatIsYourFeedback": "What is your feedback?",
     "howDoesThisFeel": "How does this make you feel?",
@@ -102,7 +103,9 @@
     "failed_to_submit_user_details": "Failed to submit user details.",
     "invalid_body_weight": "Invalid body weight.",
     "body_weight_too_low": "Body weight should not be below {minBodyWeight} kg.",
-    "failed_to_submit_body_weight": "Failed to submit body weight: {errorDetails}."
+    "failed_to_submit_body_weight": "Failed to submit body weight: {errorDetails}.",
+    "invalid_height": "Invalid height format",
+    "invalid_food_weight": "Invalid food weight"
   },
   "about_us": {
     "title": "About Us",

@@ -224,7 +224,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               errorMessage:
                   'Error: Entered body weight is below the '
                   'biologically possible limit. Please verify your input.',
-              userDetails: state.userDetails,
+              userDetails: userDetails,
               bodyWeight: todayBodyWeight,
               bodyWeightEntries: state.bodyWeightEntries,
               foodEntries: state.foodEntries,
@@ -239,7 +239,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(
           LoadingError(
             errorMessage: '$e',
-            userDetails: state.userDetails,
+            userDetails: userDetails,
             bodyWeight: todayBodyWeight,
             bodyWeightEntries: state.bodyWeightEntries,
             foodEntries: state.foodEntries,
@@ -252,7 +252,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(
         HomeLoaded(
-          userDetails: state.userDetails,
+          userDetails: userDetails,
           bodyWeight: state.bodyWeight,
           bodyWeightEntries: state.bodyWeightEntries,
           foodEntries: state.foodEntries,
@@ -318,7 +318,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(
         DetailsError(
-          errorMessage: 'Invalid details',
+          errorMessage: translate('error.invalid_height'),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -407,7 +407,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(
         FoodWeightError(
-          errorMessage: 'Invalid food weight',
+          errorMessage: translate('error.invalid_food_weight'),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -736,7 +736,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       emit(
         FoodWeightError(
-          errorMessage: 'Food weight is invalid',
+          errorMessage: translate('error.invalid_food_weight'),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
@@ -1044,13 +1044,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (kIsWeb) {
           // Handle email sending on the web using a `mailto` link.
           final Uri emailLaunchUri = Uri(
-            scheme: 'mailto',
+            scheme: constants.kMailToScheme,
             path: constants.supportEmail,
             queryParameters: <String, String>{
-              'subject':
+              constants.kSubjectParameter:
                   '${translate('feedback.appFeedback')}: '
                   '${packageInfo.appName}',
-              'body': feedbackBody.toString(),
+              constants.kBodyParameter: feedbackBody.toString(),
             },
           );
 
@@ -1063,9 +1063,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           // TODO: move this thing to "data".
           final Resend resend = Resend.instance;
           await resend.sendEmail(
-            from:
-                'Do Not Reply ${constants.appName} '
-                '<no-reply@${constants.resendEmailDomain}>',
+            from: constants.feedbackEmailSender,
             to: <String>[constants.supportEmail],
             subject:
                 '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
@@ -1166,7 +1164,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         _homeWidgetService.updateWidget(
           name: 'PortionControlWidget',
           iOSName: constants.iOSWidgetName,
-          androidName: constants.androidWidgetName,
+          androidName: constants.kAndroidWidgetName,
         );
         if (Platform.isAndroid) {
           _homeWidgetService.updateWidget(

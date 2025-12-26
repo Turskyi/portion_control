@@ -5,7 +5,7 @@ class UserDetails {
   const UserDetails({
     required this.heightInCm,
     required this.gender,
-    this.dateOfBirth,
+    required this.dateOfBirth,
   });
 
   const UserDetails.empty()

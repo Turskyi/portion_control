@@ -70,10 +70,9 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                       value: state is DetailsSubmittedState
                           ? dateOfBirth
                           : null,
-                      onTap: () => _pickDate(
-                        dateOfBirthText: dateOfBirth,
-                        dateOfBirthDateTime: state.dateOfBirth,
-                      ),
+                      onTap: () {
+                        _pickDate(dateOfBirthDateTime: state.dateOfBirth);
+                      },
                     ),
                   ),
                 Expanded(
@@ -104,9 +103,9 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
   }
 
   Future<void> _pickDate({
-    required String dateOfBirthText,
     required DateTime? dateOfBirthDateTime,
   }) async {
+    final String dateOfBirthText = dateOfBirthDateTime?.toReadableDate() ?? '';
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: dateOfBirthText.isNotEmpty
