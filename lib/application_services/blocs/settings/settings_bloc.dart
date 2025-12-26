@@ -115,13 +115,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           );
         } else if (kIsWeb || Platform.isMacOS) {
           final Uri emailLaunchUri = Uri(
-            scheme: constants.mailToScheme,
+            scheme: constants.kMailToScheme,
             path: constants.supportEmail,
             queryParameters: <String, Object?>{
-              constants.subjectParameter:
+              constants.kSubjectParameter:
                   '${translate('feedback.app_feedback')}: '
                   '${packageInfo.appName}',
-              constants.bodyParameter: feedbackBody.toString(),
+              constants.kBodyParameter: feedbackBody.toString(),
             },
           );
           try {

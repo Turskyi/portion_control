@@ -13,7 +13,7 @@ class ResponsiveContent extends StatelessWidget {
         if (constraints.maxWidth > constants.wideScreenThreshold) {
           return Center(
             child: SizedBox(
-              width: constants.wideScreenContentWidth,
+              width: constants.kWideScreenContentWidth,
               child: child,
             ),
           );

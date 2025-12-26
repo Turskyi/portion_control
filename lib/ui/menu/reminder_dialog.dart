@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -91,10 +93,17 @@ class _ReminderDialogState extends State<ReminderDialog> {
     );
 
     if (_enabled) {
-      if (await Permission.notification.request().isGranted &&
-          await Permission.scheduleExactAlarm.request().isGranted) {
+      bool granted = await ReminderService.instance
+          .requestNotificationPermissions();
+
+      if (granted && Platform.isAndroid) {
+        granted = await Permission.scheduleExactAlarm.request().isGranted;
+      }
+
+      if (granted) {
         await ReminderService.instance.scheduleDailyWeightReminder(
           time: _time,
+          body: translate('reminders.daily_reminder_body'),
         );
       }
     } else {

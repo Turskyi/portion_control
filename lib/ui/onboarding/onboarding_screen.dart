@@ -84,12 +84,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   contentKey: 'onboarding.page3.content',
                   imageAsset: '${constants.imagePath}onboarding_journey.png',
                 ),
+                // Explain local-only storage so users are not
+                // surprised when their data is cleared
+                // (uninstall/device clear).
+                const OnboardingPage(
+                  titleKey: 'onboarding.page4.title',
+                  contentKey: 'onboarding.page4.content',
+                ),
               ],
             ),
           ),
           SmoothPageIndicator(
             controller: _pageController,
-            count: 3,
+            count: 4,
             effect: ExpandingDotsEffect(
               activeDotColor: theme.colorScheme.primary,
               dotHeight: 8,
@@ -101,6 +108,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             builder: (BuildContext _, int value, Widget? _) {
               return OnboardingControls(
                 currentPage: value,
+                totalPages: 4,
                 onNextPressed: _onNextPressed,
                 onGetStartedPressed: _onGetStartedPressed,
               );

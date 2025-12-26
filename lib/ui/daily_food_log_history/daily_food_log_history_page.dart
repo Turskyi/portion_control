@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -22,11 +24,26 @@ class DailyFoodLogHistoryPage extends StatelessWidget {
           if (state is DailyFoodLogHistoryLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is DailyFoodLogHistoryLoaded) {
-            final double screenWidth = MediaQuery.sizeOf(context).width;
+            if (state.days.isEmpty) {
+              return Center(
+                child: Text(
+                  translate('no_meals_logged'),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              );
+            }
+
+            final double screenWidth = MediaQuery.widthOf(context);
             final bool isWide = screenWidth > constants.wideScreenThreshold;
+
+            // Ensure padding is never negative using math.max
             final double horizontalPadding = isWide
-                ? (screenWidth - constants.wideScreenContentWidth) / 2
+                ? math.max(
+                    0.0,
+                    (screenWidth - constants.kWideScreenContentWidth) / 2,
+                  )
                 : constants.kHorizontalIndent;
+
             return ListView.separated(
               padding: EdgeInsets.fromLTRB(
                 horizontalPadding,

@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -24,7 +25,9 @@ class LandingPage extends StatelessWidget {
     final TextTheme textTheme = theme.textTheme;
     final ColorScheme colorScheme = theme.colorScheme;
     final double? titleMediumSize = textTheme.titleMedium?.fontSize;
-
+    final Color splashColor = colorScheme.primary.withOpacity(
+      0.2,
+    );
     // Helper for translation.
     String t(String key) => translate(key);
     return GradientBackgroundScaffold(
@@ -52,9 +55,7 @@ class LandingPage extends StatelessWidget {
               SizedBox(
                 height: 50,
                 child: DefaultTextStyle(
-                  style:
-                      Theme.of(context).textTheme.bodyLarge ??
-                      const TextStyle(),
+                  style: textTheme.bodyLarge ?? const TextStyle(),
                   child: AnimatedTextKit(
                     repeatForever: true,
                     animatedTexts: <AnimatedText>[
@@ -85,13 +86,7 @@ class LandingPage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: () {
-                  final String routeName =
-                      localDataSource.isOnboardingCompleted()
-                      ? AppRoute.home.path
-                      : AppRoute.onboarding.path;
-                  Navigator.of(context).pushNamed(routeName);
-                },
+                onPressed: () => _navigateToNextScreen(context),
                 child: Text(t('landing_page.get_started_button')),
               ),
             ],
@@ -104,36 +99,17 @@ class LandingPage extends StatelessWidget {
               PopupMenuButton<String>(
                 icon: Icon(Icons.more_horiz, color: colorScheme.primary),
                 onSelected: (String result) {
-                  if (result == 'language') {
-                    _showLanguageSelectionDialog(context);
-                  } else if (result == AppRoute.privacyPolity.name) {
-                    Navigator.pushNamed(context, AppRoute.privacyPolity.path);
-                  } else if (result == AppRoute.about.name) {
-                    Navigator.pushNamed(context, AppRoute.about.path);
-                  } else if (result == AppRoute.support.name) {
-                    Navigator.pushNamed(context, AppRoute.support.path);
-                  } else if (result == constants.googlePlayUrl) {
-                    launchUrl(
-                      Uri.parse(constants.googlePlayUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  } else if (result == constants.testFlightUrl) {
-                    launchUrl(
-                      Uri.parse(constants.testFlightUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  } else if (result == constants.macOsUrl) {
-                    launchUrl(
-                      Uri.parse(constants.macOsUrl),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  }
+                  _onMenuItemSelected(context: context, result: result);
                 },
                 itemBuilder: (BuildContext _) {
                   final double badgeHeight = 40.0;
+
+                  final bool showGooglePlayLink =
+                      kIsWeb || defaultTargetPlatform == TargetPlatform.android;
+
                   return <PopupMenuEntry<String>>[
                     PopupMenuItem<String>(
-                      value: 'language',
+                      value: constants.kLanguageValue,
                       child: Text(t('language')),
                     ),
                     const PopupMenuDivider(),
@@ -150,79 +126,87 @@ class LandingPage extends StatelessWidget {
                       child: Text(t('landing_page.menu_item_support')),
                     ),
                     const PopupMenuDivider(),
-                    PopupMenuItem<String>(
-                      value: constants.googlePlayUrl,
-                      child: Semantics(
-                        label: t('landing_page.semantics_label_google_play'),
-                        button: true,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Material(
-                            // Ensures the background remains unchanged.
-                            color: Colors.transparent,
-                            child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
-                              onTap: _launchGooglePlayUrl,
-                              child: Ink.image(
-                                image: const AssetImage(
-                                  '${constants.imagePath}play_store_badge.png',
+                    if (showGooglePlayLink)
+                      PopupMenuItem<String>(
+                        value: constants.googlePlayUrl,
+                        child: Semantics(
+                          label: t('landing_page.semantics_label_google_play'),
+                          button: true,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Material(
+                              // Ensures the background remains unchanged.
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: splashColor,
+                                onTap: _launchGooglePlayUrl,
+                                child: Ink.image(
+                                  image: const AssetImage(
+                                    '${constants.imagePath}'
+                                    'play_store_badge.png',
+                                  ),
+                                  height: badgeHeight,
+                                  fit: BoxFit.fitHeight,
                                 ),
-                                height: badgeHeight,
-                                fit: BoxFit.fitHeight,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: constants.testFlightUrl,
-                      child: Semantics(
-                        label: t('landing_page.semantics_label_testflight'),
-                        button: true,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Material(
-                            // Ensures the background remains unchanged.
-                            color: Colors.transparent,
-                            child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
-                              onTap: _launchTestFlightUrl,
-                              child: Ink.image(
-                                image: const AssetImage(
-                                  '${constants.imagePath}test_flight_badge.png',
+                    if (kIsWeb ||
+                        defaultTargetPlatform != TargetPlatform.android)
+                      PopupMenuItem<String>(
+                        value: constants.testFlightUrl,
+                        child: Semantics(
+                          label: t('landing_page.semantics_label_testflight'),
+                          button: true,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Material(
+                              // Ensures the background remains unchanged.
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: splashColor,
+                                onTap: _launchTestFlightUrl,
+                                child: Ink.image(
+                                  image: const AssetImage(
+                                    '${constants.imagePath}'
+                                    'test_flight_badge.png',
+                                  ),
+                                  height: badgeHeight,
                                 ),
-                                height: badgeHeight,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: constants.macOsUrl,
-                      child: Semantics(
-                        label: t('landing_page.semantics_label_macos'),
-                        button: true,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Material(
-                            // Ensures the background remains unchanged.
-                            color: Colors.transparent,
-                            child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
-                              onTap: _launchMacOsUrl,
-                              child: Ink.image(
-                                image: const AssetImage(
-                                  '${constants.imagePath}mac_os_badge.png',
+                    if (kIsWeb ||
+                        defaultTargetPlatform == TargetPlatform.macOS ||
+                        defaultTargetPlatform == TargetPlatform.iOS)
+                      PopupMenuItem<String>(
+                        value: constants.macOsUrl,
+                        child: Semantics(
+                          label: t('landing_page.semantics_label_macos'),
+                          button: true,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Material(
+                              // Ensures the background remains unchanged.
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: splashColor,
+                                onTap: _launchMacOsUrl,
+                                child: Ink.image(
+                                  image: const AssetImage(
+                                    '${constants.imagePath}mac_os_badge.png',
+                                  ),
+                                  height: badgeHeight,
                                 ),
-                                height: badgeHeight,
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
                   ];
                 },
               ),
@@ -279,7 +263,7 @@ class LandingPage extends StatelessWidget {
                     // Ensures the background remains unchanged.
                     color: Colors.transparent,
                     child: InkWell(
-                      splashColor: colorScheme.primary.withOpacity(0.2),
+                      splashColor: splashColor,
                       onTap: _launchGooglePlayUrl,
                       child: Ink.image(
                         image: const AssetImage(
@@ -343,29 +327,66 @@ class LandingPage extends StatelessWidget {
     );
   }
 
-  void _launchMacOsUrl() {
-    launchUrl(
+  Future<void> _navigateToNextScreen(BuildContext context) {
+    final String routeName = localDataSource.isOnboardingCompleted()
+        ? AppRoute.home.path
+        : AppRoute.onboarding.path;
+    return Navigator.of(context).pushNamed<void>(routeName);
+  }
+
+  void _onMenuItemSelected({
+    required BuildContext context,
+    required String result,
+  }) {
+    if (result == constants.kLanguageValue) {
+      _showLanguageSelectionDialog(context);
+    } else if (result == AppRoute.privacyPolity.name) {
+      Navigator.pushNamed(context, AppRoute.privacyPolity.path);
+    } else if (result == AppRoute.about.name) {
+      Navigator.pushNamed(context, AppRoute.about.path);
+    } else if (result == AppRoute.support.name) {
+      Navigator.pushNamed(context, AppRoute.support.path);
+    } else if (result == constants.googlePlayUrl) {
+      launchUrl(
+        Uri.parse(constants.googlePlayUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } else if (result == constants.testFlightUrl) {
+      launchUrl(
+        Uri.parse(constants.testFlightUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    } else if (result == constants.macOsUrl) {
+      launchUrl(
+        Uri.parse(constants.macOsUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    }
+  }
+
+  Future<bool> _launchMacOsUrl() {
+    return launchUrl(
       Uri.parse(constants.macOsUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
-  void _launchGooglePlayUrl() {
-    launchUrl(
+  Future<bool> _launchGooglePlayUrl() {
+    return launchUrl(
       Uri.parse(constants.googlePlayUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
-  void _launchTestFlightUrl() {
-    launchUrl(
+  Future<bool> _launchTestFlightUrl() {
+    return launchUrl(
       Uri.parse(constants.testFlightUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
-  void _showLanguageSelectionDialog(BuildContext context) {
-    showDialog(
+  Future<void> _showLanguageSelectionDialog(BuildContext context) {
+    return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return BlocProvider<SettingsBloc>(
@@ -375,6 +396,10 @@ class LandingPage extends StatelessWidget {
           child: BlocBuilder<SettingsBloc, SettingsState>(
             builder: (BuildContext context, SettingsState state) {
               final Language currentLanguage = state.language;
+              final TextStyle? headlineMedium = Theme.of(
+                context,
+              ).textTheme.headlineMedium;
+              final double horizontalPadding = 12.0;
               return AlertDialog(
                 title: Text(translate('select_language')),
                 content: Column(
@@ -384,6 +409,13 @@ class LandingPage extends StatelessWidget {
                       title: Text(translate('english')),
                       value: Language.en,
                       groupValue: currentLanguage,
+                      secondary: Text(
+                        Language.en.flag,
+                        style: headlineMedium,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
+                      ),
                       onChanged: (Language? newLanguage) {
                         if (newLanguage != null) {
                           _changeLanguage(
@@ -394,9 +426,16 @@ class LandingPage extends StatelessWidget {
                       },
                     ),
                     RadioListTile<Language>(
-                      title: const Text('Українська'),
+                      title: Text(translate('ukrainian')),
                       value: Language.uk,
                       groupValue: currentLanguage,
+                      secondary: Text(
+                        Language.uk.flag,
+                        style: headlineMedium,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
+                      ),
                       onChanged: (Language? newLanguage) {
                         if (newLanguage != null) {
                           _changeLanguage(
@@ -416,11 +455,11 @@ class LandingPage extends StatelessWidget {
     );
   }
 
-  void _changeLanguage({
+  Future<void> _changeLanguage({
     required BuildContext context,
     required Language newLanguage,
   }) {
-    changeLocale(context, newLanguage.isoLanguageCode)
+    return changeLocale(context, newLanguage.isoLanguageCode)
     // The returned value is always `null`.
     .then((Object? _) {
       if (context.mounted) {

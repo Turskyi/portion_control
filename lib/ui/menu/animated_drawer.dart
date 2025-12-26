@@ -289,8 +289,12 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
             )..add(const LoadingInitialMenuStateEvent());
           },
           child: BlocBuilder<MenuBloc, MenuState>(
-            builder: (BuildContext _, MenuState state) {
+            builder: (BuildContext context, MenuState state) {
               final Language currentLanguage = state.language;
+              final TextStyle? headlineMedium = Theme.of(
+                context,
+              ).textTheme.headlineMedium;
+              final double horizontalPadding = 12.0;
               return AlertDialog(
                 title: Text(translate('select_language')),
                 content: Column(
@@ -300,12 +304,27 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                       title: Text(translate('english')),
                       value: Language.en,
                       groupValue: currentLanguage,
+                      secondary: Text(
+                        Language.en.flag,
+                        style: headlineMedium,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
+                      ),
+
                       onChanged: _changeLanguage,
                     ),
                     RadioListTile<Language>(
-                      title: const Text('Українська'),
+                      title: Text(translate('ukrainian')),
                       value: Language.uk,
                       groupValue: currentLanguage,
+                      secondary: Text(
+                        Language.uk.flag,
+                        style: headlineMedium,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
+                      ),
                       onChanged: _changeLanguage,
                     ),
                   ],

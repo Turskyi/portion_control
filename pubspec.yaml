@@ -25,7 +25,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build
 # suffix.
-version: 1.0.8+8
+version: 1.0.9+9
 
 environment:
   sdk: '>=3.9.2 <4.0.0'
@@ -56,12 +56,14 @@ dependencies:
   flutter_local_notifications: ^19.5.0
   flutter_localizations:
     sdk: flutter
+  flutter_timezone: ^5.0.1
   # flutter_translate: Attempting to use "^4.1.0" resulted in a version solving conflict
   # because portion_control depends on `intl` ^0.20.2.
   flutter_translate:
     git:
       url: https://github.com/Javernaver/flutter_translate.git
       ref: master
+  google_fonts: ^6.3.3
   home_widget: ^0.8.1
   intl: ^0.20.2
   # meta: Attempting to use "^1.17.0" resulted in a version solving conflict

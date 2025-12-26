@@ -59,6 +59,52 @@ class AboutPageContent extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 24),
+          Text(
+            translate('health_information.title'),
+            style: TextStyle(
+              fontSize: titleLargeFontSize,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          SelectableText(
+            translate('health_information.disclaimer'),
+            style: TextStyle(fontSize: titleMediumFontSize),
+          ),
+          const SizedBox(height: 8),
+          Text(translate('health_information.sources_label')),
+          Text.rich(
+            TextSpan(
+              children: <InlineSpan>[
+                TextSpan(
+                  text: translate('healthy_weight.bmi_source_who'),
+                  style: TextStyle(
+                    color: linkColor,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => launchUrl(
+                      Uri.parse(translate('healthy_weight.bmi_source_who_url')),
+                      mode: LaunchMode.externalApplication,
+                    ),
+                ),
+                const TextSpan(text: ' • '),
+                TextSpan(
+                  text: translate('healthy_weight.bmi_source_cdc'),
+                  style: TextStyle(
+                    color: linkColor,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () => launchUrl(
+                      Uri.parse(translate('healthy_weight.bmi_source_cdc_url')),
+                      mode: LaunchMode.externalApplication,
+                    ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -66,7 +112,7 @@ class AboutPageContent extends StatelessWidget {
 
   void _launchEmailClient() {
     final Uri emailLaunchUri = Uri(
-      scheme: res.mailToScheme,
+      scheme: res.kMailToScheme,
       path: '${res.supportEmailPrefix}${res.companyDomain}',
     );
     launchUrl(emailLaunchUri);

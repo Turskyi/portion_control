@@ -29,7 +29,7 @@ class WeeklyIntakeChart extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        padding: const EdgeInsets.fromLTRB(16, 16, 28, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -45,8 +45,8 @@ class WeeklyIntakeChart extends StatelessWidget {
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
-                    horizontalInterval: 500, // Adjust interval as needed
-                    getDrawingHorizontalLine: (double value) {
+                    horizontalInterval: 500,
+                    getDrawingHorizontalLine: (double _) {
                       return FlLine(
                         color: colorScheme.onSurface.withAlpha(50),
                         strokeWidth: 1,
@@ -76,7 +76,7 @@ class WeeklyIntakeChart extends StatelessWidget {
                             meta: meta,
                             space: 8.0,
                             child: Text(
-                              DateFormat.E(
+                              DateFormat.MMMd(
                                 Localizations.localeOf(context).languageCode,
                               ).format(date),
                               style: textTheme.bodySmall,

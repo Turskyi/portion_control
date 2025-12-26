@@ -106,8 +106,9 @@ Future<void> main() async {
     AppRoute.about.path: (BuildContext _) => const AboutPage(),
     AppRoute.support.path: (BuildContext _) => const SupportPage(),
     AppRoute.recipes.path: (BuildContext _) => const WeightLossRecipesPage(),
-    AppRoute.educationalContent.path: (BuildContext _) =>
-        const EducationalContentPage(),
+    AppRoute.educationalContent.path: (BuildContext _) {
+      return const EducationalContentPage();
+    },
     AppRoute.dailyFoodLogHistory.path: (BuildContext _) {
       return BlocProvider<DailyFoodLogHistoryBloc>(
         create: (BuildContext _) {

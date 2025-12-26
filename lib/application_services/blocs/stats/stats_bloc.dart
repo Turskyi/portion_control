@@ -41,7 +41,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         averageDailyIntake = totalIntake / foodLogs.length;
       }
 
-      // 2. Weight Change per Week
+      // 2. Weight Change per Week.
       double weeklyWeightChange = 0;
       if (weightLogs.length >= 2) {
         final BodyWeight currentWeight = weightLogs.last;
@@ -52,7 +52,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
 
         BodyWeight? pastWeight;
         // Since logs are sorted by date
-        // (as per getAllBodyWeightEntries implementation), we can search.
+        // (as per `getAllBodyWeightEntries` implementation), we can search.
         // Or simply iterate backwards to find the first entry <= targetDate.
         for (int i = weightLogs.length - 2; i >= 0; i--) {
           if (weightLogs[i].date.isBefore(targetDate) ||
@@ -68,7 +68,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         weeklyWeightChange = currentWeight.weight - pastWeight.weight;
       }
 
-      // 3. How often limit was exceeded
+      // 3. How often limit was exceeded.
       int limitExceededCount = 0;
       for (final DayFoodLog log in foodLogs) {
         // Assuming dailyLimit 0 means no limit or not set, so we skip it.

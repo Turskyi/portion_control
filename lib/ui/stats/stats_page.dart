@@ -26,10 +26,10 @@ class StatsPage extends StatelessWidget {
           } else if (state is StatsError) {
             return Center(child: Text(state.message));
           } else if (state is StatsLoaded) {
-            final double screenWidth = MediaQuery.sizeOf(context).width;
-            final bool isWide = screenWidth > constants.wideScreenThreshold;
-            final double horizontalPadding = isWide
-                ? (screenWidth - constants.wideScreenContentWidth) / 2
+            final double screenWidth = MediaQuery.widthOf(context);
+            final double horizontalPadding =
+                screenWidth > constants.kWideScreenContentWidth
+                ? (screenWidth - constants.kWideScreenContentWidth) / 2
                 : constants.kHorizontalIndent;
             final TextTheme textTheme = Theme.of(context).textTheme;
             return SingleChildScrollView(
@@ -83,9 +83,14 @@ class StatsPage extends StatelessWidget {
                   StatCard(
                     title: translate('stats.weekly_weight_change'),
                     value:
+                        '${state.weeklyWeightChange > 0 ? '+' : ''}'
                         '${state.weeklyWeightChange.toStringAsFixed(1)} '
                         '${translate('home_page.kg_unit')}',
-                    icon: Icons.trending_up,
+                    icon: state.weeklyWeightChange > 0
+                        ? Icons.trending_up
+                        : state.weeklyWeightChange < 0
+                        ? Icons.trending_down
+                        : Icons.trending_flat,
                   ),
                   const SizedBox(height: 16),
                   StatCard(

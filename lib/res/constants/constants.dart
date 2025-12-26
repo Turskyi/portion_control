@@ -3,7 +3,7 @@ const String ukrainianWebVersion = 'https://uk.portion-control.turskyi.com';
 const String companyDomain = 'turskyi.com';
 const String supportEmailPrefix = 'support@';
 const String supportEmail = '$supportEmailPrefix$companyDomain';
-const String appName = 'PortionControl';
+const String appName = 'Portion Control';
 const String googlePlayUrl =
     'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
 
@@ -57,9 +57,9 @@ const double safeMinimumFoodIntakeG = 1499.0;
 const double wideScreenThreshold = 600.0;
 
 // Max content width for wide layout.
-const double wideScreenContentWidth = 800.0;
+const double kWideScreenContentWidth = 800.0;
 
-const String mailToScheme = 'mailto';
+const String kMailToScheme = 'mailto';
 
 const String telegramUrl = 'https://t.me/+Zmd6QYP3iXc2MjZi';
 
@@ -71,13 +71,13 @@ const String screenSizeProperty = 'screenSize';
 // Expires Mar 13, 2026.
 const String resendEmailDomain = 'kima.website';
 
-const String subjectParameter = 'subject';
+const String kSubjectParameter = 'subject';
 
-const String bodyParameter = 'body';
+const String kBodyParameter = 'body';
 
 const String appleAppGroupId = 'group.dmytrowidget';
 const String iOSWidgetName = 'PortionControlWidgets';
-const String androidWidgetName = 'PortionControlWidget';
+const String kAndroidWidgetName = 'PortionControlWidget';
 
 /// BMI classification thresholds (kg/m²).
 /// Source: https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index
@@ -100,4 +100,6 @@ const String doNotReplySenderName = 'Do Not Reply';
 const String feedbackEmailSender =
     '$doNotReplySenderName $appName <no-reply@$resendEmailDomain>';
 const String feedbackScreenshotFileName = 'feedback.png';
-final double kHorizontalIndent = 12.0;
+const double kHorizontalIndent = 12.0;
+
+const String kLanguageValue = 'language';

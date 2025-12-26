@@ -53,6 +53,43 @@ class _HomePageContentState extends State<HomePageContent> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const UserDetailsWidget(),
+              // Show a brief note when app has no saved records yet so users
+              // understand their data is local-only and may be lost.
+              if (state.bodyWeightEntries.isEmpty && state.foodEntries.isEmpty)
+                Card(
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          translate('data_storage.title'),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: titleMedium?.fontSize,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(translate('data_storage.message')),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                AppRoute.support.path,
+                              );
+                            },
+                            child: Text(
+                              translate('data_storage.export_button'),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               if (state.isWeightNotSubmitted)
                 Padding(
                   padding: const EdgeInsets.only(top: 12.0),
@@ -134,10 +171,10 @@ class _HomePageContentState extends State<HomePageContent> {
             builder: (BuildContext context, BoxConstraints constraints) {
               final double maxWidthAvailable = constraints.maxWidth;
               final double width = math.min(
-                constants.wideScreenContentWidth,
+                constants.kWideScreenContentWidth,
                 maxWidthAvailable.isFinite
                     ? maxWidthAvailable
-                    : constants.wideScreenContentWidth,
+                    : constants.kWideScreenContentWidth,
               );
 
               return Center(
@@ -182,11 +219,10 @@ class _HomePageContentState extends State<HomePageContent> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(state.errorMessage),
+          behavior: SnackBarBehavior.floating,
           action: SnackBarAction(
-            label: translate('button.report'),
-            onPressed: () {
-              context.read<HomeBloc>().add(const HomeBugReportPressedEvent());
-            },
+            label: translate('button.ok'),
+            onPressed: ScaffoldMessenger.of(context).hideCurrentSnackBar,
           ),
         ),
       );

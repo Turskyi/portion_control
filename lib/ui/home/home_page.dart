@@ -27,8 +27,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const String _languageValue = 'language';
-
   FeedbackController? _feedbackController;
 
   @override
@@ -68,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                   final double badgeHeight = 40.0;
                   return <PopupMenuEntry<String>>[
                     PopupMenuItem<String>(
-                      value: _languageValue,
+                      value: constants.kLanguageValue,
                       child: Text(t('language')),
                     ),
                     const PopupMenuDivider(),
@@ -265,7 +263,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handlePopupMenuSelection(String result) {
-    if (result == _languageValue) {
+    if (result == constants.kLanguageValue) {
       _showLanguageSelectionDialog();
     } else if (result == AppRoute.privacyPolity.name) {
       Navigator.pushNamed(context, AppRoute.privacyPolity.path);
@@ -340,8 +338,8 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _showLanguageSelectionDialog() {
-    showDialog(
+  Future<void> _showLanguageSelectionDialog() {
+    return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return BlocProvider<SettingsBloc>(
@@ -351,6 +349,9 @@ class _HomePageState extends State<HomePage> {
           child: BlocBuilder<SettingsBloc, SettingsState>(
             builder: (BuildContext context, SettingsState state) {
               final Language currentLanguage = state.language;
+              final TextStyle? headlineMedium = Theme.of(
+                context,
+              ).textTheme.headlineMedium;
               return AlertDialog(
                 title: Text(translate('select_language')),
                 content: Column(
@@ -360,12 +361,20 @@ class _HomePageState extends State<HomePage> {
                       title: Text(translate('english')),
                       value: Language.en,
                       groupValue: currentLanguage,
+                      secondary: Text(
+                        Language.en.flag,
+                        style: headlineMedium,
+                      ),
                       onChanged: _changeLanguage,
                     ),
                     RadioListTile<Language>(
                       title: Text(translate('ukrainian')),
                       value: Language.uk,
                       groupValue: currentLanguage,
+                      secondary: Text(
+                        Language.uk.flag,
+                        style: headlineMedium,
+                      ),
                       onChanged: _changeLanguage,
                     ),
                   ],
@@ -378,8 +387,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _changeLanguage(Language? newLanguage) {
-    changeLocale(context, newLanguage?.isoLanguageCode)
+  Future<void> _changeLanguage(Language? newLanguage) {
+    return changeLocale(context, newLanguage?.isoLanguageCode)
     // The returned value is always `null`.
     .then((Object? _) {
       if (mounted && newLanguage != null) {
@@ -391,22 +400,22 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _launchTestFlightUrl() {
-    launchUrl(
+  Future<bool> _launchTestFlightUrl() {
+    return launchUrl(
       Uri.parse(constants.testFlightUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
-  void _launchMacOsUrl() {
-    launchUrl(
+  Future<bool> _launchMacOsUrl() {
+    return launchUrl(
       Uri.parse(constants.macOsUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
-  void _launchGooglePlayUrl() {
-    launchUrl(
+  Future<bool> _launchGooglePlayUrl() {
+    return launchUrl(
       Uri.parse(constants.googlePlayUrl),
       mode: LaunchMode.externalApplication,
     );

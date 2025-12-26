@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HealthyWeightRecommendations extends StatelessWidget {
   const HealthyWeightRecommendations({
@@ -38,10 +39,25 @@ class HealthyWeightRecommendations extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    '${translate('healthy_weight.your_bmi_prefix')}'
-                    '${bmi.toStringAsFixed(1)}',
-                    style: textTheme.titleMedium,
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          '${translate("healthy_weight.your_bmi_prefix")}'
+                          '${bmi.toStringAsFixed(1)}',
+                          style: textTheme.titleMedium,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.info_outline),
+                        tooltip: translate(
+                          'healthy_weight.bmi_info_button_tooltip',
+                        ),
+                        onPressed: () {
+                          _showBmiSourcesDialog(context);
+                        },
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -64,6 +80,76 @@ class HealthyWeightRecommendations extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _showBmiSourcesDialog(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            translate('healthy_weight.bmi_sources_title'),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  translate('app.medical_disclaimer_full'),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  translate(
+                    'healthy_weight.bmi_sources_description',
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: _launchWhoUrl,
+                  child: Text(translate('healthy_weight.bmi_source_who')),
+                ),
+                TextButton(
+                  onPressed: _launchCdcUrl,
+                  child: Text(
+                    translate('healthy_weight.bmi_source_cdc'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: Navigator.of(context).pop,
+              child: Text(
+                MaterialLocalizations.of(
+                  context,
+                ).closeButtonLabel,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> _launchCdcUrl() {
+    return launchUrl(
+      Uri.parse(
+        translate('healthy_weight.bmi_source_cdc_url'),
+      ),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
+  Future<bool> _launchWhoUrl() {
+    return launchUrl(
+      Uri.parse(
+        translate(
+          'healthy_weight.bmi_source_who_url',
+        ),
+      ),
+      mode: LaunchMode.externalApplication,
     );
   }
 

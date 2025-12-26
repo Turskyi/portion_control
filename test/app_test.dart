@@ -21,6 +21,7 @@ import 'package:portion_control/ui/home/home_page.dart';
 import 'package:portion_control/ui/landing/landing_page.dart';
 import 'package:portion_control/ui/onboarding/onboarding_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'helpers/test_database.dart' as test_database;
 import 'helpers/translate_test_helper.dart';
@@ -170,6 +171,13 @@ void main() {
           findsOneWidget,
           reason: 'HomePage should be present',
         );
+
+        // Confirm that onboarding now has 4 pages
+        // (so users see the local-storage note).
+        final SmoothPageIndicator indicator = tester.widget(
+          find.byType(SmoothPageIndicator),
+        );
+        expect(indicator.count, 4);
       },
     );
   });
