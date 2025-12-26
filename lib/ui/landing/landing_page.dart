@@ -399,6 +399,7 @@ class LandingPage extends StatelessWidget {
               final TextStyle? headlineMedium = Theme.of(
                 context,
               ).textTheme.headlineMedium;
+              final double horizontalPadding = 12.0;
               return AlertDialog(
                 title: Text(translate('select_language')),
                 content: Column(
@@ -411,6 +412,9 @@ class LandingPage extends StatelessWidget {
                       secondary: Text(
                         Language.en.flag,
                         style: headlineMedium,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
                       ),
                       onChanged: (Language? newLanguage) {
                         if (newLanguage != null) {
@@ -428,6 +432,9 @@ class LandingPage extends StatelessWidget {
                       secondary: Text(
                         Language.uk.flag,
                         style: headlineMedium,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
                       ),
                       onChanged: (Language? newLanguage) {
                         if (newLanguage != null) {

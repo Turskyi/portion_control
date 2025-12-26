@@ -294,6 +294,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               final TextStyle? headlineMedium = Theme.of(
                 context,
               ).textTheme.headlineMedium;
+              final double horizontalPadding = 12.0;
               return AlertDialog(
                 title: Text(translate('select_language')),
                 content: Column(
@@ -307,6 +308,10 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         Language.en.flag,
                         style: headlineMedium,
                       ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
+                      ),
+
                       onChanged: _changeLanguage,
                     ),
                     RadioListTile<Language>(
@@ -316,6 +321,9 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                       secondary: Text(
                         Language.uk.flag,
                         style: headlineMedium,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
                       ),
                       onChanged: _changeLanguage,
                     ),

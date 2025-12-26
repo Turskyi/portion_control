@@ -219,11 +219,10 @@ class _HomePageContentState extends State<HomePageContent> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(state.errorMessage),
+          behavior: SnackBarBehavior.floating,
           action: SnackBarAction(
-            label: translate('button.report'),
-            onPressed: () {
-              context.read<HomeBloc>().add(const HomeBugReportPressedEvent());
-            },
+            label: translate('button.ok'),
+            onPressed: ScaffoldMessenger.of(context).hideCurrentSnackBar,
           ),
         ),
       );

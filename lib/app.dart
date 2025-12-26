@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:portion_control/env/env.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/colors/gradients.dart';
@@ -51,6 +52,7 @@ class App extends StatelessWidget {
           locale: localizationDelegate.currentLocale,
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
+            textTheme: GoogleFonts.comfortaaTextTheme(),
             colorScheme: ColorScheme.fromSeed(
               // Seed color for the palette.
               seedColor: const Color(0xFFE99CBF),
