@@ -278,29 +278,6 @@ class LandingPage extends StatelessWidget {
                 ),
               ),
               Semantics(
-                label: t('landing_page.semantics_label_testflight'),
-                button: true,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Material(
-                    // Ensures the background remains unchanged.
-                    color: Colors.transparent,
-                    child: InkWell(
-                      splashColor: colorScheme.primary.withOpacity(0.2),
-                      onTap: _launchTestFlightUrl,
-                      child: Ink.image(
-                        image: const AssetImage(
-                          '${constants.imagePath}test_flight_badge.png',
-                        ),
-                        height: 40,
-                        width: 140,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Semantics(
                 label: t('landing_page.semantics_label_macos'),
                 button: true,
                 child: ClipRRect(
@@ -315,8 +292,8 @@ class LandingPage extends StatelessWidget {
                         image: const AssetImage(
                           '${constants.imagePath}mac_os_badge.png',
                         ),
-                        height: 40,
-                        width: 140,
+                        height: 72,
+                        width: 156,
                         fit: BoxFit.contain,
                       ),
                     ),
