@@ -10,9 +10,9 @@
 [![wakatime](https://wakatime.com/badge/user/f9df5074-b4ea-4c17-b001-fff428ab82aa/project/f2a257e8-361a-4986-8bdf-2cb2a69c765d.svg)](https://wakatime.com/badge/user/f9df5074-b4ea-4c17-b001-fff428ab82aa/project/f2a257e8-361a-4986-8bdf-2cb2a69c765d)
 <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/Turskyi/portion_control">
 
-# PortionControl
+# Portion Control
 
-**PortionControl** is a simple and intuitive Flutter app designed to help users
+**Portion Control** is a simple and intuitive Flutter app designed to help users
 track their food intake and weight straightforwardly. The app allows users to
 record their body weight and food portions, making it easier to monitor the
 relationship between food consumption and weight changes.
