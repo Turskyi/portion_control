@@ -40,6 +40,8 @@
   "total:": "Всього",
   "limit": "Ліміт",
   "learn_more": "Дізнатись більше",
+  "field_required": "Це поле обов'язкове",
+  "info": "Інформація",
   "measurement": {
     "grams_value": "{value} г"
   },
@@ -287,7 +289,8 @@
     "title_enter_your_details": "Введіть ваші дані",
     "label_date_of_birth": "Дата народження",
     "label_height": "Зріст",
-    "unit_cm": "см"
+    "unit_cm": "см",
+    "height_hint": "Зріст впливає на розрахунки.\nВикористовуйте найактуальніші дані, якщо це можливо."
   },
   "hint": {
     "enter_food_weight": "Введіть вагу їжі"

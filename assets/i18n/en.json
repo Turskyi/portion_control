@@ -40,6 +40,8 @@
   "total:": "Total",
   "limit": "Limit",
   "learn_more": "Learn more",
+  "field_required": "This field is required",
+  "info": "Info",
   "measurement": {
     "grams_value": "{value} g"
   },
@@ -285,7 +287,8 @@
     "title_enter_your_details": "Enter Your Details",
     "label_date_of_birth": "Date of Birth",
     "label_height": "Height",
-    "unit_cm": "cm"
+    "unit_cm": "cm",
+    "height_hint": "Height affects calculations.\nUse your most recent measured value if possible."
   },
   "hint": {
     "enter_food_weight": "Enter food weight"

@@ -76,15 +76,44 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                     ),
                   ),
                 Expanded(
-                  child: InputRow(
-                    label: t('user_details_widget.label_height'),
-                    unit: t('user_details_widget.unit_cm'),
-                    initialValue: '${height > 0 ? height : ''}',
-                    isRequired: true,
-                    value: state is DetailsSubmittedState ? '$height' : null,
-                    onChanged: (String value) {
-                      context.read<HomeBloc>().add(UpdateHeight(value));
-                    },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      InputRow(
+                        label: t('user_details_widget.label_height'),
+                        unit: t('user_details_widget.unit_cm'),
+                        initialValue: '${height > 0 ? height : ''}',
+                        isRequired: true,
+                        value: state is DetailsSubmittedState
+                            ? '$height'
+                            : null,
+                        onChanged: (String value) {
+                          context.read<HomeBloc>().add(UpdateHeight(value));
+                        },
+                        message: t('user_details_widget.height_hint'),
+                        onUnitTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  t('user_details_widget.label_height'),
+                                ),
+                                content: Text(
+                                  t('user_details_widget.height_hint'),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: Navigator.of(context).pop,
+                                    child: Text(t('button.ok')),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
