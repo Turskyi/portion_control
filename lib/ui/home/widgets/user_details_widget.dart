@@ -91,27 +91,7 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                           context.read<HomeBloc>().add(UpdateHeight(value));
                         },
                         message: t('user_details_widget.height_hint'),
-                        onUnitTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(
-                                  t('user_details_widget.label_height'),
-                                ),
-                                content: Text(
-                                  t('user_details_widget.height_hint'),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: Navigator.of(context).pop,
-                                    child: Text(t('button.ok')),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
+                        onUnitTap: _showHeightHintDialog,
                       ),
                     ],
                   ),
@@ -129,6 +109,28 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
   void dispose() {
     _dateOfBirthTextEditingController.dispose();
     super.dispose();
+  }
+
+  Future<void> _showHeightHintDialog() {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            translate('user_details_widget.label_height'),
+          ),
+          content: Text(
+            translate('user_details_widget.height_hint'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: Navigator.of(context).pop,
+              child: Text(translate('button.ok')),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _pickDate({

@@ -14,7 +14,7 @@ class InputRow extends StatelessWidget {
     this.onChanged,
     this.onTap,
     this.onUnitTap,
-    this.message,
+    this.message = '',
     super.key,
   });
 
@@ -30,7 +30,7 @@ class InputRow extends StatelessWidget {
   final VoidCallback? onUnitTap;
 
   /// The text to display in the tooltip.
-  final String? message;
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -139,27 +139,30 @@ class InputRow extends StatelessWidget {
                   ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         Padding(
           padding: const EdgeInsets.only(top: 12),
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: <Widget>[
-              Text(unit, style: TextStyle(fontSize: bodyLargeFontSize)),
-
-              if (onUnitTap != null)
-                Positioned(
-                  top: -14,
-                  right: -18,
-                  child: Tooltip(
-                    message: message,
-                    waitDuration: const Duration(milliseconds: 400),
-                    child: InkWell(
-                      onTap: onUnitTap,
-                      borderRadius: BorderRadius.circular(12),
-                      radius: 12,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
+          child: Tooltip(
+            message: message,
+            waitDuration: const Duration(milliseconds: 400),
+            child: InkWell(
+              onTap: onUnitTap,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: onUnitTap != null
+                    ? const EdgeInsets.all(14.0)
+                    : EdgeInsets.zero,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    Text(
+                      unit,
+                      style: TextStyle(fontSize: bodyLargeFontSize),
+                    ),
+                    if (onUnitTap != null)
+                      Positioned(
+                        top: -8,
+                        right: -10,
                         child: Icon(
                           Icons.info_outline,
                           size: 12,
@@ -167,13 +170,12 @@ class InputRow extends StatelessWidget {
                           semanticLabel: translate('info'),
                         ),
                       ),
-                    ),
-                  ),
+                  ],
                 ),
-            ],
+              ),
+            ),
           ),
         ),
-        const SizedBox(width: 4),
       ],
     );
   }
