@@ -63,8 +63,9 @@ dependencies:
     git:
       url: https://github.com/Javernaver/flutter_translate.git
       ref: master
-  google_fonts: ^6.3.3
+  google_fonts: ^7.0.0
   home_widget: ^0.8.1
+  in_app_update: ^4.2.5
   intl: ^0.20.2
   # meta: Attempting to use "^1.17.0" resulted in a version solving conflict
   # because portion_control depends on `flutter_test` from sdk.

@@ -1,8 +1,11 @@
+import 'dart:io' show Platform;
+
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
@@ -28,6 +31,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   FeedbackController? _feedbackController;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkForUpdate();
+  }
+
+  Future<void> _checkForUpdate() async {
+    if (kIsWeb) {
+      return;
+    }
+
+    if (Platform.isAndroid) {
+      try {
+        final AppUpdateInfo info = await InAppUpdate.checkForUpdate();
+        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+          await InAppUpdate.performImmediateUpdate();
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('InAppUpdate error: $e');
+        }
+      }
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -102,7 +130,9 @@ class _HomePageState extends State<HomePage> {
                             // Ensures the background remains unchanged.
                             color: Colors.transparent,
                             child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
+                              splashColor: colorScheme.primary.withValues(
+                                alpha: 0.2,
+                              ),
                               onTap: _launchGooglePlayUrl,
                               child: Ink.image(
                                 image: const AssetImage(
@@ -126,7 +156,9 @@ class _HomePageState extends State<HomePage> {
                             // Ensures the background remains unchanged.
                             color: Colors.transparent,
                             child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
+                              splashColor: colorScheme.primary.withValues(
+                                alpha: 0.2,
+                              ),
                               onTap: _launchTestFlightUrl,
                               child: Ink.image(
                                 image: const AssetImage(
@@ -150,7 +182,9 @@ class _HomePageState extends State<HomePage> {
                             // Ensures the background remains unchanged.
                             color: Colors.transparent,
                             child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
+                              splashColor: colorScheme.primary.withValues(
+                                alpha: 0.2,
+                              ),
                               onTap: _launchMacOsUrl,
                               child: Ink.image(
                                 image: const AssetImage(
