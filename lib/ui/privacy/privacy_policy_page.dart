@@ -5,7 +5,6 @@ import 'package:portion_control/ui/privacy/widgets/privacy_policy_page_content.d
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:portion_control/ui/widgets/leading_widget.dart';
-import 'package:portion_control/ui/widgets/responsive_content.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
   const PrivacyPolicyPage({super.key});
@@ -17,7 +16,7 @@ class PrivacyPolicyPage extends StatelessWidget {
         leading: kIsWeb ? const LeadingWidget() : null,
         title: translate('privacy_policy.title'),
       ),
-      body: const ResponsiveContent(child: PrivacyPolicyPageContent()),
+      body: const PrivacyPolicyPageContent(),
     );
   }
 }

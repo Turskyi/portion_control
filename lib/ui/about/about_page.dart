@@ -5,7 +5,6 @@ import 'package:portion_control/ui/about/widgets/about_page_content.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:portion_control/ui/widgets/leading_widget.dart';
-import 'package:portion_control/ui/widgets/responsive_content.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -17,7 +16,7 @@ class AboutPage extends StatelessWidget {
         leading: kIsWeb ? const LeadingWidget() : null,
         title: translate('about_us.title'),
       ),
-      body: const ResponsiveContent(child: AboutPageContent()),
+      body: const AboutPageContent(),
     );
   }
 }
