@@ -245,6 +245,26 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         return const SizedBox.shrink();
                       },
                     ),
+                  const Divider(),
+                  BlocBuilder<MenuBloc, MenuState>(
+                    builder: (BuildContext context, MenuState state) {
+                      if (state is LoadingMenuState) {
+                        return const SizedBox.shrink();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: Text(
+                          '${translate('app_version')}: ${state.appVersion}',
+                          style: textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   const SizedBox(height: 28),
                 ],
               ),

@@ -69,6 +69,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       MenuFeedbackState(
         language: state.language,
         streakDays: state.streakDays,
+        appVersion: state.appVersion,
       ),
     );
   }
@@ -77,7 +78,13 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     MenuClosingFeedbackEvent _,
     Emitter<MenuState> emit,
   ) {
-    emit(MenuInitial(language: state.language, streakDays: state.streakDays));
+    emit(
+      MenuInitial(
+        language: state.language,
+        streakDays: state.streakDays,
+        appVersion: state.appVersion,
+      ),
+    );
   }
 
   FutureOr<void> _sendUserFeedback(
@@ -85,7 +92,11 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     Emitter<MenuState> emit,
   ) async {
     emit(
-      LoadingMenuState(language: state.language, streakDays: state.streakDays),
+      LoadingMenuState(
+        language: state.language,
+        streakDays: state.streakDays,
+        appVersion: state.appVersion,
+      ),
     );
     final UserFeedback feedback = event.feedback;
     try {
@@ -209,6 +220,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           MenuFeedbackSent(
             language: state.language,
             streakDays: state.streakDays,
+            appVersion: state.appVersion,
           ),
         );
       } catch (error, stackTrace) {
@@ -225,7 +237,13 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       );
       add(MenuErrorEvent(translate('error.unexpectedError')));
     }
-    emit(MenuInitial(language: state.language, streakDays: state.streakDays));
+    emit(
+      MenuInitial(
+        language: state.language,
+        streakDays: state.streakDays,
+        appVersion: state.appVersion,
+      ),
+    );
   }
 
   Future<void> _loadInitialMenuState(
@@ -234,13 +252,28 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   ) async {
     final Language savedLanguage = _settingsRepository.getLanguage();
     final int streakDays = await _bodyWeightRepository.getBodyWeightStreak();
-    emit(MenuInitial(language: savedLanguage, streakDays: streakDays));
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final String appVersion =
+        '${packageInfo.version} (${packageInfo.buildNumber})';
+    emit(
+      MenuInitial(
+        language: savedLanguage,
+        streakDays: streakDays,
+        appVersion: appVersion,
+      ),
+    );
   }
 
   FutureOr<void> _handleError(MenuErrorEvent event, Emitter<MenuState> emit) {
     debugPrint('MenuErrorEvent: ${event.error}');
     //TODO: add ErrorMenuState and use it instead.
-    emit(MenuInitial(streakDays: state.streakDays));
+    emit(
+      MenuInitial(
+        streakDays: state.streakDays,
+        appVersion: state.appVersion,
+        language: state.language,
+      ),
+    );
   }
 
   FutureOr<void> _changeLanguage(
@@ -259,7 +292,13 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         if (state is MenuInitial) {
           emit(state.copyWith(language: language));
         } else {
-          MenuInitial(language: language, streakDays: state.streakDays);
+          emit(
+            MenuInitial(
+              language: language,
+              streakDays: state.streakDays,
+              appVersion: state.appVersion,
+            ),
+          );
         }
       } else {
         //TODO: not sure what to do.
