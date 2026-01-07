@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:feedback/feedback.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -57,36 +58,39 @@ class _HomePageContentState extends State<HomePageContent> {
               // understand their data is local-only and may be lost.
               if (state.bodyWeightEntries.isEmpty && state.foodEntries.isEmpty)
                 Card(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: themeData.colorScheme.surfaceVariant,
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          translate('data_storage.title'),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: titleMedium?.fontSize,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(translate('data_storage.message')),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoute.support.path,
-                              );
-                            },
-                            child: Text(
-                              translate('data_storage.export_button'),
+                    child: SelectionArea(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            translate('data_storage.title'),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: titleMedium?.fontSize,
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          Text(
+                            translate(
+                              kIsWeb
+                                  ? 'data_storage.message_web'
+                                  : 'data_storage.message',
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: _navigateToSupportPage,
+                              child: Text(
+                                translate('learn_more'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -190,16 +194,23 @@ class _HomePageContentState extends State<HomePageContent> {
     );
   }
 
-  void _updateBodyWeight(String value) {
-    context.read<HomeBloc>().add(UpdateBodyWeight(value));
-  }
-
   @override
   void dispose() {
     _scrollController.dispose();
     _feedbackController?.removeListener(_onFeedbackChanged);
     _feedbackController = null;
     super.dispose();
+  }
+
+  void _navigateToSupportPage() {
+    Navigator.pushNamed(
+      context,
+      AppRoute.support.path,
+    );
+  }
+
+  void _updateBodyWeight(String value) {
+    context.read<HomeBloc>().add(UpdateBodyWeight(value));
   }
 
   void _onFeedbackChanged() {

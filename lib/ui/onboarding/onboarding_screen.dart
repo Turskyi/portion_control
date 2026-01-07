@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -89,7 +90,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 // (uninstall/device clear).
                 const OnboardingPage(
                   titleKey: 'onboarding.page4.title',
-                  contentKey: 'onboarding.page4.content',
+                  contentKey: kIsWeb
+                      ? 'onboarding.page4.web_content'
+                      : 'onboarding.page4.content',
                 ),
               ],
             ),

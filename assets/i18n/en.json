@@ -251,7 +251,7 @@
   "data_storage": {
     "title": "Local-only storage",
     "message": "Your data is stored locally on this device. If you uninstall the app or clear app data, saved entries may be removed. The app focuses on recent trends, so continuing to use it provides the most value.",
-    "export_button": "Learn more"
+    "message_web": "Your data is stored locally in this browser. Clearing browser data, using private mode, or switching devices may remove saved entries. The app works best when used regularly in the same browser."
   },
   "landing_page": {
     "app_name": "Portion Control",
@@ -330,7 +330,8 @@
     },
     "page4": {
       "title": "🔒 Your data stays on your device",
-      "content": "Your entries are stored only on this device. If you uninstall the app or clear app data, previously saved entries may be removed. The app focuses on recent trends and remains useful when used regularly."
+      "content": "Your entries are stored only on this device. If you uninstall the app or clear app data, previously saved entries may be removed. The app focuses on recent trends and remains useful when used regularly.",
+      "web_content": "Your entries are saved locally in this browser. Clearing browser data, using private mode, or switching devices may remove saved entries. The app works best when used regularly on the same device and browser."
     },
     "tagline": "Your mindful eating companion - private, simple, and motivating."
   },
