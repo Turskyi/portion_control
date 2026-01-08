@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="appwidget_text">PortionControl</string>
+    <string name="appwidget_text">Portion Control</string>
     <string name="add_widget">Додати віджет</string>
     <string name="app_widget_description">Швидко переглядайте та реєструйте щоденні порції їжі та вагу прямо з головного екрана.</string>
     <string name="image">Зображення</string>
@@ -20,5 +20,5 @@
     <string name="limit_g">Контроль порцій: %1$s г</string>
     <string name="chart">Графік</string>
     <string name="portion_control_g">Контроль порцій: %1$s г</string>
-    <string name="portioncontrol">PortionControl</string>
+    <string name="portioncontrol">Portion Control</string>
 </resources>

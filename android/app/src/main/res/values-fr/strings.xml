@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appwidget_text">Contrôle des portions</string>
+    <string name="add_widget">Ajouter un widget</string>
+    <string name="app_widget_description">Visualisez et enregistrez rapidement vos portions alimentaires quotidiennes et votre poids directement depuis votre écran d’accueil.</string>
+    <string name="image">Image</string>
+    <string name="portioncontrol_at_glance">PortionControl en un coup d’œil</string>
+    <string name="oops_no_meal_data_available">🍽️ Oups ! Aucune donnée de repas disponible.</string>
+    <string name="looks_like_we_couldn_t_log_your_portion_this_time">🤷 On dirait que nous n’avons pas pu enregistrer votre portion cette fois.</string>
+    <string name="no_recommendation_trust_your_instincts_today">🥗 Pas de recommandation ? Faites confiance à votre instinct aujourd’hui !</string>
+    <string name="data_s_taking_a_break_try_again_soon">📊 Les données font une pause - réessayez bientôt !</string>
+    <string name="tracking_paused_try_again_later">🚀 Suivi en pause, réessayez plus tard !</string>
+    <string name="no_portions_logged_rest_day">😴 Aucune portion enregistrée - jour de repos ?</string>
+    <string name="no_entry_available">❌ Aucune entrée disponible</string>
+    <string name="no_portion_info_right_now">🤔 Aucune info sur les portions pour le moment</string>
+    <string name="enter_weight_before_your_first_meal">👉 Saisissez votre poids avant votre premier repas.</string>
+    <string name="enter_food_weight">👉 Saisissez le poids des aliments.</string>
+    <string name="weight_kg">Poids : %1$s kg</string>
+    <string name="consumed_g">Consommé : %1$s g</string>
+    <string name="limit_g">Contrôle des portions : %1$s g</string>
+    <string name="chart">Graphique</string>
+    <string name="portion_control_g">Contrôle des portions : %1$s g</string>
+    <string name="portioncontrol">Contrôle des portions</string>
+</resources>

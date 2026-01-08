@@ -196,12 +196,6 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                     },
                   ),
                   const Divider(),
-                  if (!kIsWeb)
-                    AnimatedDrawerItem(
-                      icon: Icons.web,
-                      text: translate('open_web_version'),
-                      onTap: _openWebVersion,
-                    ),
                   AnimatedDrawerItem(
                     icon: Icons.language,
                     text: translate('language'),
@@ -210,16 +204,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                   AnimatedDrawerItem(
                     icon: Icons.notifications,
                     text: translate('reminders.title'),
-                    onTap: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (BuildContext _) {
-                          return ReminderDialog(
-                            localDataSource: widget.localDataSource,
-                          );
-                        },
-                      );
-                    },
+                    onTap: _showRemindersDialog,
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.feedback,
@@ -244,6 +229,12 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         }
                         return const SizedBox.shrink();
                       },
+                    ),
+                  if (!kIsWeb)
+                    AnimatedDrawerItem(
+                      icon: Icons.web,
+                      text: translate('open_web_version'),
+                      onTap: _openWebVersion,
                     ),
                   const Divider(),
                   BlocBuilder<MenuBloc, MenuState>(
@@ -282,6 +273,17 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
     super.dispose();
   }
 
+  Future<void> _showRemindersDialog() {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext _) {
+        return ReminderDialog(
+          localDataSource: widget.localDataSource,
+        );
+      },
+    );
+  }
+
   void _openWebVersion() {
     context.read<MenuBloc>().add(const OpenWebVersionEvent());
   }
@@ -290,10 +292,10 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
     context.read<MenuBloc>().add(const PinWidgetEvent());
   }
 
-  void _showLanguageSelectionDialog() {
-    showDialog(
+  Future<void> _showLanguageSelectionDialog() {
+    return showDialog<void>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext _) {
         return BlocProvider<MenuBloc>(
           create: (BuildContext _) {
             final LocalDataSource localDataSource = widget.localDataSource;
@@ -370,8 +372,8 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
     );
   }
 
-  void _changeLanguage(Language? newLanguage) {
-    changeLocale(context, newLanguage?.isoLanguageCode)
+  Future<void> _changeLanguage(Language? newLanguage) {
+    return changeLocale(context, newLanguage?.isoLanguageCode)
     // The returned value is always `null`.
     .then((Object? _) {
       if (mounted && newLanguage != null) {
