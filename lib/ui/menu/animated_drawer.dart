@@ -347,6 +347,19 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                       ),
                       onChanged: _changeLanguage,
                     ),
+                    RadioListTile<Language>(
+                      title: Text(translate('french')),
+                      value: Language.fr,
+                      groupValue: currentLanguage,
+                      secondary: Text(
+                        Language.fr.flag,
+                        style: headlineMedium,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
+                      ),
+                      onChanged: _changeLanguage,
+                    ),
                   ],
                 ),
               );
