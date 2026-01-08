@@ -58,9 +58,7 @@ Future<void> main() async {
 
   final LocalDataSource localDataSource = LocalDataSource(prefs, appDatabase);
 
-  final String savedIsoCode = localDataSource.getLanguageIsoCode();
-
-  final Language savedLanguage = Language.fromIsoLanguageCode(savedIsoCode);
+  final Language savedLanguage = localDataSource.getLanguage();
 
   final LocalizationDelegate localizationDelegate = await localization
       .getLocalizationDelegate(localDataSource);

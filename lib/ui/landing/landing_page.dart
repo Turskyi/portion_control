@@ -381,13 +381,13 @@ class LandingPage extends StatelessWidget {
                 title: Text(translate('select_language')),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    RadioListTile<Language>(
-                      title: Text(translate('english')),
-                      value: Language.en,
+                  children: Language.values.map((Language language) {
+                    return RadioListTile<Language>(
+                      title: Text(translate(language.key)),
+                      value: language,
                       groupValue: currentLanguage,
                       secondary: Text(
-                        Language.en.flag,
+                        language.flag,
                         style: headlineMedium,
                       ),
                       contentPadding: EdgeInsets.symmetric(
@@ -401,28 +401,8 @@ class LandingPage extends StatelessWidget {
                           );
                         }
                       },
-                    ),
-                    RadioListTile<Language>(
-                      title: Text(translate('ukrainian')),
-                      value: Language.uk,
-                      groupValue: currentLanguage,
-                      secondary: Text(
-                        Language.uk.flag,
-                        style: headlineMedium,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: horizontalPadding,
-                      ),
-                      onChanged: (Language? newLanguage) {
-                        if (newLanguage != null) {
-                          _changeLanguage(
-                            context: context,
-                            newLanguage: newLanguage,
-                          );
-                        }
-                      },
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
               );
             },

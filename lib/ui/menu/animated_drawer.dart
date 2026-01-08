@@ -316,53 +316,26 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               final TextStyle? headlineMedium = Theme.of(
                 context,
               ).textTheme.headlineMedium;
-              final double horizontalPadding = 12.0;
+              final double horizontalPadding = 8.0;
               return AlertDialog(
                 title: Text(translate('select_language')),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    RadioListTile<Language>(
-                      title: Text(translate('english')),
-                      value: Language.en,
+                  children: Language.values.map((Language language) {
+                    return RadioListTile<Language>(
+                      title: Text(translate(language.key)),
+                      value: language,
                       groupValue: currentLanguage,
                       secondary: Text(
-                        Language.en.flag,
-                        style: headlineMedium,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: horizontalPadding,
-                      ),
-
-                      onChanged: _changeLanguage,
-                    ),
-                    RadioListTile<Language>(
-                      title: Text(translate('ukrainian')),
-                      value: Language.uk,
-                      groupValue: currentLanguage,
-                      secondary: Text(
-                        Language.uk.flag,
+                        language.flag,
                         style: headlineMedium,
                       ),
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: horizontalPadding,
                       ),
                       onChanged: _changeLanguage,
-                    ),
-                    RadioListTile<Language>(
-                      title: Text(translate('french')),
-                      value: Language.fr,
-                      groupValue: currentLanguage,
-                      secondary: Text(
-                        Language.fr.flag,
-                        style: headlineMedium,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: horizontalPadding,
-                      ),
-                      onChanged: _changeLanguage,
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
               );
             },
