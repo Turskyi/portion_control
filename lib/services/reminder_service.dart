@@ -43,6 +43,9 @@ class ReminderService {
           requestAlertPermission: true,
         ),
       ),
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        debugPrint('Notification tapped: ${response.payload}');
+      },
     );
 
     // Initialize timezone data
@@ -142,8 +145,20 @@ class ReminderService {
           icon: '@mipmap/ic_launcher',
         );
 
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
     final NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
+      iOS: iosDetails,
+      macOS: const DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      ),
     );
 
     try {

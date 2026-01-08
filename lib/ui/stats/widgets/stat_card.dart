@@ -31,22 +31,24 @@ class StatCard extends StatelessWidget {
               const SizedBox(width: 16),
             ],
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    title,
-                    style: textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    value,
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
+              child: SelectionArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      title,
+                      style: textTheme.titleMedium,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      value,
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

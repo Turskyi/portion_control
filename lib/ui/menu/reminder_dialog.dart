@@ -60,15 +60,7 @@ class _ReminderDialogState extends State<ReminderDialog> {
               borderRadius: BorderRadius.circular(10),
             ),
             subtitle: Text(_time.format(context)),
-            onTap: () async {
-              final TimeOfDay? picked = await showTimePicker(
-                context: context,
-                initialTime: _time,
-              );
-              if (picked != null) {
-                setState(() => _time = picked);
-              }
-            },
+            onTap: _pickTime,
           ),
         ],
       ),
@@ -83,6 +75,16 @@ class _ReminderDialogState extends State<ReminderDialog> {
         ),
       ],
     );
+  }
+
+  Future<void> _pickTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _time,
+    );
+    if (picked != null) {
+      setState(() => _time = picked);
+    }
   }
 
   Future<void> _save() async {

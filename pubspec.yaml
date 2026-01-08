@@ -64,7 +64,7 @@ dependencies:
       url: https://github.com/Javernaver/flutter_translate.git
       ref: master
   google_fonts: ^7.0.0
-  home_widget: ^0.8.1
+  home_widget: ^0.9.0
   in_app_update: ^4.2.5
   intl: ^0.20.2
   # meta: Attempting to use "^1.17.0" resulted in a version solving conflict
@@ -79,7 +79,7 @@ dependencies:
   resend: ^1.0.0
   shared_preferences: ^2.5.4
   smooth_page_indicator: ^2.0.1
-  timezone: ^0.10.1
+  timezone: any
   url_launcher: ^6.3.2
 
 dev_dependencies:
