@@ -542,9 +542,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final double bodyWeight = state.bodyWeight;
 
       try {
+        // Normalize the date to the start of the day (00:00:00.000)
+        // so that multiple entries today update the same record.
+        final DateTime now = DateTime.now();
+        final DateTime todayAtMidnight = DateTime(now.year, now.month, now.day);
+
         await _bodyWeightRepository.addOrUpdateBodyWeightEntry(
           weight: bodyWeight,
-          date: DateTime.now(),
+          date: todayAtMidnight,
         );
         final List<BodyWeight> updatedBodyWeightEntries =
             await _bodyWeightRepository.getAllBodyWeightEntries();
@@ -591,7 +596,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               portionControl = savedPortionControl;
             }
           } else {
-            // We have a historical proof (min consumption when weight increased).
+            // We have a historical proof (min consumption when weight
+            // increased).
             if (savedPortionControl != null &&
                 savedPortionControl < portionControl) {
               portionControl = savedPortionControl;
@@ -607,7 +613,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               portionControl = savedPortionControl;
             }
           } else {
-            // We have a historical proof (max consumption when weight decreased).
+            // We have a historical proof (max consumption when weight
+            // decreased).
             if (savedPortionControl != null &&
                 savedPortionControl > portionControl) {
               portionControl = savedPortionControl;
