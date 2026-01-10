@@ -310,8 +310,10 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     String url = constants.baseUrl;
     if (state.isUkrainian) {
       url = constants.ukrainianWebVersion;
+    } else if (state.isFrench) {
+      url = constants.frenchWebVersion;
     }
-    launchUrl(Uri.parse(url));
+    if (url.isNotEmpty) launchUrl(Uri.parse(url));
   }
 
   Future<void> _onPinWidgetPressed(

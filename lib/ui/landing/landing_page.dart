@@ -154,33 +154,6 @@ class LandingPage extends StatelessWidget {
                         ),
                       ),
                     if (kIsWeb ||
-                        defaultTargetPlatform != TargetPlatform.android)
-                      PopupMenuItem<String>(
-                        value: constants.testFlightUrl,
-                        child: Semantics(
-                          label: t('landing_page.semantics_label_testflight'),
-                          button: true,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Material(
-                              // Ensures the background remains unchanged.
-                              color: Colors.transparent,
-                              child: InkWell(
-                                splashColor: splashColor,
-                                onTap: _launchTestFlightUrl,
-                                child: Ink.image(
-                                  image: const AssetImage(
-                                    '${constants.imagePath}'
-                                    'test_flight_badge.png',
-                                  ),
-                                  height: badgeHeight,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    if (kIsWeb ||
                         defaultTargetPlatform == TargetPlatform.macOS ||
                         defaultTargetPlatform == TargetPlatform.iOS)
                       PopupMenuItem<String>(
@@ -328,11 +301,6 @@ class LandingPage extends StatelessWidget {
         Uri.parse(constants.googlePlayUrl),
         mode: LaunchMode.externalApplication,
       );
-    } else if (result == constants.testFlightUrl) {
-      launchUrl(
-        Uri.parse(constants.testFlightUrl),
-        mode: LaunchMode.externalApplication,
-      );
     } else if (result == constants.macOsUrl) {
       launchUrl(
         Uri.parse(constants.macOsUrl),
@@ -351,13 +319,6 @@ class LandingPage extends StatelessWidget {
   Future<bool> _launchGooglePlayUrl() {
     return launchUrl(
       Uri.parse(constants.googlePlayUrl),
-      mode: LaunchMode.externalApplication,
-    );
-  }
-
-  Future<bool> _launchTestFlightUrl() {
-    return launchUrl(
-      Uri.parse(constants.testFlightUrl),
       mode: LaunchMode.externalApplication,
     );
   }

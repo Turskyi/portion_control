@@ -146,32 +146,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     PopupMenuItem<String>(
-                      value: constants.testFlightUrl,
-                      child: Semantics(
-                        label: t('landing_page.semantics_label_testflight'),
-                        button: true,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Material(
-                            // Ensures the background remains unchanged.
-                            color: Colors.transparent,
-                            child: InkWell(
-                              splashColor: colorScheme.primary.withValues(
-                                alpha: 0.2,
-                              ),
-                              onTap: _launchTestFlightUrl,
-                              child: Ink.image(
-                                image: const AssetImage(
-                                  '${constants.imagePath}test_flight_badge.png',
-                                ),
-                                height: badgeHeight,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    PopupMenuItem<String>(
                       value: constants.macOsUrl,
                       child: Semantics(
                         label: t('landing_page.semantics_label_macos'),
@@ -314,11 +288,6 @@ class _HomePageState extends State<HomePage> {
         Uri.parse(constants.googlePlayUrl),
         mode: LaunchMode.externalApplication,
       );
-    } else if (result == constants.testFlightUrl) {
-      launchUrl(
-        Uri.parse(constants.testFlightUrl),
-        mode: LaunchMode.externalApplication,
-      );
     } else if (result == constants.macOsUrl) {
       launchUrl(
         Uri.parse(constants.macOsUrl),
@@ -432,13 +401,6 @@ class _HomePageState extends State<HomePage> {
         Navigator.pop(context);
       }
     });
-  }
-
-  Future<bool> _launchTestFlightUrl() {
-    return launchUrl(
-      Uri.parse(constants.testFlightUrl),
-      mode: LaunchMode.externalApplication,
-    );
   }
 
   Future<bool> _launchMacOsUrl() {

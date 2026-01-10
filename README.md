@@ -470,7 +470,7 @@ more expression and flexibility.
 ## Contact
 
 For any inquiries, please contact
-[support@turskyi.com](mailto:support@turskyi.com).
+[support@portioncontrol.ca](mailto:support@portioncontrol.ca).
 
 ## Screenshot
 

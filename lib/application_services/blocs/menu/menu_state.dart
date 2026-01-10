@@ -14,6 +14,8 @@ sealed class MenuState {
 
   bool get isUkrainian => language == Language.uk;
 
+  bool get isFrench => language == Language.fr;
+
   String get localeCode => language.isoLanguageCode;
 
   @override

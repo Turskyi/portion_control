@@ -1,6 +1,7 @@
-const String baseUrl = 'https://portion-control-tracker.web.app';
-const String ukrainianWebVersion = 'https://uk.portion-control.turskyi.com';
-const String companyDomain = 'turskyi.com';
+const String baseUrl = 'https://portioncontrol.ca';
+const String ukrainianWebVersion = 'https://uk.portioncontrol.ca';
+const String frenchWebVersion = 'https://fr.portioncontrol.ca';
+const String companyDomain = 'portioncontrol.ca';
 const String supportEmailPrefix = 'support@';
 const String supportEmail = '$supportEmailPrefix$companyDomain';
 const String appName = 'Portion Control';
@@ -8,8 +9,6 @@ const String googlePlayUrl =
     'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
 
 const String appStoreUrl = 'https://apps.apple.com/app/id6743641654';
-
-const String testFlightUrl = 'https://testflight.apple.com/join/aJkP43FB';
 
 const String macOsUrl =
     'https://apps.apple.com/ca/app/portion-control/id6743641654';
