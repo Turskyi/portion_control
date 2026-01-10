@@ -76,7 +76,7 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         if (log.dailyLimit > 0 &&
             log.totalConsumed > 0 &&
             log.totalConsumed > log.dailyLimit &&
-            log.dailyLimit < constants.maxDailyFoodLimit) {
+            log.dailyLimit < constants.kMaxDailyFoodLimit) {
           limitExceededCount++;
         }
       }

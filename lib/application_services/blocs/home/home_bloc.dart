@@ -123,7 +123,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final List<BodyWeight> bodyWeightEntries = await _bodyWeightRepository
             .getAllBodyWeightEntries();
 
-        double portionControl = constants.maxDailyFoodLimit;
+        double portionControl = constants.kMaxDailyFoodLimit;
 
         if (bodyWeightEntries.isNotEmpty) {
           final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
@@ -152,11 +152,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
           if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
             if (savedPortionControl == null) {
-              if (totalConsumedYesterday >= constants.safeMinimumFoodIntakeG &&
-                  totalConsumedYesterday < constants.maxDailyFoodLimit) {
+              if (totalConsumedYesterday >= constants.kSafeMinimumFoodIntakeG &&
+                  totalConsumedYesterday < constants.kMaxDailyFoodLimit) {
                 portionControl = totalConsumedYesterday;
               } else {
-                portionControl = constants.safeMinimumFoodIntakeG;
+                portionControl = constants.kSafeMinimumFoodIntakeG;
               }
             } else if (savedPortionControl < totalConsumedYesterday) {
               portionControl = savedPortionControl;
@@ -164,7 +164,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               portionControl = totalConsumedYesterday;
             }
           } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
-            portionControl = constants.safeMinimumFoodIntakeG;
+            portionControl = constants.kSafeMinimumFoodIntakeG;
             if (savedPortionControl == null) {
               portionControl = totalConsumedYesterday;
             } else if (savedPortionControl > totalConsumedYesterday) {
@@ -582,45 +582,45 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final bool isMealsConfirmed =
             _userPreferencesRepository.isMealsConfirmedForToday;
 
-        double portionControl = constants.maxDailyFoodLimit;
+        double portionControl = constants.kMaxDailyFoodLimit;
         final double? savedPortionControl = _userPreferencesRepository
             .getLastPortionControl();
         if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
           if (savedPortionControl == null) {
-            if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
-                totalConsumedYesterday < constants.maxDailyFoodLimit) {
+            if (totalConsumedYesterday > constants.kSafeMinimumFoodIntakeG &&
+                totalConsumedYesterday < constants.kMaxDailyFoodLimit) {
               portionControl = totalConsumedYesterday;
               await _userPreferencesRepository.savePortionControl(
                 totalConsumedYesterday,
               );
             }
           } else if (savedPortionControl < totalConsumedYesterday &&
-              savedPortionControl > constants.safeMinimumFoodIntakeG) {
+              savedPortionControl > constants.kSafeMinimumFoodIntakeG) {
             portionControl = savedPortionControl;
           } else if (savedPortionControl > totalConsumedYesterday &&
-              totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
-              totalConsumedYesterday < constants.maxDailyFoodLimit) {
+              totalConsumedYesterday > constants.kSafeMinimumFoodIntakeG &&
+              totalConsumedYesterday < constants.kMaxDailyFoodLimit) {
             portionControl = totalConsumedYesterday;
             await _userPreferencesRepository.savePortionControl(
               totalConsumedYesterday,
             );
           }
         } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
-          portionControl = constants.safeMinimumFoodIntakeG;
+          portionControl = constants.kSafeMinimumFoodIntakeG;
           if (savedPortionControl == null) {
-            if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
-                totalConsumedYesterday < constants.maxDailyFoodLimit) {
+            if (totalConsumedYesterday > constants.kSafeMinimumFoodIntakeG &&
+                totalConsumedYesterday < constants.kMaxDailyFoodLimit) {
               portionControl = totalConsumedYesterday;
               await _userPreferencesRepository.savePortionControl(
                 totalConsumedYesterday,
               );
             }
           } else if (savedPortionControl > totalConsumedYesterday &&
-              savedPortionControl > constants.safeMinimumFoodIntakeG) {
+              savedPortionControl > constants.kSafeMinimumFoodIntakeG) {
             portionControl = savedPortionControl;
           } else if (savedPortionControl < totalConsumedYesterday &&
-              totalConsumedYesterday > constants.safeMinimumFoodIntakeG &&
-              totalConsumedYesterday < constants.maxDailyFoodLimit) {
+              totalConsumedYesterday > constants.kSafeMinimumFoodIntakeG &&
+              totalConsumedYesterday < constants.kMaxDailyFoodLimit) {
             portionControl = totalConsumedYesterday;
             await _userPreferencesRepository.savePortionControl(
               totalConsumedYesterday,

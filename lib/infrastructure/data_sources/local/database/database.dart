@@ -260,12 +260,12 @@ class AppDatabase extends _$AppDatabase {
   Future<double> getMaxConsumptionWhenWeightDecreased() async {
     final List<BodyWeightEntry> bodyWeights = await getAllBodyWeightEntries();
     if (bodyWeights.length < 2) {
-      return constants.maxDailyFoodLimit;
+      return constants.kSafeMinimumFoodIntakeG;
     }
 
     final List<FoodEntry> foodEntries = await getAllFoodEntries();
     if (foodEntries.isEmpty) {
-      return constants.maxDailyFoodLimit;
+      return constants.kSafeMinimumFoodIntakeG;
     }
 
     // Map date to total consumption.
@@ -279,7 +279,7 @@ class AppDatabase extends _$AppDatabase {
       dailyConsumption[date] = (dailyConsumption[date] ?? 0.0) + entry.weight;
     }
 
-    double maxConsumption = constants.maxDailyFoodLimit;
+    double maxConsumption = constants.kSafeMinimumFoodIntakeG;
 
     for (int i = 1; i < bodyWeights.length; i++) {
       final BodyWeightEntry current = bodyWeights[i];
@@ -303,6 +303,55 @@ class AppDatabase extends _$AppDatabase {
       }
     }
     return maxConsumption;
+  }
+
+  Future<double> getMinConsumptionWhenWeightIncreased() async {
+    final List<BodyWeightEntry> bodyWeights = await getAllBodyWeightEntries();
+    if (bodyWeights.length < 2) {
+      return constants.kMaxDailyFoodLimit;
+    }
+
+    final List<FoodEntry> foodEntries = await getAllFoodEntries();
+    if (foodEntries.isEmpty) {
+      return constants.kMaxDailyFoodLimit;
+    }
+
+    // Map date to total consumption.
+    final Map<DateTime, double> dailyConsumption = <DateTime, double>{};
+    for (final FoodEntry entry in foodEntries) {
+      final DateTime date = DateTime(
+        entry.date.year,
+        entry.date.month,
+        entry.date.day,
+      );
+      dailyConsumption[date] = (dailyConsumption[date] ?? 0.0) + entry.weight;
+    }
+
+    double minConsumption = constants.kMaxDailyFoodLimit;
+
+    for (int i = 1; i < bodyWeights.length; i++) {
+      final BodyWeightEntry current = bodyWeights[i];
+      final BodyWeightEntry previous = bodyWeights[i - 1];
+
+      // Check if weight increased.
+      if (current.weight > previous.weight) {
+        // Find consumption for the day before the weight measurement
+        final DateTime weightDate = current.date;
+        final DateTime consumptionDate = DateTime(
+          weightDate.year,
+          weightDate.month,
+          weightDate.day,
+        ).subtract(const Duration(days: 1));
+
+        final double? consumption = dailyConsumption[consumptionDate];
+        if (consumption != null &&
+            consumption < minConsumption &&
+            consumption > constants.kSafeMinimumFoodIntakeG) {
+          minConsumption = consumption;
+        }
+      }
+    }
+    return minConsumption;
   }
 
   Future<void> insertPortionControl({
@@ -355,6 +404,10 @@ class AppDatabase extends _$AppDatabase {
     return row?.value;
   }
 
+  Future<List<PortionControlEntry>> getAllPortionControls() {
+    return select(portionControlEntries).get();
+  }
+
   static QueryExecutor _openConnection() {
     return driftDatabase(
       name: 'portion_control_db',
@@ -375,9 +428,5 @@ class AppDatabase extends _$AppDatabase {
         },
       ),
     );
-  }
-
-  Future<List<PortionControlEntry>> getAllPortionControls() {
-    return select(portionControlEntries).get();
   }
 }

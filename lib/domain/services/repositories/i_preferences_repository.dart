@@ -45,4 +45,8 @@ abstract interface class IUserPreferencesRepository {
   String? getWeightReminderTimeString();
 
   Future<bool> saveWeightReminderTimeString(String timeString);
+
+  Future<double> getMaxConsumptionWhenWeightDecreased();
+
+  Future<double> getMinConsumptionWhenWeightIncreased();
 }

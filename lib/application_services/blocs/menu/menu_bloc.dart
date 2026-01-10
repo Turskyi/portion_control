@@ -436,7 +436,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         .getTotalConsumedYesterday();
     final List<BodyWeight> bodyWeightEntries = await _bodyWeightRepository
         .getAllBodyWeightEntries();
-    double portionControl = constants.maxDailyFoodLimit;
+    double portionControl = constants.kMaxDailyFoodLimit;
 
     if (bodyWeightEntries.isNotEmpty) {
       final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
@@ -467,15 +467,15 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         }
         // Ensure portion control doesn't go below the minimum safe intake
         // if it was adjusted downwards based on yesterday's consumption.
-        if (portionControl < constants.safeMinimumFoodIntakeG) {
-          portionControl = constants.safeMinimumFoodIntakeG;
+        if (portionControl < constants.kSafeMinimumFoodIntakeG) {
+          portionControl = constants.kSafeMinimumFoodIntakeG;
         }
       } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
         // When weight is decreasing and below healthy,
         // prioritize safe minimum or user's higher intake.
-        portionControl = constants.safeMinimumFoodIntakeG;
+        portionControl = constants.kSafeMinimumFoodIntakeG;
         if (savedPortionControl == null) {
-          if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
+          if (totalConsumedYesterday > constants.kSafeMinimumFoodIntakeG) {
             portionControl = totalConsumedYesterday;
           }
         } else {

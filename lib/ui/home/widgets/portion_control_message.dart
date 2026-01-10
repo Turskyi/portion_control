@@ -32,8 +32,8 @@ class PortionControlMessage extends StatelessWidget {
           );
         } else if (state.isWeightIncreasingOrSame && isWeightAboveHealthy) {
           if (state.isMealsConfirmedForToday) {
-            if (portionControl > constants.safeMinimumFoodIntakeG) {
-              if (portionControl != constants.maxDailyFoodLimit) {
+            if (portionControl > constants.kSafeMinimumFoodIntakeG) {
+              if (portionControl != constants.kMaxDailyFoodLimit) {
                 return Text(
                   '${translate('portion_control_status.'
                   'portion_control_for_today_prefix')}'
@@ -74,8 +74,8 @@ class PortionControlMessage extends StatelessWidget {
                   // Slightly smaller than titleMediumStyle.
                   style: textTheme.bodyMedium,
                 )
-              else if (portionControl > constants.safeMinimumFoodIntakeG &&
-                  portionControl < constants.maxDailyFoodLimit)
+              else if (portionControl > constants.kSafeMinimumFoodIntakeG &&
+                  portionControl < constants.kMaxDailyFoodLimit)
                 Text(
                   '${state.previousPortionControlInfo}\n'
                   '$useAsReferenceSuffix',
@@ -91,9 +91,9 @@ class PortionControlMessage extends StatelessWidget {
           );
         } else if (state.isWeightDecreasingOrSame && isWeightBelowHealthy) {
           if (state.isMealsConfirmedForToday &&
-              portionControl > constants.safeMinimumFoodIntakeG) {
-            if (portionControl != constants.maxDailyFoodLimit &&
-                portionControl != constants.safeMinimumFoodIntakeG) {
+              portionControl > constants.kSafeMinimumFoodIntakeG) {
+            if (portionControl != constants.kMaxDailyFoodLimit &&
+                portionControl != constants.kSafeMinimumFoodIntakeG) {
               return Text(
                 '${translate('portion_control_status.'
                 'warning_weight_dropping_prefix')}'

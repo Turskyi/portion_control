@@ -21,14 +21,14 @@ sealed class HomeState {
   final Language language;
 
   bool get isSafePortionControl =>
-      portionControl > constants.safeMinimumFoodIntakeG &&
-      portionControl < constants.maxDailyFoodLimit;
+      portionControl > constants.kSafeMinimumFoodIntakeG &&
+      portionControl < constants.kMaxDailyFoodLimit;
 
   // Helper getter to check if yesterday's consumption is positive AND
   // would be a safe portion size if used today.
   bool get _isYesterdayConsumedTotalASafePortion =>
-      yesterdayConsumedTotal > constants.safeMinimumFoodIntakeG &&
-      yesterdayConsumedTotal < constants.maxDailyFoodLimit;
+      yesterdayConsumedTotal > constants.kSafeMinimumFoodIntakeG &&
+      yesterdayConsumedTotal < constants.kMaxDailyFoodLimit;
 
   double get adjustedPortion {
     if (isSafePortionControl) {
@@ -36,20 +36,20 @@ sealed class HomeState {
     } else if (_isYesterdayConsumedTotalASafePortion) {
       return yesterdayConsumedTotal;
     } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
-      return constants.safeMinimumFoodIntakeG;
+      return constants.kSafeMinimumFoodIntakeG;
     } else {
-      return constants.maxDailyFoodLimit;
+      return constants.kMaxDailyFoodLimit;
     }
   }
 
   double get safePortionControl {
-    if (portionControl > constants.safeMinimumFoodIntakeG &&
-        portionControl < constants.maxDailyFoodLimit) {
+    if (portionControl > constants.kSafeMinimumFoodIntakeG &&
+        portionControl < constants.kMaxDailyFoodLimit) {
       return portionControl;
-    } else if (portionControl < constants.safeMinimumFoodIntakeG) {
-      return constants.safeMinimumFoodIntakeG;
+    } else if (portionControl < constants.kSafeMinimumFoodIntakeG) {
+      return constants.kSafeMinimumFoodIntakeG;
     } else {
-      return constants.maxDailyFoodLimit;
+      return constants.kMaxDailyFoodLimit;
     }
   }
 
@@ -170,7 +170,7 @@ sealed class HomeState {
 
   /// Formats the safe minimum food intake constant consistently with
   /// [formattedPortionControl].
-  String get formattedSafeMinimumFoodIntake => constants.safeMinimumFoodIntakeG
+  String get formattedSafeMinimumFoodIntake => constants.kSafeMinimumFoodIntakeG
       .toStringAsFixed(1)
       .replaceAll(RegExp(r'\.0$'), '');
 
@@ -186,8 +186,8 @@ sealed class HomeState {
 
   String get previousPortionControlInfo {
     return (yesterdayConsumedTotal != adjustedPortion &&
-            adjustedPortion != constants.maxDailyFoodLimit &&
-            adjustedPortion != constants.safeMinimumFoodIntakeG)
+            adjustedPortion != constants.kMaxDailyFoodLimit &&
+            adjustedPortion != constants.kSafeMinimumFoodIntakeG)
         ? '\n${translate(
             'previous_portion_control',
             args: <String, Object?>{'adjustedPortion': adjustedPortion},
