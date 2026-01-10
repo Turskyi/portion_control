@@ -94,7 +94,7 @@ Future<void> main() async {
           final Dependencies dependencies = DependenciesScope.of(context);
           return OnboardingBloc(
             dependencies.saveLanguageUseCase,
-            savedLanguage,
+            localDataSource,
           );
         },
         child: OnboardingScreen(localDataSource: localDataSource),

@@ -360,25 +360,20 @@ class _HomePageState extends State<HomePage> {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    RadioListTile<Language>(
-                      title: Text(translate('english')),
-                      value: Language.en,
-                      groupValue: currentLanguage,
-                      secondary: Text(
-                        Language.en.flag,
-                        style: headlineMedium,
+                    ...Language.values.map(
+                      (Language language) => RadioListTile<Language>(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                        ),
+                        title: Text(translate(language.key)),
+                        value: language,
+                        groupValue: currentLanguage,
+                        secondary: Text(
+                          language.flag,
+                          style: headlineMedium,
+                        ),
+                        onChanged: _changeLanguage,
                       ),
-                      onChanged: _changeLanguage,
-                    ),
-                    RadioListTile<Language>(
-                      title: Text(translate('ukrainian')),
-                      value: Language.uk,
-                      groupValue: currentLanguage,
-                      secondary: Text(
-                        Language.uk.flag,
-                        style: headlineMedium,
-                      ),
-                      onChanged: _changeLanguage,
                     ),
                   ],
                 ),
