@@ -23,7 +23,11 @@ class BlurredAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: Colors.transparent,
       leading: kIsWeb ? const LeadingWidget() : leading,
-      title: Text(title),
+      title: Text(
+        title,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
       actions: actions,
       flexibleSpace: ClipRect(
         child: BackdropFilter(

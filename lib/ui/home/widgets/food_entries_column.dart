@@ -79,18 +79,19 @@ class FoodEntriesColumn extends StatelessWidget {
               ),
               if (state.formattedTotalConsumedYesterday == '0')
                 TextButton(
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.all(16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  onPressed: () => _navigateToDailyFoodLogHistory(context),
                   child: Text(
                     translate(
                       'food_entry.you_did_not_put_any_food_entries_yesterday',
                     ),
                     style: textTheme.titleMedium,
                   ),
-                  onPressed: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppRoute.dailyFoodLogHistory.path,
-                    );
-                  },
                 )
               else
                 Text(
@@ -121,6 +122,13 @@ class FoodEntriesColumn extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  void _navigateToDailyFoodLogHistory(BuildContext context) {
+    Navigator.pushNamed(
+      context,
+      AppRoute.dailyFoodLogHistory.path,
     );
   }
 }

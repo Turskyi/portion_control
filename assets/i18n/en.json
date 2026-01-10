@@ -13,6 +13,7 @@
   "select_language": "Select Language",
   "english": "English",
   "ukrainian": "Ukrainian",
+  "french": "French",
   "male": "Male",
   "female": "Female",
   "other": "Other",
@@ -40,6 +41,8 @@
   "total:": "Total",
   "limit": "Limit",
   "learn_more": "Learn more",
+  "field_required": "This field is required",
+  "info": "Info",
   "measurement": {
     "grams_value": "{value} g"
   },
@@ -110,10 +113,10 @@
   "about_us": {
     "title": "About Us",
     "story_prefix": "The idea for ",
-    "story_chat_gpt_prompt": " was sparked by a simple ChatGPT prompt: \"Fill the gap. To lose weight, forget about eating the __ for at least one year.\" The response? \"To lose weight, forget about eating the wrong portions for at least one year.\" That sentence resonated deeply.\n\nAround the same time, our Bengal cat, Bella, had a vet visit. The verdict? She had \"gotten rounded.\" Our solution was simple: we adjusted her automatic feeder to dispense smaller portions. It worked for Bella — but could a similar approach work for people?\n\nObviously, humans aren't cats, and we don’t eat the same thing every day. However, from experience, I noticed that when people overeat, they often do so with foods they’re familiar with. When trying something new, portions tend to be smaller. This observation led to an idea: What if portion control alone could help maintain a healthy weight without the need for complex diets?\n\nTheoretically, if someone stopped eating altogether and only drank water, they would lose weight—but that’s neither healthy nor sustainable. On the flip side, eating without restraint often leads to weight gain. I had already experienced this cycle: my wife and I followed a diet prescribed by a nutritionist, carefully weighing our portions. We lost weight — but as soon as we stopped following the program, the weight returned. The problem wasn’t just what we ate, but how much.\n\nThat’s when the idea for ",
-    "story_app_goal": " took shape. What if I created a mobile app where users could enter their height, weight, and the weight of the food they consume each time they eat? The app could calculate a recommended daily food intake in grams — enough to prevent weight gain while still being sustainable. By tracking daily weight measurements, the app could adjust recommendations dynamically. If weight starts creeping up, the app lowers the recommended intake.\n\nUnlike calorie counting, ",
-    "story_app_benefit": " simplifies the process. No need to track complex nutritional values, hunt for specific ingredients, or cook elaborate meals. Just start small — control portions, track progress, and find balance.\n\nWelcome to ",
-    "story_app_welcome_suffix": " — the practical approach to mindful eating.",
+    "story_chat_gpt_prompt": " was sparked by a simple ChatGPT prompt: \"Fill the gap. To lose weight, forget about eating the __ for at least one year.\" The response? \"To lose weight, forget about eating the wrong portions for at least one year.\" That sentence resonated deeply.\n\nAround the same time, our Bengal cat, Bella, had a vet visit. The verdict? She had \"gotten rounded.\" Our solution was simple: we adjusted her automatic feeder to dispense smaller portions. It worked for Bella - but could a similar approach work for people?\n\nObviously, humans aren't cats, and we don’t eat the same thing every day. However, from experience, I noticed that when people overeat, they often do so with foods they’re familiar with. When trying something new, portions tend to be smaller. This observation led to an idea: What if portion control alone could help maintain a healthy weight without the need for complex diets?\n\nTheoretically, if someone stopped eating altogether and only drank water, they would lose weight - but that’s neither healthy nor sustainable. On the flip side, eating without restraint often leads to weight gain. I had already experienced this cycle: my wife and I followed a diet prescribed by a nutritionist, carefully weighing our portions. We lost weight - but as soon as we stopped following the program, the weight returned. The problem wasn’t just what we ate, but how much.\n\nThat’s when the idea for ",
+    "story_app_goal": " took shape. What if I created a mobile app where users could enter their height, weight, and the weight of the food they consume each time they eat? The app could calculate a recommended daily food intake in grams - enough to prevent weight gain while still being sustainable. By tracking daily weight measurements, the app could adjust recommendations dynamically. If weight starts creeping up, the app lowers the recommended intake.\n\nUnlike calorie counting, ",
+    "story_app_benefit": " simplifies the process. No need to track complex nutritional values, hunt for specific ingredients, or cook elaborate meals. Just start small - control portions, track progress, and find balance.\n\nWelcome to ",
+    "story_app_welcome_suffix": " - the practical approach to mindful eating.",
     "story": "The idea for {appName} was sparked by a simple ChatGPT prompt: \"Fill the gap. To lose weight, forget about eating the __ for at least one year.\" The response? \"To lose weight, forget about eating the wrong portions for at least one year.\" That sentence resonated deeply.\n\nAround the same time, our Bengal cat, Bella, had a vet visit. The verdict? She had \"gotten rounded.\" Our solution was simple: we adjusted her automatic feeder to dispense smaller portions. It worked for Bella - but could a similar approach work for people?\n\nObviously, humans aren't cats, and we don’t eat the same thing every day. However, from experience, I noticed that when people overeat, they often do so with foods they’re familiar with. When trying something new, portions tend to be smaller. This observation led to an idea: What if portion control alone could help maintain a healthy weight without the need for complex diets?\n\nTheoretically, if someone stopped eating altogether and only drank water, they would lose weight - but that’s neither healthy nor sustainable. On the flip side, eating without restraint often leads to weight gain. I had already experienced this cycle: my wife and I followed a diet prescribed by a nutritionist, carefully weighing our portions. We lost weight - but as soon as we stopped following the program, the weight returned. The problem wasn’t just what we ate, but how much.\n\nThat’s when the idea for {appName} took shape. What if I created a mobile app where users could enter their height, weight, and the weight of the food they consume each time they eat? The app could calculate a recommended daily food intake in grams - enough to prevent weight gain while still being sustainable. By tracking daily weight measurements, the app could adjust recommendations dynamically. If weight starts creeping up, the app lowers the recommended intake.\n\nUnlike calorie counting, {appName} simplifies the process. No need to track complex nutritional values, hunt for specific ingredients, or cook elaborate meals. Just start small - control portions, track progress, and find balance.\n\nWelcome to {appName} - the practical approach to mindful eating."
   },
   "contact_us": {
@@ -127,10 +130,10 @@
     "sources_label": "Sources"
   },
   "health_sources": {
-    "who": "WHO — Obesity and overweight",
+    "who": "WHO - Obesity and overweight",
     "who_url": "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
-    "cdc": "CDC — About Adult BMI",
-    "cdc_url": "https://www.cdc.gov/bmi/faq"
+    "cdc": "CDC - About Adult BMI",
+    "cdc_url": "https://www.cdc.gov/bmi/about/index.html"
   },
   "button": {
     "privacy_policy": "Privacy Policy",
@@ -231,7 +234,7 @@
     "getting_started_item2": "- Use a food scale to log each meal in grams.",
     "getting_started_item3": "- The app will suggest portion guidelines to help you manage your intake.",
     "common_questions_title": "Common Questions",
-    "faq1_data_sync": "- Q: Is my data synced or backed up?\n  A: No — your data is stored only on your device and may be removed if you uninstall the app or clear app data. The app is designed to highlight recent trends (for example, yesterday’s intake versus today’s weight), so regular use preserves most of its functionality.",
+    "faq1_data_sync": "- Q: Is my data synced or backed up?\n  A: No - your data is stored only on your device and may be removed if you uninstall the app or clear app data. The app is designed to highlight recent trends (for example, yesterday’s intake versus today’s weight), so regular use preserves most of its functionality.",
     "faq2_forgot_meal": "- Q: I forgot to log a meal. What should I do?\n  A: While the app allows you to edit or add missed meals later, we strongly recommend choosing to start the day from scratch. Accurate tracking is essential for building a reliable portion control baseline, and incomplete records can lead to misleading results.",
     "faq3_children": "- Q: Is this app suitable for children?\n  A: No. This app is designed for adults.",
     "faq4_calories": "- Q: Does the app count calories?\n  A: No. This app tracks food weight in grams, not calories.",
@@ -249,7 +252,7 @@
   "data_storage": {
     "title": "Local-only storage",
     "message": "Your data is stored locally on this device. If you uninstall the app or clear app data, saved entries may be removed. The app focuses on recent trends, so continuing to use it provides the most value.",
-    "export_button": "Learn more"
+    "message_web": "Your data is stored locally in this browser. Clearing browser data, using private mode, or switching devices may remove saved entries. The app works best when used regularly in the same browser."
   },
   "landing_page": {
     "app_name": "Portion Control",
@@ -285,7 +288,8 @@
     "title_enter_your_details": "Enter Your Details",
     "label_date_of_birth": "Date of Birth",
     "label_height": "Height",
-    "unit_cm": "cm"
+    "unit_cm": "cm",
+    "height_hint": "Height affects calculations.\nUse your most recent measured value if possible."
   },
   "hint": {
     "enter_food_weight": "Enter food weight"
@@ -314,7 +318,7 @@
   "onboarding": {
     "page1": {
       "title": "Find Your Perfect Balance 🍽️",
-      "content": "Eat smarter — not less.\nTrack your meals, stay mindful, and feel your progress every day."
+      "content": "Eat smarter - not less.\nTrack your meals, stay mindful, and feel your progress every day."
     },
     "page2": {
       "title": "📊 Visualize Your Progress Effortlessly",
@@ -323,11 +327,12 @@
     },
     "page3": {
       "title": "🩷 Stay in Control Every Day",
-      "content": "Track your progress, follow your goals, and enjoy a healthier relationship with food.\nYour journey starts today - one portion at a time."
+      "content": "Track your progress and enjoy a healthier relationship with food.\nYour journey starts today - one portion at a time."
     },
     "page4": {
       "title": "🔒 Your data stays on your device",
-      "content": "Your entries are stored only on this device. If you uninstall the app or clear app data, previously saved entries may be removed. The app focuses on recent trends and remains useful when used regularly."
+      "content": "Your entries are stored only on this device. If you uninstall the app or clear app data, previously saved entries may be removed. The app focuses on recent trends and remains useful when used regularly.",
+      "web_content": "Your entries are saved locally in this browser. Clearing browser data, using private mode, or switching devices may remove saved entries. The app works best when used regularly on the same device and browser."
     },
     "tagline": "Your mindful eating companion - private, simple, and motivating."
   },
@@ -695,7 +700,7 @@
     "day_52_diet": "Diet for the day: Cottage cheese 250–600 g throughout the day and yogurt (or milk) 1.5 L. Drink fluids as needed.",
     "day_52_total": "Daily Total: 1750-2100g",
     "day_53": "Day 53",
-    "day_53_diet": "Diet for the day: Fresh raw vegetables and fruits — combinations five times a day, 250–300 g each.",
+    "day_53_diet": "Diet for the day: Fresh raw vegetables and fruits - combinations five times a day, 250–300 g each.",
     "day_53_total": "Daily Total: 1250-1500g",
     "day_54": "Day 54",
     "day_54_breakfast": "Breakfast: Boiled chicken 140 g, cucumbers 160 g. (Total: 300g)",
@@ -1254,7 +1259,7 @@
     "day_135_total": "Daily Total: 1670g",
     "day_136": "Day 136",
     "day_136_diet": "Diet day (detox)",
-    "day_136_total": "Daily Total: diet day — simple, low‑calorie foods (kefir, vegetables, fruits, lean fish).",
+    "day_136_total": "Daily Total: diet day - simple, low‑calorie foods (kefir, vegetables, fruits, lean fish).",
     "day_137": "Day 137",
     "day_137_breakfast": "Breakfast: Buckwheat porridge 160 g, vegetable salad 180 g. (Total: 340g)",
     "day_137_second_breakfast": "Second Breakfast: Fruits 240 g. (Total: 240g)",
@@ -1302,7 +1307,7 @@
     "day_142_total": "Daily Total: 1310g",
     "day_143": "Day 143",
     "day_143_diet": "Diet day (detox)",
-    "day_143_total": "Daily Total: diet day — simple, low‑calorie foods (kefir, vegetables, fruits, lean fish).",
+    "day_143_total": "Daily Total: diet day - simple, low‑calorie foods (kefir, vegetables, fruits, lean fish).",
     "day_144": "Day 144",
     "day_144_breakfast": "Breakfast: Pancakes with mushrooms 230 g. (Total: 230g)",
     "day_144_second_breakfast": "Second Breakfast: Fruits 220 g. (Total: 220g)",
@@ -1379,7 +1384,7 @@
     "day_154_dinner": "Dinner: Steamed chicken cutlets 200 g, vegetable salad 200 g. (Total: 400g)",
     "day_154_total": "Daily Total: 1720g",
     "notes_week_22_title": "Notes for Week 22",
-    "notes_week_22_additions": "Typical additions (apply to most days): Lunch — vegetable soup without potatoes (200 g), chicken roulades with cheese & herbs (170 g), and vegetables (200 g); Afternoon snack — yogurt (200 g); Dinner — steamed chicken cutlets (200 g) and vegetable salad (200 g).",
+    "notes_week_22_additions": "Typical additions (apply to most days): Lunch - vegetable soup without potatoes (200 g), chicken roulades with cheese & herbs (170 g), and vegetables (200 g); Afternoon snack - yogurt (200 g); Dinner - steamed chicken cutlets (200 g) and vegetable salad (200 g).",
     "notes_week_22_sweets": "On selected days you may have one of the following: dark chocolate (30 g); marmalade, pastila, or marshmallow (50 g); halva (50 g); fruit jelly (100 g); ice cream (70 g); 2 Raffaello candies; 2 glasses of dry wine (300 ml); or galette cookies (40 g)."
   },
   "stats": {
@@ -1409,7 +1414,7 @@
     "note_title": "A note on calories and food choices",
     "note_content": "{appName} focuses on grams to simplify portion control. However, some foods are calorie‑dense and will impact weight even in small amounts, while others are low in calories and allow larger volumes without the same impact. Use grams for consistent tracking, but prefer lower calorie‑density foods if you want to eat larger portions.",
     "high_calorie_title": "Foods high in calories",
-    "high_calorie_list": "Examples: oils, butter, nuts and nut butters, fatty cuts of meat, cheese, chocolate and sweets, pastries, and processed snacks. These are calorie‑dense — small amounts add up quickly.",
+    "high_calorie_list": "Examples: oils, butter, nuts and nut butters, fatty cuts of meat, cheese, chocolate and sweets, pastries, and processed snacks. These are calorie‑dense - small amounts add up quickly.",
     "low_calorie_title": "Lower calorie / low‑density foods",
     "low_calorie_list": "Examples: leafy greens, cucumbers, zucchini, celery, broth‑based soups, berries, melon. These let you eat more volume for fewer calories."
   },

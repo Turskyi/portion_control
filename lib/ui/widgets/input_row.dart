@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class InputRow extends StatelessWidget {
   const InputRow({
@@ -12,6 +13,8 @@ class InputRow extends StatelessWidget {
     this.controller,
     this.onChanged,
     this.onTap,
+    this.onUnitTap,
+    this.message = '',
     super.key,
   });
 
@@ -24,6 +27,10 @@ class InputRow extends StatelessWidget {
   final TextEditingController? controller;
   final GestureTapCallback? onTap;
   final ValueChanged<String>? onChanged;
+  final VoidCallback? onUnitTap;
+
+  /// The text to display in the tooltip.
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +130,7 @@ class InputRow extends StatelessWidget {
                       validator: isRequired
                           ? (String? value) {
                               if (value == null || value.isEmpty) {
-                                return 'This field is required';
+                                return translate('field_required');
                               }
                               return null;
                             }
@@ -132,10 +139,42 @@ class InputRow extends StatelessWidget {
                   ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         Padding(
           padding: const EdgeInsets.only(top: 12),
-          child: Text(unit, style: TextStyle(fontSize: bodyLargeFontSize)),
+          child: Tooltip(
+            message: message,
+            waitDuration: const Duration(milliseconds: 400),
+            child: InkWell(
+              onTap: onUnitTap,
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: onUnitTap != null
+                    ? const EdgeInsets.all(14.0)
+                    : EdgeInsets.zero,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    Text(
+                      unit,
+                      style: TextStyle(fontSize: bodyLargeFontSize),
+                    ),
+                    if (onUnitTap != null)
+                      Positioned(
+                        top: -8,
+                        right: -10,
+                        child: Icon(
+                          Icons.info_outline,
+                          size: 12,
+                          color: Colors.grey,
+                          semanticLabel: translate('info'),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ],
     );

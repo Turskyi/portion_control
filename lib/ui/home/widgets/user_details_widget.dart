@@ -76,15 +76,24 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                     ),
                   ),
                 Expanded(
-                  child: InputRow(
-                    label: t('user_details_widget.label_height'),
-                    unit: t('user_details_widget.unit_cm'),
-                    initialValue: '${height > 0 ? height : ''}',
-                    isRequired: true,
-                    value: state is DetailsSubmittedState ? '$height' : null,
-                    onChanged: (String value) {
-                      context.read<HomeBloc>().add(UpdateHeight(value));
-                    },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      InputRow(
+                        label: t('user_details_widget.label_height'),
+                        unit: t('user_details_widget.unit_cm'),
+                        initialValue: '${height > 0 ? height : ''}',
+                        isRequired: true,
+                        value: state is DetailsSubmittedState
+                            ? '$height'
+                            : null,
+                        onChanged: (String value) {
+                          context.read<HomeBloc>().add(UpdateHeight(value));
+                        },
+                        message: t('user_details_widget.height_hint'),
+                        onUnitTap: _showHeightHintDialog,
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -100,6 +109,28 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
   void dispose() {
     _dateOfBirthTextEditingController.dispose();
     super.dispose();
+  }
+
+  Future<void> _showHeightHintDialog() {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            translate('user_details_widget.label_height'),
+          ),
+          content: Text(
+            translate('user_details_widget.height_hint'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: Navigator.of(context).pop,
+              child: Text(translate('button.ok')),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _pickDate({

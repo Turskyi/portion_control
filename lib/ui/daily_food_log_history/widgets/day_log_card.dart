@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:portion_control/domain/enums/meal_type.dart';
 import 'package:portion_control/domain/models/day_food_log.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 
@@ -100,19 +101,19 @@ class DayLogCard extends StatelessWidget {
     );
   }
 
-  static final List<String> _mealOrder = <String>[
-    'breakfast',
-    'second_breakfast',
-    'lunch',
-    'snack',
-    'dinner',
+  static final List<MealType> _mealOrder = <MealType>[
+    MealType.breakfast,
+    MealType.secondBreakfast,
+    MealType.lunch,
+    MealType.snack,
+    MealType.dinner,
   ];
 
   String _getMealName({
     required int index,
     required List<FoodWeight> entries,
   }) {
-    String t(String key) => translate('meal_type.$key');
+    String t(MealType type) => translate('meal_type.${type.translationKey}');
 
     if (entries.length == 5) {
       // Clamp index to available meal slots.
@@ -120,21 +121,21 @@ class DayLogCard extends StatelessWidget {
       return t(_mealOrder[safeIndex]);
     } else if (entries.length == 4) {
       if (index == 0) {
-        return t('breakfast');
+        return t(MealType.breakfast);
       } else if (index == 1) {
-        return t('second_breakfast');
+        return t(MealType.secondBreakfast);
       } else if (index == 2) {
-        return t('lunch');
+        return t(MealType.lunch);
       } else {
-        return t('dinner');
+        return t(MealType.dinner);
       }
     } else if (entries.length == 3) {
       if (index == 0) {
-        return t('breakfast');
+        return t(MealType.breakfast);
       } else if (index == 1) {
-        return t('lunch');
+        return t(MealType.lunch);
       } else {
-        return t('dinner');
+        return t(MealType.dinner);
       }
     } else if (entries.length > 5) {
       // Get indices sorted by weight (descending).
@@ -153,37 +154,45 @@ class DayLogCard extends StatelessWidget {
 
       if (topThreeIndices.contains(index)) {
         final int position = topThreeIndices.indexOf(index);
-        if (position == 0) return t('breakfast');
-        if (position == 1) return t('lunch');
-        return t('dinner');
+        if (position == 0) return t(MealType.breakfast);
+        if (position == 1) return t(MealType.lunch);
+        return t(MealType.dinner);
       } else if (index == fourthLargestIndex) {
-        return t('second_breakfast');
+        return t(MealType.secondBreakfast);
       } else {
-        return t('snack');
+        return t(MealType.snack);
       }
     } else {
       // Fallback based on time of day.
-      String getType(int hour) {
+      MealType getType(int hour) {
         if (hour < 12) {
-          return 'breakfast';
+          return MealType.breakfast;
         } else if (hour < 17) {
-          return 'lunch';
+          return MealType.lunch;
         } else {
-          return 'dinner';
+          return MealType.dinner;
         }
       }
 
-      final String currentType = getType(entries[index].dateTime.hour);
+      final MealType currentType = getType(entries[index].dateTime.hour);
 
       if (entries.length == 2) {
         final int otherIndex = index == 0 ? 1 : 0;
-        final String otherType = getType(entries[otherIndex].dateTime.hour);
+        final MealType otherType = getType(entries[otherIndex].dateTime.hour);
 
         if (currentType == otherType) {
-          if (currentType == 'breakfast') {
-            return index == 0 ? t('breakfast') : t('lunch');
+          if (currentType == MealType.breakfast) {
+            return index == 0 ? t(MealType.breakfast) : t(MealType.lunch);
+          } else if (currentType == MealType.dinner) {
+            if (entries[index].weight > entries[otherIndex].weight) {
+              return t(MealType.dinner);
+            }
+            if (entries[otherIndex].weight > entries[index].weight) {
+              return t(MealType.snack);
+            }
+            return index == 0 ? t(MealType.dinner) : t(MealType.snack);
           } else {
-            return index == 0 ? t(currentType) : t('dinner');
+            return index == 0 ? t(currentType) : t(MealType.dinner);
           }
         }
       }

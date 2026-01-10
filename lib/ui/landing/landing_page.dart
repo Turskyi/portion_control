@@ -154,33 +154,6 @@ class LandingPage extends StatelessWidget {
                         ),
                       ),
                     if (kIsWeb ||
-                        defaultTargetPlatform != TargetPlatform.android)
-                      PopupMenuItem<String>(
-                        value: constants.testFlightUrl,
-                        child: Semantics(
-                          label: t('landing_page.semantics_label_testflight'),
-                          button: true,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Material(
-                              // Ensures the background remains unchanged.
-                              color: Colors.transparent,
-                              child: InkWell(
-                                splashColor: splashColor,
-                                onTap: _launchTestFlightUrl,
-                                child: Ink.image(
-                                  image: const AssetImage(
-                                    '${constants.imagePath}'
-                                    'test_flight_badge.png',
-                                  ),
-                                  height: badgeHeight,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    if (kIsWeb ||
                         defaultTargetPlatform == TargetPlatform.macOS ||
                         defaultTargetPlatform == TargetPlatform.iOS)
                       PopupMenuItem<String>(
@@ -278,29 +251,6 @@ class LandingPage extends StatelessWidget {
                 ),
               ),
               Semantics(
-                label: t('landing_page.semantics_label_testflight'),
-                button: true,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Material(
-                    // Ensures the background remains unchanged.
-                    color: Colors.transparent,
-                    child: InkWell(
-                      splashColor: colorScheme.primary.withOpacity(0.2),
-                      onTap: _launchTestFlightUrl,
-                      child: Ink.image(
-                        image: const AssetImage(
-                          '${constants.imagePath}test_flight_badge.png',
-                        ),
-                        height: 40,
-                        width: 140,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Semantics(
                 label: t('landing_page.semantics_label_macos'),
                 button: true,
                 child: ClipRRect(
@@ -315,8 +265,8 @@ class LandingPage extends StatelessWidget {
                         image: const AssetImage(
                           '${constants.imagePath}mac_os_badge.png',
                         ),
-                        height: 40,
-                        width: 140,
+                        height: 72,
+                        width: 156,
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -351,11 +301,6 @@ class LandingPage extends StatelessWidget {
         Uri.parse(constants.googlePlayUrl),
         mode: LaunchMode.externalApplication,
       );
-    } else if (result == constants.testFlightUrl) {
-      launchUrl(
-        Uri.parse(constants.testFlightUrl),
-        mode: LaunchMode.externalApplication,
-      );
     } else if (result == constants.macOsUrl) {
       launchUrl(
         Uri.parse(constants.macOsUrl),
@@ -374,13 +319,6 @@ class LandingPage extends StatelessWidget {
   Future<bool> _launchGooglePlayUrl() {
     return launchUrl(
       Uri.parse(constants.googlePlayUrl),
-      mode: LaunchMode.externalApplication,
-    );
-  }
-
-  Future<bool> _launchTestFlightUrl() {
-    return launchUrl(
-      Uri.parse(constants.testFlightUrl),
       mode: LaunchMode.externalApplication,
     );
   }
@@ -404,13 +342,13 @@ class LandingPage extends StatelessWidget {
                 title: Text(translate('select_language')),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    RadioListTile<Language>(
-                      title: Text(translate('english')),
-                      value: Language.en,
+                  children: Language.values.map((Language language) {
+                    return RadioListTile<Language>(
+                      title: Text(translate(language.key)),
+                      value: language,
                       groupValue: currentLanguage,
                       secondary: Text(
-                        Language.en.flag,
+                        language.flag,
                         style: headlineMedium,
                       ),
                       contentPadding: EdgeInsets.symmetric(
@@ -424,28 +362,8 @@ class LandingPage extends StatelessWidget {
                           );
                         }
                       },
-                    ),
-                    RadioListTile<Language>(
-                      title: Text(translate('ukrainian')),
-                      value: Language.uk,
-                      groupValue: currentLanguage,
-                      secondary: Text(
-                        Language.uk.flag,
-                        style: headlineMedium,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: horizontalPadding,
-                      ),
-                      onChanged: (Language? newLanguage) {
-                        if (newLanguage != null) {
-                          _changeLanguage(
-                            context: context,
-                            newLanguage: newLanguage,
-                          );
-                        }
-                      },
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
               );
             },

@@ -196,12 +196,6 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                     },
                   ),
                   const Divider(),
-                  if (!kIsWeb)
-                    AnimatedDrawerItem(
-                      icon: Icons.web,
-                      text: translate('open_web_version'),
-                      onTap: _openWebVersion,
-                    ),
                   AnimatedDrawerItem(
                     icon: Icons.language,
                     text: translate('language'),
@@ -210,16 +204,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                   AnimatedDrawerItem(
                     icon: Icons.notifications,
                     text: translate('reminders.title'),
-                    onTap: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (BuildContext _) {
-                          return ReminderDialog(
-                            localDataSource: widget.localDataSource,
-                          );
-                        },
-                      );
-                    },
+                    onTap: _showRemindersDialog,
                   ),
                   AnimatedDrawerItem(
                     icon: Icons.feedback,
@@ -245,6 +230,32 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         return const SizedBox.shrink();
                       },
                     ),
+                  if (!kIsWeb)
+                    AnimatedDrawerItem(
+                      icon: Icons.web,
+                      text: translate('open_web_version'),
+                      onTap: _openWebVersion,
+                    ),
+                  const Divider(),
+                  BlocBuilder<MenuBloc, MenuState>(
+                    builder: (BuildContext context, MenuState state) {
+                      if (state is LoadingMenuState) {
+                        return const SizedBox.shrink();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: Text(
+                          '${translate('app_version')}: ${state.appVersion}',
+                          style: textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                   const SizedBox(height: 28),
                 ],
               ),
@@ -262,6 +273,17 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
     super.dispose();
   }
 
+  Future<void> _showRemindersDialog() {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext _) {
+        return ReminderDialog(
+          localDataSource: widget.localDataSource,
+        );
+      },
+    );
+  }
+
   void _openWebVersion() {
     context.read<MenuBloc>().add(const OpenWebVersionEvent());
   }
@@ -270,10 +292,10 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
     context.read<MenuBloc>().add(const PinWidgetEvent());
   }
 
-  void _showLanguageSelectionDialog() {
-    showDialog(
+  Future<void> _showLanguageSelectionDialog() {
+    return showDialog<void>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext _) {
         return BlocProvider<MenuBloc>(
           create: (BuildContext _) {
             final LocalDataSource localDataSource = widget.localDataSource;
@@ -294,40 +316,26 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
               final TextStyle? headlineMedium = Theme.of(
                 context,
               ).textTheme.headlineMedium;
-              final double horizontalPadding = 12.0;
+              final double horizontalPadding = 8.0;
               return AlertDialog(
                 title: Text(translate('select_language')),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    RadioListTile<Language>(
-                      title: Text(translate('english')),
-                      value: Language.en,
+                  children: Language.values.map((Language language) {
+                    return RadioListTile<Language>(
+                      title: Text(translate(language.key)),
+                      value: language,
                       groupValue: currentLanguage,
                       secondary: Text(
-                        Language.en.flag,
-                        style: headlineMedium,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: horizontalPadding,
-                      ),
-
-                      onChanged: _changeLanguage,
-                    ),
-                    RadioListTile<Language>(
-                      title: Text(translate('ukrainian')),
-                      value: Language.uk,
-                      groupValue: currentLanguage,
-                      secondary: Text(
-                        Language.uk.flag,
+                        language.flag,
                         style: headlineMedium,
                       ),
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: horizontalPadding,
                       ),
                       onChanged: _changeLanguage,
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
               );
             },
@@ -337,8 +345,8 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
     );
   }
 
-  void _changeLanguage(Language? newLanguage) {
-    changeLocale(context, newLanguage?.isoLanguageCode)
+  Future<void> _changeLanguage(Language? newLanguage) {
+    return changeLocale(context, newLanguage?.isoLanguageCode)
     // The returned value is always `null`.
     .then((Object? _) {
       if (mounted && newLanguage != null) {

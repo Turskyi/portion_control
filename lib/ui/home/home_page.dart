@@ -1,8 +1,11 @@
+import 'dart:io' show Platform;
+
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
@@ -28,6 +31,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   FeedbackController? _feedbackController;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkForUpdate();
+  }
+
+  Future<void> _checkForUpdate() async {
+    if (kIsWeb) {
+      return;
+    }
+
+    if (Platform.isAndroid) {
+      try {
+        final AppUpdateInfo info = await InAppUpdate.checkForUpdate();
+        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+          await InAppUpdate.performImmediateUpdate();
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('InAppUpdate error: $e');
+        }
+      }
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -102,35 +130,13 @@ class _HomePageState extends State<HomePage> {
                             // Ensures the background remains unchanged.
                             color: Colors.transparent,
                             child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
+                              splashColor: colorScheme.primary.withValues(
+                                alpha: 0.2,
+                              ),
                               onTap: _launchGooglePlayUrl,
                               child: Ink.image(
                                 image: const AssetImage(
                                   '${constants.imagePath}play_store_badge.png',
-                                ),
-                                height: badgeHeight,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    PopupMenuItem<String>(
-                      value: constants.testFlightUrl,
-                      child: Semantics(
-                        label: t('landing_page.semantics_label_testflight'),
-                        button: true,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Material(
-                            // Ensures the background remains unchanged.
-                            color: Colors.transparent,
-                            child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
-                              onTap: _launchTestFlightUrl,
-                              child: Ink.image(
-                                image: const AssetImage(
-                                  '${constants.imagePath}test_flight_badge.png',
                                 ),
                                 height: badgeHeight,
                               ),
@@ -150,7 +156,9 @@ class _HomePageState extends State<HomePage> {
                             // Ensures the background remains unchanged.
                             color: Colors.transparent,
                             child: InkWell(
-                              splashColor: colorScheme.primary.withOpacity(0.2),
+                              splashColor: colorScheme.primary.withValues(
+                                alpha: 0.2,
+                              ),
                               onTap: _launchMacOsUrl,
                               child: Ink.image(
                                 image: const AssetImage(
@@ -280,11 +288,6 @@ class _HomePageState extends State<HomePage> {
         Uri.parse(constants.googlePlayUrl),
         mode: LaunchMode.externalApplication,
       );
-    } else if (result == constants.testFlightUrl) {
-      launchUrl(
-        Uri.parse(constants.testFlightUrl),
-        mode: LaunchMode.externalApplication,
-      );
     } else if (result == constants.macOsUrl) {
       launchUrl(
         Uri.parse(constants.macOsUrl),
@@ -398,13 +401,6 @@ class _HomePageState extends State<HomePage> {
         Navigator.pop(context);
       }
     });
-  }
-
-  Future<bool> _launchTestFlightUrl() {
-    return launchUrl(
-      Uri.parse(constants.testFlightUrl),
-      mode: LaunchMode.externalApplication,
-    );
   }
 
   Future<bool> _launchMacOsUrl() {

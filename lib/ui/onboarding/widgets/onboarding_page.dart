@@ -63,24 +63,26 @@ class OnboardingPage extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          if (localImageAsset != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 48.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: Image.asset(
-                  localImageAsset,
-                  height: 180,
+      child: SelectionArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            if (localImageAsset != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 48.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.0),
+                  child: Image.asset(
+                    localImageAsset,
+                    height: 180,
+                  ),
                 ),
               ),
-            ),
-          titleWidget,
-          const SizedBox(height: 16),
-          contentWidget,
-        ],
+            titleWidget,
+            const SizedBox(height: 16),
+            contentWidget,
+          ],
+        ),
       ),
     );
   }

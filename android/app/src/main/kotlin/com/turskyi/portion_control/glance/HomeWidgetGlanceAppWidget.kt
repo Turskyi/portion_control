@@ -1,7 +1,5 @@
 package com.turskyi.portion_control.glance
 
-import HomeWidgetGlanceState
-import HomeWidgetGlanceStateDefinition
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -33,6 +31,8 @@ import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.turskyi.portion_control.MainActivity
 import com.turskyi.portion_control.R
+import es.antonborri.home_widget.HomeWidgetGlanceState
+import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 import es.antonborri.home_widget.actionStartActivity
 
 class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
@@ -45,12 +45,13 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
         const val KEY_LAST_UPDATED = "text_last_updated"
     }
 
-    override val stateDefinition: GlanceStateDefinition<*>
+    override val stateDefinition: GlanceStateDefinition<HomeWidgetGlanceState>
         get() = HomeWidgetGlanceStateDefinition()
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            GlanceContent(context, currentState = currentState())
+            val state = currentState<HomeWidgetGlanceState>()
+            GlanceContent(context, currentState = state)
         }
     }
 
@@ -219,4 +220,3 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
         }
     }
 }
-

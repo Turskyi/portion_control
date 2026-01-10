@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="appwidget_text">PortionControl</string>
+    <string name="appwidget_text">Portion Control</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">Quickly view and log your daily food portions and weight directly from your home screen.</string>
     <string name="image">Image</string>
@@ -20,5 +20,5 @@
     <string name="limit_g">Portion Control: %1$s g</string>
     <string name="chart">Chart</string>
     <string name="portion_control_g">Portion Control: %1$s g</string>
-    <string name="portioncontrol">PortionControl</string>
+    <string name="portioncontrol">Portion Control</string>
 </resources>

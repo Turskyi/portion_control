@@ -2,23 +2,28 @@
 /// project.
 enum Language {
   en(
-    name: _englishLanguage,
+    key: _englishLanguage,
     isoLanguageCode: kEnglishIsoLanguageCode,
     flag: '🇬🇧',
   ),
   uk(
-    name: _ukrainianLanguage,
+    key: _ukrainianLanguage,
     isoLanguageCode: _ukrainianIsoLanguageCode,
     flag: '🇺🇦',
+  ),
+  fr(
+    key: _frenchLanguage,
+    isoLanguageCode: _frenchIsoLanguageCode,
+    flag: '🇫🇷',
   );
 
   const Language({
-    required this.name,
+    required this.key,
     required this.isoLanguageCode,
     required this.flag,
   });
 
-  final String name;
+  final String key;
   final String isoLanguageCode;
   final String flag;
 
@@ -26,12 +31,16 @@ enum Language {
 
   bool get isUkrainian => this == Language.uk;
 
+  bool get isFrench => this == Language.fr;
+
   static Language fromIsoLanguageCode(String isoLanguageCode) {
     switch (isoLanguageCode.trim().toLowerCase()) {
       case kEnglishIsoLanguageCode:
         return Language.en;
       case _ukrainianIsoLanguageCode:
         return Language.uk;
+      case _frenchIsoLanguageCode:
+        return Language.fr;
       default:
         return Language.en;
     }
@@ -40,5 +49,8 @@ enum Language {
 
 const String kEnglishIsoLanguageCode = 'en';
 const String _ukrainianIsoLanguageCode = 'uk';
-const String _englishLanguage = 'English';
-const String _ukrainianLanguage = 'Ukrainian';
+const String _frenchIsoLanguageCode = 'fr';
+
+const String _englishLanguage = 'english';
+const String _ukrainianLanguage = 'ukrainian';
+const String _frenchLanguage = 'french';

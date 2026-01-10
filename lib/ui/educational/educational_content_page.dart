@@ -23,14 +23,14 @@ class EducationalContentPage extends StatelessWidget {
         leading: kIsWeb ? const LeadingWidget() : null,
         title: translate('educational_content.title'),
       ),
-      body: ResponsiveContent(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            horizontalIndent,
-            MediaQuery.paddingOf(context).top + 72,
-            horizontalIndent,
-            80.0,
-          ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          horizontalIndent,
+          MediaQuery.paddingOf(context).top + 72,
+          horizontalIndent,
+          80.0,
+        ),
+        child: ResponsiveContent(
           child: Column(
             spacing: 16,
             crossAxisAlignment: CrossAxisAlignment.start,
