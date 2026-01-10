@@ -55,7 +55,7 @@ class FoodEntriesColumn extends StatelessWidget {
                 },
               );
             }),
-            if ((totalConsumedToday < constants.maxDailyFoodLimit &&
+            if ((totalConsumedToday < constants.kMaxDailyFoodLimit &&
                     (!shouldAskForMealConfirmation ||
                         state.hasNoPortionControl) &&
                     totalConsumedToday < portionControl) ||
@@ -67,7 +67,7 @@ class FoodEntriesColumn extends StatelessWidget {
                   context.read<HomeBloc>().add(AddFoodEntry(value));
                 },
               )
-            else if (totalConsumedToday >= constants.maxDailyFoodLimit)
+            else if (totalConsumedToday >= constants.kMaxDailyFoodLimit)
               Text(translate('food_entry.challenge_warning')),
 
             if (!shouldAskForMealConfirmation ||
@@ -102,8 +102,8 @@ class FoodEntriesColumn extends StatelessWidget {
               if (isWeightBelowHealthy &&
                   isWeightDecreasingOrSame &&
                   totalConsumedToday < portionControl &&
-                  portionControl != constants.maxDailyFoodLimit &&
-                  portionControl != constants.safeMinimumFoodIntakeG)
+                  portionControl != constants.kMaxDailyFoodLimit &&
+                  portionControl != constants.kSafeMinimumFoodIntakeG)
                 Text(
                   '${translate('food_entry.must_eat_at_least_prefix')}'
                   '${state.formattedRemainingFood}$gramsSuffix'
@@ -111,7 +111,7 @@ class FoodEntriesColumn extends StatelessWidget {
                   style: textTheme.bodyMedium,
                 )
               else if (totalConsumedToday < portionControl &&
-                  portionControl != constants.maxDailyFoodLimit)
+                  portionControl != constants.kMaxDailyFoodLimit)
                 Text(
                   '${translate('food_entry.can_eat_prefix')}'
                   '${state.formattedRemainingFood}'

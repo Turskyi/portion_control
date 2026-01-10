@@ -18,9 +18,9 @@ const String imagePath = 'assets/images/';
 /// Blur intensity constant.
 const double blurSigma = 12.0;
 
-// in centimetres
+// in centimeters
 final double minUserHeight = 100.0;
-// in centimetres
+// in centimeters
 final double maxUserHeight = 250.0;
 
 const double maxHealthyBmi = 24.9;
@@ -31,7 +31,21 @@ const double minBodyWeight = 20.0;
 
 const int minAge = 18;
 
-const double maxDailyFoodLimit = 4000.0;
+/// Absolute upper bound for daily food intake, in grams.
+///
+/// This value acts as a technical safeguard when there is insufficient
+/// user data (for example, during early onboarding or missing history).
+/// It prevents unbounded or unrealistic values while avoiding premature
+/// restriction before enough observations are available.
+///
+/// The value of `4000 g` is intentionally conservative and is **not**
+/// a recommended or target intake. It is not shown as dietary advice
+/// and does not represent a personalized limit.
+///
+/// Once sufficient body-weight and food log data is available, the app
+/// derives adaptive daily values based on observed trends rather than
+/// relying on this fallback.
+const double kMaxDailyFoodLimit = 4000.0;
 
 /// The minimum daily portion control limit, in grams.
 ///
@@ -50,7 +64,7 @@ const double maxDailyFoodLimit = 4000.0;
 /// This is a general safety floor and does not replace personalized
 /// medical advice. Users with special dietary needs should consult
 /// a healthcare professional.
-const double safeMinimumFoodIntakeG = 1499.0;
+const double kSafeMinimumFoodIntakeG = 1499.0;
 
 /// When to switch to wide layout.
 const double wideScreenThreshold = 600.0;

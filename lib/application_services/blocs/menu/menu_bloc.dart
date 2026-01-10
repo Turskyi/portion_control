@@ -432,85 +432,55 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   //TODO: move this to a UseCase
   Future<double> _calculatePortionControl() async {
-    final double totalConsumedYesterday = await _foodWeightRepository
-        .getTotalConsumedYesterday();
-    final List<BodyWeight> bodyWeightEntries = await _bodyWeightRepository
-        .getAllBodyWeightEntries();
-    double portionControl = constants.maxDailyFoodLimit;
+    final BodyWeight bodyWeightEntry = await _bodyWeightRepository
+        .getLastBodyWeight();
+    double portionControl = constants.kMaxDailyFoodLimit;
 
-    if (bodyWeightEntries.isNotEmpty) {
-      final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
+    if (bodyWeightEntry.weight > 0) {
+      final double bodyWeight = bodyWeightEntry.weight;
+      final bool isWeightAboveHealthy = _isWeightAboveHealthyFor(bodyWeight);
+      final bool isWeightBelowHealthy = _isWeightBelowHealthyFor(bodyWeight);
 
-      final bool isWeightIncreasingOrSame = await _isWeightIncreasingOrSameFor(
-        bodyWeightEntries,
-      );
-      final bool isWeightAboveHealthy = _isWeightAboveHealthyFor(
-        lastSavedBodyWeightEntry.weight,
-      );
-      final bool isWeightDecreasingOrSame = await _isWeightDecreasingOrSameFor(
-        bodyWeightEntries,
-      );
-      final bool isWeightBelowHealthy = _isWeightBelowHealthyFor(
-        lastSavedBodyWeightEntry.weight,
-      );
+      if (isWeightAboveHealthy) {
+        portionControl = await _userPreferencesRepository
+            .getMinConsumptionWhenWeightIncreased();
+      } else if (isWeightBelowHealthy) {
+        portionControl = await _userPreferencesRepository
+            .getMaxConsumptionWhenWeightDecreased();
+      }
 
       final double? savedPortionControl = _userPreferencesRepository
           .getLastPortionControl();
 
-      if (isWeightIncreasingOrSame && isWeightAboveHealthy) {
-        if (savedPortionControl == null) {
-          portionControl = totalConsumedYesterday;
-        } else if (savedPortionControl < totalConsumedYesterday) {
-          portionControl = savedPortionControl;
-        } else if (savedPortionControl > totalConsumedYesterday) {
-          portionControl = totalConsumedYesterday;
-        }
-        // Ensure portion control doesn't go below the minimum safe intake
-        // if it was adjusted downwards based on yesterday's consumption.
-        if (portionControl < constants.safeMinimumFoodIntakeG) {
-          portionControl = constants.safeMinimumFoodIntakeG;
-        }
-      } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
-        // When weight is decreasing and below healthy,
-        // prioritize safe minimum or user's higher intake.
-        portionControl = constants.safeMinimumFoodIntakeG;
-        if (savedPortionControl == null) {
-          if (totalConsumedYesterday > constants.safeMinimumFoodIntakeG) {
-            portionControl = totalConsumedYesterday;
+      if (isWeightAboveHealthy) {
+        if (portionControl == constants.kMaxDailyFoodLimit) {
+          if (savedPortionControl != null) {
+            portionControl = savedPortionControl;
+          } else {
+            final double yesterdayTotal = await _foodWeightRepository
+                .getTotalConsumedYesterday();
+            if (yesterdayTotal > constants.kSafeMinimumFoodIntakeG) {
+              portionControl = yesterdayTotal;
+            }
           }
-        } else {
-          // If there's a saved portion, take the higher of saved, yesterday,
-          // or safe minimum.
-          if (savedPortionControl > portionControl) {
+        } else if (savedPortionControl != null &&
+            savedPortionControl < portionControl) {
+          portionControl = savedPortionControl;
+        }
+      } else if (isWeightBelowHealthy) {
+        if (portionControl == constants.kSafeMinimumFoodIntakeG) {
+          if (savedPortionControl != null) {
             portionControl = savedPortionControl;
           }
-          if (totalConsumedYesterday > portionControl) {
-            portionControl = totalConsumedYesterday;
-          }
+        } else if (savedPortionControl != null &&
+            savedPortionControl > portionControl) {
+          portionControl = savedPortionControl;
         }
-      }
-      // If no specific condition met, `portionControl` remains
-      // `constants.maxDailyFoodLimit`.
-      else if (savedPortionControl != null) {
+      } else if (savedPortionControl != null) {
         portionControl = savedPortionControl;
       }
     }
     return portionControl;
-  }
-
-  Future<bool> _isWeightIncreasingOrSameFor(
-    List<BodyWeight> bodyWeightEntries,
-  ) async {
-    final double yesterdayConsumedTotal = await _foodWeightRepository
-        .getTotalConsumedYesterday();
-    if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
-      return false;
-    }
-    if (bodyWeightEntries.length == 1) {
-      return true;
-    }
-    return bodyWeightEntries.last.weight >=
-        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
   }
 
   Future<String> _getBmiMessage() async {
@@ -572,28 +542,15 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   bool _isWeightAboveHealthyFor(double bodyWeight) {
     final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
     final double heightInMeters = userDetails.heightInCm / 100;
+    if (heightInMeters == 0) return false;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi > constants.maxHealthyBmi;
-  }
-
-  Future<bool> _isWeightDecreasingOrSameFor(
-    List<BodyWeight> bodyWeightEntries,
-  ) async {
-    final double yesterdayConsumedTotal = await _foodWeightRepository
-        .getTotalConsumedYesterday();
-    if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
-      return false;
-    }
-    if (bodyWeightEntries.length == 1) {
-      return true;
-    }
-    return bodyWeightEntries.last.weight <=
-        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
   }
 
   bool _isWeightBelowHealthyFor(double bodyWeight) {
     final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
     final double heightInMeters = userDetails.heightInCm / 100;
+    if (heightInMeters == 0) return false;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi < constants.minHealthyBmi;
   }

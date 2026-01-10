@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
@@ -465,7 +466,7 @@ class LocalDataSource {
 
     final double defaultLimit =
         getLastPortionControl() ??
-        await _appDatabase.getMaxConsumptionWhenWeightDecreased();
+        await _appDatabase.getMinConsumptionWhenWeightIncreased();
 
     final List<PortionControlEntry> portionControls = await _appDatabase
         .getAllPortionControls();
@@ -512,5 +513,13 @@ class LocalDataSource {
     required DateTime date,
   }) {
     return _appDatabase.insertPortionControl(value: value, date: date);
+  }
+
+  Future<double> getMaxConsumptionWhenWeightDecreased() {
+    return _appDatabase.getMaxConsumptionWhenWeightDecreased();
+  }
+
+  Future<double> getMinConsumptionWhenWeightIncreased() {
+    return _appDatabase.getMinConsumptionWhenWeightIncreased();
   }
 }

@@ -122,4 +122,14 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
       return Future<bool>.value(false);
     }
   }
+
+  @override
+  Future<double> getMaxConsumptionWhenWeightDecreased() {
+    return _localDataSource.getMaxConsumptionWhenWeightDecreased();
+  }
+
+  @override
+  Future<double> getMinConsumptionWhenWeightIncreased() {
+    return _localDataSource.getMinConsumptionWhenWeightIncreased();
+  }
 }
