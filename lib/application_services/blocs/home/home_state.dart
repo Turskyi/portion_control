@@ -69,14 +69,20 @@ sealed class HomeState {
 
   int get age => userDetails.age;
 
-  double get totalConsumedToday =>
-      foodEntries.fold(0, (double sum, FoodWeight entry) => sum + entry.weight);
+  double get totalConsumedToday => foodEntries.fold(
+    0.0,
+    (double sum, FoodWeight entry) => sum + entry.weight,
+  );
 
   double get totalConsumedYesterday => yesterdayConsumedTotal;
 
-  bool get hasNoPortionControl =>
-      (bodyWeightEntries.length == 1 && bodyWeightEntries.first.date.isToday) ||
-      (bodyWeightEntries.length > 1 && yesterdayConsumedTotal == 0);
+  bool get hasNoPortionControl {
+    final BodyWeight? firstEntry = bodyWeightEntries.firstOrNull;
+    final bool isSingleTodayEntry =
+        bodyWeightEntries.length == 1 && firstEntry?.date.isToday == true;
+    return isSingleTodayEntry ||
+        (bodyWeightEntries.length > 1 && yesterdayConsumedTotal == 0);
+  }
 
   bool get isWeightIncreasing {
     if (bodyWeightEntries.length < 2 || yesterdayConsumedTotal <= 0) {
@@ -103,11 +109,13 @@ sealed class HomeState {
         bodyWeightEntries[bodyWeightEntries.length - 2].weight;
   }
 
-  bool get isWeightDecreasing =>
-      yesterdayConsumedTotal > 0 &&
-      bodyWeightEntries.length > 1 &&
-      bodyWeightEntries.last.weight <
-          bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+  bool get isWeightDecreasing {
+    if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.length < 2) {
+      return false;
+    }
+    return bodyWeightEntries.last.weight <
+        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
+  }
 
   bool get isWeightDecreasingOrSame {
     return isWeightDecreasingOrSameFor(bodyWeightEntries);
@@ -128,6 +136,7 @@ sealed class HomeState {
 
   bool isWeightAboveHealthyFor(double bodyWeight) {
     final double heightInMeters = heightInCm / 100;
+    if (heightInMeters == 0) return false;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi > constants.maxHealthyBmi;
   }
@@ -136,18 +145,25 @@ sealed class HomeState {
 
   bool isWeightBelowHealthyFor(double bodyWeight) {
     final double heightInMeters = heightInCm / 100;
+    if (heightInMeters == 0) return false;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
     return bmi < constants.minHealthyBmi;
   }
 
-  bool get isWeightNotSubmitted =>
-      this is DetailsSubmittedState &&
-      this is! BodyWeightSubmittedState &&
-      !(bodyWeightEntries.lastOrNull?.date.isToday == true);
+  bool get isWeightNotSubmitted {
+    final BodyWeight? lastEntry = bodyWeightEntries.lastOrNull;
+    return this is DetailsSubmittedState &&
+        this is! BodyWeightSubmittedState &&
+        !(lastEntry?.date.isToday == true);
+  }
 
-  bool get isMealsConfirmedForToday =>
-      this is BodyWeightSubmittedState &&
-      (this as BodyWeightSubmittedState).isConfirmedAllMealsLogged;
+  bool get isMealsConfirmedForToday {
+    final HomeState state = this;
+    if (state is BodyWeightSubmittedState) {
+      return state.isConfirmedAllMealsLogged;
+    }
+    return false;
+  }
 
   bool get shouldAskForMealConfirmation =>
       isWeightIncreasingOrSame &&
@@ -201,6 +217,7 @@ sealed class HomeState {
   double get bmi {
     final double weight = bodyWeight;
     final double heightInMeters = heightInCm / 100;
+    if (heightInMeters == 0) return 0.0;
     return weight / (heightInMeters * heightInMeters);
   }
 
