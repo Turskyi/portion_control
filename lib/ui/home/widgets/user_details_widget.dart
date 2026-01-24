@@ -62,6 +62,7 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
               children: <Widget>[
                 if (gender.isMaleOrFemale)
                   Expanded(
+                    flex: 3,
                     child: InputRow(
                       label: t('user_details_widget.label_date_of_birth'),
                       controller: _dateOfBirthTextEditingController
@@ -76,24 +77,18 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                     ),
                   ),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      InputRow(
-                        label: t('user_details_widget.label_height'),
-                        unit: t('user_details_widget.unit_cm'),
-                        initialValue: '${height > 0 ? height : ''}',
-                        isRequired: true,
-                        value: state is DetailsSubmittedState
-                            ? '$height'
-                            : null,
-                        onChanged: (String value) {
-                          context.read<HomeBloc>().add(UpdateHeight(value));
-                        },
-                        message: t('user_details_widget.height_hint'),
-                        onUnitTap: _showHeightHintDialog,
-                      ),
-                    ],
+                  flex: 2,
+                  child: InputRow(
+                    label: t('user_details_widget.label_height'),
+                    unit: t('user_details_widget.unit_cm'),
+                    initialValue: '${height > 0 ? height : ''}',
+                    isRequired: true,
+                    value: state is DetailsSubmittedState ? '$height' : null,
+                    onChanged: (String value) {
+                      context.read<HomeBloc>().add(UpdateHeight(value));
+                    },
+                    message: t('user_details_widget.height_hint'),
+                    onUnitTap: _showHeightHintDialog,
                   ),
                 ),
               ],
