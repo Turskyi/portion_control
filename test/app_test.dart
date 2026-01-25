@@ -99,9 +99,13 @@ void main() {
               child: const LandingPage(),
             );
           },
-          AppRoute.home.path: (_) => HomePage(
-            settingsBloc: settingsBloc,
-            localDataSource: localDataSource,
+          AppRoute.home.path: (_) => MultiBlocProvider(
+            providers: <SingleChildWidget>[
+              BlocProvider<SettingsBloc>.value(value: settingsBloc),
+            ],
+            child: HomePage(
+              localDataSource: localDataSource,
+            ),
           ),
         };
 

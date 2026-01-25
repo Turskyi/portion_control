@@ -25,14 +25,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
-    required this.settingsBloc,
     required this.localDataSource,
     super.key,
   });
 
   final LocalDataSource localDataSource;
-
-  final SettingsBloc settingsBloc;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -351,11 +348,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showLanguageSelectionDialog() {
+    final SettingsBloc settingsBloc = context.read<SettingsBloc>();
     return showDialog<void>(
       context: context,
       builder: (BuildContext _) {
-        return BlocProvider<SettingsBloc>(
-          create: (BuildContext _) => widget.settingsBloc,
+        return BlocProvider<SettingsBloc>.value(
+          value: settingsBloc,
           child: BlocBuilder<SettingsBloc, SettingsState>(
             builder: (BuildContext context, SettingsState state) {
               final Language currentLanguage = state.language;

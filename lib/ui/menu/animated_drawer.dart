@@ -288,38 +288,42 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
   }
 
   Future<void> _showLanguageSelectionDialog() {
+    final MenuBloc menuBloc = context.read<MenuBloc>();
     return showDialog<void>(
       context: context,
       builder: (BuildContext _) {
-        return BlocBuilder<MenuBloc, MenuState>(
-          builder: (BuildContext context, MenuState state) {
-            final Language currentLanguage = state.language;
-            final TextStyle? headlineMedium = Theme.of(
-              context,
-            ).textTheme.headlineMedium;
-            final double horizontalPadding = 8.0;
-            return AlertDialog(
-              title: Text(translate('select_language')),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: Language.values.map((Language language) {
-                  return RadioListTile<Language>(
-                    title: Text(translate(language.key)),
-                    value: language,
-                    groupValue: currentLanguage,
-                    secondary: Text(
-                      language.flag,
-                      style: headlineMedium,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: horizontalPadding,
-                    ),
-                    onChanged: _changeLanguage,
-                  );
-                }).toList(),
-              ),
-            );
-          },
+        return BlocProvider<MenuBloc>.value(
+          value: menuBloc,
+          child: BlocBuilder<MenuBloc, MenuState>(
+            builder: (BuildContext context, MenuState state) {
+              final Language currentLanguage = state.language;
+              final TextStyle? headlineMedium = Theme.of(
+                context,
+              ).textTheme.headlineMedium;
+              final double horizontalPadding = 8.0;
+              return AlertDialog(
+                title: Text(translate('select_language')),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: Language.values.map((Language language) {
+                    return RadioListTile<Language>(
+                      title: Text(translate(language.key)),
+                      value: language,
+                      groupValue: currentLanguage,
+                      secondary: Text(
+                        language.flag,
+                        style: headlineMedium,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: horizontalPadding,
+                      ),
+                      onChanged: _changeLanguage,
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
         );
       },
     );
