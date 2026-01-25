@@ -1,10 +1,8 @@
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
-import 'package:nested/nested.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/daily_food_log_history/daily_food_log_history_bloc.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
@@ -32,18 +30,9 @@ import 'package:portion_control/infrastructure/repositories/user_preferences_rep
 import 'package:portion_control/localization/localization_delegate_getter.dart'
     as localization;
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/router/routes.dart' as router;
 import 'package:portion_control/services/home_widget_service.dart';
-import 'package:portion_control/ui/about/about_page.dart';
-import 'package:portion_control/ui/daily_food_log_history/daily_food_log_history_page.dart';
-import 'package:portion_control/ui/educational/educational_content_page.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
-import 'package:portion_control/ui/home/home_page.dart';
-import 'package:portion_control/ui/landing/landing_page.dart';
-import 'package:portion_control/ui/onboarding/onboarding_screen.dart';
-import 'package:portion_control/ui/privacy/privacy_policy_page.dart';
-import 'package:portion_control/ui/recipes/weight_loss_recipes_page.dart';
-import 'package:portion_control/ui/stats/stats_page.dart';
-import 'package:portion_control/ui/support/support_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
@@ -172,62 +161,15 @@ Future<void> main() async {
     );
   }
 
-  final Map<String, WidgetBuilder> routeMap = <String, WidgetBuilder>{
-    AppRoute.landing.path: (BuildContext _) {
-      return BlocProvider<SettingsBloc>(
-        create: (BuildContext _) => settingsBloc,
-        child: const LandingPage(),
-      );
-    },
-    AppRoute.home.path: (BuildContext _) {
-      return MultiBlocProvider(
-        providers: <SingleChildWidget>[
-          BlocProvider<HomeBloc>(
-            create: (BuildContext _) => homeBloc..add(const LoadEntries()),
-          ),
-          BlocProvider<YesterdayEntriesBloc>(
-            create: (BuildContext _) => yesterdayEntriesBloc,
-          ),
-          BlocProvider<MenuBloc>(
-            create: (BuildContext _) {
-              return menuBloc..add(const LoadingInitialMenuStateEvent());
-            },
-          ),
-          BlocProvider<SettingsBloc>(
-            create: (BuildContext _) => settingsBloc,
-          ),
-        ],
-        child: const HomePage(),
-      );
-    },
-    AppRoute.onboarding.path: (BuildContext _) {
-      return BlocProvider<OnboardingBloc>(
-        create: (BuildContext _) => onboardingBloc,
-        child: const OnboardingScreen(),
-      );
-    },
-    AppRoute.privacyPolity.path: (BuildContext _) => const PrivacyPolicyPage(),
-    AppRoute.about.path: (BuildContext _) => const AboutPage(),
-    AppRoute.support.path: (BuildContext _) => const SupportPage(),
-    AppRoute.recipes.path: (BuildContext _) => const WeightLossRecipesPage(),
-    AppRoute.educationalContent.path: (BuildContext _) {
-      return const EducationalContentPage();
-    },
-    AppRoute.dailyFoodLogHistory.path: (BuildContext _) {
-      return BlocProvider<DailyFoodLogHistoryBloc>(
-        create: (BuildContext _) {
-          return dailyFoodLogHistoryBloc..add(LoadDailyFoodLogHistoryEvent());
-        },
-        child: const DailyFoodLogHistoryPage(),
-      );
-    },
-    AppRoute.stats.path: (BuildContext _) {
-      return BlocProvider<StatsBloc>(
-        create: (BuildContext _) => statsBloc..add(const LoadStatsEvent()),
-        child: const StatsPage(),
-      );
-    },
-  };
+  final Map<String, WidgetBuilder> routeMap = router.getRouteMap(
+    settingsBloc: settingsBloc,
+    homeBloc: homeBloc,
+    yesterdayEntriesBloc: yesterdayEntriesBloc,
+    menuBloc: menuBloc,
+    onboardingBloc: onboardingBloc,
+    dailyFoodLogHistoryBloc: dailyFoodLogHistoryBloc,
+    statsBloc: statsBloc,
+  );
 
   runApp(
     LocalizedApp(
