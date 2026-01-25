@@ -64,8 +64,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               },
               children: <Widget>[
                 OnboardingPage(
-                  // By adding a UniqueKey, we ensure this widget and its state
-                  // are completely rebuilt when the parent rebuilds. [2, 3, 4]
+                  // By adding a `UniqueKey`, we ensure this widget and its
+                  // state are completely rebuilt when the parent rebuilds.
                   key: UniqueKey(),
                   titleKey: 'onboarding.page1.title',
                   contentKey: 'onboarding.page1.content',

@@ -65,6 +65,7 @@ class OnboardingPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 40.0),
       child: SelectionArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             if (localImageAsset != null)
