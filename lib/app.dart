@@ -1,27 +1,23 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/env/env.dart';
-import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/colors/gradients.dart';
 import 'package:portion_control/res/colors/material_colors.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/resources.dart';
-import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/router/navigator.dart';
 import 'package:resend/resend.dart';
 
 class App extends StatelessWidget {
   const App({
     required this.routeMap,
-    required this.localDataSource,
     super.key,
   });
 
   final Map<String, WidgetBuilder> routeMap;
-  final LocalDataSource localDataSource;
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +25,9 @@ class App extends StatelessWidget {
     final LocalizationDelegate localizationDelegate = LocalizedApp.of(
       context,
     ).delegate;
-    final String initialRoute = kIsWeb
-        ? AppRoute.landing.path
-        : localDataSource.isOnboardingCompleted()
-        ? AppRoute.home.path
-        : AppRoute.onboarding.path;
+
+    final String initialRoute = DependenciesScope.of(context).initialRoute;
+
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
       child: Resources(

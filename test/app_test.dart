@@ -145,10 +145,7 @@ void main() {
                 ],
                 child: DependenciesScope(
                   dependencies: Dependencies(localDataSource),
-                  child: App(
-                    routeMap: testRoutes,
-                    localDataSource: localDataSource,
-                  ),
+                  child: App(routeMap: testRoutes),
                 ),
               ),
             ),

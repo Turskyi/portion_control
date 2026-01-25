@@ -190,7 +190,6 @@ Future<void> main() async {
           dependencies: dependencies,
           child: App(
             routeMap: routeMap,
-            localDataSource: localDataSource,
           ),
         ),
       ),
