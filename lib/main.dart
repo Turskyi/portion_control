@@ -1,7 +1,9 @@
 import 'package:feedback/feedback.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:intl/intl.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/daily_food_log_history/daily_food_log_history_bloc.dart';
 import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
@@ -58,7 +60,21 @@ Future<void> main() async {
 
   final LocalDataSource localDataSource = LocalDataSource(prefs, appDatabase);
 
-  final Language savedLanguage = localDataSource.getLanguage();
+  final SettingsRepository settingsRepository = SettingsRepository(
+    localDataSource,
+  );
+
+  final SettingsBloc settingsBloc = SettingsBloc(settingsRepository);
+
+  Language initialLanguage = settingsRepository.getLanguage();
+
+  if (kIsWeb) {
+    // Retrieves the host name (e.g., "localhost" or "uk.portioncontrol.ca").
+    initialLanguage = await _resolveInitialLanguageFromUrl(
+      initialLanguage: initialLanguage,
+      localDataSource: localDataSource,
+    );
+  }
 
   final LocalizationDelegate localizationDelegate = await localization
       .getLocalizationDelegate(localDataSource);
@@ -67,21 +83,17 @@ Future<void> main() async {
     localizationDelegate.currentLocale.languageCode,
   );
 
-  if (savedLanguage != currentLanguage) {
-    final Locale locale = localeFromString(savedLanguage.isoLanguageCode);
-
-    localizationDelegate.changeLocale(locale);
-
-    // Notify listeners that the locale has changed so they can update.
-    localizationDelegate.onLocaleChanged?.call(locale);
+  if (initialLanguage != currentLanguage) {
+    _applyInitialLocale(
+      initialLanguage: initialLanguage,
+      localizationDelegate: localizationDelegate,
+    );
   }
 
   final Map<String, WidgetBuilder> routeMap = <String, WidgetBuilder>{
     AppRoute.landing.path: (BuildContext _) {
       return BlocProvider<SettingsBloc>(
-        create: (BuildContext _) {
-          return SettingsBloc(SettingsRepository(localDataSource));
-        },
+        create: (BuildContext _) => settingsBloc,
         child: LandingPage(localDataSource: localDataSource),
       );
     },
@@ -155,4 +167,50 @@ Future<void> main() async {
       ),
     ),
   );
+}
+
+Future<Language> _resolveInitialLanguageFromUrl({
+  required Language initialLanguage,
+  required LocalDataSource localDataSource,
+}) async {
+  // Retrieves the host name (e.g., "localhost" or "uk.portioncontrol.ca").
+  final String host = Uri.base.host;
+
+  // Retrieves the fragment (e.g., "/en" or "/uk").
+  final String fragment = Uri.base.fragment;
+
+  for (final Language language in Language.values) {
+    final String currentLanguageCode = language.isoLanguageCode;
+    if (host.startsWith('$currentLanguageCode.') ||
+        fragment.contains('${AppRoute.home.path}$currentLanguageCode')) {
+      try {
+        Intl.defaultLocale = currentLanguageCode;
+      } catch (e, stackTrace) {
+        debugPrint(
+          'Failed to set Intl.defaultLocale to "$currentLanguageCode".\n'
+          'Error: $e\n'
+          'StackTrace: $stackTrace\n'
+          'Proceeding with previously set default locale or system default.',
+        );
+      }
+      initialLanguage = language;
+      // We save it so the rest of the app (like recommendations) uses this
+      // language.
+      await localDataSource.saveLanguageIsoCode(currentLanguageCode);
+      break;
+    }
+  }
+  return initialLanguage;
+}
+
+void _applyInitialLocale({
+  required Language initialLanguage,
+  required LocalizationDelegate localizationDelegate,
+}) {
+  final Locale locale = localeFromString(initialLanguage.isoLanguageCode);
+
+  localizationDelegate.changeLocale(locale);
+
+  // Notify listeners that the locale has changed so they can update.
+  localizationDelegate.onLocaleChanged?.call(locale);
 }
