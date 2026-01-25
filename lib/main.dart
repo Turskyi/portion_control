@@ -4,28 +4,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
+import 'package:nested/nested.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/daily_food_log_history/daily_food_log_history_bloc.dart';
+import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
+import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
+import 'package:portion_control/application_services/interactors/clear_tracking_data_use_case.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/di/injector.dart' as di;
 import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/domain/services/interactors/i_clear_tracking_data_use_case.dart';
+import 'package:portion_control/domain/services/interactors/save_language_use_case.dart';
+import 'package:portion_control/domain/services/interactors/use_case.dart';
+import 'package:portion_control/domain/services/repositories/i_body_weight_repository.dart';
+import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
+import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
+import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/localization/localization_delegate_getter.dart'
     as localization;
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/about/about_page.dart';
 import 'package:portion_control/ui/daily_food_log_history/daily_food_log_history_page.dart';
 import 'package:portion_control/ui/educational/educational_content_page.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
-import 'package:portion_control/ui/home/home_view.dart' show HomeView;
+import 'package:portion_control/ui/home/home_page.dart';
 import 'package:portion_control/ui/landing/landing_page.dart';
 import 'package:portion_control/ui/onboarding/onboarding_screen.dart';
 import 'package:portion_control/ui/privacy/privacy_policy_page.dart';
@@ -33,6 +45,11 @@ import 'package:portion_control/ui/recipes/weight_loss_recipes_page.dart';
 import 'package:portion_control/ui/stats/stats_page.dart';
 import 'package:portion_control/ui/support/support_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
+import 'domain/services/repositories/i_settings_repository.dart';
+import 'domain/services/repositories/i_tracking_repository.dart';
+import 'infrastructure/repositories/tracking_repository.dart';
 
 /// The [main] is the ultimate detail — the lowest-level policy.
 /// It is the initial entry point of the system.
@@ -60,11 +77,76 @@ Future<void> main() async {
 
   final LocalDataSource localDataSource = LocalDataSource(prefs, appDatabase);
 
-  final SettingsRepository settingsRepository = SettingsRepository(
+  final Dependencies dependencies = Dependencies(localDataSource);
+
+  final IUserPreferencesRepository userPreferencesRepository =
+      UserPreferencesRepository(
+        localDataSource,
+      );
+
+  final IBodyWeightRepository bodyWeightRepository = BodyWeightRepository(
     localDataSource,
   );
 
+  final ISettingsRepository settingsRepository = SettingsRepository(
+    localDataSource,
+  );
+
+  final IFoodWeightRepository foodWeightRepository = FoodWeightRepository(
+    localDataSource,
+  );
+
+  final ITrackingRepository trackingRepository = TrackingRepository(
+    localDataSource,
+  );
+
+  final IClearTrackingDataUseCase clearTrackingDataUseCase =
+      ClearTrackingDataUseCase(
+        trackingRepository,
+      );
+
+  final UseCase<Future<bool>, String> saveLanguageUseCase = SaveLanguageUseCase(
+    localDataSource,
+  );
+
+  final HomeWidgetService homeWidgetService = const HomeWidgetServiceImpl();
+
   final SettingsBloc settingsBloc = SettingsBloc(settingsRepository);
+
+  final YesterdayEntriesBloc yesterdayEntriesBloc = YesterdayEntriesBloc(
+    foodWeightRepository,
+  );
+
+  final HomeBloc homeBloc = HomeBloc(
+    userPreferencesRepository,
+    bodyWeightRepository,
+    foodWeightRepository,
+    clearTrackingDataUseCase,
+    homeWidgetService,
+  );
+
+  final MenuBloc menuBloc = MenuBloc(
+    settingsRepository,
+    homeWidgetService,
+    bodyWeightRepository,
+    foodWeightRepository,
+    userPreferencesRepository,
+  );
+
+  final OnboardingBloc onboardingBloc = OnboardingBloc(
+    saveLanguageUseCase,
+    localDataSource,
+  );
+
+  final DailyFoodLogHistoryBloc dailyFoodLogHistoryBloc =
+      DailyFoodLogHistoryBloc(
+        foodWeightRepository,
+      );
+
+  final StatsBloc statsBloc = StatsBloc(
+    foodWeightRepository,
+    bodyWeightRepository,
+  );
 
   Language initialLanguage = settingsRepository.getLanguage();
 
@@ -94,21 +176,36 @@ Future<void> main() async {
     AppRoute.landing.path: (BuildContext _) {
       return BlocProvider<SettingsBloc>(
         create: (BuildContext _) => settingsBloc,
-        child: LandingPage(localDataSource: localDataSource),
+        child: const LandingPage(),
       );
     },
     AppRoute.home.path: (BuildContext _) {
-      return HomeView(localDataSource: localDataSource);
+      return MultiBlocProvider(
+        providers: <SingleChildWidget>[
+          BlocProvider<HomeBloc>(
+            create: (BuildContext _) => homeBloc..add(const LoadEntries()),
+          ),
+          BlocProvider<YesterdayEntriesBloc>(
+            create: (BuildContext _) => yesterdayEntriesBloc,
+          ),
+          BlocProvider<MenuBloc>(
+            create: (BuildContext _) {
+              return menuBloc..add(const LoadingInitialMenuStateEvent());
+            },
+          ),
+          BlocProvider<SettingsBloc>(
+            create: (BuildContext _) => settingsBloc,
+          ),
+        ],
+        child: HomePage(
+          settingsBloc: settingsBloc,
+          localDataSource: localDataSource,
+        ),
+      );
     },
     AppRoute.onboarding.path: (BuildContext _) {
       return BlocProvider<OnboardingBloc>(
-        create: (BuildContext context) {
-          final Dependencies dependencies = DependenciesScope.of(context);
-          return OnboardingBloc(
-            dependencies.saveLanguageUseCase,
-            localDataSource,
-          );
-        },
+        create: (BuildContext _) => onboardingBloc,
         child: OnboardingScreen(localDataSource: localDataSource),
       );
     },
@@ -122,21 +219,14 @@ Future<void> main() async {
     AppRoute.dailyFoodLogHistory.path: (BuildContext _) {
       return BlocProvider<DailyFoodLogHistoryBloc>(
         create: (BuildContext _) {
-          return DailyFoodLogHistoryBloc(
-            FoodWeightRepository(localDataSource),
-          )..add(LoadDailyFoodLogHistoryEvent());
+          return dailyFoodLogHistoryBloc..add(LoadDailyFoodLogHistoryEvent());
         },
         child: const DailyFoodLogHistoryPage(),
       );
     },
     AppRoute.stats.path: (BuildContext _) {
       return BlocProvider<StatsBloc>(
-        create: (BuildContext _) {
-          return StatsBloc(
-            FoodWeightRepository(localDataSource),
-            BodyWeightRepository(localDataSource),
-          )..add(const LoadStatsEvent());
-        },
+        create: (BuildContext _) => statsBloc..add(const LoadStatsEvent()),
         child: const StatsPage(),
       );
     },
@@ -158,7 +248,7 @@ Future<void> main() async {
               );
             },
         child: DependenciesScope(
-          dependencies: Dependencies(localDataSource),
+          dependencies: dependencies,
           child: App(
             routeMap: routeMap,
             localDataSource: localDataSource,

@@ -14,4 +14,7 @@ class SettingsRepository implements ISettingsRepository {
   Future<bool> saveLanguageIsoCode(String languageIsoCode) {
     return _localDataSource.saveLanguageIsoCode(languageIsoCode);
   }
+
+  @override
+  bool isOnboardingCompleted() => _localDataSource.isOnboardingCompleted();
 }

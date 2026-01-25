@@ -8,12 +8,7 @@ import 'package:home_widget/home_widget.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
-import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
-import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
-import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
-import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/router/app_route.dart';
-import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/menu/reminder_dialog.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
 
@@ -296,50 +291,35 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
     return showDialog<void>(
       context: context,
       builder: (BuildContext _) {
-        return BlocProvider<MenuBloc>(
-          create: (BuildContext _) {
-            final LocalDataSource localDataSource = widget.localDataSource;
-            return MenuBloc(
-              SettingsRepository(widget.localDataSource),
-              const HomeWidgetServiceImpl(),
-              BodyWeightRepository(localDataSource),
-              FoodWeightRepository(localDataSource),
-              UserPreferencesRepository(
-                localDataSource,
+        return BlocBuilder<MenuBloc, MenuState>(
+          builder: (BuildContext context, MenuState state) {
+            final Language currentLanguage = state.language;
+            final TextStyle? headlineMedium = Theme.of(
+              context,
+            ).textTheme.headlineMedium;
+            final double horizontalPadding = 8.0;
+            return AlertDialog(
+              title: Text(translate('select_language')),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: Language.values.map((Language language) {
+                  return RadioListTile<Language>(
+                    title: Text(translate(language.key)),
+                    value: language,
+                    groupValue: currentLanguage,
+                    secondary: Text(
+                      language.flag,
+                      style: headlineMedium,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: horizontalPadding,
+                    ),
+                    onChanged: _changeLanguage,
+                  );
+                }).toList(),
               ),
-              localDataSource,
-            )..add(const LoadingInitialMenuStateEvent());
+            );
           },
-          child: BlocBuilder<MenuBloc, MenuState>(
-            builder: (BuildContext context, MenuState state) {
-              final Language currentLanguage = state.language;
-              final TextStyle? headlineMedium = Theme.of(
-                context,
-              ).textTheme.headlineMedium;
-              final double horizontalPadding = 8.0;
-              return AlertDialog(
-                title: Text(translate('select_language')),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: Language.values.map((Language language) {
-                    return RadioListTile<Language>(
-                      title: Text(translate(language.key)),
-                      value: language,
-                      groupValue: currentLanguage,
-                      secondary: Text(
-                        language.flag,
-                        style: headlineMedium,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: horizontalPadding,
-                      ),
-                      onChanged: _changeLanguage,
-                    );
-                  }).toList(),
-                ),
-              );
-            },
-          ),
         );
       },
     );

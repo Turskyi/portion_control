@@ -6,4 +6,6 @@ abstract interface class ISettingsRepository {
   Language getLanguage();
 
   Future<bool> saveLanguageIsoCode(String languageIsoCode);
+
+  bool isOnboardingCompleted();
 }

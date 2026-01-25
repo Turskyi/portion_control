@@ -2,9 +2,13 @@ part of 'settings_bloc.dart';
 
 @immutable
 sealed class SettingsState {
-  const SettingsState({required this.language});
+  const SettingsState({
+    required this.language,
+    required this.isOnboardingCompleted,
+  });
 
   final Language language;
+  final bool isOnboardingCompleted;
 
   bool get isEnglish => language == Language.en;
 
@@ -14,41 +18,69 @@ sealed class SettingsState {
 }
 
 final class SettingsInitial extends SettingsState {
-  const SettingsInitial({required super.language});
+  const SettingsInitial({
+    required super.language,
+    required super.isOnboardingCompleted,
+  });
 
-  SettingsState copyWith({Language? language}) {
-    return SettingsInitial(language: language ?? this.language);
+  SettingsState copyWith({Language? language, bool? isOnboardingCompleted}) {
+    return SettingsInitial(
+      language: language ?? this.language,
+      isOnboardingCompleted:
+          isOnboardingCompleted ?? this.isOnboardingCompleted,
+    );
   }
 
   @override
   String toString() {
     return 'SettingsInitial{'
         '  language: $language,'
+        '  isOnboardingCompleted: $isOnboardingCompleted,'
         '}';
   }
 }
 
 final class FeedbackState extends SettingsState {
-  const FeedbackState({required this.errorMessage, required super.language});
+  const FeedbackState({
+    required this.errorMessage,
+    required super.language,
+    required super.isOnboardingCompleted,
+  });
 
   final String errorMessage;
 
   @override
   String toString() => 'FeedbackState()';
 
-  FeedbackState copyWith({String? errorMessage, Language? language}) {
+  FeedbackState copyWith({
+    String? errorMessage,
+    Language? language,
+    bool? isOnboardingCompleted,
+  }) {
     return FeedbackState(
       errorMessage: errorMessage ?? this.errorMessage,
       language: language ?? this.language,
+      isOnboardingCompleted:
+          isOnboardingCompleted ?? this.isOnboardingCompleted,
     );
   }
 }
 
 final class SettingsFeedbackSent extends SettingsState {
-  const SettingsFeedbackSent({required super.language});
+  const SettingsFeedbackSent({
+    required super.language,
+    required super.isOnboardingCompleted,
+  });
 
-  SettingsFeedbackSent copyWith({Language? language}) {
-    return SettingsFeedbackSent(language: language ?? this.language);
+  SettingsFeedbackSent copyWith({
+    Language? language,
+    bool? isOnboardingCompleted,
+  }) {
+    return SettingsFeedbackSent(
+      language: language ?? this.language,
+      isOnboardingCompleted:
+          isOnboardingCompleted ?? this.isOnboardingCompleted,
+    );
   }
 
   @override
@@ -56,21 +88,34 @@ final class SettingsFeedbackSent extends SettingsState {
 }
 
 final class LoadingSettingsState extends SettingsState {
-  const LoadingSettingsState({required super.language});
+  const LoadingSettingsState({
+    required super.language,
+    required super.isOnboardingCompleted,
+  });
 
   @override
   String toString() => 'LoadingSettingsState()';
 }
 
 final class SettingsError extends SettingsState {
-  const SettingsError({required this.errorMessage, required super.language});
+  const SettingsError({
+    required this.errorMessage,
+    required super.language,
+    required super.isOnboardingCompleted,
+  });
 
   final String errorMessage;
 
-  SettingsError copyWith({String? errorMessage, Language? language}) {
+  SettingsError copyWith({
+    String? errorMessage,
+    Language? language,
+    bool? isOnboardingCompleted,
+  }) {
     return SettingsError(
       errorMessage: errorMessage ?? this.errorMessage,
       language: language ?? this.language,
+      isOnboardingCompleted:
+          isOnboardingCompleted ?? this.isOnboardingCompleted,
     );
   }
 

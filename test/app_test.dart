@@ -8,6 +8,7 @@ import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
+import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
@@ -37,6 +38,7 @@ void main() {
     late LocalDataSource localDataSource;
     late LocalizationDelegate localizationDelegate;
     late SettingsRepository settingsRepository;
+    late SettingsBloc settingsBloc;
     late HomeWidgetService mockHomeWidgetService;
     late AppDatabase database;
 
@@ -64,6 +66,7 @@ void main() {
 
       // Initialize repositories
       settingsRepository = SettingsRepository(localDataSource);
+      settingsBloc = SettingsBloc(settingsRepository);
     });
 
     tearDown(() async {
@@ -91,9 +94,15 @@ void main() {
             );
           },
           AppRoute.landing.path: (_) {
-            return LandingPage(localDataSource: localDataSource);
+            return BlocProvider<SettingsBloc>(
+              create: (_) => SettingsBloc(settingsRepository),
+              child: const LandingPage(),
+            );
           },
-          AppRoute.home.path: (_) => HomePage(localDataSource: localDataSource),
+          AppRoute.home.path: (_) => HomePage(
+            settingsBloc: settingsBloc,
+            localDataSource: localDataSource,
+          ),
         };
 
         // Build widget tree
@@ -117,7 +126,6 @@ void main() {
                         mockFoodWeightRepository,
                         mockClearTrackingDataUseCase,
                         mockHomeWidgetService,
-                        localDataSource,
                       );
                     },
                   ),
@@ -129,7 +137,6 @@ void main() {
                         mockBodyWeightRepository,
                         mockFoodWeightRepository,
                         mockUserDetailsRepository,
-                        localDataSource,
                       );
                     },
                   ),

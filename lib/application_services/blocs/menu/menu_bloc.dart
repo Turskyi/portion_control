@@ -24,7 +24,6 @@ import 'package:portion_control/domain/services/repositories/i_food_weight_repos
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_settings_repository.dart';
 import 'package:portion_control/extensions/list_extension.dart';
-import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/enums/home_widget_keys.dart';
 import 'package:portion_control/services/home_widget_service.dart';
@@ -42,7 +41,6 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     this._bodyWeightRepository,
     this._foodWeightRepository,
     this._userPreferencesRepository,
-    this._localDataSource,
   ) : super(const LoadingMenuState(streakDays: 0)) {
     on<LoadingInitialMenuStateEvent>(_loadInitialMenuState);
     on<BugReportPressedEvent>(_onFeedbackRequested);
@@ -59,7 +57,6 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   final IBodyWeightRepository _bodyWeightRepository;
   final IFoodWeightRepository _foodWeightRepository;
   final IUserPreferencesRepository _userPreferencesRepository;
-  final LocalDataSource _localDataSource;
 
   FutureOr<void> _onFeedbackRequested(
     BugReportPressedEvent _,
@@ -516,7 +513,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       now.hour,
       now.minute,
     );
-    final String languageIsoCode = _localDataSource.getLanguageIsoCode();
+    final String languageIsoCode = _userPreferencesRepository
+        .getLanguageIsoCode();
     try {
       final DateFormat formatter = DateFormat(
         'MMM dd, EEEE \'-\' hh:mm a',
