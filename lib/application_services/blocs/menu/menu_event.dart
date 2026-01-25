@@ -46,3 +46,19 @@ class OpenWebVersionEvent extends MenuEvent {
 class PinWidgetEvent extends MenuEvent {
   const PinWidgetEvent();
 }
+
+class ToggleWeightReminderEvent extends MenuEvent {
+  const ToggleWeightReminderEvent(this.enabled);
+
+  final bool enabled;
+}
+
+class ChangeWeightReminderTimeEvent extends MenuEvent {
+  const ChangeWeightReminderTimeEvent(this.time);
+
+  final TimeOfDay time;
+}
+
+class SaveReminderSettingsEvent extends MenuEvent {
+  const SaveReminderSettingsEvent();
+}

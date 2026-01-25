@@ -6,11 +6,15 @@ sealed class MenuState {
     required this.streakDays,
     this.language = Language.en,
     this.appVersion = '',
+    this.isWeightReminderEnabled = false,
+    this.weightReminderTime = const TimeOfDay(hour: 8, minute: 0),
   });
 
   final Language language;
   final int streakDays;
   final String appVersion;
+  final bool isWeightReminderEnabled;
+  final TimeOfDay weightReminderTime;
 
   bool get isUkrainian => language == Language.uk;
 
@@ -25,18 +29,26 @@ sealed class MenuState {
           runtimeType == other.runtimeType &&
           language == other.language &&
           streakDays == other.streakDays &&
-          appVersion == other.appVersion;
+          appVersion == other.appVersion &&
+          isWeightReminderEnabled == other.isWeightReminderEnabled &&
+          weightReminderTime == other.weightReminderTime;
 
   @override
   int get hashCode =>
-      language.hashCode ^ streakDays.hashCode ^ appVersion.hashCode;
+      language.hashCode ^
+      streakDays.hashCode ^
+      appVersion.hashCode ^
+      isWeightReminderEnabled.hashCode ^
+      weightReminderTime.hashCode;
 
   @override
   String toString() {
-    return 'ChatState('
+    return 'MenuState('
         'language: $language,'
         'streakDays: $streakDays,'
         'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }
@@ -46,17 +58,24 @@ final class MenuInitial extends MenuState {
     required super.streakDays,
     super.language,
     super.appVersion,
+    super.isWeightReminderEnabled,
+    super.weightReminderTime,
   });
 
   MenuInitial copyWith({
     Language? language,
     int? streakDays,
     String? appVersion,
+    bool? isWeightReminderEnabled,
+    TimeOfDay? weightReminderTime,
   }) {
     return MenuInitial(
       language: language ?? this.language,
       streakDays: streakDays ?? this.streakDays,
       appVersion: appVersion ?? this.appVersion,
+      isWeightReminderEnabled:
+          isWeightReminderEnabled ?? this.isWeightReminderEnabled,
+      weightReminderTime: weightReminderTime ?? this.weightReminderTime,
     );
   }
 
@@ -65,7 +84,9 @@ final class MenuInitial extends MenuState {
     return 'MenuInitial('
         'language: $language,'
         'streakDays: $streakDays,'
-        'appVersion: $appVersion'
+        'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }
@@ -75,17 +96,24 @@ final class MenuFeedbackState extends MenuState {
     required super.language,
     required super.streakDays,
     super.appVersion,
+    super.isWeightReminderEnabled,
+    super.weightReminderTime,
   });
 
   MenuFeedbackState copyWith({
     Language? language,
     int? streakDays,
     String? appVersion,
+    bool? isWeightReminderEnabled,
+    TimeOfDay? weightReminderTime,
   }) {
     return MenuFeedbackState(
       language: language ?? this.language,
       streakDays: streakDays ?? this.streakDays,
       appVersion: appVersion ?? this.appVersion,
+      isWeightReminderEnabled:
+          isWeightReminderEnabled ?? this.isWeightReminderEnabled,
+      weightReminderTime: weightReminderTime ?? this.weightReminderTime,
     );
   }
 
@@ -94,7 +122,9 @@ final class MenuFeedbackState extends MenuState {
     return 'MenuFeedbackState('
         'language: $language,'
         'streakDays: $streakDays,'
-        'appVersion: $appVersion'
+        'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }
@@ -104,17 +134,24 @@ final class MenuFeedbackSent extends MenuState {
     required super.streakDays,
     required super.language,
     super.appVersion,
+    super.isWeightReminderEnabled,
+    super.weightReminderTime,
   });
 
   MenuFeedbackSent copyWith({
     Language? language,
     int? streakDays,
     String? appVersion,
+    bool? isWeightReminderEnabled,
+    TimeOfDay? weightReminderTime,
   }) {
     return MenuFeedbackSent(
       language: language ?? this.language,
       streakDays: streakDays ?? this.streakDays,
       appVersion: appVersion ?? this.appVersion,
+      isWeightReminderEnabled:
+          isWeightReminderEnabled ?? this.isWeightReminderEnabled,
+      weightReminderTime: weightReminderTime ?? this.weightReminderTime,
     );
   }
 
@@ -123,7 +160,9 @@ final class MenuFeedbackSent extends MenuState {
     return 'MenuFeedbackSent('
         'language: $language,'
         'streakDays: $streakDays,'
-        'appVersion: $appVersion'
+        'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }
@@ -133,17 +172,24 @@ final class LoadingMenuState extends MenuState {
     required super.streakDays,
     super.language,
     super.appVersion,
+    super.isWeightReminderEnabled,
+    super.weightReminderTime,
   });
 
   LoadingMenuState copyWith({
     Language? language,
     int? streakDays,
     String? appVersion,
+    bool? isWeightReminderEnabled,
+    TimeOfDay? weightReminderTime,
   }) {
     return LoadingMenuState(
       streakDays: streakDays ?? this.streakDays,
       language: language ?? this.language,
       appVersion: appVersion ?? this.appVersion,
+      isWeightReminderEnabled:
+          isWeightReminderEnabled ?? this.isWeightReminderEnabled,
+      weightReminderTime: weightReminderTime ?? this.weightReminderTime,
     );
   }
 
@@ -152,7 +198,9 @@ final class LoadingMenuState extends MenuState {
     return 'LoadingMenuState('
         'language: $language,'
         'streakDays: $streakDays,'
-        'appVersion: $appVersion'
+        'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }

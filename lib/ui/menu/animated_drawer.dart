@@ -7,15 +7,12 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/domain/enums/language.dart';
-import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/menu/reminder_dialog.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
 
 class AnimatedDrawer extends StatefulWidget {
-  const AnimatedDrawer({required this.localDataSource, super.key});
-
-  final LocalDataSource localDataSource;
+  const AnimatedDrawer({super.key});
 
   @override
   State<AnimatedDrawer> createState() => _AnimatedDrawerState();
@@ -225,12 +222,6 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         return const SizedBox.shrink();
                       },
                     ),
-                  if (!kIsWeb)
-                    AnimatedDrawerItem(
-                      icon: Icons.web,
-                      text: translate('open_web_version'),
-                      onTap: _openWebVersion,
-                    ),
                   const Divider(),
                   BlocBuilder<MenuBloc, MenuState>(
                     builder: (BuildContext context, MenuState state) {
@@ -269,18 +260,16 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
   }
 
   Future<void> _showRemindersDialog() {
+    final MenuBloc menuBloc = context.read<MenuBloc>();
     return showDialog<void>(
       context: context,
       builder: (BuildContext _) {
-        return ReminderDialog(
-          localDataSource: widget.localDataSource,
+        return BlocProvider<MenuBloc>.value(
+          value: menuBloc,
+          child: const ReminderDialog(),
         );
       },
     );
-  }
-
-  void _openWebVersion() {
-    context.read<MenuBloc>().add(const OpenWebVersionEvent());
   }
 
   void _pinWidget() {

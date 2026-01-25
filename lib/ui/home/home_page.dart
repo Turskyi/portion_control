@@ -13,7 +13,6 @@ import 'package:portion_control/application_services/blocs/yesterday_entries_blo
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/extensions/build_context_extensions.dart';
-import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/home/widgets/home_page_content.dart';
@@ -24,12 +23,7 @@ import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({
-    required this.localDataSource,
-    super.key,
-  });
-
-  final LocalDataSource localDataSource;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -65,9 +59,7 @@ class _HomePageState extends State<HomePage> {
             ? null
             : BlocListener<MenuBloc, MenuState>(
                 listener: _menuStateListener,
-                child: AnimatedDrawer(
-                  localDataSource: widget.localDataSource,
-                ),
+                child: const AnimatedDrawer(),
               ),
         appBar: AppBar(
           backgroundColor: Colors.transparent,

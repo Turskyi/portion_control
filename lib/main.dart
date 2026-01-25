@@ -197,7 +197,7 @@ Future<void> main() async {
             create: (BuildContext _) => settingsBloc,
           ),
         ],
-        child: HomePage(localDataSource: localDataSource),
+        child: const HomePage(),
       );
     },
     AppRoute.onboarding.path: (BuildContext _) {

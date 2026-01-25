@@ -103,9 +103,7 @@ void main() {
             providers: <SingleChildWidget>[
               BlocProvider<SettingsBloc>.value(value: settingsBloc),
             ],
-            child: HomePage(
-              localDataSource: localDataSource,
-            ),
+            child: const HomePage(),
           ),
         };
 

@@ -10,6 +10,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart' as path;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:portion_control/domain/enums/feedback_rating.dart';
 import 'package:portion_control/domain/enums/feedback_submission_type.dart';
 import 'package:portion_control/domain/enums/feedback_type.dart';
@@ -27,6 +28,7 @@ import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/enums/home_widget_keys.dart';
 import 'package:portion_control/services/home_widget_service.dart';
+import 'package:portion_control/services/reminder_service.dart';
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
 import 'package:resend/resend.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -50,6 +52,9 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     on<ChangeLanguageEvent>(_changeLanguage);
     on<OpenWebVersionEvent>(_openWebPage);
     on<PinWidgetEvent>(_onPinWidgetPressed);
+    on<ToggleWeightReminderEvent>(_onToggleWeightReminder);
+    on<ChangeWeightReminderTimeEvent>(_onChangeWeightReminderTime);
+    on<SaveReminderSettingsEvent>(_onSaveReminderSettings);
   }
 
   final ISettingsRepository _settingsRepository;
@@ -67,6 +72,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         language: state.language,
         streakDays: state.streakDays,
         appVersion: state.appVersion,
+        isWeightReminderEnabled: state.isWeightReminderEnabled,
+        weightReminderTime: state.weightReminderTime,
       ),
     );
   }
@@ -80,6 +87,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         language: state.language,
         streakDays: state.streakDays,
         appVersion: state.appVersion,
+        isWeightReminderEnabled: state.isWeightReminderEnabled,
+        weightReminderTime: state.weightReminderTime,
       ),
     );
   }
@@ -93,6 +102,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         language: state.language,
         streakDays: state.streakDays,
         appVersion: state.appVersion,
+        isWeightReminderEnabled: state.isWeightReminderEnabled,
+        weightReminderTime: state.weightReminderTime,
       ),
     );
     final UserFeedback feedback = event.feedback;
@@ -218,6 +229,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
             language: state.language,
             streakDays: state.streakDays,
             appVersion: state.appVersion,
+            isWeightReminderEnabled: state.isWeightReminderEnabled,
+            weightReminderTime: state.weightReminderTime,
           ),
         );
       } catch (error, stackTrace) {
@@ -239,6 +252,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         language: state.language,
         streakDays: state.streakDays,
         appVersion: state.appVersion,
+        isWeightReminderEnabled: state.isWeightReminderEnabled,
+        weightReminderTime: state.weightReminderTime,
       ),
     );
   }
@@ -252,11 +267,27 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final String appVersion =
         '${packageInfo.version} (${packageInfo.buildNumber})';
+
+    final bool isWeightReminderEnabled = _userPreferencesRepository
+        .isWeightReminderEnabled();
+    final String? timeString = _userPreferencesRepository
+        .getWeightReminderTimeString();
+    TimeOfDay weightReminderTime = const TimeOfDay(hour: 8, minute: 0);
+    if (timeString != null) {
+      final List<String> parts = timeString.split(':');
+      weightReminderTime = TimeOfDay(
+        hour: int.parse(parts[0]),
+        minute: int.parse(parts[1]),
+      );
+    }
+
     emit(
       MenuInitial(
         language: savedLanguage,
         streakDays: streakDays,
         appVersion: appVersion,
+        isWeightReminderEnabled: isWeightReminderEnabled,
+        weightReminderTime: weightReminderTime,
       ),
     );
   }
@@ -269,6 +300,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         streakDays: state.streakDays,
         appVersion: state.appVersion,
         language: state.language,
+        isWeightReminderEnabled: state.isWeightReminderEnabled,
+        weightReminderTime: state.weightReminderTime,
       ),
     );
   }
@@ -294,6 +327,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
               language: language,
               streakDays: state.streakDays,
               appVersion: state.appVersion,
+              isWeightReminderEnabled: state.isWeightReminderEnabled,
+              weightReminderTime: state.weightReminderTime,
             ),
           );
         }
@@ -560,5 +595,87 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     final File screenshotFile = File(screenshotFilePath);
     await screenshotFile.writeAsBytes(feedbackScreenshot);
     return screenshotFilePath;
+  }
+
+  void _onToggleWeightReminder(
+    ToggleWeightReminderEvent event,
+    Emitter<MenuState> emit,
+  ) {
+    if (state is MenuInitial) {
+      emit(
+        (state as MenuInitial).copyWith(isWeightReminderEnabled: event.enabled),
+      );
+    } else if (state is MenuFeedbackState) {
+      emit(
+        (state as MenuFeedbackState).copyWith(
+          isWeightReminderEnabled: event.enabled,
+        ),
+      );
+    } else if (state is MenuFeedbackSent) {
+      emit(
+        (state as MenuFeedbackSent).copyWith(
+          isWeightReminderEnabled: event.enabled,
+        ),
+      );
+    } else if (state is LoadingMenuState) {
+      emit(
+        (state as LoadingMenuState).copyWith(
+          isWeightReminderEnabled: event.enabled,
+        ),
+      );
+    }
+  }
+
+  void _onChangeWeightReminderTime(
+    ChangeWeightReminderTimeEvent event,
+    Emitter<MenuState> emit,
+  ) {
+    if (state is MenuInitial) {
+      emit((state as MenuInitial).copyWith(weightReminderTime: event.time));
+    } else if (state is MenuFeedbackState) {
+      emit(
+        (state as MenuFeedbackState).copyWith(weightReminderTime: event.time),
+      );
+    } else if (state is MenuFeedbackSent) {
+      emit(
+        (state as MenuFeedbackSent).copyWith(weightReminderTime: event.time),
+      );
+    } else if (state is LoadingMenuState) {
+      emit(
+        (state as LoadingMenuState).copyWith(weightReminderTime: event.time),
+      );
+    }
+  }
+
+  Future<void> _onSaveReminderSettings(
+    SaveReminderSettingsEvent event,
+    Emitter<MenuState> emit,
+  ) async {
+    final bool enabled = state.isWeightReminderEnabled;
+    final TimeOfDay time = state.weightReminderTime;
+
+    await _userPreferencesRepository.saveWeightReminderEnabled(enabled);
+    await _userPreferencesRepository.saveWeightReminderTimeString(
+      '${time.hour.toString().padLeft(2, '0')}:'
+      '${time.minute.toString().padLeft(2, '0')}',
+    );
+
+    if (enabled) {
+      bool granted = await ReminderService.instance
+          .requestNotificationPermissions();
+
+      if (granted && Platform.isAndroid) {
+        granted = await Permission.scheduleExactAlarm.request().isGranted;
+      }
+
+      if (granted) {
+        await ReminderService.instance.scheduleDailyWeightReminder(
+          time: time,
+          body: translate('reminders.daily_reminder_body'),
+        );
+      }
+    } else {
+      await ReminderService.instance.cancelWeightReminder();
+    }
   }
 }
