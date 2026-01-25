@@ -10,3 +10,7 @@ class ChangeLanguageEvent extends OnboardingEvent {
 
   final Language language;
 }
+
+class CompleteOnboardingEvent extends OnboardingEvent {
+  const CompleteOnboardingEvent();
+}

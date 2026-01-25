@@ -203,7 +203,7 @@ Future<void> main() async {
     AppRoute.onboarding.path: (BuildContext _) {
       return BlocProvider<OnboardingBloc>(
         create: (BuildContext _) => onboardingBloc,
-        child: OnboardingScreen(localDataSource: localDataSource),
+        child: const OnboardingScreen(),
       );
     },
     AppRoute.privacyPolity.path: (BuildContext _) => const PrivacyPolicyPage(),

@@ -10,12 +10,14 @@ part 'onboarding_event.dart';
 part 'onboarding_state.dart';
 
 class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
-  OnboardingBloc(this._saveLanguageUseCase, LocalDataSource localDataSource)
-    : super(OnboardingInitial(localDataSource.getLanguage())) {
+  OnboardingBloc(this._saveLanguageUseCase, this._localDataSource)
+    : super(OnboardingInitial(_localDataSource.getLanguage())) {
     on<ChangeLanguageEvent>(_changeLanguage);
+    on<CompleteOnboardingEvent>(_completeOnboarding);
   }
 
   final UseCase<Future<bool>, String> _saveLanguageUseCase;
+  final LocalDataSource _localDataSource;
 
   FutureOr<void> _changeLanguage(
     ChangeLanguageEvent event,
@@ -32,5 +34,12 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
         emit(OnboardingInitial(state.language));
       }
     }
+  }
+
+  FutureOr<void> _completeOnboarding(
+    CompleteOnboardingEvent event,
+    Emitter<OnboardingState> emit,
+  ) async {
+    await _localDataSource.saveOnboardingCompleted();
   }
 }

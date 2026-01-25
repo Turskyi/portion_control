@@ -90,7 +90,7 @@ void main() {
                   localDataSource,
                 );
               },
-              child: OnboardingScreen(localDataSource: localDataSource),
+              child: const OnboardingScreen(),
             );
           },
           AppRoute.landing.path: (_) {
