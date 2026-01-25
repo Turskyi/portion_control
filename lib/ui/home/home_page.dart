@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false,
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: colorScheme.surface),
         ),
         body: const HomePageContent(),
         persistentFooterAlignment: AlignmentDirectional.center,

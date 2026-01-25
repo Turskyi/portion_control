@@ -53,9 +53,17 @@ class App extends StatelessWidget {
               // Override primary color (border outline, input label).
               primary: Colors.pinkAccent,
               // Background gradient center.
-              background: const Color(0xFFFFF0F5),
+              surface: const Color(0xFFFFF0F5),
               // Background gradient edge.
               secondary: const Color(0xFFD47A9B),
+              // Success/Healthy color.
+              tertiary: Colors.green,
+              // Obese color.
+              error: Colors.red,
+              // Underweight color.
+              primaryContainer: Colors.blue,
+              // Overweight color.
+              secondaryContainer: Colors.orange,
             ),
           ),
           initialRoute: initialRoute,
