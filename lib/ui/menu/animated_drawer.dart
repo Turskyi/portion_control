@@ -73,12 +73,18 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    translate('menu'),
-                    style: textTheme.headlineSmall?.copyWith(
-                      color: colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  BlocBuilder<MenuBloc, MenuState>(
+                    builder: (BuildContext _, MenuState state) {
+                      return Text(
+                        translate('menu'),
+                        style: textTheme.headlineSmall?.copyWith(
+                          color: state.isDarkTheme
+                              ? colorScheme.onSurface
+                              : colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 6),
                   BlocBuilder<MenuBloc, MenuState>(
@@ -110,7 +116,9 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         return Text(
                           streakText,
                           style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onPrimary.withOpacity(0.85),
+                            color: state.isDarkTheme
+                                ? colorScheme.onSurface.withOpacity(0.85)
+                                : colorScheme.onPrimary,
                           ),
                         );
                       }

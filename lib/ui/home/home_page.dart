@@ -54,203 +54,217 @@ class _HomePageState extends State<HomePage> {
     final ColorScheme colorScheme = theme.colorScheme;
     return BlocListener<YesterdayEntriesBloc, YesterdayEntriesState>(
       listener: _yesterdayEntriesStateListener,
-      child: GradientBackgroundScaffold(
-        drawer: kIsWeb
-            ? null
-            : BlocListener<MenuBloc, MenuState>(
-                listener: _menuStateListener,
-                child: const AnimatedDrawer(),
+      child: BlocConsumer<MenuBloc, MenuState>(
+        listener: _menuStateListener,
+        builder: (BuildContext context, MenuState state) {
+          return GradientBackgroundScaffold(
+            drawer: kIsWeb ? null : const AnimatedDrawer(),
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              automaticallyImplyLeading: false,
+              iconTheme: IconThemeData(
+                color: state.isDarkTheme
+                    ? colorScheme.onSurface
+                    : colorScheme.surface,
               ),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          automaticallyImplyLeading: false,
-          iconTheme: IconThemeData(color: colorScheme.surface),
-        ),
-        body: const HomePageContent(),
-        persistentFooterAlignment: AlignmentDirectional.center,
-        persistentFooterButtons: kIsWeb && context.isNarrowScreen
-            ? <Widget>[
-                PopupMenuButton<String>(
-                  icon: Icon(Icons.more_horiz, color: colorScheme.primary),
-                  onSelected: _handlePopupMenuSelection,
-                  itemBuilder: (BuildContext _) {
-                    final double badgeHeight = 40.0;
-                    return <PopupMenuEntry<String>>[
-                      PopupMenuItem<String>(
-                        value: constants.kLanguageValue,
-                        child: Text(t('language')),
-                      ),
-                      const PopupMenuDivider(),
-                      PopupMenuItem<String>(
-                        value: AppRoute.dailyFoodLogHistory.name,
-                        child: Text(t('daily_food_log_history.title')),
-                      ),
-                      PopupMenuItem<String>(
-                        value: AppRoute.privacyPolity.name,
-                        child: Text(t('landing_page.menu_item_privacy_policy')),
-                      ),
-                      PopupMenuItem<String>(
-                        value: AppRoute.about.name,
-                        child: Text(t('landing_page.menu_item_about')),
-                      ),
-                      PopupMenuItem<String>(
-                        value: AppRoute.support.name,
-                        child: Text(t('landing_page.menu_item_support')),
-                      ),
-                      PopupMenuItem<String>(
-                        value: AppRoute.recipes.name,
-                        child: Text(t('recipes_page.title')),
-                      ),
-                      const PopupMenuDivider(),
-                      PopupMenuItem<String>(
-                        value: constants.googlePlayUrl,
-                        child: Semantics(
-                          label: t('landing_page.semantics_label_google_play'),
-                          button: true,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Material(
-                              // Ensures the background remains unchanged.
-                              color: Colors.transparent,
-                              child: InkWell(
-                                splashColor: colorScheme.primary.withValues(
-                                  alpha: 0.2,
-                                ),
-                                onTap: _launchGooglePlayUrl,
-                                child: Ink.image(
-                                  image: const AssetImage(
-                                    '${constants.imagePath}'
-                                    'play_store_badge.png',
+            ),
+            body: const HomePageContent(),
+            persistentFooterAlignment: AlignmentDirectional.center,
+            persistentFooterButtons: kIsWeb && context.isNarrowScreen
+                ? <Widget>[
+                    PopupMenuButton<String>(
+                      icon: Icon(Icons.more_horiz, color: colorScheme.primary),
+                      onSelected: _handlePopupMenuSelection,
+                      itemBuilder: (BuildContext _) {
+                        final double badgeHeight = 40.0;
+                        return <PopupMenuEntry<String>>[
+                          PopupMenuItem<String>(
+                            value: constants.kLanguageValue,
+                            child: Text(t('language')),
+                          ),
+                          const PopupMenuDivider(),
+                          PopupMenuItem<String>(
+                            value: AppRoute.dailyFoodLogHistory.name,
+                            child: Text(t('daily_food_log_history.title')),
+                          ),
+                          PopupMenuItem<String>(
+                            value: AppRoute.privacyPolity.name,
+                            child: Text(
+                              t('landing_page.menu_item_privacy_policy'),
+                            ),
+                          ),
+                          PopupMenuItem<String>(
+                            value: AppRoute.about.name,
+                            child: Text(t('landing_page.menu_item_about')),
+                          ),
+                          PopupMenuItem<String>(
+                            value: AppRoute.support.name,
+                            child: Text(t('landing_page.menu_item_support')),
+                          ),
+                          PopupMenuItem<String>(
+                            value: AppRoute.recipes.name,
+                            child: Text(t('recipes_page.title')),
+                          ),
+                          const PopupMenuDivider(),
+                          PopupMenuItem<String>(
+                            value: constants.googlePlayUrl,
+                            child: Semantics(
+                              label: t(
+                                'landing_page.semantics_label_google_play',
+                              ),
+                              button: true,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Material(
+                                  // Ensures the background remains unchanged.
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    splashColor: colorScheme.primary.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    onTap: _launchGooglePlayUrl,
+                                    child: Ink.image(
+                                      image: const AssetImage(
+                                        '${constants.imagePath}'
+                                        'play_store_badge.png',
+                                      ),
+                                      height: badgeHeight,
+                                    ),
                                   ),
-                                  height: badgeHeight,
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      PopupMenuItem<String>(
-                        value: constants.macOsUrl,
-                        child: Semantics(
-                          label: t('landing_page.semantics_label_macos'),
-                          button: true,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Material(
-                              // Ensures the background remains unchanged.
-                              color: Colors.transparent,
-                              child: InkWell(
-                                splashColor: colorScheme.primary.withValues(
-                                  alpha: 0.2,
-                                ),
-                                onTap: _launchMacOsUrl,
-                                child: Ink.image(
-                                  image: const AssetImage(
-                                    '${constants.imagePath}mac_os_badge.png',
+                          PopupMenuItem<String>(
+                            value: constants.macOsUrl,
+                            child: Semantics(
+                              label: t('landing_page.semantics_label_macos'),
+                              button: true,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Material(
+                                  // Ensures the background remains unchanged.
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    splashColor: colorScheme.primary.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    onTap: _launchMacOsUrl,
+                                    child: Ink.image(
+                                      image: const AssetImage(
+                                        '${constants.imagePath}'
+                                        'mac_os_badge.png',
+                                      ),
+                                      height: badgeHeight,
+                                    ),
                                   ),
-                                  height: badgeHeight,
                                 ),
                               ),
                             ),
                           ),
-                        ),
+                        ];
+                      },
+                    ),
+                  ]
+                : kIsWeb
+                ? <Widget>[
+                    Semantics(
+                      label: t('language'),
+                      button: true,
+                      child: TextButton.icon(
+                        onPressed: _showLanguageSelectionDialog,
+                        icon: Icon(Icons.language, size: titleMediumSize),
+                        label: Text(t('language')),
                       ),
-                    ];
-                  },
-                ),
-              ]
-            : kIsWeb
-            ? <Widget>[
-                Semantics(
-                  label: t('language'),
-                  button: true,
-                  child: TextButton.icon(
-                    onPressed: _showLanguageSelectionDialog,
-                    icon: Icon(Icons.language, size: titleMediumSize),
-                    label: Text(t('language')),
-                  ),
-                ),
-                Semantics(
-                  label: t('semantic_label.daily_food_log_history'),
-                  button: true,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(
-                        context,
-                        AppRoute.dailyFoodLogHistory.path,
-                      );
-                    },
-                    icon: Icon(Icons.history, size: titleMediumSize),
-                    label: Text(t('daily_food_log_history.title')),
-                  ),
-                ),
-                Semantics(
-                  label: translate('semantic_label.privacy_policy_button'),
-                  button: true,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoute.privacyPolity.path);
-                    },
-                    icon: Icon(
-                      Icons.privacy_tip,
-                      size: titleMediumSize,
                     ),
-                    label: Text(translate('button.privacy_policy')),
-                  ),
-                ),
-                Semantics(
-                  label: translate('semantic_label.about_us_button'),
-                  button: true,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoute.about.path);
-                    },
-                    icon: Icon(
-                      Icons.group,
-                      size: titleMediumSize,
+                    Semantics(
+                      label: t('semantic_label.daily_food_log_history'),
+                      button: true,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoute.dailyFoodLogHistory.path,
+                          );
+                        },
+                        icon: Icon(Icons.history, size: titleMediumSize),
+                        label: Text(t('daily_food_log_history.title')),
+                      ),
                     ),
-                    label: Text(translate('button.about_us')),
-                  ),
-                ),
-                Semantics(
-                  label: translate('semantic_label.recipes_button'),
-                  button: true,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoute.recipes.path);
-                    },
-                    icon: Icon(
-                      Icons.restaurant_menu,
-                      size: titleMediumSize,
+                    Semantics(
+                      label: translate('semantic_label.privacy_policy_button'),
+                      button: true,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoute.privacyPolity.path,
+                          );
+                        },
+                        icon: Icon(
+                          Icons.privacy_tip,
+                          size: titleMediumSize,
+                        ),
+                        label: Text(translate('button.privacy_policy')),
+                      ),
                     ),
-                    label: Text(translate('recipes_page.title')),
-                  ),
-                ),
-                Semantics(
-                  label: t('landing_page.menu_item_support'),
-                  button: true,
-                  child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoute.support.path);
-                    },
-                    icon: Icon(Icons.support_agent, size: titleMediumSize),
-                    label: Text(t('landing_page.menu_item_support')),
-                  ),
-                ),
-                Semantics(
-                  label: translate('semantic_label.feedback_button'),
-                  button: true,
-                  child: TextButton.icon(
-                    onPressed: () => _showFeedbackDialog(context),
-                    icon: Icon(
-                      Icons.feedback,
-                      size: Theme.of(context).textTheme.titleMedium?.fontSize,
+                    Semantics(
+                      label: translate('semantic_label.about_us_button'),
+                      button: true,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoute.about.path);
+                        },
+                        icon: Icon(
+                          Icons.group,
+                          size: titleMediumSize,
+                        ),
+                        label: Text(translate('button.about_us')),
+                      ),
                     ),
-                    label: Text(translate('button.feedback')),
-                  ),
-                ),
-              ]
-            : null,
+                    Semantics(
+                      label: translate('semantic_label.recipes_button'),
+                      button: true,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoute.recipes.path);
+                        },
+                        icon: Icon(
+                          Icons.restaurant_menu,
+                          size: titleMediumSize,
+                        ),
+                        label: Text(translate('recipes_page.title')),
+                      ),
+                    ),
+                    Semantics(
+                      label: t('landing_page.menu_item_support'),
+                      button: true,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(context, AppRoute.support.path);
+                        },
+                        icon: Icon(Icons.support_agent, size: titleMediumSize),
+                        label: Text(t('landing_page.menu_item_support')),
+                      ),
+                    ),
+                    Semantics(
+                      label: translate('semantic_label.feedback_button'),
+                      button: true,
+                      child: TextButton.icon(
+                        onPressed: () => _showFeedbackDialog(context),
+                        icon: Icon(
+                          Icons.feedback,
+                          size: Theme.of(
+                            context,
+                          ).textTheme.titleMedium?.fontSize,
+                        ),
+                        label: Text(translate('button.feedback')),
+                      ),
+                    ),
+                  ]
+                : null,
+          );
+        },
       ),
     );
   }

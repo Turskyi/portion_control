@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -26,6 +27,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     : super(
         SettingsInitial(
           language: _settingsRepository.getLanguage(),
+          themeMode: _settingsRepository.getThemeMode(),
           isOnboardingCompleted: _settingsRepository.isOnboardingCompleted(),
         ),
       ) {
@@ -38,6 +40,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsErrorEvent>(_handleError);
 
     on<SettingsChangeLanguageEvent>(_changeLanguage);
+
+    on<SettingsChangeThemeEvent>(_changeTheme);
   }
 
   final ISettingsRepository _settingsRepository;
@@ -50,6 +54,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       SettingsError(
         errorMessage: event.error,
         language: state.language,
+        themeMode: state.themeMode,
         isOnboardingCompleted: state.isOnboardingCompleted,
       ),
     );
@@ -63,6 +68,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       emit(
         LoadingSettingsState(
           language: state.language,
+          themeMode: state.themeMode,
           isOnboardingCompleted: state.isOnboardingCompleted,
         ),
       );
@@ -162,6 +168,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
               SettingsError(
                 errorMessage: errorMessage,
                 language: state.language,
+                themeMode: state.themeMode,
                 isOnboardingCompleted: state.isOnboardingCompleted,
               ),
             );
@@ -190,6 +197,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         emit(
           SettingsFeedbackSent(
             language: state.language,
+            themeMode: state.themeMode,
             isOnboardingCompleted: state.isOnboardingCompleted,
           ),
         );
@@ -199,6 +207,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           SettingsError(
             errorMessage: translate('error.unexpected_error'),
             language: state.language,
+            themeMode: state.themeMode,
             isOnboardingCompleted: state.isOnboardingCompleted,
           ),
         );
@@ -221,6 +230,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(
       FeedbackState(
         language: state.language,
+        themeMode: state.themeMode,
         errorMessage: errorMessage,
         isOnboardingCompleted: state.isOnboardingCompleted,
       ),
@@ -234,6 +244,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(
       SettingsInitial(
         language: state.language,
+        themeMode: state.themeMode,
         isOnboardingCompleted: state.isOnboardingCompleted,
       ),
     );
@@ -255,13 +266,41 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         if (state is SettingsInitial) {
           emit(state.copyWith(language: language));
         } else {
-          SettingsInitial(
-            language: language,
-            isOnboardingCompleted: state.isOnboardingCompleted,
+          emit(
+            SettingsInitial(
+              language: language,
+              themeMode: state.themeMode,
+              isOnboardingCompleted: state.isOnboardingCompleted,
+            ),
           );
         }
       } else {
         //TODO: no sure what to do.
+      }
+    }
+  }
+
+  FutureOr<void> _changeTheme(
+    SettingsChangeThemeEvent event,
+    Emitter<SettingsState> emit,
+  ) async {
+    final ThemeMode themeMode = event.themeMode;
+    final SettingsState state = this.state;
+
+    if (themeMode != state.themeMode) {
+      final bool isSaved = await _settingsRepository.saveThemeMode(themeMode);
+      if (isSaved) {
+        if (state is SettingsInitial) {
+          emit(state.copyWith(themeMode: themeMode));
+        } else {
+          emit(
+            SettingsInitial(
+              language: state.language,
+              themeMode: themeMode,
+              isOnboardingCompleted: state.isOnboardingCompleted,
+            ),
+          );
+        }
       }
     }
   }

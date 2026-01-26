@@ -24,6 +24,8 @@ sealed class MenuState {
 
   String get localeCode => language.isoLanguageCode;
 
+  bool get isDarkTheme => themeMode == ThemeMode.dark;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

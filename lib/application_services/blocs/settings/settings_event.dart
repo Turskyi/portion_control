@@ -36,3 +36,9 @@ class SettingsChangeLanguageEvent extends SettingsEvent {
 
   final Language language;
 }
+
+class SettingsChangeThemeEvent extends SettingsEvent {
+  const SettingsChangeThemeEvent(this.themeMode);
+
+  final ThemeMode themeMode;
+}
