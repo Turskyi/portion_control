@@ -2,13 +2,51 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/services/recipe_tried_state_service.dart';
 import 'package:portion_control/ui/recipes/widgets/day_card.dart';
 import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class WeightLossRecipesPage extends StatelessWidget {
+class WeightLossRecipesPage extends StatefulWidget {
   const WeightLossRecipesPage({super.key});
+
+  @override
+  State<WeightLossRecipesPage> createState() => _WeightLossRecipesPageState();
+}
+
+class _WeightLossRecipesPageState extends State<WeightLossRecipesPage> {
+  final RecipeTriedStateService _triedStateService = RecipeTriedStateService();
+  final Map<String, bool> _triedStates = <String, bool>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAllTriedStates();
+  }
+
+  Future<void> _loadAllTriedStates() async {
+    // Load tried states for all recipe IDs
+    // Recipe IDs are based on day_X format
+    for (int i = 1; i <= 154; i++) {
+      final String recipeId = 'day_$i';
+      final bool tried = await _triedStateService.getTriedState(recipeId);
+      if (mounted) {
+        setState(() {
+          _triedStates[recipeId] = tried;
+        });
+      }
+    }
+  }
+
+  Future<void> _toggleTried(String recipeId) async {
+    final bool newState = await _triedStateService.toggleTriedState(recipeId);
+    if (mounted) {
+      setState(() {
+        _triedStates[recipeId] = newState;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +84,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             ),
           ),
           DayCard(
+            recipeId: 'day_1',
+            tried: _triedStates['day_1'] ?? false,
+            onTriedChanged: () => _toggleTried('day_1'),
+
             title: translate('recipes_page.week_1'),
             dayTitle: translate('recipes_page.day_1'),
             meals: <String>[
@@ -58,6 +100,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_1_total'),
           ),
           DayCard(
+            recipeId: 'day_2',
+            tried: _triedStates['day_2'] ?? false,
+            onTriedChanged: () => _toggleTried('day_2'),
+
             dayTitle: translate('recipes_page.day_2'),
             meals: <String>[
               translate('recipes_page.day_2_breakfast'),
@@ -69,6 +115,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_2_total'),
           ),
           DayCard(
+            recipeId: 'day_3',
+            tried: _triedStates['day_3'] ?? false,
+            onTriedChanged: () => _toggleTried('day_3'),
+
             dayTitle: translate('recipes_page.day_3'),
             meals: <String>[
               translate('recipes_page.day_3_diet'),
@@ -76,6 +126,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_3_total'),
           ),
           DayCard(
+            recipeId: 'day_4',
+            tried: _triedStates['day_4'] ?? false,
+            onTriedChanged: () => _toggleTried('day_4'),
+
             dayTitle: translate('recipes_page.day_4'),
             meals: <String>[
               translate('recipes_page.day_4_breakfast'),
@@ -87,6 +141,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_4_total'),
           ),
           DayCard(
+            recipeId: 'day_5',
+            tried: _triedStates['day_5'] ?? false,
+            onTriedChanged: () => _toggleTried('day_5'),
+
             dayTitle: translate('recipes_page.day_5'),
             meals: <String>[
               translate('recipes_page.day_5_breakfast'),
@@ -98,6 +156,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_5_total'),
           ),
           DayCard(
+            recipeId: 'day_6',
+            tried: _triedStates['day_6'] ?? false,
+            onTriedChanged: () => _toggleTried('day_6'),
+
             dayTitle: translate('recipes_page.day_6'),
             meals: <String>[
               translate('recipes_page.day_6_breakfast'),
@@ -109,6 +171,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_6_total'),
           ),
           DayCard(
+            recipeId: 'day_7',
+            tried: _triedStates['day_7'] ?? false,
+            onTriedChanged: () => _toggleTried('day_7'),
+
             dayTitle: translate('recipes_page.day_7'),
             meals: <String>[
               translate('recipes_page.day_7_breakfast'),
@@ -120,6 +186,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_7_total'),
           ),
           DayCard(
+            recipeId: 'notes_title',
+            tried: _triedStates['notes_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_title'),
+
             title: translate('recipes_page.notes_title'),
             meals: <String>[
               translate('recipes_page.notes_sweets'),
@@ -128,6 +198,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_8',
+            tried: _triedStates['day_8'] ?? false,
+            onTriedChanged: () => _toggleTried('day_8'),
+
             title: translate('recipes_page.week_2'),
             dayTitle: translate('recipes_page.day_8'),
             meals: <String>[
@@ -140,6 +214,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_8_total'),
           ),
           DayCard(
+            recipeId: 'day_9',
+            tried: _triedStates['day_9'] ?? false,
+            onTriedChanged: () => _toggleTried('day_9'),
+
             dayTitle: translate('recipes_page.day_9'),
             meals: <String>[
               translate('recipes_page.day_9_diet'),
@@ -147,6 +225,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_9_total'),
           ),
           DayCard(
+            recipeId: 'day_10',
+            tried: _triedStates['day_10'] ?? false,
+            onTriedChanged: () => _toggleTried('day_10'),
+
             dayTitle: translate('recipes_page.day_10'),
             meals: <String>[
               translate('recipes_page.day_10_breakfast'),
@@ -158,6 +240,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_10_total'),
           ),
           DayCard(
+            recipeId: 'day_11',
+            tried: _triedStates['day_11'] ?? false,
+            onTriedChanged: () => _toggleTried('day_11'),
+
             dayTitle: translate('recipes_page.day_11'),
             meals: <String>[
               translate('recipes_page.day_11_breakfast'),
@@ -169,6 +255,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_11_total'),
           ),
           DayCard(
+            recipeId: 'day_12',
+            tried: _triedStates['day_12'] ?? false,
+            onTriedChanged: () => _toggleTried('day_12'),
+
             dayTitle: translate('recipes_page.day_12'),
             meals: <String>[
               translate('recipes_page.day_12_breakfast'),
@@ -180,6 +270,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_12_total'),
           ),
           DayCard(
+            recipeId: 'day_13',
+            tried: _triedStates['day_13'] ?? false,
+            onTriedChanged: () => _toggleTried('day_13'),
+
             dayTitle: translate('recipes_page.day_13'),
             meals: <String>[
               translate('recipes_page.day_13_breakfast'),
@@ -191,6 +285,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_13_total'),
           ),
           DayCard(
+            recipeId: 'day_14',
+            tried: _triedStates['day_14'] ?? false,
+            onTriedChanged: () => _toggleTried('day_14'),
+
             dayTitle: translate('recipes_page.day_14'),
             meals: <String>[
               translate('recipes_page.day_14_breakfast'),
@@ -202,6 +300,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_14_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_2_title',
+            tried: _triedStates['notes_week_2_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_2_title'),
+
             title: translate('recipes_page.notes_week_2_title'),
             meals: <String>[
               translate('recipes_page.notes_week_2_sweets'),
@@ -209,6 +311,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_15',
+            tried: _triedStates['day_15'] ?? false,
+            onTriedChanged: () => _toggleTried('day_15'),
+
             title: translate('recipes_page.week_3'),
             dayTitle: translate('recipes_page.day_15'),
             meals: <String>[
@@ -221,6 +327,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_15_total'),
           ),
           DayCard(
+            recipeId: 'day_16',
+            tried: _triedStates['day_16'] ?? false,
+            onTriedChanged: () => _toggleTried('day_16'),
+
             dayTitle: translate('recipes_page.day_16'),
             meals: <String>[
               translate('recipes_page.day_16_breakfast'),
@@ -232,6 +342,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_16_total'),
           ),
           DayCard(
+            recipeId: 'day_17',
+            tried: _triedStates['day_17'] ?? false,
+            onTriedChanged: () => _toggleTried('day_17'),
+
             dayTitle: translate('recipes_page.day_17'),
             meals: <String>[
               translate('recipes_page.day_17_breakfast'),
@@ -243,6 +357,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_17_total'),
           ),
           DayCard(
+            recipeId: 'day_18',
+            tried: _triedStates['day_18'] ?? false,
+            onTriedChanged: () => _toggleTried('day_18'),
+
             dayTitle: translate('recipes_page.day_18'),
             meals: <String>[
               translate('recipes_page.day_18_breakfast'),
@@ -254,6 +372,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_18_total'),
           ),
           DayCard(
+            recipeId: 'day_19',
+            tried: _triedStates['day_19'] ?? false,
+            onTriedChanged: () => _toggleTried('day_19'),
+
             dayTitle: translate('recipes_page.day_19'),
             meals: <String>[
               translate('recipes_page.day_19_breakfast'),
@@ -265,6 +387,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_19_total'),
           ),
           DayCard(
+            recipeId: 'day_20',
+            tried: _triedStates['day_20'] ?? false,
+            onTriedChanged: () => _toggleTried('day_20'),
+
             dayTitle: translate('recipes_page.day_20'),
             meals: <String>[
               translate('recipes_page.day_20_breakfast'),
@@ -276,6 +402,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_20_total'),
           ),
           DayCard(
+            recipeId: 'day_21',
+            tried: _triedStates['day_21'] ?? false,
+            onTriedChanged: () => _toggleTried('day_21'),
+
             dayTitle: translate('recipes_page.day_21'),
             meals: <String>[
               translate('recipes_page.day_21_breakfast'),
@@ -288,6 +418,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_22',
+            tried: _triedStates['day_22'] ?? false,
+            onTriedChanged: () => _toggleTried('day_22'),
+
             title: translate('recipes_page.week_4'),
             dayTitle: translate('recipes_page.day_22'),
             meals: <String>[
@@ -300,6 +434,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_22_total'),
           ),
           DayCard(
+            recipeId: 'day_23',
+            tried: _triedStates['day_23'] ?? false,
+            onTriedChanged: () => _toggleTried('day_23'),
+
             dayTitle: translate('recipes_page.day_23'),
             meals: <String>[
               translate('recipes_page.day_23_diet'),
@@ -307,6 +445,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_23_total'),
           ),
           DayCard(
+            recipeId: 'day_24',
+            tried: _triedStates['day_24'] ?? false,
+            onTriedChanged: () => _toggleTried('day_24'),
+
             dayTitle: translate('recipes_page.day_24'),
             meals: <String>[
               translate('recipes_page.day_24_breakfast'),
@@ -318,6 +460,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_24_total'),
           ),
           DayCard(
+            recipeId: 'day_25',
+            tried: _triedStates['day_25'] ?? false,
+            onTriedChanged: () => _toggleTried('day_25'),
+
             dayTitle: translate('recipes_page.day_25'),
             meals: <String>[
               translate('recipes_page.day_25_breakfast'),
@@ -329,6 +475,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_25_total'),
           ),
           DayCard(
+            recipeId: 'day_26',
+            tried: _triedStates['day_26'] ?? false,
+            onTriedChanged: () => _toggleTried('day_26'),
+
             dayTitle: translate('recipes_page.day_26'),
             meals: <String>[
               translate('recipes_page.day_26_breakfast'),
@@ -340,6 +490,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_26_total'),
           ),
           DayCard(
+            recipeId: 'day_27',
+            tried: _triedStates['day_27'] ?? false,
+            onTriedChanged: () => _toggleTried('day_27'),
+
             dayTitle: translate('recipes_page.day_27'),
             meals: <String>[
               translate('recipes_page.day_27_breakfast'),
@@ -351,6 +505,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_27_total'),
           ),
           DayCard(
+            recipeId: 'day_28',
+            tried: _triedStates['day_28'] ?? false,
+            onTriedChanged: () => _toggleTried('day_28'),
+
             dayTitle: translate('recipes_page.day_28'),
             meals: <String>[
               translate('recipes_page.day_28_breakfast'),
@@ -362,6 +520,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_28_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_4_title',
+            tried: _triedStates['notes_week_4_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_4_title'),
+
             title: translate('recipes_page.notes_week_4_title'),
             meals: <String>[
               translate('recipes_page.notes_week_4_sweets'),
@@ -369,6 +531,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_29',
+            tried: _triedStates['day_29'] ?? false,
+            onTriedChanged: () => _toggleTried('day_29'),
+
             title: translate('recipes_page.week_5'),
             dayTitle: translate('recipes_page.day_29'),
             meals: <String>[
@@ -381,6 +547,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_29_total'),
           ),
           DayCard(
+            recipeId: 'day_30',
+            tried: _triedStates['day_30'] ?? false,
+            onTriedChanged: () => _toggleTried('day_30'),
+
             dayTitle: translate('recipes_page.day_30'),
             meals: <String>[
               translate('recipes_page.day_30_breakfast'),
@@ -392,6 +562,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_30_total'),
           ),
           DayCard(
+            recipeId: 'day_31',
+            tried: _triedStates['day_31'] ?? false,
+            onTriedChanged: () => _toggleTried('day_31'),
+
             dayTitle: translate('recipes_page.day_31'),
             meals: <String>[
               translate('recipes_page.day_31_diet'),
@@ -399,6 +573,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_31_total'),
           ),
           DayCard(
+            recipeId: 'day_32',
+            tried: _triedStates['day_32'] ?? false,
+            onTriedChanged: () => _toggleTried('day_32'),
+
             dayTitle: translate('recipes_page.day_32'),
             meals: <String>[
               translate('recipes_page.day_32_breakfast'),
@@ -410,6 +588,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_32_total'),
           ),
           DayCard(
+            recipeId: 'day_33',
+            tried: _triedStates['day_33'] ?? false,
+            onTriedChanged: () => _toggleTried('day_33'),
+
             dayTitle: translate('recipes_page.day_33'),
             meals: <String>[
               translate('recipes_page.day_33_breakfast'),
@@ -421,6 +603,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_33_total'),
           ),
           DayCard(
+            recipeId: 'day_34',
+            tried: _triedStates['day_34'] ?? false,
+            onTriedChanged: () => _toggleTried('day_34'),
+
             dayTitle: translate('recipes_page.day_34'),
             meals: <String>[
               translate('recipes_page.day_34_breakfast'),
@@ -432,6 +618,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_34_total'),
           ),
           DayCard(
+            recipeId: 'day_35',
+            tried: _triedStates['day_35'] ?? false,
+            onTriedChanged: () => _toggleTried('day_35'),
+
             dayTitle: translate('recipes_page.day_35'),
             meals: <String>[
               translate('recipes_page.day_35_breakfast'),
@@ -443,6 +633,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_35_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_5_title',
+            tried: _triedStates['notes_week_5_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_5_title'),
+
             title: translate('recipes_page.notes_week_5_title'),
             meals: <String>[
               translate('recipes_page.notes_week_5_sweets'),
@@ -450,6 +644,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_36',
+            tried: _triedStates['day_36'] ?? false,
+            onTriedChanged: () => _toggleTried('day_36'),
+
             title: translate('recipes_page.week_6'),
             dayTitle: translate('recipes_page.day_36'),
             meals: <String>[
@@ -462,6 +660,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_36_total'),
           ),
           DayCard(
+            recipeId: 'day_37',
+            tried: _triedStates['day_37'] ?? false,
+            onTriedChanged: () => _toggleTried('day_37'),
+
             dayTitle: translate('recipes_page.day_37'),
             meals: <String>[
               translate('recipes_page.day_37_breakfast'),
@@ -473,6 +675,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_37_total'),
           ),
           DayCard(
+            recipeId: 'day_38',
+            tried: _triedStates['day_38'] ?? false,
+            onTriedChanged: () => _toggleTried('day_38'),
+
             dayTitle: translate('recipes_page.day_38'),
             meals: <String>[
               translate('recipes_page.day_38_diet'),
@@ -480,6 +686,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_38_total'),
           ),
           DayCard(
+            recipeId: 'day_39',
+            tried: _triedStates['day_39'] ?? false,
+            onTriedChanged: () => _toggleTried('day_39'),
+
             dayTitle: translate('recipes_page.day_39'),
             meals: <String>[
               translate('recipes_page.day_39_breakfast'),
@@ -491,6 +701,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_39_total'),
           ),
           DayCard(
+            recipeId: 'day_40',
+            tried: _triedStates['day_40'] ?? false,
+            onTriedChanged: () => _toggleTried('day_40'),
+
             dayTitle: translate('recipes_page.day_40'),
             meals: <String>[
               translate('recipes_page.day_40_breakfast'),
@@ -502,6 +716,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_40_total'),
           ),
           DayCard(
+            recipeId: 'day_41',
+            tried: _triedStates['day_41'] ?? false,
+            onTriedChanged: () => _toggleTried('day_41'),
+
             dayTitle: translate('recipes_page.day_41'),
             meals: <String>[
               translate('recipes_page.day_41_breakfast'),
@@ -513,6 +731,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_41_total'),
           ),
           DayCard(
+            recipeId: 'day_42',
+            tried: _triedStates['day_42'] ?? false,
+            onTriedChanged: () => _toggleTried('day_42'),
+
             dayTitle: translate('recipes_page.day_42'),
             meals: <String>[
               translate('recipes_page.day_42_breakfast'),
@@ -524,6 +746,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_42_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_6_title',
+            tried: _triedStates['notes_week_6_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_6_title'),
+
             title: translate('recipes_page.notes_week_6_title'),
             meals: <String>[
               translate('recipes_page.notes_week_6_soups'),
@@ -531,6 +757,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_43',
+            tried: _triedStates['day_43'] ?? false,
+            onTriedChanged: () => _toggleTried('day_43'),
+
             title: translate('recipes_page.week_7'),
             dayTitle: translate('recipes_page.day_43'),
             meals: <String>[
@@ -543,6 +773,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_43_total'),
           ),
           DayCard(
+            recipeId: 'day_44',
+            tried: _triedStates['day_44'] ?? false,
+            onTriedChanged: () => _toggleTried('day_44'),
+
             dayTitle: translate('recipes_page.day_44'),
             meals: <String>[
               translate('recipes_page.day_44_breakfast'),
@@ -554,6 +788,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_44_total'),
           ),
           DayCard(
+            recipeId: 'day_45',
+            tried: _triedStates['day_45'] ?? false,
+            onTriedChanged: () => _toggleTried('day_45'),
+
             dayTitle: translate('recipes_page.day_45'),
             meals: <String>[
               translate('recipes_page.day_45_breakfast'),
@@ -565,6 +803,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_45_total'),
           ),
           DayCard(
+            recipeId: 'day_46',
+            tried: _triedStates['day_46'] ?? false,
+            onTriedChanged: () => _toggleTried('day_46'),
+
             dayTitle: translate('recipes_page.day_46'),
             meals: <String>[
               translate('recipes_page.day_46_breakfast'),
@@ -576,6 +818,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_46_total'),
           ),
           DayCard(
+            recipeId: 'day_47',
+            tried: _triedStates['day_47'] ?? false,
+            onTriedChanged: () => _toggleTried('day_47'),
+
             dayTitle: translate('recipes_page.day_47'),
             meals: <String>[
               translate('recipes_page.day_47_breakfast'),
@@ -587,6 +833,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_47_total'),
           ),
           DayCard(
+            recipeId: 'day_48',
+            tried: _triedStates['day_48'] ?? false,
+            onTriedChanged: () => _toggleTried('day_48'),
+
             dayTitle: translate('recipes_page.day_48'),
             meals: <String>[
               translate('recipes_page.day_48_diet'),
@@ -594,6 +844,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_48_total'),
           ),
           DayCard(
+            recipeId: 'day_49',
+            tried: _triedStates['day_49'] ?? false,
+            onTriedChanged: () => _toggleTried('day_49'),
+
             dayTitle: translate('recipes_page.day_49'),
             meals: <String>[
               translate('recipes_page.day_49_breakfast'),
@@ -605,6 +859,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_49_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_7_title',
+            tried: _triedStates['notes_week_7_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_7_title'),
+
             title: translate('recipes_page.notes_week_7_title'),
             meals: <String>[
               translate('recipes_page.notes_week_7_general'),
@@ -612,6 +870,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_50',
+            tried: _triedStates['day_50'] ?? false,
+            onTriedChanged: () => _toggleTried('day_50'),
+
             title: translate('recipes_page.week_8'),
             dayTitle: translate('recipes_page.day_50'),
             meals: <String>[
@@ -624,6 +886,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_50_total'),
           ),
           DayCard(
+            recipeId: 'day_51',
+            tried: _triedStates['day_51'] ?? false,
+            onTriedChanged: () => _toggleTried('day_51'),
+
             dayTitle: translate('recipes_page.day_51'),
             meals: <String>[
               translate('recipes_page.day_51_breakfast'),
@@ -635,6 +901,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_51_total'),
           ),
           DayCard(
+            recipeId: 'day_52',
+            tried: _triedStates['day_52'] ?? false,
+            onTriedChanged: () => _toggleTried('day_52'),
+
             dayTitle: translate('recipes_page.day_52'),
             meals: <String>[
               translate('recipes_page.day_52_diet'),
@@ -642,6 +912,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_52_total'),
           ),
           DayCard(
+            recipeId: 'day_53',
+            tried: _triedStates['day_53'] ?? false,
+            onTriedChanged: () => _toggleTried('day_53'),
+
             dayTitle: translate('recipes_page.day_53'),
             meals: <String>[
               translate('recipes_page.day_53_diet'),
@@ -649,6 +923,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_53_total'),
           ),
           DayCard(
+            recipeId: 'day_54',
+            tried: _triedStates['day_54'] ?? false,
+            onTriedChanged: () => _toggleTried('day_54'),
+
             dayTitle: translate('recipes_page.day_54'),
             meals: <String>[
               translate('recipes_page.day_54_breakfast'),
@@ -660,6 +938,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_54_total'),
           ),
           DayCard(
+            recipeId: 'day_55',
+            tried: _triedStates['day_55'] ?? false,
+            onTriedChanged: () => _toggleTried('day_55'),
+
             dayTitle: translate('recipes_page.day_55'),
             meals: <String>[
               translate('recipes_page.day_55_breakfast'),
@@ -671,6 +953,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_55_total'),
           ),
           DayCard(
+            recipeId: 'day_56',
+            tried: _triedStates['day_56'] ?? false,
+            onTriedChanged: () => _toggleTried('day_56'),
+
             dayTitle: translate('recipes_page.day_56'),
             meals: <String>[
               translate('recipes_page.day_56_breakfast'),
@@ -682,6 +968,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_56_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_8_title',
+            tried: _triedStates['notes_week_8_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_8_title'),
+
             title: translate('recipes_page.notes_week_8_title'),
             meals: <String>[
               translate('recipes_page.notes_week_8_general'),
@@ -689,6 +979,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_57',
+            tried: _triedStates['day_57'] ?? false,
+            onTriedChanged: () => _toggleTried('day_57'),
+
             title: translate('recipes_page.week_9'),
             dayTitle: translate('recipes_page.day_57'),
             meals: <String>[
@@ -701,6 +995,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_57_total'),
           ),
           DayCard(
+            recipeId: 'day_58',
+            tried: _triedStates['day_58'] ?? false,
+            onTriedChanged: () => _toggleTried('day_58'),
+
             dayTitle: translate('recipes_page.day_58'),
             meals: <String>[
               translate('recipes_page.day_58_breakfast'),
@@ -712,6 +1010,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_58_total'),
           ),
           DayCard(
+            recipeId: 'day_59',
+            tried: _triedStates['day_59'] ?? false,
+            onTriedChanged: () => _toggleTried('day_59'),
+
             dayTitle: translate('recipes_page.day_59'),
             meals: <String>[
               translate('recipes_page.day_59_diet'),
@@ -719,6 +1021,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_59_total'),
           ),
           DayCard(
+            recipeId: 'day_60',
+            tried: _triedStates['day_60'] ?? false,
+            onTriedChanged: () => _toggleTried('day_60'),
+
             dayTitle: translate('recipes_page.day_60'),
             meals: <String>[
               translate('recipes_page.day_60_breakfast'),
@@ -730,6 +1036,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_60_total'),
           ),
           DayCard(
+            recipeId: 'day_61',
+            tried: _triedStates['day_61'] ?? false,
+            onTriedChanged: () => _toggleTried('day_61'),
+
             dayTitle: translate('recipes_page.day_61'),
             meals: <String>[
               translate('recipes_page.day_61_breakfast'),
@@ -741,6 +1051,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_61_total'),
           ),
           DayCard(
+            recipeId: 'day_62',
+            tried: _triedStates['day_62'] ?? false,
+            onTriedChanged: () => _toggleTried('day_62'),
+
             dayTitle: translate('recipes_page.day_62'),
             meals: <String>[
               translate('recipes_page.day_62_breakfast'),
@@ -752,6 +1066,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_62_total'),
           ),
           DayCard(
+            recipeId: 'day_63',
+            tried: _triedStates['day_63'] ?? false,
+            onTriedChanged: () => _toggleTried('day_63'),
+
             dayTitle: translate('recipes_page.day_63'),
             meals: <String>[
               translate('recipes_page.day_63_breakfast'),
@@ -763,6 +1081,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_63_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_9_title',
+            tried: _triedStates['notes_week_9_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_9_title'),
+
             title: translate('recipes_page.notes_week_9_title'),
             meals: <String>[
               translate('recipes_page.notes_week_9_sweets'),
@@ -770,6 +1092,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_64',
+            tried: _triedStates['day_64'] ?? false,
+            onTriedChanged: () => _toggleTried('day_64'),
+
             title: translate('recipes_page.week_10'),
             dayTitle: translate('recipes_page.day_64'),
             meals: <String>[
@@ -782,6 +1108,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_64_total'),
           ),
           DayCard(
+            recipeId: 'day_65',
+            tried: _triedStates['day_65'] ?? false,
+            onTriedChanged: () => _toggleTried('day_65'),
+
             dayTitle: translate('recipes_page.day_65'),
             meals: <String>[
               translate('recipes_page.day_65_diet'),
@@ -789,6 +1119,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_65_total'),
           ),
           DayCard(
+            recipeId: 'day_66',
+            tried: _triedStates['day_66'] ?? false,
+            onTriedChanged: () => _toggleTried('day_66'),
+
             dayTitle: translate('recipes_page.day_66'),
             meals: <String>[
               translate('recipes_page.day_66_breakfast'),
@@ -800,6 +1134,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_66_total'),
           ),
           DayCard(
+            recipeId: 'day_67',
+            tried: _triedStates['day_67'] ?? false,
+            onTriedChanged: () => _toggleTried('day_67'),
+
             dayTitle: translate('recipes_page.day_67'),
             meals: <String>[
               translate('recipes_page.day_67_breakfast'),
@@ -811,6 +1149,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_67_total'),
           ),
           DayCard(
+            recipeId: 'day_68',
+            tried: _triedStates['day_68'] ?? false,
+            onTriedChanged: () => _toggleTried('day_68'),
+
             dayTitle: translate('recipes_page.day_68'),
             meals: <String>[
               translate('recipes_page.day_68_breakfast'),
@@ -822,6 +1164,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_68_total'),
           ),
           DayCard(
+            recipeId: 'day_69',
+            tried: _triedStates['day_69'] ?? false,
+            onTriedChanged: () => _toggleTried('day_69'),
+
             dayTitle: translate('recipes_page.day_69'),
             meals: <String>[
               translate('recipes_page.day_69_breakfast'),
@@ -833,6 +1179,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_69_total'),
           ),
           DayCard(
+            recipeId: 'day_70',
+            tried: _triedStates['day_70'] ?? false,
+            onTriedChanged: () => _toggleTried('day_70'),
+
             dayTitle: translate('recipes_page.day_70'),
             meals: <String>[
               translate('recipes_page.day_70_breakfast'),
@@ -844,6 +1194,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_70_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_10_title',
+            tried: _triedStates['notes_week_10_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_10_title'),
+
             title: translate('recipes_page.notes_week_10_title'),
             meals: <String>[
               translate('recipes_page.notes_week_10_sweets'),
@@ -851,6 +1205,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_71',
+            tried: _triedStates['day_71'] ?? false,
+            onTriedChanged: () => _toggleTried('day_71'),
+
             title: translate('recipes_page.week_11'),
             dayTitle: translate('recipes_page.day_71'),
             meals: <String>[
@@ -861,6 +1219,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_71_total'),
           ),
           DayCard(
+            recipeId: 'day_72',
+            tried: _triedStates['day_72'] ?? false,
+            onTriedChanged: () => _toggleTried('day_72'),
+
             dayTitle: translate('recipes_page.day_72'),
             meals: <String>[
               translate('recipes_page.day_72_diet'),
@@ -868,6 +1230,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_72_total'),
           ),
           DayCard(
+            recipeId: 'day_73',
+            tried: _triedStates['day_73'] ?? false,
+            onTriedChanged: () => _toggleTried('day_73'),
+
             dayTitle: translate('recipes_page.day_73'),
             meals: <String>[
               translate('recipes_page.day_73_breakfast'),
@@ -879,6 +1245,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_73_total'),
           ),
           DayCard(
+            recipeId: 'day_74',
+            tried: _triedStates['day_74'] ?? false,
+            onTriedChanged: () => _toggleTried('day_74'),
+
             dayTitle: translate('recipes_page.day_74'),
             meals: <String>[
               translate('recipes_page.day_74_breakfast'),
@@ -890,6 +1260,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_74_total'),
           ),
           DayCard(
+            recipeId: 'day_75',
+            tried: _triedStates['day_75'] ?? false,
+            onTriedChanged: () => _toggleTried('day_75'),
+
             dayTitle: translate('recipes_page.day_75'),
             meals: <String>[
               translate('recipes_page.day_75_breakfast'),
@@ -900,6 +1274,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_75_total'),
           ),
           DayCard(
+            recipeId: 'day_76',
+            tried: _triedStates['day_76'] ?? false,
+            onTriedChanged: () => _toggleTried('day_76'),
+
             dayTitle: translate('recipes_page.day_76'),
             meals: <String>[
               translate('recipes_page.day_76_breakfast'),
@@ -910,6 +1288,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_76_total'),
           ),
           DayCard(
+            recipeId: 'day_77',
+            tried: _triedStates['day_77'] ?? false,
+            onTriedChanged: () => _toggleTried('day_77'),
+
             dayTitle: translate('recipes_page.day_77'),
             meals: <String>[
               translate('recipes_page.day_77_breakfast'),
@@ -921,6 +1303,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_77_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_11_title',
+            tried: _triedStates['notes_week_11_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_11_title'),
+
             title: translate('recipes_page.notes_week_11_title'),
             meals: <String>[
               translate('recipes_page.notes_week_11_sweets'),
@@ -928,6 +1314,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_78',
+            tried: _triedStates['day_78'] ?? false,
+            onTriedChanged: () => _toggleTried('day_78'),
+
             title: translate('recipes_page.week_12'),
             dayTitle: translate('recipes_page.day_78'),
             meals: <String>[
@@ -940,6 +1330,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_78_total'),
           ),
           DayCard(
+            recipeId: 'day_79',
+            tried: _triedStates['day_79'] ?? false,
+            onTriedChanged: () => _toggleTried('day_79'),
+
             dayTitle: translate('recipes_page.day_79'),
             meals: <String>[
               translate('recipes_page.day_79_diet'),
@@ -947,6 +1341,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_79_total'),
           ),
           DayCard(
+            recipeId: 'day_80',
+            tried: _triedStates['day_80'] ?? false,
+            onTriedChanged: () => _toggleTried('day_80'),
+
             dayTitle: translate('recipes_page.day_80'),
             meals: <String>[
               translate('recipes_page.day_80_breakfast'),
@@ -958,6 +1356,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_80_total'),
           ),
           DayCard(
+            recipeId: 'day_81',
+            tried: _triedStates['day_81'] ?? false,
+            onTriedChanged: () => _toggleTried('day_81'),
+
             dayTitle: translate('recipes_page.day_81'),
             meals: <String>[
               translate('recipes_page.day_81_breakfast'),
@@ -969,6 +1371,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_81_total'),
           ),
           DayCard(
+            recipeId: 'day_82',
+            tried: _triedStates['day_82'] ?? false,
+            onTriedChanged: () => _toggleTried('day_82'),
+
             dayTitle: translate('recipes_page.day_82'),
             meals: <String>[
               translate('recipes_page.day_82_breakfast'),
@@ -980,6 +1386,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_82_total'),
           ),
           DayCard(
+            recipeId: 'day_83',
+            tried: _triedStates['day_83'] ?? false,
+            onTriedChanged: () => _toggleTried('day_83'),
+
             dayTitle: translate('recipes_page.day_83'),
             meals: <String>[
               translate('recipes_page.day_83_breakfast'),
@@ -991,6 +1401,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_83_total'),
           ),
           DayCard(
+            recipeId: 'day_84',
+            tried: _triedStates['day_84'] ?? false,
+            onTriedChanged: () => _toggleTried('day_84'),
+
             dayTitle: translate('recipes_page.day_84'),
             meals: <String>[
               translate('recipes_page.day_84_breakfast'),
@@ -1002,6 +1416,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_84_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_12_title',
+            tried: _triedStates['notes_week_12_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_12_title'),
+
             title: translate('recipes_page.notes_week_12_title'),
             meals: <String>[
               translate('recipes_page.notes_week_12_sweets'),
@@ -1009,6 +1427,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_85',
+            tried: _triedStates['day_85'] ?? false,
+            onTriedChanged: () => _toggleTried('day_85'),
+
             title: translate('recipes_page.week_13'),
             dayTitle: translate('recipes_page.day_85'),
             meals: <String>[
@@ -1021,6 +1443,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_85_total'),
           ),
           DayCard(
+            recipeId: 'day_86',
+            tried: _triedStates['day_86'] ?? false,
+            onTriedChanged: () => _toggleTried('day_86'),
+
             dayTitle: translate('recipes_page.day_86'),
             meals: <String>[
               translate('recipes_page.day_86_diet'),
@@ -1028,6 +1454,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_86_total'),
           ),
           DayCard(
+            recipeId: 'day_87',
+            tried: _triedStates['day_87'] ?? false,
+            onTriedChanged: () => _toggleTried('day_87'),
+
             dayTitle: translate('recipes_page.day_87'),
             meals: <String>[
               translate('recipes_page.day_87_breakfast'),
@@ -1039,6 +1469,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_87_total'),
           ),
           DayCard(
+            recipeId: 'day_88',
+            tried: _triedStates['day_88'] ?? false,
+            onTriedChanged: () => _toggleTried('day_88'),
+
             dayTitle: translate('recipes_page.day_88'),
             meals: <String>[
               translate('recipes_page.day_88_breakfast'),
@@ -1050,6 +1484,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_88_total'),
           ),
           DayCard(
+            recipeId: 'day_89',
+            tried: _triedStates['day_89'] ?? false,
+            onTriedChanged: () => _toggleTried('day_89'),
+
             dayTitle: translate('recipes_page.day_89'),
             meals: <String>[
               translate('recipes_page.day_89_breakfast'),
@@ -1061,6 +1499,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_89_total'),
           ),
           DayCard(
+            recipeId: 'day_90',
+            tried: _triedStates['day_90'] ?? false,
+            onTriedChanged: () => _toggleTried('day_90'),
+
             dayTitle: translate('recipes_page.day_90'),
             meals: <String>[
               translate('recipes_page.day_90_breakfast'),
@@ -1072,6 +1514,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_90_total'),
           ),
           DayCard(
+            recipeId: 'day_91',
+            tried: _triedStates['day_91'] ?? false,
+            onTriedChanged: () => _toggleTried('day_91'),
+
             dayTitle: translate('recipes_page.day_91'),
             meals: <String>[
               translate('recipes_page.day_91_breakfast'),
@@ -1083,6 +1529,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_91_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_13_title',
+            tried: _triedStates['notes_week_13_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_13_title'),
+
             title: translate('recipes_page.notes_week_13_title'),
             meals: <String>[
               translate('recipes_page.notes_week_13_sweets'),
@@ -1090,6 +1540,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_92',
+            tried: _triedStates['day_92'] ?? false,
+            onTriedChanged: () => _toggleTried('day_92'),
+
             title: translate('recipes_page.week_14'),
             dayTitle: translate('recipes_page.day_92'),
             meals: <String>[
@@ -1102,6 +1556,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_92_total'),
           ),
           DayCard(
+            recipeId: 'day_93',
+            tried: _triedStates['day_93'] ?? false,
+            onTriedChanged: () => _toggleTried('day_93'),
+
             dayTitle: translate('recipes_page.day_93'),
             meals: <String>[
               translate('recipes_page.day_93_diet'),
@@ -1109,6 +1567,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_93_total'),
           ),
           DayCard(
+            recipeId: 'day_94',
+            tried: _triedStates['day_94'] ?? false,
+            onTriedChanged: () => _toggleTried('day_94'),
+
             dayTitle: translate('recipes_page.day_94'),
             meals: <String>[
               translate('recipes_page.day_94_breakfast'),
@@ -1120,6 +1582,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_94_total'),
           ),
           DayCard(
+            recipeId: 'day_95',
+            tried: _triedStates['day_95'] ?? false,
+            onTriedChanged: () => _toggleTried('day_95'),
+
             dayTitle: translate('recipes_page.day_95'),
             meals: <String>[
               translate('recipes_page.day_95_breakfast'),
@@ -1131,6 +1597,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_95_total'),
           ),
           DayCard(
+            recipeId: 'day_96',
+            tried: _triedStates['day_96'] ?? false,
+            onTriedChanged: () => _toggleTried('day_96'),
+
             dayTitle: translate('recipes_page.day_96'),
             meals: <String>[
               translate('recipes_page.day_96_breakfast'),
@@ -1141,6 +1611,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_96_total'),
           ),
           DayCard(
+            recipeId: 'day_97',
+            tried: _triedStates['day_97'] ?? false,
+            onTriedChanged: () => _toggleTried('day_97'),
+
             dayTitle: translate('recipes_page.day_97'),
             meals: <String>[
               translate('recipes_page.day_97_breakfast'),
@@ -1151,6 +1625,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_97_total'),
           ),
           DayCard(
+            recipeId: 'day_98',
+            tried: _triedStates['day_98'] ?? false,
+            onTriedChanged: () => _toggleTried('day_98'),
+
             dayTitle: translate('recipes_page.day_98'),
             meals: <String>[
               translate('recipes_page.day_98_breakfast'),
@@ -1162,6 +1640,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_98_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_14_title',
+            tried: _triedStates['notes_week_14_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_14_title'),
+
             title: translate('recipes_page.notes_week_14_title'),
             meals: <String>[
               translate('recipes_page.notes_week_14_sweets'),
@@ -1169,6 +1651,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_99',
+            tried: _triedStates['day_99'] ?? false,
+            onTriedChanged: () => _toggleTried('day_99'),
+
             title: translate('recipes_page.week_15'),
             dayTitle: translate('recipes_page.day_99'),
             meals: <String>[
@@ -1181,6 +1667,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_99_total'),
           ),
           DayCard(
+            recipeId: 'day_100',
+            tried: _triedStates['day_100'] ?? false,
+            onTriedChanged: () => _toggleTried('day_100'),
+
             dayTitle: translate('recipes_page.day_100'),
             meals: <String>[
               translate('recipes_page.day_100_breakfast'),
@@ -1192,6 +1682,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_100_total'),
           ),
           DayCard(
+            recipeId: 'day_101',
+            tried: _triedStates['day_101'] ?? false,
+            onTriedChanged: () => _toggleTried('day_101'),
+
             dayTitle: translate('recipes_page.day_101'),
             meals: <String>[
               translate('recipes_page.day_101_breakfast'),
@@ -1203,6 +1697,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_101_total'),
           ),
           DayCard(
+            recipeId: 'day_102',
+            tried: _triedStates['day_102'] ?? false,
+            onTriedChanged: () => _toggleTried('day_102'),
+
             dayTitle: translate('recipes_page.day_102'),
             meals: <String>[
               translate('recipes_page.day_102_diet'),
@@ -1210,6 +1708,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_102_total'),
           ),
           DayCard(
+            recipeId: 'day_103',
+            tried: _triedStates['day_103'] ?? false,
+            onTriedChanged: () => _toggleTried('day_103'),
+
             dayTitle: translate('recipes_page.day_103'),
             meals: <String>[
               translate('recipes_page.day_103_breakfast'),
@@ -1220,6 +1722,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_103_total'),
           ),
           DayCard(
+            recipeId: 'day_104',
+            tried: _triedStates['day_104'] ?? false,
+            onTriedChanged: () => _toggleTried('day_104'),
+
             dayTitle: translate('recipes_page.day_104'),
             meals: <String>[
               translate('recipes_page.day_104_breakfast'),
@@ -1230,6 +1736,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_104_total'),
           ),
           DayCard(
+            recipeId: 'day_105',
+            tried: _triedStates['day_105'] ?? false,
+            onTriedChanged: () => _toggleTried('day_105'),
+
             dayTitle: translate('recipes_page.day_105'),
             meals: <String>[
               translate('recipes_page.day_105_breakfast'),
@@ -1241,6 +1751,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_105_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_15_title',
+            tried: _triedStates['notes_week_15_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_15_title'),
+
             title: translate('recipes_page.notes_week_15_title'),
             meals: <String>[
               translate('recipes_page.notes_week_15_sweets'),
@@ -1248,6 +1762,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_106',
+            tried: _triedStates['day_106'] ?? false,
+            onTriedChanged: () => _toggleTried('day_106'),
+
             title: translate('recipes_page.week_16'),
             dayTitle: translate('recipes_page.day_106'),
             meals: <String>[
@@ -1261,6 +1779,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_106_total'),
           ),
           DayCard(
+            recipeId: 'day_107',
+            tried: _triedStates['day_107'] ?? false,
+            onTriedChanged: () => _toggleTried('day_107'),
+
             dayTitle: translate('recipes_page.day_107'),
             meals: <String>[
               translate('recipes_page.day_107_breakfast'),
@@ -1272,6 +1794,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_107_total'),
           ),
           DayCard(
+            recipeId: 'day_108',
+            tried: _triedStates['day_108'] ?? false,
+            onTriedChanged: () => _toggleTried('day_108'),
+
             dayTitle: translate('recipes_page.day_108'),
             meals: <String>[
               translate('recipes_page.day_108_diet'),
@@ -1279,6 +1805,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_108_total'),
           ),
           DayCard(
+            recipeId: 'day_109',
+            tried: _triedStates['day_109'] ?? false,
+            onTriedChanged: () => _toggleTried('day_109'),
+
             dayTitle: translate('recipes_page.day_109'),
             meals: <String>[
               translate('recipes_page.day_109_breakfast'),
@@ -1290,6 +1820,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_109_total'),
           ),
           DayCard(
+            recipeId: 'day_110',
+            tried: _triedStates['day_110'] ?? false,
+            onTriedChanged: () => _toggleTried('day_110'),
+
             dayTitle: translate('recipes_page.day_110'),
             meals: <String>[
               translate('recipes_page.day_110_breakfast'),
@@ -1300,6 +1834,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_110_total'),
           ),
           DayCard(
+            recipeId: 'day_111',
+            tried: _triedStates['day_111'] ?? false,
+            onTriedChanged: () => _toggleTried('day_111'),
+
             dayTitle: translate('recipes_page.day_111'),
             meals: <String>[
               translate('recipes_page.day_111_breakfast'),
@@ -1310,6 +1848,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_111_total'),
           ),
           DayCard(
+            recipeId: 'day_112',
+            tried: _triedStates['day_112'] ?? false,
+            onTriedChanged: () => _toggleTried('day_112'),
+
             dayTitle: translate('recipes_page.day_112'),
             meals: <String>[
               translate('recipes_page.day_112_breakfast'),
@@ -1321,6 +1863,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_112_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_16_title',
+            tried: _triedStates['notes_week_16_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_16_title'),
+
             title: translate('recipes_page.notes_week_16_title'),
             meals: <String>[
               translate('recipes_page.notes_week_16_sweets'),
@@ -1328,6 +1874,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_113',
+            tried: _triedStates['day_113'] ?? false,
+            onTriedChanged: () => _toggleTried('day_113'),
+
             title: translate('recipes_page.week_17'),
             dayTitle: translate('recipes_page.day_113'),
             meals: <String>[
@@ -1340,6 +1890,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_113_total'),
           ),
           DayCard(
+            recipeId: 'day_114',
+            tried: _triedStates['day_114'] ?? false,
+            onTriedChanged: () => _toggleTried('day_114'),
+
             dayTitle: translate('recipes_page.day_114'),
             meals: <String>[
               translate('recipes_page.day_114_breakfast'),
@@ -1351,6 +1905,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_114_total'),
           ),
           DayCard(
+            recipeId: 'day_115',
+            tried: _triedStates['day_115'] ?? false,
+            onTriedChanged: () => _toggleTried('day_115'),
+
             dayTitle: translate('recipes_page.day_115'),
             meals: <String>[
               translate('recipes_page.day_115_diet'),
@@ -1358,6 +1916,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_115_total'),
           ),
           DayCard(
+            recipeId: 'day_116',
+            tried: _triedStates['day_116'] ?? false,
+            onTriedChanged: () => _toggleTried('day_116'),
+
             dayTitle: translate('recipes_page.day_116'),
             meals: <String>[
               translate('recipes_page.day_116_breakfast'),
@@ -1369,6 +1931,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_116_total'),
           ),
           DayCard(
+            recipeId: 'day_117',
+            tried: _triedStates['day_117'] ?? false,
+            onTriedChanged: () => _toggleTried('day_117'),
+
             dayTitle: translate('recipes_page.day_117'),
             meals: <String>[
               translate('recipes_page.day_117_breakfast'),
@@ -1380,6 +1946,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_117_total'),
           ),
           DayCard(
+            recipeId: 'day_118',
+            tried: _triedStates['day_118'] ?? false,
+            onTriedChanged: () => _toggleTried('day_118'),
+
             dayTitle: translate('recipes_page.day_118'),
             meals: <String>[
               translate('recipes_page.day_118_breakfast'),
@@ -1391,6 +1961,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_118_total'),
           ),
           DayCard(
+            recipeId: 'day_119',
+            tried: _triedStates['day_119'] ?? false,
+            onTriedChanged: () => _toggleTried('day_119'),
+
             dayTitle: translate('recipes_page.day_119'),
             meals: <String>[
               translate('recipes_page.day_119_breakfast'),
@@ -1402,6 +1976,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_119_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_17_title',
+            tried: _triedStates['notes_week_17_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_17_title'),
+
             title: translate('recipes_page.notes_week_17_title'),
             meals: <String>[
               translate('recipes_page.notes_week_17_sweets'),
@@ -1409,6 +1987,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_120',
+            tried: _triedStates['day_120'] ?? false,
+            onTriedChanged: () => _toggleTried('day_120'),
+
             title: translate('recipes_page.week_18'),
             dayTitle: translate('recipes_page.day_120'),
             meals: <String>[
@@ -1421,6 +2003,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_120_total'),
           ),
           DayCard(
+            recipeId: 'day_121',
+            tried: _triedStates['day_121'] ?? false,
+            onTriedChanged: () => _toggleTried('day_121'),
+
             dayTitle: translate('recipes_page.day_121'),
             meals: <String>[
               translate('recipes_page.day_121_breakfast'),
@@ -1432,6 +2018,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_121_total'),
           ),
           DayCard(
+            recipeId: 'day_122',
+            tried: _triedStates['day_122'] ?? false,
+            onTriedChanged: () => _toggleTried('day_122'),
+
             dayTitle: translate('recipes_page.day_122'),
             meals: <String>[
               translate('recipes_page.day_122_diet'),
@@ -1439,6 +2029,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_122_total'),
           ),
           DayCard(
+            recipeId: 'day_123',
+            tried: _triedStates['day_123'] ?? false,
+            onTriedChanged: () => _toggleTried('day_123'),
+
             dayTitle: translate('recipes_page.day_123'),
             meals: <String>[
               translate('recipes_page.day_123_breakfast'),
@@ -1450,6 +2044,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_123_total'),
           ),
           DayCard(
+            recipeId: 'day_124',
+            tried: _triedStates['day_124'] ?? false,
+            onTriedChanged: () => _toggleTried('day_124'),
+
             dayTitle: translate('recipes_page.day_124'),
             meals: <String>[
               translate('recipes_page.day_124_breakfast'),
@@ -1461,6 +2059,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_124_total'),
           ),
           DayCard(
+            recipeId: 'day_125',
+            tried: _triedStates['day_125'] ?? false,
+            onTriedChanged: () => _toggleTried('day_125'),
+
             dayTitle: translate('recipes_page.day_125'),
             meals: <String>[
               translate('recipes_page.day_125_breakfast'),
@@ -1468,6 +2070,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_125_total'),
           ),
           DayCard(
+            recipeId: 'day_126',
+            tried: _triedStates['day_126'] ?? false,
+            onTriedChanged: () => _toggleTried('day_126'),
+
             dayTitle: translate('recipes_page.day_126'),
             meals: <String>[
               translate('recipes_page.day_126_breakfast'),
@@ -1479,6 +2085,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_126_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_18_title',
+            tried: _triedStates['notes_week_18_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_18_title'),
+
             title: translate('recipes_page.notes_week_18_title'),
             meals: <String>[
               translate('recipes_page.notes_week_18_sweets'),
@@ -1486,6 +2096,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_127',
+            tried: _triedStates['day_127'] ?? false,
+            onTriedChanged: () => _toggleTried('day_127'),
+
             title: translate('recipes_page.week_19'),
             dayTitle: translate('recipes_page.day_127'),
             meals: <String>[
@@ -1498,6 +2112,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_127_total'),
           ),
           DayCard(
+            recipeId: 'day_128',
+            tried: _triedStates['day_128'] ?? false,
+            onTriedChanged: () => _toggleTried('day_128'),
+
             dayTitle: translate('recipes_page.day_128'),
             meals: <String>[
               translate('recipes_page.day_128_breakfast'),
@@ -1509,6 +2127,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_128_total'),
           ),
           DayCard(
+            recipeId: 'day_129',
+            tried: _triedStates['day_129'] ?? false,
+            onTriedChanged: () => _toggleTried('day_129'),
+
             dayTitle: translate('recipes_page.day_129'),
             meals: <String>[
               translate('recipes_page.day_129_breakfast'),
@@ -1520,6 +2142,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_129_total'),
           ),
           DayCard(
+            recipeId: 'day_130',
+            tried: _triedStates['day_130'] ?? false,
+            onTriedChanged: () => _toggleTried('day_130'),
+
             dayTitle: translate('recipes_page.day_130'),
             meals: <String>[
               translate('recipes_page.day_130_breakfast'),
@@ -1531,6 +2157,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_130_total'),
           ),
           DayCard(
+            recipeId: 'day_131',
+            tried: _triedStates['day_131'] ?? false,
+            onTriedChanged: () => _toggleTried('day_131'),
+
             dayTitle: translate('recipes_page.day_131'),
             meals: <String>[
               translate('recipes_page.day_131_breakfast'),
@@ -1541,6 +2171,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_131_total'),
           ),
           DayCard(
+            recipeId: 'day_132',
+            tried: _triedStates['day_132'] ?? false,
+            onTriedChanged: () => _toggleTried('day_132'),
+
             dayTitle: translate('recipes_page.day_132'),
             meals: <String>[
               translate('recipes_page.day_132_breakfast'),
@@ -1551,6 +2185,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_132_total'),
           ),
           DayCard(
+            recipeId: 'day_133',
+            tried: _triedStates['day_133'] ?? false,
+            onTriedChanged: () => _toggleTried('day_133'),
+
             dayTitle: translate('recipes_page.day_133'),
             meals: <String>[
               translate('recipes_page.day_133_breakfast'),
@@ -1562,6 +2200,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_133_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_19_title',
+            tried: _triedStates['notes_week_19_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_19_title'),
+
             title: translate('recipes_page.notes_week_19_title'),
             meals: <String>[
               translate('recipes_page.notes_week_19_sweets'),
@@ -1569,6 +2211,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_134',
+            tried: _triedStates['day_134'] ?? false,
+            onTriedChanged: () => _toggleTried('day_134'),
+
             title: translate('recipes_page.week_20'),
             dayTitle: translate('recipes_page.day_134'),
             meals: <String>[
@@ -1581,6 +2227,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_134_total'),
           ),
           DayCard(
+            recipeId: 'day_135',
+            tried: _triedStates['day_135'] ?? false,
+            onTriedChanged: () => _toggleTried('day_135'),
+
             dayTitle: translate('recipes_page.day_135'),
             meals: <String>[
               translate('recipes_page.day_135_breakfast'),
@@ -1592,6 +2242,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_135_total'),
           ),
           DayCard(
+            recipeId: 'day_136',
+            tried: _triedStates['day_136'] ?? false,
+            onTriedChanged: () => _toggleTried('day_136'),
+
             dayTitle: translate('recipes_page.day_136'),
             meals: <String>[
               translate('recipes_page.day_136_diet'),
@@ -1599,6 +2253,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_136_total'),
           ),
           DayCard(
+            recipeId: 'day_137',
+            tried: _triedStates['day_137'] ?? false,
+            onTriedChanged: () => _toggleTried('day_137'),
+
             dayTitle: translate('recipes_page.day_137'),
             meals: <String>[
               translate('recipes_page.day_137_breakfast'),
@@ -1610,6 +2268,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_137_total'),
           ),
           DayCard(
+            recipeId: 'day_138',
+            tried: _triedStates['day_138'] ?? false,
+            onTriedChanged: () => _toggleTried('day_138'),
+
             dayTitle: translate('recipes_page.day_138'),
             meals: <String>[
               translate('recipes_page.day_138_breakfast'),
@@ -1621,6 +2283,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_138_total'),
           ),
           DayCard(
+            recipeId: 'day_139',
+            tried: _triedStates['day_139'] ?? false,
+            onTriedChanged: () => _toggleTried('day_139'),
+
             dayTitle: translate('recipes_page.day_139'),
             meals: <String>[
               translate('recipes_page.day_139_breakfast'),
@@ -1632,6 +2298,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_139_total'),
           ),
           DayCard(
+            recipeId: 'day_140',
+            tried: _triedStates['day_140'] ?? false,
+            onTriedChanged: () => _toggleTried('day_140'),
+
             dayTitle: translate('recipes_page.day_140'),
             meals: <String>[
               translate('recipes_page.day_140_breakfast'),
@@ -1643,6 +2313,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_140_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_20_title',
+            tried: _triedStates['notes_week_20_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_20_title'),
+
             title: translate('recipes_page.notes_week_20_title'),
             meals: <String>[
               translate('recipes_page.notes_week_20_sweets'),
@@ -1650,6 +2324,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_141',
+            tried: _triedStates['day_141'] ?? false,
+            onTriedChanged: () => _toggleTried('day_141'),
+
             title: translate('recipes_page.week_21'),
             dayTitle: translate('recipes_page.day_141'),
             meals: <String>[
@@ -1662,6 +2340,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_141_total'),
           ),
           DayCard(
+            recipeId: 'day_142',
+            tried: _triedStates['day_142'] ?? false,
+            onTriedChanged: () => _toggleTried('day_142'),
+
             dayTitle: translate('recipes_page.day_142'),
             meals: <String>[
               translate('recipes_page.day_142_breakfast'),
@@ -1673,6 +2355,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_142_total'),
           ),
           DayCard(
+            recipeId: 'day_143',
+            tried: _triedStates['day_143'] ?? false,
+            onTriedChanged: () => _toggleTried('day_143'),
+
             dayTitle: translate('recipes_page.day_143'),
             meals: <String>[
               translate('recipes_page.day_143_diet'),
@@ -1680,6 +2366,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_143_total'),
           ),
           DayCard(
+            recipeId: 'day_144',
+            tried: _triedStates['day_144'] ?? false,
+            onTriedChanged: () => _toggleTried('day_144'),
+
             dayTitle: translate('recipes_page.day_144'),
             meals: <String>[
               translate('recipes_page.day_144_breakfast'),
@@ -1691,6 +2381,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_144_total'),
           ),
           DayCard(
+            recipeId: 'day_145',
+            tried: _triedStates['day_145'] ?? false,
+            onTriedChanged: () => _toggleTried('day_145'),
+
             dayTitle: translate('recipes_page.day_145'),
             meals: <String>[
               translate('recipes_page.day_145_breakfast'),
@@ -1702,6 +2396,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_145_total'),
           ),
           DayCard(
+            recipeId: 'day_146',
+            tried: _triedStates['day_146'] ?? false,
+            onTriedChanged: () => _toggleTried('day_146'),
+
             dayTitle: translate('recipes_page.day_146'),
             meals: <String>[
               translate('recipes_page.day_146_breakfast'),
@@ -1713,6 +2411,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_146_total'),
           ),
           DayCard(
+            recipeId: 'day_147',
+            tried: _triedStates['day_147'] ?? false,
+            onTriedChanged: () => _toggleTried('day_147'),
+
             dayTitle: translate('recipes_page.day_147'),
             meals: <String>[
               translate('recipes_page.day_147_breakfast'),
@@ -1724,6 +2426,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_147_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_21_title',
+            tried: _triedStates['notes_week_21_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_21_title'),
+
             title: translate('recipes_page.notes_week_21_title'),
             meals: <String>[
               translate('recipes_page.notes_week_21_sweets'),
@@ -1731,6 +2437,10 @@ class WeightLossRecipesPage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           DayCard(
+            recipeId: 'day_148',
+            tried: _triedStates['day_148'] ?? false,
+            onTriedChanged: () => _toggleTried('day_148'),
+
             title: translate('recipes_page.week_22'),
             dayTitle: translate('recipes_page.day_148'),
             meals: <String>[
@@ -1742,6 +2452,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_148_total'),
           ),
           DayCard(
+            recipeId: 'day_149',
+            tried: _triedStates['day_149'] ?? false,
+            onTriedChanged: () => _toggleTried('day_149'),
+
             dayTitle: translate('recipes_page.day_149'),
             meals: <String>[
               translate('recipes_page.day_149_breakfast'),
@@ -1753,6 +2467,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_149_total'),
           ),
           DayCard(
+            recipeId: 'day_150',
+            tried: _triedStates['day_150'] ?? false,
+            onTriedChanged: () => _toggleTried('day_150'),
+
             dayTitle: translate('recipes_page.day_150'),
             meals: <String>[
               translate('recipes_page.day_150_meals'),
@@ -1760,6 +2478,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_150_total'),
           ),
           DayCard(
+            recipeId: 'day_151',
+            tried: _triedStates['day_151'] ?? false,
+            onTriedChanged: () => _toggleTried('day_151'),
+
             dayTitle: translate('recipes_page.day_151'),
             meals: <String>[
               translate('recipes_page.day_151_breakfast'),
@@ -1771,6 +2493,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_151_total'),
           ),
           DayCard(
+            recipeId: 'day_152',
+            tried: _triedStates['day_152'] ?? false,
+            onTriedChanged: () => _toggleTried('day_152'),
+
             dayTitle: translate('recipes_page.day_152'),
             meals: <String>[
               translate('recipes_page.day_152_breakfast'),
@@ -1782,6 +2508,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_152_total'),
           ),
           DayCard(
+            recipeId: 'day_153',
+            tried: _triedStates['day_153'] ?? false,
+            onTriedChanged: () => _toggleTried('day_153'),
+
             dayTitle: translate('recipes_page.day_153'),
             meals: <String>[
               translate('recipes_page.day_153_breakfast'),
@@ -1793,6 +2523,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_153_total'),
           ),
           DayCard(
+            recipeId: 'day_154',
+            tried: _triedStates['day_154'] ?? false,
+            onTriedChanged: () => _toggleTried('day_154'),
+
             dayTitle: translate('recipes_page.day_154'),
             meals: <String>[
               translate('recipes_page.day_154_breakfast'),
@@ -1804,6 +2538,10 @@ class WeightLossRecipesPage extends StatelessWidget {
             total: translate('recipes_page.day_154_total'),
           ),
           DayCard(
+            recipeId: 'notes_week_22_title',
+            tried: _triedStates['notes_week_22_title'] ?? false,
+            onTriedChanged: () => _toggleTried('notes_week_22_title'),
+
             title: translate('recipes_page.notes_week_22_title'),
             meals: <String>[
               translate('recipes_page.notes_week_22_additions'),
