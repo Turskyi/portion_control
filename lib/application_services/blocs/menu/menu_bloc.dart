@@ -50,6 +50,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     on<MenuSubmitFeedbackEvent>(_sendUserFeedback);
     on<MenuErrorEvent>(_handleError);
     on<ChangeLanguageEvent>(_changeLanguage);
+    on<ChangeThemeEvent>(_changeTheme);
     on<OpenWebVersionEvent>(_openWebPage);
     on<PinWidgetEvent>(_onPinWidgetPressed);
     on<ToggleWeightReminderEvent>(_onToggleWeightReminder);
@@ -70,6 +71,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     emit(
       MenuFeedbackState(
         language: state.language,
+        themeMode: state.themeMode,
         streakDays: state.streakDays,
         appVersion: state.appVersion,
         isWeightReminderEnabled: state.isWeightReminderEnabled,
@@ -85,6 +87,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     emit(
       MenuInitial(
         language: state.language,
+        themeMode: state.themeMode,
         streakDays: state.streakDays,
         appVersion: state.appVersion,
         isWeightReminderEnabled: state.isWeightReminderEnabled,
@@ -100,6 +103,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     emit(
       LoadingMenuState(
         language: state.language,
+        themeMode: state.themeMode,
         streakDays: state.streakDays,
         appVersion: state.appVersion,
         isWeightReminderEnabled: state.isWeightReminderEnabled,
@@ -227,6 +231,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         emit(
           MenuFeedbackSent(
             language: state.language,
+            themeMode: state.themeMode,
             streakDays: state.streakDays,
             appVersion: state.appVersion,
             isWeightReminderEnabled: state.isWeightReminderEnabled,
@@ -250,6 +255,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     emit(
       MenuInitial(
         language: state.language,
+        themeMode: state.themeMode,
         streakDays: state.streakDays,
         appVersion: state.appVersion,
         isWeightReminderEnabled: state.isWeightReminderEnabled,
@@ -263,6 +269,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     Emitter<MenuState> emit,
   ) async {
     final Language savedLanguage = _settingsRepository.getLanguage();
+    final ThemeMode themeMode = _settingsRepository.getThemeMode();
     final int streakDays = await _bodyWeightRepository.getBodyWeightStreak();
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     final String appVersion =
@@ -284,6 +291,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     emit(
       MenuInitial(
         language: savedLanguage,
+        themeMode: themeMode,
         streakDays: streakDays,
         appVersion: appVersion,
         isWeightReminderEnabled: isWeightReminderEnabled,
@@ -300,6 +308,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         streakDays: state.streakDays,
         appVersion: state.appVersion,
         language: state.language,
+        themeMode: state.themeMode,
         isWeightReminderEnabled: state.isWeightReminderEnabled,
         weightReminderTime: state.weightReminderTime,
       ),
@@ -325,6 +334,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           emit(
             MenuInitial(
               language: language,
+              themeMode: state.themeMode,
               streakDays: state.streakDays,
               appVersion: state.appVersion,
               isWeightReminderEnabled: state.isWeightReminderEnabled,
@@ -334,6 +344,34 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         }
       } else {
         //TODO: not sure what to do.
+      }
+    }
+  }
+
+  FutureOr<void> _changeTheme(
+    ChangeThemeEvent event,
+    Emitter<MenuState> emit,
+  ) async {
+    final ThemeMode themeMode = event.themeMode;
+    final MenuState state = this.state;
+
+    if (themeMode != state.themeMode) {
+      final bool isSaved = await _settingsRepository.saveThemeMode(themeMode);
+      if (isSaved) {
+        if (state is MenuInitial) {
+          emit(state.copyWith(themeMode: themeMode));
+        } else {
+          emit(
+            MenuInitial(
+              language: state.language,
+              themeMode: themeMode,
+              streakDays: state.streakDays,
+              appVersion: state.appVersion,
+              isWeightReminderEnabled: state.isWeightReminderEnabled,
+              weightReminderTime: state.weightReminderTime,
+            ),
+          );
+        }
       }
     }
   }

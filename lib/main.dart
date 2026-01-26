@@ -1,6 +1,7 @@
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/intl.dart';
 import 'package:portion_control/app.dart';
@@ -120,7 +121,7 @@ Future<void> main() async {
     bodyWeightRepository,
     foodWeightRepository,
     userPreferencesRepository,
-  );
+  )..add(const LoadingInitialMenuStateEvent());
 
   final OnboardingBloc onboardingBloc = OnboardingBloc(
     saveLanguageUseCase,
@@ -188,8 +189,12 @@ Future<void> main() async {
             },
         child: DependenciesScope(
           dependencies: dependencies,
-          child: App(
-            routeMap: routeMap,
+          // We wrap the `App` with `BlocProvider<MenuBloc>.value` here to make
+          // the `MenuBloc` available via context throughout the app, including
+          // for the `MaterialApp`'s theme selection.
+          child: BlocProvider<MenuBloc>.value(
+            value: menuBloc,
+            child: App(routeMap: routeMap),
           ),
         ),
       ),

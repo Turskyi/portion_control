@@ -198,6 +198,27 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                     text: translate('reminders.title'),
                     onTap: _showRemindersDialog,
                   ),
+                  BlocBuilder<MenuBloc, MenuState>(
+                    builder: (BuildContext context, MenuState state) {
+                      return SwitchListTile(
+                        secondary: Icon(
+                          state.themeMode == ThemeMode.dark
+                              ? Icons.dark_mode
+                              : Icons.light_mode,
+                          color: colorScheme.onSurface,
+                        ),
+                        title: Text(translate('dark_theme')),
+                        value: state.themeMode == ThemeMode.dark,
+                        onChanged: (bool value) {
+                          context.read<MenuBloc>().add(
+                            ChangeThemeEvent(
+                              value ? ThemeMode.dark : ThemeMode.light,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                   AnimatedDrawerItem(
                     icon: Icons.feedback,
                     text: translate('button.feedback'),

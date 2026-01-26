@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/services/repositories/i_settings_repository.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
@@ -17,4 +18,11 @@ class SettingsRepository implements ISettingsRepository {
 
   @override
   bool isOnboardingCompleted() => _localDataSource.isOnboardingCompleted();
+
+  @override
+  ThemeMode getThemeMode() => _localDataSource.getThemeMode();
+
+  @override
+  Future<bool> saveThemeMode(ThemeMode themeMode) =>
+      _localDataSource.saveThemeMode(themeMode);
 }

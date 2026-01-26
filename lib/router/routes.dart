@@ -45,10 +45,8 @@ Map<String, WidgetBuilder> getRouteMap({
           BlocProvider<YesterdayEntriesBloc>(
             create: (BuildContext _) => yesterdayEntriesBloc,
           ),
-          BlocProvider<MenuBloc>(
-            create: (BuildContext _) {
-              return menuBloc..add(const LoadingInitialMenuStateEvent());
-            },
+          BlocProvider<MenuBloc>.value(
+            value: menuBloc,
           ),
           BlocProvider<SettingsBloc>(
             create: (BuildContext _) => settingsBloc,

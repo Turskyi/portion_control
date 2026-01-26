@@ -34,6 +34,7 @@ class LocalDataSource {
   static const String _onboardingCompletedKey = 'onboarding_completed';
   static const String _weightReminderEnabledKey = 'weight_reminder_enabled';
   static const String _weightReminderTimeKey = 'weight_reminder_time';
+  static const String _themeModeKey = 'theme_mode';
 
   double? getHeight() => _preferences.getDouble(_heightKey);
 
@@ -264,6 +265,19 @@ class LocalDataSource {
         '${time.hour.toString().padLeft(2, '0')}:'
         '${time.minute.toString().padLeft(2, '0')}';
     return _preferences.setString(_weightReminderTimeKey, value);
+  }
+
+  ThemeMode getThemeMode() {
+    final String? themeName = _preferences.getString(_themeModeKey);
+    if (themeName == null) return ThemeMode.light;
+    return ThemeMode.values.firstWhere(
+      (ThemeMode mode) => mode.name == themeName,
+      orElse: () => ThemeMode.light,
+    );
+  }
+
+  Future<bool> saveThemeMode(ThemeMode themeMode) {
+    return _preferences.setString(_themeModeKey, themeMode.name);
   }
 
   /// Insert or update a body weight entry for the same date.

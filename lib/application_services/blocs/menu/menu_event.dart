@@ -39,6 +39,12 @@ class ChangeLanguageEvent extends MenuEvent {
   final Language language;
 }
 
+class ChangeThemeEvent extends MenuEvent {
+  const ChangeThemeEvent(this.themeMode);
+
+  final ThemeMode themeMode;
+}
+
 class OpenWebVersionEvent extends MenuEvent {
   const OpenWebVersionEvent();
 }

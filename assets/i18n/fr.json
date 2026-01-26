@@ -43,6 +43,8 @@
   "learn_more": "En savoir plus",
   "field_required": "Ce champ est requis",
   "info": "Info",
+  "dark_theme": "Thème sombre",
+  "light_theme": "Thème clair",
   "measurement": {
     "grams_value": "{value} g"
   },
