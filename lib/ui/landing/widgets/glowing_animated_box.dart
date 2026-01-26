@@ -13,7 +13,6 @@ class GlowingAnimatedBox extends StatefulWidget {
 class _GlowingAnimatedBoxState extends State<GlowingAnimatedBox>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<Color?> _glowColor;
 
   @override
   void initState() {
@@ -22,11 +21,6 @@ class _GlowingAnimatedBoxState extends State<GlowingAnimatedBox>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-
-    _glowColor = ColorTween(
-      begin: Colors.pinkAccent.withOpacity(0.4),
-      end: Colors.pinkAccent.withOpacity(0.9),
-    ).animate(_controller);
   }
 
   @override
@@ -37,16 +31,29 @@ class _GlowingAnimatedBoxState extends State<GlowingAnimatedBox>
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final Color primaryColor = colorScheme.primary;
+    final Color surfaceColor = colorScheme.surface;
+
+    final Color glowBegin = primaryColor.withValues(alpha: 0.4);
+    final Color glowEnd = primaryColor.withValues(alpha: 0.9);
+
     return AnimatedBuilder(
-      animation: _glowColor,
-      builder: (_, Widget? logoChildWidget) {
+      animation: _controller,
+      builder: (BuildContext context, Widget? logoChildWidget) {
+        final Color? currentColor = Color.lerp(
+          glowBegin,
+          glowEnd,
+          _controller.value,
+        );
+
         return DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8.0),
-            border: Border.all(color: Colors.white, width: 3),
+            border: Border.all(color: surfaceColor, width: 3),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: _glowColor.value ?? Colors.pinkAccent,
+                color: currentColor ?? primaryColor,
                 blurRadius: 12,
                 spreadRadius: 3,
               ),
@@ -62,10 +69,10 @@ class _GlowingAnimatedBoxState extends State<GlowingAnimatedBox>
           child: DecoratedBox(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
-              border: Border.all(color: Colors.white),
+              border: Border.all(color: surfaceColor),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Colors.pinkAccent.withOpacity(0.2),
+                  color: primaryColor.withValues(alpha: 0.2),
                   blurRadius: 12,
                   spreadRadius: 3,
                 ),

@@ -4,8 +4,6 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/env/env.dart';
-import 'package:portion_control/res/colors/gradients.dart';
-import 'package:portion_control/res/colors/material_colors.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/resources.dart';
 import 'package:portion_control/router/navigator.dart';
@@ -31,8 +29,6 @@ class App extends StatelessWidget {
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
       child: Resources(
-        colors: const MaterialColors(),
-        gradients: const Gradients(),
         child: MaterialApp(
           navigatorKey: navigatorKey,
           title: constants.appName,

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:portion_control/res/colors/gradients.dart';
-import 'package:portion_control/res/colors/material_colors.dart';
 import 'package:portion_control/res/values/app_durations.dart';
 import 'package:portion_control/res/values/dimens.dart';
 import 'package:portion_control/res/values/strings.dart';
 
 class Resources extends InheritedWidget {
   const Resources({
-    required this.colors,
-    required this.gradients,
     required super.child,
     this.strings = const Strings(),
     this.dimens = const Dimens(),
@@ -17,8 +13,6 @@ class Resources extends InheritedWidget {
     super.key,
   });
 
-  final MaterialColors colors;
-  final Gradients gradients;
   final Dimens dimens;
   final Strings strings;
   final AppDurations durations;
