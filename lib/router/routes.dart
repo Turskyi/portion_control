@@ -69,16 +69,18 @@ Map<String, WidgetBuilder> getRouteMap({
       return const EducationalContentPage();
     },
     AppRoute.dailyFoodLogHistory.path: (BuildContext _) {
-      return BlocProvider<DailyFoodLogHistoryBloc>(
-        create: (BuildContext _) {
-          return dailyFoodLogHistoryBloc..add(LoadDailyFoodLogHistoryEvent());
-        },
+      // Reset the bloc state by adding a load event
+      dailyFoodLogHistoryBloc.add(LoadDailyFoodLogHistoryEvent());
+      return BlocProvider<DailyFoodLogHistoryBloc>.value(
+        value: dailyFoodLogHistoryBloc,
         child: const DailyFoodLogHistoryPage(),
       );
     },
     AppRoute.stats.path: (BuildContext _) {
-      return BlocProvider<StatsBloc>(
-        create: (BuildContext _) => statsBloc..add(const LoadStatsEvent()),
+      // Reset the bloc state by adding a load event
+      statsBloc.add(const LoadStatsEvent());
+      return BlocProvider<StatsBloc>.value(
+        value: statsBloc,
         child: const StatsPage(),
       );
     },
