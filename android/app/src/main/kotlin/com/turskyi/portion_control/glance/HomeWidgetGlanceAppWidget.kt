@@ -1,6 +1,8 @@
 package com.turskyi.portion_control.glance
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.runtime.Composable
@@ -34,6 +36,7 @@ import com.turskyi.portion_control.R
 import es.antonborri.home_widget.HomeWidgetGlanceState
 import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
 import es.antonborri.home_widget.actionStartActivity
+import java.util.Locale
 
 class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
     companion object {
@@ -43,6 +46,30 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
         const val KEY_CONSUMED = "text_consumed"
         const val KEY_RECOMMENDATION = "text_recommendation"
         const val KEY_LAST_UPDATED = "text_last_updated"
+        const val KEY_LOCALE = "text_locale"
+
+        // Create a localized context for resource lookups based on the
+        // provided language code.
+        fun getLocalizedContext(
+            context: Context,
+            languageCode: String
+        ): Context {
+            // Use forLanguageTag for standard BCP 47 tags (e.g., "en", "uk").
+            val locale: Locale = Locale.forLanguageTag(
+                languageCode,
+            )
+            Locale.setDefault(locale)
+            val config = Configuration(
+                context.resources.configuration,
+            )
+            config.setLocale(locale)
+
+            // `createConfigurationContext` is safe and will NOT crash the
+            // widget.
+            // It is specifically designed to create a Context with overridden
+            // resources.
+            return context.createConfigurationContext(config)
+        }
     }
 
     override val stateDefinition: GlanceStateDefinition<HomeWidgetGlanceState>
@@ -50,7 +77,8 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            val state = currentState<HomeWidgetGlanceState>()
+            val state: HomeWidgetGlanceState =
+                currentState<HomeWidgetGlanceState>()
             GlanceContent(context, currentState = state)
         }
     }
@@ -60,10 +88,25 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
         context: Context,
         currentState: HomeWidgetGlanceState
     ) {
-        val widgetData = currentState.preferences
+        val widgetData: SharedPreferences = currentState.preferences
+
+        // Get the locale from widget data and create localized context.
+        val languageCode: String = widgetData.getString(
+            KEY_LOCALE,
+            "en",
+        ) ?: "en"
+
+        val localizedContext: Context = getLocalizedContext(
+            context,
+            languageCode,
+        )
 
         val weight: String? = widgetData.getString(KEY_WEIGHT, null)
-        val consumed: String? = widgetData.getString(KEY_CONSUMED, null)
+        val consumed: String? = widgetData.getString(
+            KEY_CONSUMED,
+            null,
+        )
+
         val portionControl: String? = widgetData.getString(
             KEY_PORTION_CONTROL,
             null,
@@ -76,36 +119,48 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
             KEY_LAST_UPDATED,
             null,
         )
-        val imagePath: String? = widgetData.getString(KEY_IMAGE_PATH, null)
+        val imagePath: String? = widgetData.getString(
+            KEY_IMAGE_PATH,
+            null,
+        )
 
         val defaultMessages: List<String> = listOf(
-            context.getString(R.string.oops_no_meal_data_available),
-            context.getString(
+            localizedContext.getString(
+                R.string.oops_no_meal_data_available,
+            ),
+            localizedContext.getString(
                 R.string.looks_like_we_couldn_t_log_your_portion_this_time,
             ),
-            context.getString(
+            localizedContext.getString(
                 R.string.no_recommendation_trust_your_instincts_today,
             ),
-            context.getString(
+            localizedContext.getString(
                 R.string.data_s_taking_a_break_try_again_soon,
             ),
-            context.getString(R.string.tracking_paused_try_again_later),
-            context.getString(R.string.no_portions_logged_rest_day),
-            context.getString(R.string.no_entry_available),
-            context.getString(R.string.no_portion_info_right_now)
+            localizedContext.getString(
+                R.string.tracking_paused_try_again_later,
+            ),
+            localizedContext.getString(
+                R.string.no_portions_logged_rest_day,
+            ),
+            localizedContext.getString(R.string.no_entry_available),
+            localizedContext.getString(
+                R.string.no_portion_info_right_now,
+            )
         )
 
         // Check for hints.
         val weightValue: Double = weight?.toDoubleOrNull() ?: 0.0
         val consumedValue = consumed?.toDoubleOrNull() ?: 0.0
         val hintMessage: String? = when {
-            weightValue == 0.0 -> context.getString(
+            weightValue == 0.0 -> localizedContext.getString(
                 R.string.enter_weight_before_your_first_meal,
             )
 
-            weightValue != 0.0 && consumedValue == 0.0 -> context.getString(
-                R.string.enter_food_weight,
-            )
+            weightValue != 0.0 && consumedValue == 0.0 ->
+                localizedContext.getString(
+                    R.string.enter_food_weight,
+                )
 
             else -> null
         }
@@ -130,7 +185,7 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
                 if (weightValue != 0.0) {
                     weight?.let { nnWeight: String ->
                         Text(
-                            text = context.getString(
+                            text = localizedContext.getString(
                                 R.string.weight_kg,
                                 nnWeight
                             ),
@@ -147,7 +202,7 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
                 if (consumedValue != 0.0) {
                     consumed?.let {
                         Text(
-                            text = context.getString(
+                            text = localizedContext.getString(
                                 R.string.consumed_g,
                                 it,
                             ),
@@ -162,7 +217,7 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
                 // Portion Control.
                 if (!portionControl.isNullOrEmpty()) {
                     Text(
-                        text = context.getString(
+                        text = localizedContext.getString(
                             R.string.limit_g,
                             portionControl
                         ),
@@ -208,7 +263,7 @@ class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
                     bitmap?.let { bmp: Bitmap ->
                         Image(
                             provider = ImageProvider(bitmap = bmp),
-                            contentDescription = context.getString(
+                            contentDescription = localizedContext.getString(
                                 R.string.chart,
                             ),
                             modifier = GlanceModifier

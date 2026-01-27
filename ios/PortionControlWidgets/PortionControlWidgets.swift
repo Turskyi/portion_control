@@ -1,7 +1,5 @@
-
-
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
 // MARK: - Data Keys
 struct WidgetDataKeys {
@@ -11,7 +9,7 @@ struct WidgetDataKeys {
     static let consumed = "text_consumed"
     static let recommendation = "text_recommendation"
     static let lastUpdated = "text_last_updated"
-    static  let locale = "text_locale"
+    static let locale = "text_locale"
 }
 
 // MARK: - Localization
@@ -22,7 +20,7 @@ private struct LocalizedStrings {
     let enterWeightHint: String
     let enterFoodWeightHint: String
     let defaultMessages: [String]
-    
+
     init(locale: String?) {
         switch locale {
         case "uk":
@@ -35,9 +33,21 @@ private struct LocalizedStrings {
                 "🍽️ Ой! Немає даних про прийом їжі.",
                 "🤷 Схоже, цього разу нам не вдалося зареєструвати вашу порцію.",
                 "🥗 Немає рекомендацій? Довіряйте своїй інтуїції сьогодні!",
-                "📊 Дані взяли перерву — спробуйте ще раз незабаром!"
+                "📊 Дані взяли перерву - спробуйте ще раз незабаром!",
             ]
-        default: // "en" and fallback
+        case "fr":
+            weightLabel = "Poids:"
+            consumedLabel = "Consommé:"
+            limitLabel = "Limite:"
+            enterWeightHint = "👉 Entrez votre poids avant votre premier repas."
+            enterFoodWeightHint = "👉 Entrez le poids du repas."
+            defaultMessages = [
+                "🍽️ Oups! Aucune donnée de repas disponible.",
+                "🤷 Il semble que nous n'ayons pas pu enregistrer votre portion cette fois.",
+                "🥗 Pas de recommandation? Faites confiance à votre intuition aujourd'hui!",
+                "📊 Les données prennent une pause - réessayez bientôt!",
+            ]
+        default:  // "en" and fallback
             weightLabel = "Weight:"
             consumedLabel = "Consumed:"
             limitLabel = "Limit:"
@@ -47,7 +57,7 @@ private struct LocalizedStrings {
                 "🍽️ Oops! No meal data available.",
                 "🤷 Looks like we couldn’t log your portion this time.",
                 "🥗 No recommendation? Trust your instincts today!",
-                "📊 Data’s taking a break — try again soon!"
+                "📊 Data’s taking a break - try again soon!",
             ]
         }
     }
@@ -55,9 +65,9 @@ private struct LocalizedStrings {
 
 // MARK: - Timeline Provider
 struct Provider: TimelineProvider {
-    
+
     let userDefaults = UserDefaults(suiteName: "group.dmytrowidget")
-    
+
     func placeholder(in context: Context) -> PortionControlEntry {
         PortionControlEntry(
             date: Date(),
@@ -70,19 +80,19 @@ struct Provider: TimelineProvider {
             locale: "en"
         )
     }
-    
-    func getSnapshot(in context: Context, completion: @escaping (PortionControlEntry) -> ()) {
+
+    func getSnapshot(in context: Context, completion: @escaping (PortionControlEntry) -> Void) {
         let entry = readData()
         completion(entry)
     }
-    
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
         let entry = readData()
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
         let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
         completion(timeline)
     }
-    
+
     private func readData() -> PortionControlEntry {
         let weight = userDefaults?.string(forKey: WidgetDataKeys.weight)
         let consumed = userDefaults?.string(forKey: WidgetDataKeys.consumed)
@@ -91,7 +101,7 @@ struct Provider: TimelineProvider {
         let lastUpdated = userDefaults?.string(forKey: WidgetDataKeys.lastUpdated)
         let imagePath = userDefaults?.string(forKey: WidgetDataKeys.imagePath)
         let locale = userDefaults?.string(forKey: WidgetDataKeys.locale)
-        
+
         var chartImage: UIImage?
         if let path = imagePath {
             // Important: The image path must be accessible by the widget extension.
@@ -100,7 +110,7 @@ struct Provider: TimelineProvider {
                 chartImage = image
             }
         }
-        
+
         return PortionControlEntry(
             date: Date(),
             weight: weight,
@@ -129,16 +139,16 @@ struct PortionControlEntry: TimelineEntry {
 // MARK: - Widget View
 struct PortionControlWidgetsEntryView: View {
     var entry: Provider.Entry
-    
+
     var body: some View {
         let strings = LocalizedStrings(locale: entry.locale)
         let weightValue = Double(entry.weight ?? "0.0") ?? 0.0
         let consumedValue = Double(entry.consumed ?? "0.0") ?? 0.0
-        
+
         var hintMessage: String? {
-            
+
             if weightValue == 0.0 {
-                
+
                 return strings.enterWeightHint
             }
             if weightValue != 0.0 && consumedValue == 0.0 {
@@ -146,25 +156,25 @@ struct PortionControlWidgetsEntryView: View {
             }
             return nil
         }
-        
+
         let recommendationText: String = {
             if let hint = hintMessage {
                 return hint
             } else if let rec = entry.recommendation, !rec.isEmpty {
                 return rec
             } else {
-                
+
                 return strings.defaultMessages.randomElement()!
             }
-            
+
         }()
-        
+
         ZStack {
             // Background gradient
             RadialGradient(
                 gradient: Gradient(colors: [
-                    Color(red: 1.0, green: 0.94, blue: 0.96), // #FFF0F5
-                    Color(red: 0.83, green: 0.48, blue: 0.61)  // #D47A9B
+                    Color(red: 1.0, green: 0.94, blue: 0.96),  // #FFF0F5
+                    Color(red: 0.83, green: 0.48, blue: 0.61),  // #D47A9B
                 ]),
                 center: .center,
                 startRadius: 5,
@@ -173,7 +183,7 @@ struct PortionControlWidgetsEntryView: View {
             .mask(
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
             )
-            
+
             // --- Background chart image or fallback ---
             if let uiImage = entry.chartImage {
                 Image(uiImage: uiImage)
@@ -185,8 +195,8 @@ struct PortionControlWidgetsEntryView: View {
             } else {
                 RadialGradient(
                     gradient: Gradient(colors: [
-                        Color(red: 1.0, green: 0.94, blue: 0.96), // #FFF0F5
-                        Color(red: 0.83, green: 0.48, blue: 0.61)  // #D47A9B
+                        Color(red: 1.0, green: 0.94, blue: 0.96),  // #FFF0F5
+                        Color(red: 0.83, green: 0.48, blue: 0.61),  // #D47A9B
                     ]),
                     center: .center,
                     startRadius: 5,
@@ -194,12 +204,12 @@ struct PortionControlWidgetsEntryView: View {
                 )
                 .ignoresSafeArea()
             }
-            
+
             // --- Overlay text blocks ---
             VStack {
                 HStack(alignment: .top) {
                     VStack(alignment: .leading, spacing: 4) {
-                        
+
                         if weightValue != 0.0, let weight = entry.weight {
                             Text("\(strings.weightLabel) \(weight) kg")
                                 .font(.system(size: 18, weight: .bold))
@@ -207,13 +217,15 @@ struct PortionControlWidgetsEntryView: View {
                             Text("PortionControl")
                                 .font(.system(size: 18, weight: .bold))
                         }
-                        
+
                         if consumedValue != 0.0, let consumed = entry.consumed {
                             Text("\(strings.consumedLabel) \(consumed) g")
                                 .font(.system(size: 16))
                         }
-                        
-                        if weightValue != 0.0, let portionControl = entry.portionControl, !portionControl.isEmpty {
+
+                        if weightValue != 0.0, let portionControl = entry.portionControl,
+                            !portionControl.isEmpty
+                        {
                             Text("\(strings.limitLabel) \(portionControl) g")
                                 .font(.system(size: 15))
                         }
@@ -224,20 +236,20 @@ struct PortionControlWidgetsEntryView: View {
                     .frame(width: UIScreen.main.bounds.width * 0.7, alignment: .leading)
                     .padding([.top, .leading], 4)
                 }
-                
+
                 Spacer()
-                
+
                 // Bottom-left info (recommendation + last updated)
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(recommendationText)
                             .font(.system(size: 14, weight: .bold))
                             .multilineTextAlignment(.leading)
-                        
+
                         if let lastUpdated = entry.lastUpdated, !lastUpdated.isEmpty {
                             Text(lastUpdated)
                                 .font(.system(size: 12))
-                            
+
                         }
                     }
                     .padding(8)
@@ -254,7 +266,7 @@ struct PortionControlWidgetsEntryView: View {
 // MARK: - Widget Configuration
 struct PortionControlWidgets: Widget {
     let kind: String = "PortionControlWidgets"
-    
+
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             PortionControlWidgetsEntryView(entry: entry)
