@@ -6,13 +6,13 @@ class RecipeTriedStateService {
 
   /// Get the tried state for a recipe by its ID
   Future<bool> getTriedState(String recipeId) async {
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_prefixKey + recipeId) ?? false;
   }
 
   /// Set the tried state for a recipe
   Future<void> setTriedState(String recipeId, bool tried) async {
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (tried) {
       await prefs.setBool(_prefixKey + recipeId, true);
     } else {
@@ -22,16 +22,16 @@ class RecipeTriedStateService {
 
   /// Toggle the tried state for a recipe
   Future<bool> toggleTriedState(String recipeId) async {
-    final current = await getTriedState(recipeId);
+    final bool current = await getTriedState(recipeId);
     await setTriedState(recipeId, !current);
     return !current;
   }
 
   /// Clear all tried states
   Future<void> clearAll() async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
-    for (final key in keys) {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final Set<String> keys = prefs.getKeys();
+    for (final String key in keys) {
       if (key.startsWith(_prefixKey)) {
         await prefs.remove(key);
       }
