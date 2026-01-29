@@ -170,29 +170,8 @@ struct PortionControlWidgetsEntryView: View {
         }()
 
         ZStack {
-            // Background gradient
-            RadialGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 1.0, green: 0.94, blue: 0.96),  // #FFF0F5
-                    Color(red: 0.83, green: 0.48, blue: 0.61),  // #D47A9B
-                ]),
-                center: .center,
-                startRadius: 5,
-                endRadius: 500
-            )
-            .mask(
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-            )
-
-            // --- Background chart image or fallback ---
-            if let uiImage = entry.chartImage {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipped()
-                    .padding([.leading], 8)
-            } else {
+            // --- Background layer (Pinkish Gradient + Optional Chart Image) ---
+            ZStack {
                 RadialGradient(
                     gradient: Gradient(colors: [
                         Color(red: 1.0, green: 0.94, blue: 0.96),  // #FFF0F5
@@ -202,8 +181,17 @@ struct PortionControlWidgetsEntryView: View {
                     startRadius: 5,
                     endRadius: 500
                 )
-                .ignoresSafeArea()
+
+                if let uiImage = entry.chartImage {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .clipped()
+                        .padding([.leading], 8)
+                }
             }
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
 
             // --- Overlay text blocks ---
             VStack {
