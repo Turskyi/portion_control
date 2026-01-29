@@ -5,12 +5,18 @@ sealed class MenuState {
   const MenuState({
     required this.streakDays,
     this.language = Language.en,
+    this.themeMode = ThemeMode.light,
     this.appVersion = '',
+    this.isWeightReminderEnabled = false,
+    this.weightReminderTime = const TimeOfDay(hour: 8, minute: 0),
   });
 
   final Language language;
+  final ThemeMode themeMode;
   final int streakDays;
   final String appVersion;
+  final bool isWeightReminderEnabled;
+  final TimeOfDay weightReminderTime;
 
   bool get isUkrainian => language == Language.uk;
 
@@ -18,25 +24,38 @@ sealed class MenuState {
 
   String get localeCode => language.isoLanguageCode;
 
+  bool get isDarkTheme => themeMode == ThemeMode.dark;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is MenuState &&
           runtimeType == other.runtimeType &&
           language == other.language &&
+          themeMode == other.themeMode &&
           streakDays == other.streakDays &&
-          appVersion == other.appVersion;
+          appVersion == other.appVersion &&
+          isWeightReminderEnabled == other.isWeightReminderEnabled &&
+          weightReminderTime == other.weightReminderTime;
 
   @override
   int get hashCode =>
-      language.hashCode ^ streakDays.hashCode ^ appVersion.hashCode;
+      language.hashCode ^
+      themeMode.hashCode ^
+      streakDays.hashCode ^
+      appVersion.hashCode ^
+      isWeightReminderEnabled.hashCode ^
+      weightReminderTime.hashCode;
 
   @override
   String toString() {
-    return 'ChatState('
+    return 'MenuState('
         'language: $language,'
+        'themeMode: $themeMode,'
         'streakDays: $streakDays,'
         'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }
@@ -45,18 +64,28 @@ final class MenuInitial extends MenuState {
   const MenuInitial({
     required super.streakDays,
     super.language,
+    super.themeMode,
     super.appVersion,
+    super.isWeightReminderEnabled,
+    super.weightReminderTime,
   });
 
   MenuInitial copyWith({
     Language? language,
+    ThemeMode? themeMode,
     int? streakDays,
     String? appVersion,
+    bool? isWeightReminderEnabled,
+    TimeOfDay? weightReminderTime,
   }) {
     return MenuInitial(
       language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
       streakDays: streakDays ?? this.streakDays,
       appVersion: appVersion ?? this.appVersion,
+      isWeightReminderEnabled:
+          isWeightReminderEnabled ?? this.isWeightReminderEnabled,
+      weightReminderTime: weightReminderTime ?? this.weightReminderTime,
     );
   }
 
@@ -64,8 +93,11 @@ final class MenuInitial extends MenuState {
   String toString() {
     return 'MenuInitial('
         'language: $language,'
+        'themeMode: $themeMode,'
         'streakDays: $streakDays,'
-        'appVersion: $appVersion'
+        'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }
@@ -74,18 +106,28 @@ final class MenuFeedbackState extends MenuState {
   const MenuFeedbackState({
     required super.language,
     required super.streakDays,
+    super.themeMode,
     super.appVersion,
+    super.isWeightReminderEnabled,
+    super.weightReminderTime,
   });
 
   MenuFeedbackState copyWith({
     Language? language,
+    ThemeMode? themeMode,
     int? streakDays,
     String? appVersion,
+    bool? isWeightReminderEnabled,
+    TimeOfDay? weightReminderTime,
   }) {
     return MenuFeedbackState(
       language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
       streakDays: streakDays ?? this.streakDays,
       appVersion: appVersion ?? this.appVersion,
+      isWeightReminderEnabled:
+          isWeightReminderEnabled ?? this.isWeightReminderEnabled,
+      weightReminderTime: weightReminderTime ?? this.weightReminderTime,
     );
   }
 
@@ -93,8 +135,11 @@ final class MenuFeedbackState extends MenuState {
   String toString() {
     return 'MenuFeedbackState('
         'language: $language,'
+        'themeMode: $themeMode,'
         'streakDays: $streakDays,'
-        'appVersion: $appVersion'
+        'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }
@@ -103,18 +148,28 @@ final class MenuFeedbackSent extends MenuState {
   const MenuFeedbackSent({
     required super.streakDays,
     required super.language,
+    super.themeMode,
     super.appVersion,
+    super.isWeightReminderEnabled,
+    super.weightReminderTime,
   });
 
   MenuFeedbackSent copyWith({
     Language? language,
+    ThemeMode? themeMode,
     int? streakDays,
     String? appVersion,
+    bool? isWeightReminderEnabled,
+    TimeOfDay? weightReminderTime,
   }) {
     return MenuFeedbackSent(
       language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
       streakDays: streakDays ?? this.streakDays,
       appVersion: appVersion ?? this.appVersion,
+      isWeightReminderEnabled:
+          isWeightReminderEnabled ?? this.isWeightReminderEnabled,
+      weightReminderTime: weightReminderTime ?? this.weightReminderTime,
     );
   }
 
@@ -122,8 +177,11 @@ final class MenuFeedbackSent extends MenuState {
   String toString() {
     return 'MenuFeedbackSent('
         'language: $language,'
+        'themeMode: $themeMode,'
         'streakDays: $streakDays,'
-        'appVersion: $appVersion'
+        'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }
@@ -132,18 +190,28 @@ final class LoadingMenuState extends MenuState {
   const LoadingMenuState({
     required super.streakDays,
     super.language,
+    super.themeMode,
     super.appVersion,
+    super.isWeightReminderEnabled,
+    super.weightReminderTime,
   });
 
   LoadingMenuState copyWith({
     Language? language,
+    ThemeMode? themeMode,
     int? streakDays,
     String? appVersion,
+    bool? isWeightReminderEnabled,
+    TimeOfDay? weightReminderTime,
   }) {
     return LoadingMenuState(
       streakDays: streakDays ?? this.streakDays,
       language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
       appVersion: appVersion ?? this.appVersion,
+      isWeightReminderEnabled:
+          isWeightReminderEnabled ?? this.isWeightReminderEnabled,
+      weightReminderTime: weightReminderTime ?? this.weightReminderTime,
     );
   }
 
@@ -151,8 +219,11 @@ final class LoadingMenuState extends MenuState {
   String toString() {
     return 'LoadingMenuState('
         'language: $language,'
+        'themeMode: $themeMode,'
         'streakDays: $streakDays,'
-        'appVersion: $appVersion'
+        'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
         ')';
   }
 }

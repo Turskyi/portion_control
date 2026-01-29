@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -23,7 +24,13 @@ part 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   SettingsBloc(this._settingsRepository)
-    : super(SettingsInitial(language: _settingsRepository.getLanguage())) {
+    : super(
+        SettingsInitial(
+          language: _settingsRepository.getLanguage(),
+          themeMode: _settingsRepository.getThemeMode(),
+          isOnboardingCompleted: _settingsRepository.isOnboardingCompleted(),
+        ),
+      ) {
     on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
 
     on<BugReportPressedEvent>(_onFeedbackRequested);
@@ -33,6 +40,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsErrorEvent>(_handleError);
 
     on<SettingsChangeLanguageEvent>(_changeLanguage);
+
+    on<SettingsChangeThemeEvent>(_changeTheme);
   }
 
   final ISettingsRepository _settingsRepository;
@@ -41,7 +50,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     SettingsErrorEvent event,
     Emitter<SettingsState> emit,
   ) {
-    emit(SettingsError(errorMessage: event.error, language: state.language));
+    emit(
+      SettingsError(
+        errorMessage: event.error,
+        language: state.language,
+        themeMode: state.themeMode,
+        isOnboardingCompleted: state.isOnboardingCompleted,
+      ),
+    );
   }
 
   FutureOr<void> _sendUserFeedback(
@@ -49,7 +65,13 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     Emitter<SettingsState> emit,
   ) async {
     if (state is! LoadingSettingsState && state is! SettingsFeedbackSent) {
-      emit(LoadingSettingsState(language: state.language));
+      emit(
+        LoadingSettingsState(
+          language: state.language,
+          themeMode: state.themeMode,
+          isOnboardingCompleted: state.isOnboardingCompleted,
+        ),
+      );
       final UserFeedback feedback = event.feedback;
       try {
         final PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -146,6 +168,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
               SettingsError(
                 errorMessage: errorMessage,
                 language: state.language,
+                themeMode: state.themeMode,
+                isOnboardingCompleted: state.isOnboardingCompleted,
               ),
             );
           }
@@ -170,13 +194,21 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           }
         }
 
-        emit(SettingsFeedbackSent(language: state.language));
+        emit(
+          SettingsFeedbackSent(
+            language: state.language,
+            themeMode: state.themeMode,
+            isOnboardingCompleted: state.isOnboardingCompleted,
+          ),
+        );
       } catch (e, stackTrace) {
         debugPrint('SettingsErrorEvent:$e\nStackTrace: $stackTrace');
         emit(
           SettingsError(
             errorMessage: translate('error.unexpected_error'),
             language: state.language,
+            themeMode: state.themeMode,
+            isOnboardingCompleted: state.isOnboardingCompleted,
           ),
         );
       }
@@ -195,14 +227,27 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     } else if (state is FeedbackState) {
       errorMessage = state.errorMessage;
     }
-    emit(FeedbackState(language: state.language, errorMessage: errorMessage));
+    emit(
+      FeedbackState(
+        language: state.language,
+        themeMode: state.themeMode,
+        errorMessage: errorMessage,
+        isOnboardingCompleted: state.isOnboardingCompleted,
+      ),
+    );
   }
 
   FutureOr<void> _onFeedbackDialogDismissed(
     ClosingFeedbackEvent _,
     Emitter<SettingsState> emit,
   ) {
-    emit(SettingsInitial(language: state.language));
+    emit(
+      SettingsInitial(
+        language: state.language,
+        themeMode: state.themeMode,
+        isOnboardingCompleted: state.isOnboardingCompleted,
+      ),
+    );
   }
 
   FutureOr<void> _changeLanguage(
@@ -221,10 +266,41 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         if (state is SettingsInitial) {
           emit(state.copyWith(language: language));
         } else {
-          SettingsInitial(language: language);
+          emit(
+            SettingsInitial(
+              language: language,
+              themeMode: state.themeMode,
+              isOnboardingCompleted: state.isOnboardingCompleted,
+            ),
+          );
         }
       } else {
         //TODO: no sure what to do.
+      }
+    }
+  }
+
+  FutureOr<void> _changeTheme(
+    SettingsChangeThemeEvent event,
+    Emitter<SettingsState> emit,
+  ) async {
+    final ThemeMode themeMode = event.themeMode;
+    final SettingsState state = this.state;
+
+    if (themeMode != state.themeMode) {
+      final bool isSaved = await _settingsRepository.saveThemeMode(themeMode);
+      if (isSaved) {
+        if (state is SettingsInitial) {
+          emit(state.copyWith(themeMode: themeMode));
+        } else {
+          emit(
+            SettingsInitial(
+              language: state.language,
+              themeMode: themeMode,
+              isOnboardingCompleted: state.isOnboardingCompleted,
+            ),
+          );
+        }
       }
     }
   }

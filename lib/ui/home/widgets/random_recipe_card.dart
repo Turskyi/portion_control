@@ -45,7 +45,10 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
+    final ThemeData theme = Theme.of(context);
+    final TextTheme textTheme = theme.textTheme;
+    final ColorScheme colorScheme = theme.colorScheme;
+
     // Check if translation exists, otherwise find another one.
     String translation = translate(_recipeKey);
     if (translation == _recipeKey) {
@@ -74,11 +77,11 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: colorScheme.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(16),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -89,7 +92,10 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
         children: <Widget>[
           Row(
             children: <Widget>[
-              const Icon(Icons.restaurant_menu, color: Colors.orange),
+              Icon(
+                Icons.restaurant_menu,
+                color: colorScheme.secondaryContainer,
+              ),
               const SizedBox(width: 8),
               Text(
                 translate('meal_type.$_mealType'),
@@ -99,7 +105,11 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
               ),
               const Spacer(),
               IconButton(
-                icon: const Icon(Icons.refresh, size: 20, color: Colors.grey),
+                icon: Icon(
+                  Icons.refresh,
+                  size: 20,
+                  color: colorScheme.onSurfaceVariant,
+                ),
                 onPressed: () {
                   //TODO: use HomeBloc
                   setState(() {
@@ -119,7 +129,7 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
           Text(
             translate('home_page.meal_inspiration_optional'),
             style: textTheme.bodySmall?.copyWith(
-              color: Colors.grey,
+              color: colorScheme.onSurfaceVariant,
               fontStyle: FontStyle.italic,
             ),
           ),

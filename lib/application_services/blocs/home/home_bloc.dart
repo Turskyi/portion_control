@@ -22,7 +22,6 @@ import 'package:portion_control/domain/services/repositories/i_food_weight_repos
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/extensions/list_extension.dart';
-import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/enums/home_widget_keys.dart';
 import 'package:portion_control/services/home_widget_service.dart';
@@ -40,8 +39,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     this._foodWeightRepository,
     this._clearTrackingDataUseCase,
     this._homeWidgetService,
-    this._localDataSource,
-  ) : super(HomeLoading(language: _localDataSource.getLanguage())) {
+  ) : super(HomeLoading(language: _userPreferencesRepository.getLanguage())) {
     on<LoadEntries>(_loadEntries);
     on<UpdateHeight>(_updateHeight);
     on<UpdateDateOfBirth>(_updateDateOfBirth);
@@ -70,7 +68,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final IFoodWeightRepository _foodWeightRepository;
   final IClearTrackingDataUseCase _clearTrackingDataUseCase;
   final HomeWidgetService _homeWidgetService;
-  final LocalDataSource _localDataSource;
 
   // Store the previous state.
   HomeState? _previousState;
@@ -80,7 +77,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
 
     if (userDetails.isNotEmpty) {
       emit(
@@ -259,7 +256,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     UpdateDateOfBirth event,
     Emitter<HomeState> emit,
   ) {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     final DateTime dateOfBirth = event.dateOfBirth;
     //Let's not allow minors to mess with their health.
     if (dateOfBirth.isOlderThanMinimumAge) {
@@ -293,7 +290,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final double? height = double.tryParse(event.height);
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     if (height != null) {
       emit(
         DetailsUpdateState(
@@ -322,7 +319,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> _updateGender(UpdateGender event, Emitter<HomeState> emit) {
     final Gender gender = event.gender;
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     emit(
       DetailsUpdateState(
         userDetails: state.userDetails.copyWith(gender: gender),
@@ -340,7 +337,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final double? bodyWeight = double.tryParse(event.bodyWeight);
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     if (bodyWeight != null) {
       emit(
         BodyWeightUpdatedState(
@@ -367,28 +364,33 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _updateFoodWeightState(
+  Future<void> _updateFoodWeightState(
     UpdateFoodWeight event,
     Emitter<HomeState> emit,
-  ) {
-    final Language language = _localDataSource.getLanguage();
+  ) async {
+    final Language language = _userPreferencesRepository.getLanguage();
     final double? foodWeight = double.tryParse(event.foodWeight);
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
     if (foodWeight != null) {
       final int foodEntryId = event.foodEntryId;
-      _foodWeightRepository.updateFoodWeightEntry(
+
+      await _foodWeightRepository.updateFoodWeightEntry(
         foodEntryId: foodEntryId,
         foodEntryValue: foodWeight,
       );
+
+      final List<FoodWeight> updatedFoodWeightEntries =
+          await _foodWeightRepository.getTodayFoodEntries();
+
       emit(
         FoodWeightUpdatedState(
           foodEntryId: event.foodEntryId,
-          yesterdayConsumedTotal: foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
-          foodEntries: state.foodEntries,
+          foodEntries: updatedFoodWeightEntries,
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
           language: language,
@@ -409,13 +411,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
     }
+    _triggerHomeWidgetUpdate();
   }
 
   FutureOr<void> _submitDetails(
     SubmitDetails _,
     Emitter<HomeState> emit,
   ) async {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     if (state.isNotEmptyDetails) {
       final double height = state.heightInCm;
       final DateTime? dateOfBirth = state.dateOfBirth;
@@ -537,7 +540,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     SubmitBodyWeight event,
     Emitter<HomeState> emit,
   ) async {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     if (event.bodyWeight > constants.minBodyWeight) {
       final double bodyWeight = state.bodyWeight;
 
@@ -684,7 +687,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     AddFoodEntry event,
     Emitter<HomeState> emit,
   ) async {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     final double? foodWeight = double.tryParse(event.foodWeight);
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
@@ -755,7 +758,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     DeleteFoodEntry event,
     Emitter<HomeState> emit,
   ) async {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
     try {
@@ -802,7 +805,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     EditDetails _,
     Emitter<HomeState> emit,
   ) async {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     final double yesterdayConsumedTotal = await _foodWeightRepository
         .getTotalConsumedYesterday();
     emit(
@@ -821,7 +824,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     EditBodyWeight _,
     Emitter<HomeState> emit,
   ) {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     emit(
       BodyWeightUpdatedState(
         bodyWeight: state.bodyWeight,
@@ -839,7 +842,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) {
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     emit(
       FoodWeightUpdateState(
         foodEntryId: event.foodEntryId,
@@ -859,7 +862,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ClearUserData _,
     Emitter<HomeState> emit,
   ) async {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     try {
       await _clearTrackingDataUseCase.execute();
       emit(
@@ -891,7 +894,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ResetFoodEntries _,
     Emitter<HomeState> emit,
   ) async {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     try {
       await _foodWeightRepository.clearAllTrackingData();
       emit(
@@ -925,7 +928,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ConfirmMealsLogged _,
     Emitter<HomeState> emit,
   ) async {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     final bool isSaved = await _userPreferencesRepository.saveMealsConfirmed();
     if (isSaved) {
       emit(
@@ -961,7 +964,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     HomeBugReportPressedEvent _,
     Emitter<HomeState> emit,
   ) {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     _previousState = state;
     emit(
       HomeFeedbackState(
@@ -1000,7 +1003,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     HomeSubmitFeedbackEvent event,
     Emitter<HomeState> emit,
   ) async {
-    final Language language = _localDataSource.getLanguage();
+    final Language language = _userPreferencesRepository.getLanguage();
     emit(
       FeedbackHomeLoading(
         language: language,
@@ -1191,7 +1194,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       now.hour,
       now.minute,
     );
-    final String languageIsoCode = _localDataSource.getLanguageIsoCode();
+    final String languageIsoCode = _userPreferencesRepository
+        .getLanguageIsoCode();
     try {
       final DateFormat formatter = DateFormat(
         'MMM dd, EEEE \'-\' hh:mm a',

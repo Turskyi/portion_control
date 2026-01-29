@@ -43,6 +43,8 @@
   "learn_more": "Дізнатись більше",
   "field_required": "Це поле обов'язкове",
   "info": "Інформація",
+  "dark_theme": "Темна тема",
+  "light_theme": "Світла тема",
   "measurement": {
     "grams_value": "{value} г"
   },

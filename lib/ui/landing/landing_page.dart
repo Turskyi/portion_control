@@ -6,8 +6,6 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/extensions/build_context_extensions.dart';
-import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
-import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/landing/widgets/glowing_animated_box.dart';
@@ -15,9 +13,7 @@ import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LandingPage extends StatelessWidget {
-  const LandingPage({required this.localDataSource, super.key});
-
-  final LocalDataSource localDataSource;
+  const LandingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -278,7 +274,11 @@ class LandingPage extends StatelessWidget {
   }
 
   Future<void> _navigateToNextScreen(BuildContext context) {
-    final String routeName = localDataSource.isOnboardingCompleted()
+    final bool isOnboardingCompleted = context
+        .read<SettingsBloc>()
+        .state
+        .isOnboardingCompleted;
+    final String routeName = isOnboardingCompleted
         ? AppRoute.home.path
         : AppRoute.onboarding.path;
     return Navigator.of(context).pushNamed<void>(routeName);
@@ -324,13 +324,12 @@ class LandingPage extends StatelessWidget {
   }
 
   Future<void> _showLanguageSelectionDialog(BuildContext context) {
+    final SettingsBloc settingsBloc = context.read<SettingsBloc>();
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return BlocProvider<SettingsBloc>(
-          create: (BuildContext _) {
-            return SettingsBloc(SettingsRepository(localDataSource));
-          },
+        return BlocProvider<SettingsBloc>.value(
+          value: settingsBloc,
           child: BlocBuilder<SettingsBloc, SettingsState>(
             builder: (BuildContext context, SettingsState state) {
               final Language currentLanguage = state.language;

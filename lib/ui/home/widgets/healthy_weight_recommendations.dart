@@ -166,18 +166,19 @@ class HealthyWeightRecommendations extends StatelessWidget {
   }
 
   Color _getBmiMessageColor(double bmi, BuildContext context) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     if (bmi < 18.5) {
       // Underweight.
-      return Colors.blue;
+      return colorScheme.primaryContainer;
     } else if (bmi >= 18.5 && bmi <= 24.9) {
       // Healthy weight.
-      return Colors.green;
+      return colorScheme.tertiary;
     } else if (bmi >= 25.0 && bmi <= 29.9) {
       // Overweight.
-      return Colors.orange;
+      return colorScheme.secondaryContainer;
     } else {
       // Obese.
-      return Colors.red;
+      return colorScheme.error;
     }
   }
 }

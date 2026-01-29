@@ -34,7 +34,7 @@ class ReminderService {
         );
 
     await _plugin.initialize(
-      InitializationSettings(
+      settings: InitializationSettings(
         android: androidSettings,
         iOS: iosSettings,
         macOS: const DarwinInitializationSettings(
@@ -163,11 +163,11 @@ class ReminderService {
 
     try {
       await _plugin.zonedSchedule(
-        _weightReminderId,
-        title,
-        body,
-        scheduled,
-        platformDetails,
+        id: _weightReminderId,
+        title: title,
+        body: body,
+        scheduledDate: scheduled,
+        notificationDetails: platformDetails,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time,
       );
@@ -180,6 +180,6 @@ class ReminderService {
 
   Future<void> cancelWeightReminder() async {
     await _init();
-    await _plugin.cancel(_weightReminderId);
+    await _plugin.cancel(id: _weightReminderId);
   }
 }

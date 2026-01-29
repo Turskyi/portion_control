@@ -7,20 +7,12 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/domain/enums/language.dart';
-import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
-import 'package:portion_control/infrastructure/repositories/body_weight_repository.dart';
-import 'package:portion_control/infrastructure/repositories/food_weight_repository.dart';
-import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
-import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/router/app_route.dart';
-import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/menu/reminder_dialog.dart';
 import 'package:portion_control/ui/menu/widgets/animated_drawer_item.dart';
 
 class AnimatedDrawer extends StatefulWidget {
-  const AnimatedDrawer({required this.localDataSource, super.key});
-
-  final LocalDataSource localDataSource;
+  const AnimatedDrawer({super.key});
 
   @override
   State<AnimatedDrawer> createState() => _AnimatedDrawerState();
@@ -81,12 +73,18 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    translate('menu'),
-                    style: textTheme.headlineSmall?.copyWith(
-                      color: colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  BlocBuilder<MenuBloc, MenuState>(
+                    builder: (BuildContext _, MenuState state) {
+                      return Text(
+                        translate('menu'),
+                        style: textTheme.headlineSmall?.copyWith(
+                          color: state.isDarkTheme
+                              ? colorScheme.onSurface
+                              : colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    },
                   ),
                   const SizedBox(height: 6),
                   BlocBuilder<MenuBloc, MenuState>(
@@ -118,7 +116,9 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         return Text(
                           streakText,
                           style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onPrimary.withOpacity(0.85),
+                            color: state.isDarkTheme
+                                ? colorScheme.onSurface.withOpacity(0.85)
+                                : colorScheme.onPrimary,
                           ),
                         );
                       }
@@ -206,6 +206,27 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                     text: translate('reminders.title'),
                     onTap: _showRemindersDialog,
                   ),
+                  BlocBuilder<MenuBloc, MenuState>(
+                    builder: (BuildContext context, MenuState state) {
+                      return SwitchListTile(
+                        secondary: Icon(
+                          state.themeMode == ThemeMode.dark
+                              ? Icons.dark_mode
+                              : Icons.light_mode,
+                          color: colorScheme.onSurface,
+                        ),
+                        title: Text(translate('dark_theme')),
+                        value: state.themeMode == ThemeMode.dark,
+                        onChanged: (bool value) {
+                          context.read<MenuBloc>().add(
+                            ChangeThemeEvent(
+                              value ? ThemeMode.dark : ThemeMode.light,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                   AnimatedDrawerItem(
                     icon: Icons.feedback,
                     text: translate('button.feedback'),
@@ -229,12 +250,6 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                         }
                         return const SizedBox.shrink();
                       },
-                    ),
-                  if (!kIsWeb)
-                    AnimatedDrawerItem(
-                      icon: Icons.web,
-                      text: translate('open_web_version'),
-                      onTap: _openWebVersion,
                     ),
                   const Divider(),
                   BlocBuilder<MenuBloc, MenuState>(
@@ -274,18 +289,16 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
   }
 
   Future<void> _showRemindersDialog() {
+    final MenuBloc menuBloc = context.read<MenuBloc>();
     return showDialog<void>(
       context: context,
       builder: (BuildContext _) {
-        return ReminderDialog(
-          localDataSource: widget.localDataSource,
+        return BlocProvider<MenuBloc>.value(
+          value: menuBloc,
+          child: const ReminderDialog(),
         );
       },
     );
-  }
-
-  void _openWebVersion() {
-    context.read<MenuBloc>().add(const OpenWebVersionEvent());
   }
 
   void _pinWidget() {
@@ -293,23 +306,12 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
   }
 
   Future<void> _showLanguageSelectionDialog() {
+    final MenuBloc menuBloc = context.read<MenuBloc>();
     return showDialog<void>(
       context: context,
       builder: (BuildContext _) {
-        return BlocProvider<MenuBloc>(
-          create: (BuildContext _) {
-            final LocalDataSource localDataSource = widget.localDataSource;
-            return MenuBloc(
-              SettingsRepository(widget.localDataSource),
-              const HomeWidgetServiceImpl(),
-              BodyWeightRepository(localDataSource),
-              FoodWeightRepository(localDataSource),
-              UserPreferencesRepository(
-                localDataSource,
-              ),
-              localDataSource,
-            )..add(const LoadingInitialMenuStateEvent());
-          },
+        return BlocProvider<MenuBloc>.value(
+          value: menuBloc,
           child: BlocBuilder<MenuBloc, MenuState>(
             builder: (BuildContext context, MenuState state) {
               final Language currentLanguage = state.language;

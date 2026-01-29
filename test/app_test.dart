@@ -8,9 +8,9 @@ import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
+import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
-import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
@@ -38,6 +38,7 @@ void main() {
     late LocalDataSource localDataSource;
     late LocalizationDelegate localizationDelegate;
     late SettingsRepository settingsRepository;
+    late SettingsBloc settingsBloc;
     late HomeWidgetService mockHomeWidgetService;
     late AppDatabase database;
 
@@ -65,6 +66,7 @@ void main() {
 
       // Initialize repositories
       settingsRepository = SettingsRepository(localDataSource);
+      settingsBloc = SettingsBloc(settingsRepository);
     });
 
     tearDown(() async {
@@ -82,24 +84,27 @@ void main() {
             return BlocProvider<OnboardingBloc>(
               create: (BuildContext context) {
                 final Dependencies dependencies = DependenciesScope.of(context);
-                final String savedIsoCode = localDataSource
-                    .getLanguageIsoCode();
-                final Language savedLanguage = Language.fromIsoLanguageCode(
-                  savedIsoCode,
-                );
 
                 return OnboardingBloc(
                   dependencies.saveLanguageUseCase,
-                  savedLanguage,
+                  localDataSource,
                 );
               },
-              child: OnboardingScreen(localDataSource: localDataSource),
+              child: const OnboardingScreen(),
             );
           },
           AppRoute.landing.path: (_) {
-            return LandingPage(localDataSource: localDataSource);
+            return BlocProvider<SettingsBloc>(
+              create: (_) => SettingsBloc(settingsRepository),
+              child: const LandingPage(),
+            );
           },
-          AppRoute.home.path: (_) => HomePage(localDataSource: localDataSource),
+          AppRoute.home.path: (_) => MultiBlocProvider(
+            providers: <SingleChildWidget>[
+              BlocProvider<SettingsBloc>.value(value: settingsBloc),
+            ],
+            child: const HomePage(),
+          ),
         };
 
         // Build widget tree
@@ -123,7 +128,6 @@ void main() {
                         mockFoodWeightRepository,
                         mockClearTrackingDataUseCase,
                         mockHomeWidgetService,
-                        localDataSource,
                       );
                     },
                   ),
@@ -135,17 +139,13 @@ void main() {
                         mockBodyWeightRepository,
                         mockFoodWeightRepository,
                         mockUserDetailsRepository,
-                        localDataSource,
                       );
                     },
                   ),
                 ],
                 child: DependenciesScope(
                   dependencies: Dependencies(localDataSource),
-                  child: App(
-                    routeMap: testRoutes,
-                    localDataSource: localDataSource,
-                  ),
+                  child: App(routeMap: testRoutes),
                 ),
               ),
             ),

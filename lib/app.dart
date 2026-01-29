@@ -1,27 +1,23 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
+import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/env/env.dart';
-import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
-import 'package:portion_control/res/colors/gradients.dart';
-import 'package:portion_control/res/colors/material_colors.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/resources.dart';
-import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/router/navigator.dart';
 import 'package:resend/resend.dart';
 
 class App extends StatelessWidget {
   const App({
     required this.routeMap,
-    required this.localDataSource,
     super.key,
   });
 
   final Map<String, WidgetBuilder> routeMap;
-  final LocalDataSource localDataSource;
 
   @override
   Widget build(BuildContext context) {
@@ -29,43 +25,70 @@ class App extends StatelessWidget {
     final LocalizationDelegate localizationDelegate = LocalizedApp.of(
       context,
     ).delegate;
-    final String initialRoute = kIsWeb
-        ? AppRoute.landing.path
-        : localDataSource.isOnboardingCompleted()
-        ? AppRoute.home.path
-        : AppRoute.onboarding.path;
+
+    final String initialRoute = DependenciesScope.of(context).initialRoute;
+
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
       child: Resources(
-        colors: const MaterialColors(),
-        gradients: const Gradients(),
-        child: MaterialApp(
-          navigatorKey: navigatorKey,
-          title: constants.appName,
-          localizationsDelegates: <LocalizationsDelegate<Object>>[
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            localizationDelegate,
-          ],
-          supportedLocales: localizationDelegate.supportedLocales,
-          locale: localizationDelegate.currentLocale,
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            textTheme: GoogleFonts.comfortaaTextTheme(),
-            colorScheme: ColorScheme.fromSeed(
-              // Seed color for the palette.
-              seedColor: const Color(0xFFE99CBF),
-              // Override primary color (border outline, input label).
-              primary: Colors.pinkAccent,
-              // Background gradient center.
-              background: const Color(0xFFFFF0F5),
-              // Background gradient edge.
-              secondary: const Color(0xFFD47A9B),
-            ),
-          ),
-          initialRoute: initialRoute,
-          routes: routeMap,
+        child: BlocBuilder<MenuBloc, MenuState>(
+          builder: (BuildContext _, MenuState state) {
+            return MaterialApp(
+              navigatorKey: navigatorKey,
+              title: constants.appName,
+              localizationsDelegates: <LocalizationsDelegate<Object>>[
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                localizationDelegate,
+              ],
+              supportedLocales: localizationDelegate.supportedLocales,
+              locale: localizationDelegate.currentLocale,
+              debugShowCheckedModeBanner: false,
+              themeMode: state.themeMode,
+              theme: ThemeData(
+                brightness: Brightness.light,
+                textTheme: GoogleFonts.comfortaaTextTheme(),
+                colorScheme: ColorScheme.fromSeed(
+                  // Seed color for the palette.
+                  seedColor: const Color(0xFFE99CBF),
+                  // Override primary color (border outline, input label).
+                  primary: Colors.pinkAccent,
+                  // Background gradient center.
+                  surface: const Color(0xFFFFF0F5),
+                  // Background gradient edge.
+                  secondary: const Color(0xFFD47A9B),
+                  // Success/Healthy color.
+                  tertiary: Colors.green,
+                  // Obese color.
+                  error: Colors.red,
+                  // Underweight color.
+                  primaryContainer: Colors.blue,
+                  // Overweight color.
+                  secondaryContainer: Colors.orange,
+                ),
+              ),
+              darkTheme: ThemeData(
+                brightness: Brightness.dark,
+                textTheme: GoogleFonts.comfortaaTextTheme(
+                  ThemeData.dark().textTheme,
+                ),
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: const Color(0xFFE99CBF),
+                  brightness: Brightness.dark,
+                  primary: Colors.pinkAccent,
+                  surface: const Color(0xFF121212),
+                  secondary: const Color(0xFF4A1A2C),
+                  tertiary: Colors.greenAccent,
+                  error: Colors.redAccent,
+                  primaryContainer: Colors.blueAccent,
+                  secondaryContainer: Colors.orangeAccent,
+                ),
+              ),
+              initialRoute: initialRoute,
+              routes: routeMap,
+            );
+          },
         ),
       ),
     );

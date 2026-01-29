@@ -11,16 +11,15 @@ class DayLogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
     final bool isOverLimit = day.totalConsumed > day.dailyLimit;
     final bool hasEntries = day.entries.isNotEmpty;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        // The `withOpacity` method is being deprecated.
-        // It's better to use `withAlpha` if your Flutter version supports it
-        // well, or stick to this if you need to support older versions.
-        color: Colors.white.withOpacity(0.85),
+        color: colorScheme.surface.withOpacity(0.85),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -32,7 +31,7 @@ class DayLogCard extends StatelessWidget {
             children: <Widget>[
               Text(
                 day.formattedDate,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: theme.textTheme.titleMedium,
               ),
               if (hasEntries)
                 Text(
@@ -42,7 +41,9 @@ class DayLogCard extends StatelessWidget {
                         : 'daily_food_log_history.within_limit',
                   ),
                   style: TextStyle(
-                    color: isOverLimit ? Colors.red : Colors.green,
+                    color: isOverLimit
+                        ? colorScheme.error
+                        : colorScheme.tertiary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -94,7 +95,7 @@ class DayLogCard extends StatelessWidget {
           ] else
             Text(
               translate('daily_food_log_history.no_meals_logged'),
-              style: TextStyle(color: Colors.grey.shade600),
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
             ),
         ],
       ),

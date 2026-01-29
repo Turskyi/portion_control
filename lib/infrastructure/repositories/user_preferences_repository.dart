@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portion_control/domain/enums/gender.dart';
+import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
@@ -132,4 +133,10 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
   Future<double> getMinConsumptionWhenWeightIncreased() {
     return _localDataSource.getMinConsumptionWhenWeightIncreased();
   }
+
+  @override
+  Language getLanguage() => _localDataSource.getLanguage();
+
+  @override
+  String getLanguageIsoCode() => _localDataSource.getLanguageIsoCode();
 }

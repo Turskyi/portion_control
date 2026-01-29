@@ -35,6 +35,7 @@ class InputRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
+    final ColorScheme colorScheme = themeData.colorScheme;
     final double? bodyLargeFontSize = themeData.textTheme.bodyLarge?.fontSize;
     return Row(
       children: <Widget>[
@@ -78,7 +79,7 @@ class InputRow extends StatelessWidget {
                               key: ValueKey<String>('$value'),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: themeData.colorScheme.onTertiary,
+                                  color: colorScheme.outline,
                                 ),
                                 borderRadius: BorderRadius.circular(4),
                               ),
@@ -150,7 +151,7 @@ class InputRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: Padding(
                 padding: onUnitTap != null
-                    ? const EdgeInsets.all(14.0)
+                    ? const EdgeInsets.fromLTRB(8.0, 14.0, 14.0, 14.0)
                     : EdgeInsets.zero,
                 child: Stack(
                   clipBehavior: Clip.none,
@@ -166,7 +167,7 @@ class InputRow extends StatelessWidget {
                         child: Icon(
                           Icons.info_outline,
                           size: 12,
-                          color: Colors.grey,
+                          color: colorScheme.onSurfaceVariant,
                           semanticLabel: translate('info'),
                         ),
                       ),

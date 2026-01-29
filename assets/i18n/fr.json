@@ -43,6 +43,8 @@
   "learn_more": "En savoir plus",
   "field_required": "Ce champ est requis",
   "info": "Info",
+  "dark_theme": "Thème sombre",
+  "light_theme": "Thème clair",
   "measurement": {
     "grams_value": "{value} g"
   },
@@ -131,7 +133,7 @@
   },
   "health_sources": {
     "who": "OMS - Obésité et surpoids",
-    "who_url": "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
+    "who_url": "https://www.who.int/fr/news-room/fact-sheets/detail/obesity-and-overweight",
     "cdc": "CDC - À propos de l'IMC adulte",
     "cdc_url": "https://www.cdc.gov/bmi/about/index.html"
   },
@@ -192,9 +194,9 @@
     "bmi_sources_title": "Informations IMC et sources",
     "bmi_sources_description": "L'IMC et les catégories de poids sont basés sur l'Organisation mondiale de la santé (OMS) et les Centres pour le contrôle et la prévention des maladies (CDC) des États-Unis.",
     "bmi_source_who": "OMS - Obésité et surpoids",
-    "bmi_source_who_url": "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
+    "bmi_source_who_url": "https://www.who.int/fr/news-room/fact-sheets/detail/obesity-and-overweight",
     "bmi_source_cdc": "CDC - À propos de l'IMC adulte",
-    "bmi_source_cdc_url": "https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/index.html"
+    "bmi_source_cdc_url": "https://www.cdc.gov/bmi/about/index.html"
   },
   "home_page": {
     "enter_weight_instruction": "👉 Entrez le poids avant votre premier repas.",
@@ -323,7 +325,7 @@
     "page2": {
       "title": "📊 Visualisez vos progrès sans effort",
       "content": "Voyez comment vos portions quotidiennes et votre poids changent au fil du temps avec des graphiques clairs et simples - aucun comptage de calories requis.",
-      "onboarding_chart": "en_onboarding_chart.png"
+      "onboarding_chart": "fr_onboarding_chart.png"
     },
     "page3": {
       "title": "🩷 Restez en contrôle chaque jour",

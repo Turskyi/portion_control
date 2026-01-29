@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
 import 'package:portion_control/domain/enums/language.dart';
-import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/onboarding/widgets/onboarding_controls.dart';
@@ -14,9 +13,7 @@ import 'package:portion_control/ui/widgets/language_selector.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({required this.localDataSource, super.key});
-
-  final LocalDataSource localDataSource;
+  const OnboardingScreen({super.key});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -64,8 +61,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               },
               children: <Widget>[
                 OnboardingPage(
-                  // By adding a UniqueKey, we ensure this widget and its state
-                  // are completely rebuilt when the parent rebuilds. [2, 3, 4]
+                  // By adding a `UniqueKey`, we ensure this widget and its
+                  // state are completely rebuilt when the parent rebuilds.
                   key: UniqueKey(),
                   titleKey: 'onboarding.page1.title',
                   contentKey: 'onboarding.page1.content',
@@ -138,7 +135,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _onGetStartedPressed() {
-    widget.localDataSource.saveOnboardingCompleted();
+    context.read<OnboardingBloc>().add(const CompleteOnboardingEvent());
     Navigator.of(context).pushReplacementNamed(AppRoute.home.path);
   }
 }

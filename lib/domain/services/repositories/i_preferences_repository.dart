@@ -1,4 +1,5 @@
 import 'package:portion_control/domain/enums/gender.dart';
+import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 
 abstract interface class IUserPreferencesRepository {
@@ -49,4 +50,8 @@ abstract interface class IUserPreferencesRepository {
   Future<double> getMaxConsumptionWhenWeightDecreased();
 
   Future<double> getMinConsumptionWhenWeightIncreased();
+
+  Language getLanguage();
+
+  String getLanguageIsoCode();
 }

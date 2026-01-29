@@ -2,53 +2,102 @@ part of 'settings_bloc.dart';
 
 @immutable
 sealed class SettingsState {
-  const SettingsState({required this.language});
+  const SettingsState({
+    required this.language,
+    required this.themeMode,
+    required this.isOnboardingCompleted,
+  });
 
   final Language language;
+  final ThemeMode themeMode;
+  final bool isOnboardingCompleted;
 
   bool get isEnglish => language == Language.en;
 
   bool get isUkrainian => language == Language.uk;
 
   String get locale => language.isoLanguageCode;
+
+  bool get isDarkTheme => themeMode == ThemeMode.dark;
 }
 
 final class SettingsInitial extends SettingsState {
-  const SettingsInitial({required super.language});
+  const SettingsInitial({
+    required super.language,
+    required super.themeMode,
+    required super.isOnboardingCompleted,
+  });
 
-  SettingsState copyWith({Language? language}) {
-    return SettingsInitial(language: language ?? this.language);
+  SettingsInitial copyWith({
+    Language? language,
+    ThemeMode? themeMode,
+    bool? isOnboardingCompleted,
+  }) {
+    return SettingsInitial(
+      language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
+      isOnboardingCompleted:
+          isOnboardingCompleted ?? this.isOnboardingCompleted,
+    );
   }
 
   @override
   String toString() {
     return 'SettingsInitial{'
         '  language: $language,'
+        '  themeMode: $themeMode,'
+        '  isOnboardingCompleted: $isOnboardingCompleted,'
         '}';
   }
 }
 
 final class FeedbackState extends SettingsState {
-  const FeedbackState({required this.errorMessage, required super.language});
+  const FeedbackState({
+    required this.errorMessage,
+    required super.language,
+    required super.themeMode,
+    required super.isOnboardingCompleted,
+  });
 
   final String errorMessage;
 
   @override
   String toString() => 'FeedbackState()';
 
-  FeedbackState copyWith({String? errorMessage, Language? language}) {
+  FeedbackState copyWith({
+    String? errorMessage,
+    Language? language,
+    ThemeMode? themeMode,
+    bool? isOnboardingCompleted,
+  }) {
     return FeedbackState(
       errorMessage: errorMessage ?? this.errorMessage,
       language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
+      isOnboardingCompleted:
+          isOnboardingCompleted ?? this.isOnboardingCompleted,
     );
   }
 }
 
 final class SettingsFeedbackSent extends SettingsState {
-  const SettingsFeedbackSent({required super.language});
+  const SettingsFeedbackSent({
+    required super.language,
+    required super.themeMode,
+    required super.isOnboardingCompleted,
+  });
 
-  SettingsFeedbackSent copyWith({Language? language}) {
-    return SettingsFeedbackSent(language: language ?? this.language);
+  SettingsFeedbackSent copyWith({
+    Language? language,
+    ThemeMode? themeMode,
+    bool? isOnboardingCompleted,
+  }) {
+    return SettingsFeedbackSent(
+      language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
+      isOnboardingCompleted:
+          isOnboardingCompleted ?? this.isOnboardingCompleted,
+    );
   }
 
   @override
@@ -56,21 +105,38 @@ final class SettingsFeedbackSent extends SettingsState {
 }
 
 final class LoadingSettingsState extends SettingsState {
-  const LoadingSettingsState({required super.language});
+  const LoadingSettingsState({
+    required super.language,
+    required super.themeMode,
+    required super.isOnboardingCompleted,
+  });
 
   @override
   String toString() => 'LoadingSettingsState()';
 }
 
 final class SettingsError extends SettingsState {
-  const SettingsError({required this.errorMessage, required super.language});
+  const SettingsError({
+    required this.errorMessage,
+    required super.language,
+    required super.themeMode,
+    required super.isOnboardingCompleted,
+  });
 
   final String errorMessage;
 
-  SettingsError copyWith({String? errorMessage, Language? language}) {
+  SettingsError copyWith({
+    String? errorMessage,
+    Language? language,
+    ThemeMode? themeMode,
+    bool? isOnboardingCompleted,
+  }) {
     return SettingsError(
       errorMessage: errorMessage ?? this.errorMessage,
       language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
+      isOnboardingCompleted:
+          isOnboardingCompleted ?? this.isOnboardingCompleted,
     );
   }
 
