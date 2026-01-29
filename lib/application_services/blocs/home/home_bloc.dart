@@ -364,28 +364,33 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _updateFoodWeightState(
+  Future<void> _updateFoodWeightState(
     UpdateFoodWeight event,
     Emitter<HomeState> emit,
-  ) {
+  ) async {
     final Language language = _userPreferencesRepository.getLanguage();
     final double? foodWeight = double.tryParse(event.foodWeight);
     final bool isMealsConfirmed =
         _userPreferencesRepository.isMealsConfirmedForToday;
     if (foodWeight != null) {
       final int foodEntryId = event.foodEntryId;
-      _foodWeightRepository.updateFoodWeightEntry(
+
+      await _foodWeightRepository.updateFoodWeightEntry(
         foodEntryId: foodEntryId,
         foodEntryValue: foodWeight,
       );
+
+      final List<FoodWeight> updatedFoodWeightEntries =
+          await _foodWeightRepository.getTodayFoodEntries();
+
       emit(
         FoodWeightUpdatedState(
           foodEntryId: event.foodEntryId,
-          yesterdayConsumedTotal: foodWeight,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
           bodyWeightEntries: state.bodyWeightEntries,
-          foodEntries: state.foodEntries,
+          foodEntries: updatedFoodWeightEntries,
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
           language: language,
@@ -406,6 +411,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
       );
     }
+    _triggerHomeWidgetUpdate();
   }
 
   FutureOr<void> _submitDetails(
