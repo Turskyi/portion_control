@@ -41,12 +41,12 @@ import java.util.Locale
 class HomeWidgetGlanceAppWidget : GlanceAppWidget() {
     companion object {
         const val KEY_PORTION_CONTROL = "text_portion_control"
-        const val KEY_IMAGE_PATH = "image"
         const val KEY_WEIGHT = "text_weight"
         const val KEY_CONSUMED = "text_consumed"
-        const val KEY_RECOMMENDATION = "text_recommendation"
-        const val KEY_LAST_UPDATED = "text_last_updated"
-        const val KEY_LOCALE = "text_locale"
+        const val KEY_RECOMMENDATION = "pc_text_recommendation"
+        const val KEY_LAST_UPDATED = "pc_text_last_updated"
+        const val KEY_LOCALE = "pc_text_locale"
+        const val KEY_IMAGE_PATH = "pc_image"
 
         // Create a localized context for resource lookups based on the
         // provided language code.
