@@ -66,6 +66,13 @@ class _HomePageState extends State<HomePage> {
                 color: state.isDarkTheme
                     ? colorScheme.onSurface
                     : colorScheme.surface,
+                shadows: <Shadow>[
+                  Shadow(
+                    color: colorScheme.shadow.withValues(alpha: 0.5),
+                    offset: const Offset(0, 1),
+                    blurRadius: 8.0,
+                  ),
+                ],
               ),
             ),
             body: const HomePageContent(),

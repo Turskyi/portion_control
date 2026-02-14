@@ -205,7 +205,7 @@ sealed class HomeState {
             adjustedPortion != constants.kMaxDailyFoodLimit &&
             adjustedPortion != constants.kSafeMinimumFoodIntakeG)
         ? '\n${translate(
-            'previous_portion_control',
+            'home_page.previous_portion_control',
             args: <String, Object?>{'adjustedPortion': adjustedPortion},
           )}'
         : '';
