@@ -152,7 +152,7 @@ class InputRow extends StatelessWidget {
           ),
         ),
         if (unit.isNotEmpty) ...<Widget>[
-          const SizedBox(width: 4),
+          const SizedBox(width: 8),
           Padding(
             padding: const EdgeInsets.only(top: 12),
             child: Tooltip(
@@ -163,7 +163,7 @@ class InputRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 child: Padding(
                   padding: onUnitTap != null
-                      ? const EdgeInsets.fromLTRB(8.0, 14.0, 14.0, 14.0)
+                      ? const EdgeInsets.fromLTRB(4.0, 14.0, 14.0, 14.0)
                       : EdgeInsets.zero,
                   child: Stack(
                     clipBehavior: Clip.none,
