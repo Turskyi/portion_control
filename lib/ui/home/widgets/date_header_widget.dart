@@ -16,25 +16,48 @@ class DateHeaderWidget extends StatelessWidget {
 
         return Column(
           children: <Widget>[
-            const Divider(),
+            const Divider(thickness: 1, height: 32),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  SelectionArea(
-                    child: Text(
-                      isToday ? translate('today') : date.toReadableDate(),
-                      style: Theme.of(context).textTheme.titleLarge,
+                  Expanded(
+                    child: SelectionArea(
+                      child: InkWell(
+                        onTap: () {
+                          context.read<HomeBloc>().add(const LoadEntries());
+                        },
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            isToday
+                                ? '${date.toReadableDate()} '
+                                      '(${translate('today')})'
+                                : date.toReadableDate(),
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: isToday ? null : Colors.orangeAccent,
+                                ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   if (!isToday)
-                    TextButton.icon(
+                    ElevatedButton.icon(
                       onPressed: () {
                         context.read<HomeBloc>().add(const LoadEntries());
                       },
                       icon: const Icon(Icons.today),
                       label: Text(translate('go_to_today')),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primaryContainer,
+                      ),
                     ),
                 ],
               ),

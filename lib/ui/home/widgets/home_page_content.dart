@@ -177,31 +177,37 @@ class _HomePageContentState extends State<HomePageContent> {
             ],
           ),
         );
-        return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            constants.kHorizontalIndent,
-            MediaQuery.paddingOf(context).top,
-            constants.kHorizontalIndent,
-            80.0,
-          ),
-          controller: _scrollController,
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              final double maxWidthAvailable = constraints.maxWidth;
-              final double width = math.min(
-                constants.kWideScreenContentWidth,
-                maxWidthAvailable.isFinite
-                    ? maxWidthAvailable
-                    : constants.kWideScreenContentWidth,
-              );
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<HomeBloc>().add(const LoadEntries());
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              constants.kHorizontalIndent,
+              MediaQuery.paddingOf(context).top,
+              constants.kHorizontalIndent,
+              80.0,
+            ),
+            controller: _scrollController,
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final double maxWidthAvailable = constraints.maxWidth;
+                final double width = math.min(
+                  constants.kWideScreenContentWidth,
+                  maxWidthAvailable.isFinite
+                      ? maxWidthAvailable
+                      : constants.kWideScreenContentWidth,
+                );
 
-              return Center(
-                child: SizedBox(
-                  width: width,
-                  child: contentColumn,
-                ),
-              );
-            },
+                return Center(
+                  child: SizedBox(
+                    width: width,
+                    child: contentColumn,
+                  ),
+                );
+              },
+            ),
           ),
         );
       },
