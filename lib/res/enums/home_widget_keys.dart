@@ -16,13 +16,13 @@ enum HomeWidgetKey {
       case HomeWidgetKey.portionControl:
         return 'text_portion_control';
       case HomeWidgetKey.textLastUpdated:
-        return 'text_last_updated';
+        return 'pc_text_last_updated';
       case HomeWidgetKey.textRecommendation:
-        return 'text_recommendation';
+        return 'pc_text_recommendation';
       case HomeWidgetKey.locale:
-        return 'text_locale';
+        return 'pc_text_locale';
       case HomeWidgetKey.image:
-        return 'image';
+        return 'pc_image';
     }
   }
 }

@@ -15,6 +15,8 @@ class InputRow extends StatelessWidget {
     this.onTap,
     this.onUnitTap,
     this.message = '',
+    this.onSave,
+    this.isSaveEnabled = true,
     super.key,
   });
 
@@ -28,6 +30,12 @@ class InputRow extends StatelessWidget {
   final GestureTapCallback? onTap;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onUnitTap;
+
+  /// Callback for the save action (e.g., checkmark button).
+  final VoidCallback? onSave;
+
+  /// Whether the save action is enabled.
+  final bool isSaveEnabled;
 
   /// The text to display in the tooltip.
   final String message;
@@ -128,6 +136,9 @@ class InputRow extends StatelessWidget {
                       ],
                       onChanged: onChanged,
                       onTap: onTap,
+                      onFieldSubmitted: isSaveEnabled
+                          ? (String _) => onSave?.call()
+                          : null,
                       validator: isRequired
                           ? (String? value) {
                               if (value == null || value.isEmpty) {
@@ -140,43 +151,55 @@ class InputRow extends StatelessWidget {
                   ),
           ),
         ),
-        const SizedBox(width: 4),
-        Padding(
-          padding: const EdgeInsets.only(top: 12),
-          child: Tooltip(
-            message: message,
-            waitDuration: const Duration(milliseconds: 400),
-            child: InkWell(
-              onTap: onUnitTap,
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: onUnitTap != null
-                    ? const EdgeInsets.fromLTRB(8.0, 14.0, 14.0, 14.0)
-                    : EdgeInsets.zero,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: <Widget>[
-                    Text(
-                      unit,
-                      style: TextStyle(fontSize: bodyLargeFontSize),
-                    ),
-                    if (onUnitTap != null)
-                      Positioned(
-                        top: -8,
-                        right: -10,
-                        child: Icon(
-                          Icons.info_outline,
-                          size: 12,
-                          color: colorScheme.onSurfaceVariant,
-                          semanticLabel: translate('info'),
-                        ),
+        if (unit.isNotEmpty) ...<Widget>[
+          const SizedBox(width: 8),
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Tooltip(
+              message: message,
+              waitDuration: const Duration(milliseconds: 400),
+              child: InkWell(
+                onTap: onUnitTap,
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: onUnitTap != null
+                      ? const EdgeInsets.fromLTRB(4.0, 14.0, 14.0, 14.0)
+                      : EdgeInsets.zero,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      Text(
+                        unit,
+                        style: TextStyle(fontSize: bodyLargeFontSize),
                       ),
-                  ],
+                      if (onUnitTap != null)
+                        Positioned(
+                          top: -8,
+                          right: -10,
+                          child: Icon(
+                            Icons.info_outline,
+                            size: 12,
+                            color: colorScheme.onSurfaceVariant,
+                            semanticLabel: translate('info'),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        ],
+        if (onSave != null && value == null) ...<Widget>[
+          const SizedBox(width: 4),
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: isSaveEnabled ? onSave : null,
+            ),
+          ),
+        ],
       ],
     );
   }

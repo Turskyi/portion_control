@@ -478,6 +478,31 @@ class LocalDataSource {
       grouped.putIfAbsent(day, () => <FoodEntry>[]).add(entry);
     }
 
+    final List<BodyWeightEntry> bodyWeights = await _appDatabase
+        .getAllBodyWeightEntries();
+
+    final Map<DateTime, double> bodyWeightByDay = <DateTime, double>{
+      for (final BodyWeightEntry bw in bodyWeights)
+        DateTime(bw.date.year, bw.date.month, bw.date.day): bw.weight,
+    };
+
+    // To get previous body weight, we need sorted body weights.
+    final List<BodyWeightEntry> sortedBodyWeights = List<BodyWeightEntry>.from(
+      bodyWeights,
+    )..sort((BodyWeightEntry a, BodyWeightEntry b) => a.date.compareTo(b.date));
+
+    final Map<DateTime, double> previousBodyWeightByDay = <DateTime, double>{};
+    for (int i = 1; i < sortedBodyWeights.length; i++) {
+      final BodyWeightEntry current = sortedBodyWeights[i];
+      final BodyWeightEntry previous = sortedBodyWeights[i - 1];
+      previousBodyWeightByDay[DateTime(
+            current.date.year,
+            current.date.month,
+            current.date.day,
+          )] =
+          previous.weight;
+    }
+
     final double defaultLimit =
         getLastPortionControl() ??
         await _appDatabase.getMinConsumptionWhenWeightIncreased();
@@ -506,6 +531,8 @@ class LocalDataSource {
         date: day,
         totalConsumed: total,
         dailyLimit: dailyLimit,
+        bodyWeight: bodyWeightByDay[day],
+        previousBodyWeight: previousBodyWeightByDay[day],
         entries: mapEntry.value.map((FoodEntry entry) {
           return FoodWeight(
             id: entry.id,

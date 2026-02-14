@@ -92,6 +92,16 @@ const String appleAppGroupId = 'group.dmytrowidget';
 const String iOSWidgetName = 'PortionControlWidgets';
 const String kAndroidWidgetName = 'PortionControlWidget';
 
+/// The minimum BMI value considered valid for display and classification.
+///
+/// Values below this threshold are treated as missing or insufficient input
+/// (for example, when body weight has not been entered yet) and are excluded
+/// from BMI category messaging.
+///
+/// This helps prevent showing misleading classifications on first app launch
+/// or before the user provides complete data.
+const double kMinValidBmi = 10.0;
+
 /// BMI classification thresholds (kg/m²).
 /// Source: https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index
 /// Marks end of underweight / start of healthy.

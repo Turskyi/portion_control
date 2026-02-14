@@ -22,8 +22,8 @@ import java.util.Locale
 class PortionControlWidget : HomeWidgetProvider() {
     companion object {
         const val KEY_PORTION_CONTROL = "text_portion_control"
-        const val KEY_IMAGE_PATH = "image"
-        const val KEY_LOCALE = "text_locale"
+        const val KEY_IMAGE_PATH = "pc_image"
+        const val KEY_LOCALE = "pc_text_locale"
     }
 
     override fun onUpdate(

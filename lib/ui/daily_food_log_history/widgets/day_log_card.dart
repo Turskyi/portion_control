@@ -29,9 +29,31 @@ class DayLogCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
-                day.formattedDate,
-                style: theme.textTheme.titleMedium,
+              Row(
+                children: <Widget>[
+                  Text(
+                    day.formattedDate,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  if (day.isWeightIncreasing == true)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Icon(
+                        Icons.trending_up,
+                        color: colorScheme.error,
+                        size: 18,
+                      ),
+                    )
+                  else if (day.isWeightDecreasing == true)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Icon(
+                        Icons.trending_down,
+                        color: colorScheme.tertiary,
+                        size: 18,
+                      ),
+                    ),
+                ],
               ),
               if (hasEntries)
                 Text(
@@ -121,15 +143,25 @@ class DayLogCard extends StatelessWidget {
       final int safeIndex = index.clamp(0, _mealOrder.length - 1);
       return t(_mealOrder[safeIndex]);
     } else if (entries.length == 4) {
-      if (index == 0) {
-        return t(MealType.breakfast);
-      } else if (index == 1) {
-        return t(MealType.secondBreakfast);
-      } else if (index == 2) {
-        return t(MealType.lunch);
-      } else {
+      // Sort indices by weight (descending).
+      final List<int> sortedIndices =
+          List<int>.generate(entries.length, (int i) => i)..sort(
+            (int a, int b) => entries[b].weight.compareTo(entries[a].weight),
+          );
+
+      // Three largest meals become Breakfast, Lunch, Dinner (chronological).
+      final List<int> mainMealIndices = sortedIndices.take(3).toList()..sort();
+
+      if (mainMealIndices.contains(index)) {
+        final int position = mainMealIndices.indexOf(index);
+        if (position == 0) return t(MealType.breakfast);
+        if (position == 1) return t(MealType.lunch);
         return t(MealType.dinner);
       }
+
+      // The remaining meal is Snack or Second Breakfast based on time.
+      final int hour = entries[index].dateTime.hour;
+      return hour < 12 ? t(MealType.secondBreakfast) : t(MealType.snack);
     } else if (entries.length == 3) {
       if (index == 0) {
         return t(MealType.breakfast);

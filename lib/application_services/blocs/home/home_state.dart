@@ -205,7 +205,7 @@ sealed class HomeState {
             adjustedPortion != constants.kMaxDailyFoodLimit &&
             adjustedPortion != constants.kSafeMinimumFoodIntakeG)
         ? '\n${translate(
-            'previous_portion_control',
+            'home_page.previous_portion_control',
             args: <String, Object?>{'adjustedPortion': adjustedPortion},
           )}'
         : '';
@@ -222,7 +222,9 @@ sealed class HomeState {
   }
 
   String get bmiMessage {
-    if (bmi < constants.bmiUnderweightThreshold) {
+    if (bmi < constants.kMinValidBmi) {
+      return '';
+    } else if (bmi < constants.bmiUnderweightThreshold) {
       return translate('healthy_weight.underweight_message');
     } else if (bmi >= constants.bmiUnderweightThreshold &&
         bmi <= constants.bmiHealthyUpperThreshold) {

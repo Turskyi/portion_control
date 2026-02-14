@@ -4,12 +4,12 @@ import WidgetKit
 // MARK: - Data Keys
 struct WidgetDataKeys {
     static let portionControl = "text_portion_control"
-    static let imagePath = "image"
     static let weight = "text_weight"
     static let consumed = "text_consumed"
-    static let recommendation = "text_recommendation"
-    static let lastUpdated = "text_last_updated"
-    static let locale = "text_locale"
+    static let recommendation = "pc_text_recommendation"
+    static let lastUpdated = "pc_text_last_updated"
+    static let locale = "pc_text_locale"
+    static let imagePath = "pc_image"
 }
 
 // MARK: - Localization
