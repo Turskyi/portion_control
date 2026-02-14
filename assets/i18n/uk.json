@@ -45,6 +45,7 @@
   "info": "Інформація",
   "dark_theme": "Темна тема",
   "light_theme": "Світла тема",
+  "go_to_today": "Перейти до сьогодні",
   "measurement": {
     "grams_value": "{value} г"
   },

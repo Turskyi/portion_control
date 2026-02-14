@@ -10,6 +10,7 @@ import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
+import 'package:portion_control/ui/home/widgets/date_header_widget.dart';
 import 'package:portion_control/ui/home/widgets/food_entries_column.dart';
 import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.dart';
 import 'package:portion_control/ui/home/widgets/portion_control_message.dart';
@@ -94,6 +95,7 @@ class _HomePageContentState extends State<HomePageContent> {
                     ),
                   ),
                 ),
+              const DateHeaderWidget(),
               if (state.isWeightNotSubmitted)
                 Padding(
                   padding: const EdgeInsets.only(top: 12.0),

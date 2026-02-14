@@ -45,6 +45,7 @@
   "info": "Info",
   "dark_theme": "Dark theme",
   "light_theme": "Light theme",
+  "go_to_today": "Go to Today",
   "measurement": {
     "grams_value": "{value} g"
   },

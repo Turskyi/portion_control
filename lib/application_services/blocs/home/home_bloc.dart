@@ -78,6 +78,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
     final Language language = _userPreferencesRepository.getLanguage();
+    final DateTime now = DateTime.now();
 
     if (userDetails.isNotEmpty) {
       emit(
@@ -88,6 +89,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.totalConsumedYesterday,
           language: language,
+          dataDate: now,
         ),
       );
       final BodyWeight todayBodyWeightEntry = await _bodyWeightRepository
@@ -101,6 +103,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.totalConsumedYesterday,
           language: language,
+          dataDate: now,
         ),
       );
       final double totalConsumedYesterday = await _foodWeightRepository
@@ -114,6 +117,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: totalConsumedYesterday,
           language: language,
+          dataDate: now,
         ),
       );
       try {
@@ -126,9 +130,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
           final DateTime lastSavedBodyWeightDate =
               lastSavedBodyWeightEntry.date;
-          final DateTime today = DateTime.now();
 
-          todayBodyWeight = lastSavedBodyWeightDate.isSameDate(today)
+          todayBodyWeight = lastSavedBodyWeightDate.isSameDate(now)
               ? lastSavedBodyWeightEntry.weight
               : 0;
 
@@ -171,6 +174,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               foodEntries: state.foodEntries,
               yesterdayConsumedTotal: totalConsumedYesterday,
               language: language,
+              dataDate: now,
             ),
           );
         } else if (todayBodyWeight > constants.minBodyWeight) {
@@ -189,6 +193,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 isConfirmedAllMealsLogged: isMealsConfirmed,
                 portionControl: portionControl,
                 language: language,
+                dataDate: now,
               ),
             );
           } else {
@@ -202,6 +207,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 isConfirmedAllMealsLogged: isMealsConfirmed,
                 portionControl: portionControl,
                 language: language,
+                dataDate: now,
               ),
             );
           }
@@ -218,6 +224,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               yesterdayConsumedTotal: totalConsumedYesterday,
               portionControl: state.portionControl,
               language: language,
+              dataDate: now,
             ),
           );
         }
@@ -233,6 +240,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             yesterdayConsumedTotal: totalConsumedYesterday,
             portionControl: state.portionControl,
             language: language,
+            dataDate: now,
           ),
         );
       }
@@ -246,6 +254,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           yesterdayConsumedTotal: state.totalConsumedYesterday,
           portionControl: state.portionControl,
           language: language,
+          dataDate: now,
         ),
       );
     }
@@ -268,6 +277,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     } else {
@@ -280,6 +290,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -300,6 +311,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     } else {
@@ -312,6 +324,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -328,6 +341,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         foodEntries: state.foodEntries,
         yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         language: language,
+        dataDate: state.dataDate,
       ),
     );
   }
@@ -347,6 +361,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     } else {
@@ -359,6 +374,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -394,6 +410,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     } else {
@@ -408,6 +425,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -441,6 +459,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             language: language,
+            dataDate: state.dataDate,
           ),
         );
         // Exit early if height validation fails.
@@ -472,6 +491,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 isConfirmedAllMealsLogged: isMealsConfirmed,
                 portionControl: state.portionControl,
                 language: language,
+                dataDate: state.dataDate,
               ),
             );
           } else {
@@ -482,6 +502,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 bodyWeightEntries: state.bodyWeightEntries,
                 foodEntries: state.foodEntries,
                 language: language,
+                dataDate: state.dataDate,
               ),
             );
           }
@@ -495,6 +516,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               foodEntries: state.foodEntries,
               yesterdayConsumedTotal: state.yesterdayConsumedTotal,
               language: language,
+              dataDate: state.dataDate,
             ),
           );
         }
@@ -513,6 +535,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             language: language,
+            dataDate: state.dataDate,
           ),
         );
       }
@@ -531,6 +554,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -639,6 +663,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             isConfirmedAllMealsLogged: isMealsConfirmed,
             portionControl: portionControl,
             language: language,
+            dataDate: state.dataDate,
           ),
         );
       } catch (error, stackTrace) {
@@ -657,6 +682,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             foodEntries: state.foodEntries,
             yesterdayConsumedTotal: state.yesterdayConsumedTotal,
             language: language,
+            dataDate: state.dataDate,
           ),
         );
       }
@@ -678,6 +704,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -713,6 +740,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             isConfirmedAllMealsLogged: isMealsConfirmed,
             portionControl: state.portionControl,
             language: language,
+            dataDate: state.dataDate,
           ),
         );
       } catch (error, stackTrace) {
@@ -732,6 +760,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             isConfirmedAllMealsLogged: isMealsConfirmed,
             portionControl: state.portionControl,
             language: language,
+            dataDate: state.dataDate,
           ),
         );
       }
@@ -747,6 +776,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -778,6 +808,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 isConfirmedAllMealsLogged: isMealsConfirmed,
                 portionControl: state.portionControl,
                 language: language,
+                dataDate: state.dataDate,
               ),
             );
           });
@@ -795,6 +826,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           isConfirmedAllMealsLogged: isMealsConfirmed,
           portionControl: state.portionControl,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -816,6 +848,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         foodEntries: state.foodEntries,
         language: language,
         yesterdayConsumedTotal: yesterdayConsumedTotal,
+        dataDate: state.dataDate,
       ),
     );
   }
@@ -832,6 +865,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         bodyWeightEntries: state.bodyWeightEntries,
         foodEntries: state.foodEntries,
         language: language,
+        dataDate: state.dataDate,
       ),
     );
   }
@@ -854,6 +888,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         isConfirmedAllMealsLogged: isMealsConfirmed,
         portionControl: state.portionControl,
         language: language,
+        dataDate: state.dataDate,
       ),
     );
   }
@@ -873,6 +908,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: const <FoodWeight>[],
           language: language,
           yesterdayConsumedTotal: 0,
+          dataDate: state.dataDate,
         ),
       );
     } catch (error) {
@@ -885,6 +921,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -907,6 +944,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           isConfirmedAllMealsLogged: false,
           portionControl: state.portionControl,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     } catch (error) {
@@ -919,6 +957,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           foodEntries: state.foodEntries,
           yesterdayConsumedTotal: state.yesterdayConsumedTotal,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -941,6 +980,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           isConfirmedAllMealsLogged: isSaved,
           portionControl: state.portionControl,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     } else {
@@ -955,6 +995,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           isConfirmedAllMealsLogged: false,
           portionControl: state.portionControl,
           language: language,
+          dataDate: state.dataDate,
         ),
       );
     }
@@ -975,6 +1016,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         foodEntries: state.foodEntries,
         portionControl: state.portionControl,
         language: language,
+        dataDate: state.dataDate,
       ),
     );
   }
@@ -1013,6 +1055,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         foodEntries: state.foodEntries,
         yesterdayConsumedTotal: state.yesterdayConsumedTotal,
         portionControl: state.portionControl,
+        dataDate: state.dataDate,
       ),
     );
     final UserFeedback feedback = event.feedback;
