@@ -4,6 +4,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/extensions/date_time_extension.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/constants/date_constants.dart'
     as date_constants;
 import 'package:portion_control/ui/home/widgets/gender_selection_widget.dart';
@@ -36,6 +37,8 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
         final String title = state is BodyWeightSubmittedState
             ? t('user_details_widget.title_your_details')
             : t('user_details_widget.title_enter_your_details');
+        final bool isDetailsSubmitted = state is DetailsSubmittedState;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 16,
@@ -89,11 +92,20 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                     },
                     message: t('user_details_widget.height_hint'),
                     onUnitTap: _showHeightHintDialog,
+                    onSave: !isDetailsSubmitted
+                        ? () {
+                            context.read<HomeBloc>().add(const SubmitDetails());
+                          }
+                        : null,
+                    isSaveEnabled: height >= constants.minUserHeight,
                   ),
                 ),
               ],
             ),
-            const SubmitEditDetailsButton(),
+            if (isDetailsSubmitted ||
+                MediaQuery.sizeOf(context).width >=
+                    constants.wideScreenThreshold)
+              const SubmitEditDetailsButton(),
           ],
         );
       },

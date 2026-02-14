@@ -28,6 +28,7 @@ class SubmitEditBodyWeightButton extends StatelessWidget {
               return BlocListener<MenuBloc, MenuState>(
                 listenWhen: _shouldRebuildOnLanguageChange,
                 listener: (BuildContext _, MenuState _) {
+                  //TODO: why we need this "setState" here?
                   setState(() {});
                 },
                 child: ResponsiveButton(

@@ -58,7 +58,7 @@ class _HomePageContentState extends State<HomePageContent> {
               // understand their data is local-only and may be lost.
               if (state.bodyWeightEntries.isEmpty && state.foodEntries.isEmpty)
                 Card(
-                  color: themeData.colorScheme.surfaceVariant,
+                  color: themeData.colorScheme.surfaceContainerHighest,
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: SelectionArea(
@@ -114,9 +114,21 @@ class _HomePageContentState extends State<HomePageContent> {
                       '${weight > constants.minBodyWeight ? weight : ''}',
                   value: state is BodyWeightSubmittedState ? '$weight' : null,
                   onChanged: _updateBodyWeight,
+                  onSave: state is! BodyWeightSubmittedState
+                      ? () {
+                          context.read<HomeBloc>().add(
+                            SubmitBodyWeight(state.bodyWeight),
+                          );
+                        }
+                      : null,
+                  isSaveEnabled: weight >= constants.minBodyWeight,
                 ),
-              if (state is DetailsSubmittedState)
+              if (state is DetailsSubmittedState &&
+                  (state is BodyWeightSubmittedState ||
+                      MediaQuery.sizeOf(context).width >=
+                          constants.wideScreenThreshold))
                 const SubmitEditBodyWeightButton(),
+              const SizedBox(height: 4),
               if (state.bodyWeightEntries.length > 1)
                 // Line Chart of Body Weight trends for the last two
                 // weeks.
