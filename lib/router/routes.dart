@@ -31,33 +31,34 @@ Map<String, WidgetBuilder> getRouteMap({
 }) {
   return <String, WidgetBuilder>{
     AppRoute.landing.path: (BuildContext _) {
-      return BlocProvider<SettingsBloc>(
-        create: (BuildContext _) => settingsBloc,
+      return BlocProvider<SettingsBloc>.value(
+        value: settingsBloc,
         child: const LandingPage(),
       );
     },
     AppRoute.home.path: (BuildContext _) {
+      homeBloc.add(const LoadEntries());
       return MultiBlocProvider(
         providers: <SingleChildWidget>[
-          BlocProvider<HomeBloc>(
-            create: (BuildContext _) => homeBloc..add(const LoadEntries()),
+          BlocProvider<HomeBloc>.value(
+            value: homeBloc,
           ),
-          BlocProvider<YesterdayEntriesBloc>(
-            create: (BuildContext _) => yesterdayEntriesBloc,
+          BlocProvider<YesterdayEntriesBloc>.value(
+            value: yesterdayEntriesBloc,
           ),
           BlocProvider<MenuBloc>.value(
             value: menuBloc,
           ),
-          BlocProvider<SettingsBloc>(
-            create: (BuildContext _) => settingsBloc,
+          BlocProvider<SettingsBloc>.value(
+            value: settingsBloc,
           ),
         ],
         child: const HomePage(),
       );
     },
     AppRoute.onboarding.path: (BuildContext _) {
-      return BlocProvider<OnboardingBloc>(
-        create: (BuildContext _) => onboardingBloc,
+      return BlocProvider<OnboardingBloc>.value(
+        value: onboardingBloc,
         child: const OnboardingScreen(),
       );
     },
