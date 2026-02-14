@@ -29,9 +29,31 @@ class DayLogCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Text(
-                day.formattedDate,
-                style: theme.textTheme.titleMedium,
+              Row(
+                children: <Widget>[
+                  Text(
+                    day.formattedDate,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  if (day.isWeightIncreasing == true)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Icon(
+                        Icons.trending_up,
+                        color: colorScheme.error,
+                        size: 18,
+                      ),
+                    )
+                  else if (day.isWeightDecreasing == true)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Icon(
+                        Icons.trending_down,
+                        color: colorScheme.tertiary,
+                        size: 18,
+                      ),
+                    ),
+                ],
               ),
               if (hasEntries)
                 Text(

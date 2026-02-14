@@ -7,16 +7,30 @@ class DayFoodLog {
     required this.totalConsumed,
     required this.dailyLimit,
     required this.entries,
+    this.bodyWeight,
+    this.previousBodyWeight,
   });
 
   final DateTime date;
   final double totalConsumed;
   final double dailyLimit;
   final List<FoodWeight> entries;
+  final double? bodyWeight;
+  final double? previousBodyWeight;
 
   bool get hasEntries => entries.isNotEmpty;
 
   bool get isOverLimit => totalConsumed > dailyLimit;
+
+  bool? get isWeightIncreasing =>
+      (bodyWeight != null && previousBodyWeight != null)
+      ? bodyWeight! > previousBodyWeight!
+      : null;
+
+  bool? get isWeightDecreasing =>
+      (bodyWeight != null && previousBodyWeight != null)
+      ? bodyWeight! < previousBodyWeight!
+      : null;
 
   String get formattedDate {
     final DateTime now = DateTime.now();
