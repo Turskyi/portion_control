@@ -23,13 +23,13 @@ sealed class HomeState {
   final DateTime dataDate;
 
   bool get isSafePortionControl =>
-      portionControl > constants.kSafeMinimumFoodIntakeG &&
+      portionControl >= constants.kAbsoluteMinimumFoodIntakeG &&
       portionControl < constants.kMaxDailyFoodLimit;
 
   // Helper getter to check if yesterday's consumption is positive AND
   // would be a safe portion size if used today.
   bool get _isYesterdayConsumedTotalASafePortion =>
-      yesterdayConsumedTotal > constants.kSafeMinimumFoodIntakeG &&
+      yesterdayConsumedTotal >= constants.kAbsoluteMinimumFoodIntakeG &&
       yesterdayConsumedTotal < constants.kMaxDailyFoodLimit;
 
   double get adjustedPortion {
@@ -39,17 +39,22 @@ sealed class HomeState {
       return yesterdayConsumedTotal;
     } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
       return constants.kSafeMinimumFoodIntakeG;
+    } else if (isWeightAboveHealthy || isWeightIncreasing) {
+      // If we are above healthy weight or weight is increasing, we should not
+      // default to the technical max limit (4000g).
+      // Instead, we use the safe minimum as a floor.
+      return constants.kSafeMinimumFoodIntakeG;
     } else {
       return constants.kMaxDailyFoodLimit;
     }
   }
 
   double get safePortionControl {
-    if (portionControl > constants.kSafeMinimumFoodIntakeG &&
+    if (portionControl >= constants.kAbsoluteMinimumFoodIntakeG &&
         portionControl < constants.kMaxDailyFoodLimit) {
       return portionControl;
-    } else if (portionControl < constants.kSafeMinimumFoodIntakeG) {
-      return constants.kSafeMinimumFoodIntakeG;
+    } else if (portionControl < constants.kAbsoluteMinimumFoodIntakeG) {
+      return constants.kAbsoluteMinimumFoodIntakeG;
     } else {
       return constants.kMaxDailyFoodLimit;
     }

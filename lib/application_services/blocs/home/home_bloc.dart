@@ -152,15 +152,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
           // If historical proofs are not yet available, fallback to last saved
           // portion or safe defaults.
-          if (portionControl == constants.kMaxDailyFoodLimit ||
-              portionControl == constants.kSafeMinimumFoodIntakeG) {
+          // Note: If isWeightAboveHealthy is true and portionControl is
+          // kSafeMinimumFoodIntakeG, it means a "proof" was found (weight
+          // increased even at low intake), so we should NOT treat it as a
+          // missing proof and fallback to saved values.
+          final bool isNoProofFound =
+              portionControl == constants.kMaxDailyFoodLimit ||
+              (isWeightBelowHealthy &&
+                  portionControl == constants.kSafeMinimumFoodIntakeG);
+
+          if (isNoProofFound) {
             final double? savedPortionControl = _userPreferencesRepository
                 .getLastPortionControl();
             if (savedPortionControl != null) {
               portionControl = savedPortionControl;
-            } else if (isWeightAboveHealthy &&
-                totalConsumedYesterday > constants.kSafeMinimumFoodIntakeG) {
-              portionControl = totalConsumedYesterday;
+            } else if (isWeightAboveHealthy && totalConsumedYesterday > 0) {
+              // If we are above healthy weight, ensure we don't exceed safety
+              // floor if yesterday's intake was already very low.
+              portionControl =
+                  totalConsumedYesterday > constants.kSafeMinimumFoodIntakeG
+                  ? totalConsumedYesterday
+                  : constants.kSafeMinimumFoodIntakeG;
             }
           }
         }
@@ -613,8 +625,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (isWeightAboveHealthy) {
           if (portionControl == constants.kMaxDailyFoodLimit) {
             if (savedPortionControl == null) {
-              if (totalConsumedYesterday > constants.kSafeMinimumFoodIntakeG) {
-                portionControl = totalConsumedYesterday;
+              if (totalConsumedYesterday > 0) {
+                portionControl =
+                    totalConsumedYesterday > constants.kSafeMinimumFoodIntakeG
+                    ? totalConsumedYesterday
+                    : constants.kSafeMinimumFoodIntakeG;
                 await _userPreferencesRepository.savePortionControl(
                   portionControl,
                 );
