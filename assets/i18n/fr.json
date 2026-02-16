@@ -1419,7 +1419,16 @@
     "high_calorie_title": "Aliments riches en calories",
     "high_calorie_list": "Exemples : huiles, beurre, noix et beurres de noix, morceaux gras de viande, fromage, chocolat et sucreries, pâtisseries et snacks transformés. Ces aliments sont très denses en calories – de petites quantités s’additionnent rapidement.",
     "low_calorie_title": "Aliments à faible densité / faibles en calories",
-    "low_calorie_list": "Exemples : légumes-feuilles, concombres, courgettes, céleri, soupes à base de bouillon, baies, melon. Ces aliments permettent de manger plus de volume pour moins de calories."
+    "low_calorie_list": "Exemples : légumes-feuilles, concombres, courgettes, céleri, soupes à base de bouillon, baies, melon. Ces aliments permettent de manger plus de volume pour moins de calories.",
+    "safety_limits_title": "Limites de sécurité",
+    "safety_limits_intro": "Pour garantir votre santé et votre sécurité, l'application utilise des limites spécifiques pour le suivi de la consommation alimentaire :",
+    "max_limit_title": "Protection maximale (4000 g)",
+    "max_limit_content": "Une limite supérieure technique pour éviter les valeurs irréalistes avant que suffisamment de données ne soient collectées. Ce n'est pas une cible recommandée.",
+    "safe_min_limit_title": "Minimum recommandé (1200 g)",
+    "safe_min_limit_content": "Une protection pour éviter de suggérer une consommation alimentaire dangereusement basse, basée sur les directives de santé générales pour la perte de poids.",
+    "absolute_min_limit_title": "Seuil de sécurité absolu (1000 g)",
+    "absolute_min_limit_content": "Le seuil ultime pour l'algorithme adaptatif. Une consommation inférieure à ce niveau peut mettre la vie en danger si elle est prolongée.",
+    "safety_limits_tooltip": "Afficher les informations sur les limites de sécurité"
   },
   "streak": {
     "zero": "Commencez votre premier jour aujourd’hui",

@@ -4,6 +4,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/ui/home/widgets/meal_confirmation_card.dart';
+import 'package:portion_control/ui/widgets/safety_limits_dialog.dart';
 
 class PortionControlMessage extends StatelessWidget {
   const PortionControlMessage({super.key});
@@ -25,6 +26,7 @@ class PortionControlMessage extends StatelessWidget {
         final bool isWeightIncreasing = state.isWeightIncreasing;
         final double portionControl = state.adjustedPortion;
         final double yesterdayTotal = state.yesterdayConsumedTotal;
+
         if (state.hasNoPortionControl) {
           return Text(
             translate('portion_control_status.no_portion_control_today'),
@@ -32,28 +34,21 @@ class PortionControlMessage extends StatelessWidget {
           );
         } else if (state.isWeightIncreasingOrSame && isWeightAboveHealthy) {
           if (state.isMealsConfirmedForToday) {
-            if (portionControl > constants.kSafeMinimumFoodIntakeG) {
-              if (portionControl != constants.kMaxDailyFoodLimit) {
-                return Text(
-                  '${translate('portion_control_status.'
-                  'portion_control_for_today_prefix')}'
-                  '${state.formattedPortionControl}'
-                  '${translate('portion_control_status.'
-                  'grams_suffix_with_emoji')}',
-                  style: titleMediumStyle,
-                );
-              }
-            }
-            // Portion control too low → show minimum safe intake instead.
-            return Text(
+            final String limitValue =
+                (portionControl > constants.kSafeMinimumFoodIntakeG &&
+                    portionControl != constants.kMaxDailyFoodLimit)
+                ? state.formattedPortionControl
+                : state.formattedSafeMinimumFoodIntake;
+
+            return _buildMessageWithInfo(
+              context,
               '${translate('portion_control_status.'
               'portion_control_for_today_prefix')}'
-              '${state.formattedSafeMinimumFoodIntake}'
+              '$limitValue'
               '${translate('portion_control_status.grams_suffix_with_emoji')}',
-              style: titleMediumStyle,
+              titleMediumStyle,
             );
           } else if (!state.isMealsConfirmedForToday) {
-            // false
             return MealConfirmationCard(yesterdayTotal: yesterdayTotal);
           }
         } else if (isWeightDecreasing && isWeightAboveHealthy) {
@@ -71,7 +66,6 @@ class PortionControlMessage extends StatelessWidget {
                   '$yesterdayTotal$gramsSuffix'
                   '${state.previousPortionControlInfo}\n'
                   '$useAsReferenceSuffix',
-                  // Slightly smaller than titleMediumStyle.
                   style: textTheme.bodyMedium,
                 )
               else if (portionControl > constants.kSafeMinimumFoodIntakeG &&
@@ -79,7 +73,6 @@ class PortionControlMessage extends StatelessWidget {
                 Text(
                   '${state.previousPortionControlInfo}\n'
                   '$useAsReferenceSuffix',
-                  // Slightly smaller than titleMediumStyle.
                   style: textTheme.bodyMedium,
                 ),
             ],
@@ -94,13 +87,14 @@ class PortionControlMessage extends StatelessWidget {
               portionControl > constants.kSafeMinimumFoodIntakeG) {
             if (portionControl != constants.kMaxDailyFoodLimit &&
                 portionControl != constants.kSafeMinimumFoodIntakeG) {
-              return Text(
+              return _buildMessageWithInfo(
+                context,
                 '${translate('portion_control_status.'
                 'warning_weight_dropping_prefix')}'
                 '${state.formattedPortionControl}'
                 '${translate('portion_control_status.'
                 'grams_suffix_with_emoji')}',
-                style: titleMediumStyle,
+                titleMediumStyle,
               );
             }
           } else if (!state.isMealsConfirmedForToday) {
@@ -114,9 +108,32 @@ class PortionControlMessage extends StatelessWidget {
             );
           }
         }
-        // Default empty widget if no condition matches.
         return const SizedBox.shrink();
       },
+    );
+  }
+
+  Widget _buildMessageWithInfo(
+    BuildContext context,
+    String text,
+    TextStyle? style,
+  ) {
+    return Row(
+      children: <Widget>[
+        Expanded(child: Text(text, style: style)),
+        IconButton(
+          icon: const Icon(Icons.info_outline, size: 20),
+          onPressed: () => _showSafetyLimitsDialog(context),
+          tooltip: translate('educational_content.safety_limits_tooltip'),
+        ),
+      ],
+    );
+  }
+
+  void _showSafetyLimitsDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) => const SafetyLimitsDialog(),
     );
   }
 }

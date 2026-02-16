@@ -23,25 +23,23 @@ class DateHeaderWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Expanded(
-                    child: SelectionArea(
-                      child: InkWell(
-                        onTap: () {
-                          context.read<HomeBloc>().add(const LoadEntries());
-                        },
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(
-                            isToday
-                                ? '${date.toReadableDate()} '
-                                      '(${translate('today')})'
-                                : date.toReadableDate(),
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: isToday ? null : Colors.orangeAccent,
-                                ),
-                          ),
+                    child: InkWell(
+                      onTap: () {
+                        context.read<HomeBloc>().add(const LoadEntries());
+                      },
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Text(
+                          isToday
+                              ? '${date.toReadableDate()} '
+                                    '(${translate('today')})'
+                              : date.toReadableDate(),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: isToday ? null : Colors.orangeAccent,
+                              ),
                         ),
                       ),
                     ),

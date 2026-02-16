@@ -1419,7 +1419,16 @@
     "high_calorie_title": "Foods high in calories",
     "high_calorie_list": "Examples: oils, butter, nuts and nut butters, fatty cuts of meat, cheese, chocolate and sweets, pastries, and processed snacks. These are calorie‑dense - small amounts add up quickly.",
     "low_calorie_title": "Lower calorie / low‑density foods",
-    "low_calorie_list": "Examples: leafy greens, cucumbers, zucchini, celery, broth‑based soups, berries, melon. These let you eat more volume for fewer calories."
+    "low_calorie_list": "Examples: leafy greens, cucumbers, zucchini, celery, broth‑based soups, berries, melon. These let you eat more volume for fewer calories.",
+    "safety_limits_title": "Safety Limits",
+    "safety_limits_intro": "To ensure your health and safety, the app uses specific limits for food intake tracking:",
+    "max_limit_title": "Upper Safeguard (4000g)",
+    "max_limit_content": "A technical upper bound to prevent unrealistic values before enough data is collected. It is not a recommended target.",
+    "safe_min_limit_title": "Recommended Minimum (1200g)",
+    "safe_min_limit_content": "A safeguard to prevent suggesting dangerously low food intake, based on general health guidelines for weight loss.",
+    "absolute_min_limit_title": "Absolute Safety Floor (1000g)",
+    "absolute_min_limit_content": "The ultimate floor for the adaptive algorithm. Intake below this level can be life-threatening if sustained.",
+    "safety_limits_tooltip": "View safety limits information"
   },
   "streak": {
     "zero": "Start your first day today",
