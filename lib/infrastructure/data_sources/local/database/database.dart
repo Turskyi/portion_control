@@ -344,13 +344,18 @@ class AppDatabase extends _$AppDatabase {
         ).subtract(const Duration(days: 1));
 
         final double? consumption = dailyConsumption[consumptionDate];
-        if (consumption != null &&
-            consumption < minConsumption &&
-            consumption > constants.kSafeMinimumFoodIntakeG) {
+        if (consumption != null && consumption < minConsumption) {
           minConsumption = consumption;
         }
       }
     }
+
+    // If historical evidence suggests weight increases even at very low intake,
+    // we still don't recommend eating less than the absolute safety floor.
+    if (minConsumption < constants.kAbsoluteMinimumFoodIntakeG) {
+      return constants.kAbsoluteMinimumFoodIntakeG;
+    }
+
     return minConsumption;
   }
 

@@ -3,6 +3,8 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/domain/enums/meal_type.dart';
 import 'package:portion_control/domain/models/day_food_log.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
+import 'package:portion_control/ui/widgets/safety_limits_dialog.dart';
 
 class DayLogCard extends StatelessWidget {
   const DayLogCard({required this.day, super.key});
@@ -15,11 +17,13 @@ class DayLogCard extends StatelessWidget {
     final ColorScheme colorScheme = theme.colorScheme;
     final bool isOverLimit = day.totalConsumed > day.dailyLimit;
     final bool hasEntries = day.entries.isNotEmpty;
-
+    final String bodyWeight =
+        day.bodyWeight?.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '') ??
+        '';
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: colorScheme.surface.withOpacity(0.85),
+        color: colorScheme.surface.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -35,6 +39,16 @@ class DayLogCard extends StatelessWidget {
                     day.formattedDate,
                     style: theme.textTheme.titleMedium,
                   ),
+                  if (day.bodyWeight != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Text(
+                        '($bodyWeight${translate("home_page.kg_unit")})',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
                   if (day.isWeightIncreasing == true)
                     Padding(
                       padding: const EdgeInsets.only(left: 4),
@@ -82,11 +96,31 @@ class DayLogCard extends StatelessWidget {
                 args: <String, Object?>{'value': day.totalConsumed},
               ),
             ),
-            Text(
-              translate(
-                'daily_food_log_history.daily_limit',
-                args: <String, Object?>{'value': day.dailyLimit},
-              ),
+            Row(
+              children: <Widget>[
+                Text(
+                  translate(
+                    'daily_food_log_history.daily_limit',
+                    args: <String, Object?>{'value': day.dailyLimit},
+                  ),
+                ),
+                if (day.dailyLimit == constants.kMaxDailyFoodLimit ||
+                    day.dailyLimit == constants.kSafeMinimumFoodIntakeG ||
+                    day.dailyLimit == constants.kAbsoluteMinimumFoodIntakeG)
+                  IconButton(
+                    icon: const Icon(Icons.info_outline, size: 16),
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (BuildContext context) =>
+                            const SafetyLimitsDialog(),
+                      );
+                    },
+                  ),
+              ],
             ),
             const SizedBox(height: 8),
 

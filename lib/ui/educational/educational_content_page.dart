@@ -7,6 +7,7 @@ import 'package:portion_control/ui/widgets/blurred_app_bar.dart';
 import 'package:portion_control/ui/widgets/gradient_background_scaffold.dart';
 import 'package:portion_control/ui/widgets/leading_widget.dart';
 import 'package:portion_control/ui/widgets/responsive_content.dart';
+import 'package:portion_control/ui/widgets/safety_limit_detail.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EducationalContentPage extends StatelessWidget {
@@ -68,6 +69,32 @@ class EducationalContentPage extends StatelessWidget {
               Text(
                 translate(
                   'educational_content.what_is_portion_control_content',
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                translate('educational_content.safety_limits_title'),
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(translate('educational_content.safety_limits_intro')),
+              SafetyLimitDetail(
+                title: translate('educational_content.max_limit_title'),
+                content: translate('educational_content.max_limit_content'),
+              ),
+              SafetyLimitDetail(
+                title: translate('educational_content.safe_min_limit_title'),
+                content: translate(
+                  'educational_content.safe_min_limit_content',
+                ),
+              ),
+              SafetyLimitDetail(
+                title: translate(
+                  'educational_content.absolute_min_limit_title',
+                ),
+                content: translate(
+                  'educational_content.absolute_min_limit_content',
                 ),
               ),
               const SizedBox(height: 12),

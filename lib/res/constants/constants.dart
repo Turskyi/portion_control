@@ -52,9 +52,9 @@ const double kMaxDailyFoodLimit = 4000.0;
 /// This safeguard exists to prevent the app from recommending
 /// dangerously low food intake.
 ///
-/// The value of `1499 g` is derived from the widely accepted
-/// minimum safe caloric intake for adults (≈1500 kcal/day)
-/// recommended by public health authorities such as WHO and CDC.
+/// The value of `1200 g` is derived from the widely accepted
+/// minimum safe caloric intake for adults (≈1200 kcal/day)
+/// recommended by many health organizations for weight loss.
 ///
 /// Because the app tracks food weight in grams rather than
 /// calories, this constant acts as a conservative proxy: it ensures
@@ -64,7 +64,14 @@ const double kMaxDailyFoodLimit = 4000.0;
 /// This is a general safety floor and does not replace personalized
 /// medical advice. Users with special dietary needs should consult
 /// a healthcare professional.
-const double kSafeMinimumFoodIntakeG = 1499.0;
+const double kSafeMinimumFoodIntakeG = 1200.0;
+
+/// The absolute minimum daily food intake, in grams.
+///
+/// This value represents a level below which intake might be
+/// life-threatening if sustained, and it serves as the ultimate floor
+/// for the app's adaptive algorithm, even if weight continues to increase.
+const double kAbsoluteMinimumFoodIntakeG = 1000.0;
 
 /// When to switch to wide layout.
 const double wideScreenThreshold = 600.0;

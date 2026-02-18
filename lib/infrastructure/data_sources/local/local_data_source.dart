@@ -510,6 +510,13 @@ class LocalDataSource {
     final List<PortionControlEntry> portionControls = await _appDatabase
         .getAllPortionControls();
 
+    // Sort portion controls by date ascending so that later entries for
+    // the same day overwrite earlier ones in our map.
+    portionControls.sort(
+      (PortionControlEntry a, PortionControlEntry b) =>
+          a.date.compareTo(b.date),
+    );
+
     final Map<DateTime, double> portionControlByDay = <DateTime, double>{
       for (final PortionControlEntry pc in portionControls)
         DateTime(pc.date.year, pc.date.month, pc.date.day): pc.value,
@@ -526,7 +533,6 @@ class LocalDataSource {
         0.0,
         (double sum, FoodEntry item) => sum + item.weight,
       );
-
       return DayFoodLog(
         date: day,
         totalConsumed: total,

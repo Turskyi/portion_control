@@ -10,6 +10,7 @@ import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
+import 'package:portion_control/ui/home/widgets/date_header_widget.dart';
 import 'package:portion_control/ui/home/widgets/food_entries_column.dart';
 import 'package:portion_control/ui/home/widgets/healthy_weight_recommendations.dart';
 import 'package:portion_control/ui/home/widgets/portion_control_message.dart';
@@ -94,6 +95,7 @@ class _HomePageContentState extends State<HomePageContent> {
                     ),
                   ),
                 ),
+              const DateHeaderWidget(),
               if (state.isWeightNotSubmitted)
                 Padding(
                   padding: const EdgeInsets.only(top: 12.0),
@@ -155,17 +157,12 @@ class _HomePageContentState extends State<HomePageContent> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Expanded(child: PortionControlMessage()),
                     IconButton(
                       icon: const Icon(Icons.info_outline),
                       tooltip: translate('learn_more'),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoute.educationalContent.path,
-                        );
-                      },
+                      onPressed: _navigateToEducationalContentPage,
                     ),
+                    const Expanded(child: PortionControlMessage()),
                   ],
                 ),
               if (state is BodyWeightSubmittedState)
@@ -175,31 +172,37 @@ class _HomePageContentState extends State<HomePageContent> {
             ],
           ),
         );
-        return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            constants.kHorizontalIndent,
-            MediaQuery.paddingOf(context).top,
-            constants.kHorizontalIndent,
-            80.0,
-          ),
-          controller: _scrollController,
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              final double maxWidthAvailable = constraints.maxWidth;
-              final double width = math.min(
-                constants.kWideScreenContentWidth,
-                maxWidthAvailable.isFinite
-                    ? maxWidthAvailable
-                    : constants.kWideScreenContentWidth,
-              );
+        return RefreshIndicator(
+          onRefresh: () async {
+            context.read<HomeBloc>().add(const LoadEntries());
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              constants.kHorizontalIndent,
+              MediaQuery.paddingOf(context).top,
+              constants.kHorizontalIndent,
+              80.0,
+            ),
+            controller: _scrollController,
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final double maxWidthAvailable = constraints.maxWidth;
+                final double width = math.min(
+                  constants.kWideScreenContentWidth,
+                  maxWidthAvailable.isFinite
+                      ? maxWidthAvailable
+                      : constants.kWideScreenContentWidth,
+                );
 
-              return Center(
-                child: SizedBox(
-                  width: width,
-                  child: contentColumn,
-                ),
-              );
-            },
+                return Center(
+                  child: SizedBox(
+                    width: width,
+                    child: contentColumn,
+                  ),
+                );
+              },
+            ),
           ),
         );
       },
@@ -212,6 +215,13 @@ class _HomePageContentState extends State<HomePageContent> {
     _feedbackController?.removeListener(_onFeedbackChanged);
     _feedbackController = null;
     super.dispose();
+  }
+
+  void _navigateToEducationalContentPage() {
+    Navigator.pushNamed(
+      context,
+      AppRoute.educationalContent.path,
+    );
   }
 
   void _navigateToSupportPage() {

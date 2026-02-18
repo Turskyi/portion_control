@@ -29,12 +29,13 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   FeedbackController? _feedbackController;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkForUpdate();
   }
 
@@ -42,6 +43,15 @@ class _HomePageState extends State<HomePage> {
   void didChangeDependencies() {
     _feedbackController = BetterFeedback.of(context);
     super.didChangeDependencies();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Refresh entries when the app is brought back to the foreground.
+      // This helps in transitioning to a new day after waking up.
+      context.read<HomeBloc>().add(const LoadEntries());
+    }
   }
 
   @override
@@ -278,6 +288,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _feedbackController?.removeListener(_onFeedbackChanged);
     _feedbackController = null;
     super.dispose();
@@ -343,7 +354,7 @@ class _HomePageState extends State<HomePage> {
 
   void _notifyFeedbackSent() {
     BetterFeedback.of(context).hide();
-    // Let user know that his feedback is sent.
+    // Let user let know that his feedback is sent.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(translate('feedback.sent')),
