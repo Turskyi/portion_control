@@ -191,7 +191,6 @@ class InputRow extends StatelessWidget {
           ),
         ],
         if (onSave != null && value == null) ...<Widget>[
-          const SizedBox(width: 4),
           Padding(
             padding: const EdgeInsets.only(top: 12),
             child: IconButton(

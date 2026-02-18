@@ -7,7 +7,7 @@ habits."
 
 publish_to: 'none'
 
-version: 1.1.4+14
+version: 1.1.5+15
 
 environment:
   sdk: '>=3.9.2 <4.0.0'
@@ -37,7 +37,7 @@ dependencies:
     git:
       url: https://github.com/Javernaver/flutter_translate.git
       ref: master
-  google_fonts: ^8.0.1
+  google_fonts: ^8.0.2
   home_widget: ^0.9.0
   in_app_update: ^4.2.5
   intl: ^0.20.2
