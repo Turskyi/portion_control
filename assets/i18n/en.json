@@ -209,7 +209,7 @@
   },
   "portion_control_status": {
     "no_portion_control_today": "🍽️ No portion control today!\n📝 Log everything you eat to track how it affects your weight.",
-    "portion_control_for_today_prefix": "⚖️ Portion Control for today: ",
+    "portion_control_for_today_prefix": "⚖️ Portion Control for today:\n",
     "grams_suffix_with_emoji": " g 🍽️",
     "weight_decreasing_celebrate": "📉 Your weight is decreasing! 🎉\nEnjoy your meals without strict Portion Control, but keep logging to track your progress. 🍽️",
     "yesterday_prefix": "📊 Yesterday: ",

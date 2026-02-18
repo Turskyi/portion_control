@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
@@ -109,22 +108,29 @@ class ChartLabels extends StatelessWidget {
     final ThemeData themeData = Theme.of(context);
     final TextStyle? labelStyle = themeData.textTheme.labelLarge;
 
-    // Take the last 3 entries, or fewer if not available.
-    final List<BodyWeight> lastThreeEntries = bodyWeightEntries.length > 3
-        ? bodyWeightEntries.sublist(bodyWeightEntries.length - 3)
-        : bodyWeightEntries;
+    // Get up to 3 unique weight values, starting from the most recent.
+    final Set<String> seen = <String>{};
+    final List<double> distinctWeights = <double>[];
 
-    // Sort the entries by weight to ensure they are displayed numerically.
-    final List<BodyWeight> sortedEntries = lastThreeEntries.sortedBy<num>(
-      (BodyWeight entry) => entry.weight,
-    );
+    for (final BodyWeight entry in bodyWeightEntries.reversed) {
+      final String formatted = entry.weight.toStringAsFixed(1);
+      if (seen.add(formatted)) {
+        distinctWeights.add(entry.weight);
+      }
+      if (distinctWeights.length == 3) {
+        break;
+      }
+    }
+
+    // Sort numerically so the highest is at the top.
+    distinctWeights.sort();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: sortedEntries.reversed.map((BodyWeight entry) {
+      children: distinctWeights.reversed.map((double weight) {
         return Text(
-          entry.weight.toStringAsFixed(1),
+          weight.toStringAsFixed(1),
           style: labelStyle,
         );
       }).toList(),

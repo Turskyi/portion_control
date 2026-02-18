@@ -17,7 +17,9 @@ class DayLogCard extends StatelessWidget {
     final ColorScheme colorScheme = theme.colorScheme;
     final bool isOverLimit = day.totalConsumed > day.dailyLimit;
     final bool hasEntries = day.entries.isNotEmpty;
-
+    final String bodyWeight =
+        day.bodyWeight?.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '') ??
+        '';
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -37,6 +39,16 @@ class DayLogCard extends StatelessWidget {
                     day.formattedDate,
                     style: theme.textTheme.titleMedium,
                   ),
+                  if (day.bodyWeight != null)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
+                      child: Text(
+                        '($bodyWeight${translate("home_page.kg_unit")})',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
                   if (day.isWeightIncreasing == true)
                     Padding(
                       padding: const EdgeInsets.only(left: 4),

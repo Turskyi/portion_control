@@ -157,17 +157,12 @@ class _HomePageContentState extends State<HomePageContent> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Expanded(child: PortionControlMessage()),
                     IconButton(
                       icon: const Icon(Icons.info_outline),
                       tooltip: translate('learn_more'),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoute.educationalContent.path,
-                        );
-                      },
+                      onPressed: _navigateToEducationalContentPage,
                     ),
+                    const Expanded(child: PortionControlMessage()),
                   ],
                 ),
               if (state is BodyWeightSubmittedState)
@@ -220,6 +215,13 @@ class _HomePageContentState extends State<HomePageContent> {
     _feedbackController?.removeListener(_onFeedbackChanged);
     _feedbackController = null;
     super.dispose();
+  }
+
+  void _navigateToEducationalContentPage() {
+    Navigator.pushNamed(
+      context,
+      AppRoute.educationalContent.path,
+    );
   }
 
   void _navigateToSupportPage() {
