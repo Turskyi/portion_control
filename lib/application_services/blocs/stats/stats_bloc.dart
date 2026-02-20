@@ -81,15 +81,25 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
         }
       }
 
+      final List<DayFoodLog> lastSevenDaysIntake = foodLogs
+          .take(DateTime.daysPerWeek)
+          .toList();
+
+      // `weightLogs` is sorted ASC (oldest first), so we need the last 14
+      // entries.
+      final int weightLimit = DateTime.daysPerWeek * 2;
+      final List<BodyWeight> lastTwoWeeksBodyWeightEntries =
+          weightLogs.length > weightLimit
+          ? weightLogs.sublist(weightLogs.length - weightLimit)
+          : weightLogs;
+
       emit(
         StatsLoaded(
           averageDailyIntake: averageDailyIntake,
           weeklyWeightChange: weeklyWeightChange,
           limitExceededCount: limitExceededCount,
-          lastSevenDaysIntake: foodLogs.take(DateTime.daysPerWeek).toList(),
-          lastTwoWeeksBodyWeightEntries: weightLogs
-              .take(DateTime.daysPerWeek * 2)
-              .toList(),
+          lastSevenDaysIntake: lastSevenDaysIntake,
+          lastTwoWeeksBodyWeightEntries: lastTwoWeeksBodyWeightEntries,
         ),
       );
     } catch (e) {

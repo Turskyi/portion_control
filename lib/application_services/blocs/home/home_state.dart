@@ -184,8 +184,13 @@ sealed class HomeState {
   String get formattedTotalConsumedToday =>
       totalConsumedToday.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
 
-  String get formattedTotalConsumedYesterday =>
-      totalConsumedYesterday.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');
+  String get formattedTotalConsumedYesterday {
+    return totalConsumedYesterday
+        .toStringAsFixed(1)
+        .replaceAll(RegExp(r'\.0$'), '');
+  }
+
+  bool get hasNoFoodEntriesYesterday => formattedTotalConsumedYesterday == '0';
 
   String get formattedPortionControl {
     return adjustedPortion.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '');

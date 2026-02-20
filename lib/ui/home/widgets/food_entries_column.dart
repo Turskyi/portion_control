@@ -77,7 +77,7 @@ class FoodEntriesColumn extends StatelessWidget {
                 '${state.formattedTotalConsumedToday}$gramsSuffix',
                 style: textTheme.titleMedium,
               ),
-              if (state.formattedTotalConsumedYesterday == '0')
+              if (state.hasNoFoodEntriesYesterday)
                 TextButton(
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.all(16),
@@ -99,7 +99,9 @@ class FoodEntriesColumn extends StatelessWidget {
                   '${state.formattedTotalConsumedYesterday}$gramsSuffix',
                   style: textTheme.titleMedium,
                 ),
-              if (isWeightBelowHealthy &&
+              if (state.hasNoFoodEntriesYesterday)
+                const SizedBox.shrink()
+              else if (isWeightBelowHealthy &&
                   isWeightDecreasingOrSame &&
                   totalConsumedToday < portionControl &&
                   portionControl != constants.kMaxDailyFoodLimit &&
