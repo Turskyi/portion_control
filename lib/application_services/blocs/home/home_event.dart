@@ -113,3 +113,7 @@ final class ErrorEvent extends HomeEvent {
 final class UpdateDeviceHomeWidgetEvent extends HomeEvent {
   const UpdateDeviceHomeWidgetEvent();
 }
+
+final class CheckForUpdate extends HomeEvent {
+  const CheckForUpdate();
+}

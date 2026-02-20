@@ -65,7 +65,7 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
               children: <Widget>[
                 if (gender.isMaleOrFemale)
                   Expanded(
-                    flex: 3,
+                    flex: 10,
                     child: InputRow(
                       label: t('user_details_widget.label_date_of_birth'),
                       controller: _dateOfBirthTextEditingController
@@ -80,7 +80,7 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                     ),
                   ),
                 Expanded(
-                  flex: 2,
+                  flex: 11,
                   child: InputRow(
                     label: t('user_details_widget.label_height'),
                     unit: t('user_details_widget.unit_cm'),

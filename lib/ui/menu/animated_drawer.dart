@@ -191,9 +191,7 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
                   AnimatedDrawerItem(
                     icon: Icons.bar_chart,
                     text: translate('stats.title'),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoute.stats.path);
-                    },
+                    onTap: _navigateToStats,
                   ),
                   const Divider(),
                   AnimatedDrawerItem(
@@ -286,6 +284,10 @@ class _AnimatedDrawerState extends State<AnimatedDrawer>
     _controller.dispose();
     _isRequestPinWidgetSupported.dispose();
     super.dispose();
+  }
+
+  Future<void> _navigateToStats() {
+    return Navigator.pushNamed<void>(context, AppRoute.stats.path);
   }
 
   Future<void> _showRemindersDialog() {

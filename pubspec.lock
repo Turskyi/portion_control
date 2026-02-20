@@ -85,10 +85,10 @@ packages:
     dependency: "direct main"
     description:
       name: build
-      sha256: c1668065e9ba04752570ad7e038288559d1e2ca5c6d0131c0f5f55e39e777413
+      sha256: "275bf6bb2a00a9852c28d4e0b410da1d833a734d57d39d44f94bfc895a484ec3"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.3"
+    version: "4.0.4"
   build_config:
     dependency: transitive
     description:
@@ -117,18 +117,18 @@ packages:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: "7b5b569f3df370590a85029148d6fc66c7d0201fc6f1847c07dd85d365ae9fcd"
+      sha256: "39ad4ca8a2876779737c60e4228b4bcd35d4352ef7e14e47514093edc012c734"
       url: "https://pub.dev"
     source: hosted
-    version: "2.10.3"
+    version: "2.11.1"
   build_web_compilers:
     dependency: "direct dev"
     description:
       name: build_web_compilers
-      sha256: "2dd6810e1cdd6c398fb498096afa7a5de43babba0df18b8650a368c199cb109e"
+      sha256: a9e26a88296e0ef0a4bbe1e8da40dc42ce1e45563c8820a962ac1907ace3e07b
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.11"
+    version: "4.4.12"
   built_collection:
     dependency: transitive
     description:
@@ -482,10 +482,10 @@ packages:
     dependency: "direct main"
     description:
       name: google_fonts
-      sha256: c30eef5e7cd26eb89cc8065b4390ac86ce579f2fcdbe35220891c6278b5460da
+      sha256: db9df7a5898d894eeda4c78143f35c30a243558be439518972366880b80bf88e
       url: "https://pub.dev"
     source: hosted
-    version: "8.0.1"
+    version: "8.0.2"
   graphs:
     dependency: transitive
     description:
@@ -650,10 +650,10 @@ packages:
     dependency: "direct main"
     description:
       name: mockito
-      sha256: "4feb43bc4eb6c03e832f5fcd637d1abb44b98f9cfa245c58e27382f58859f8f6"
+      sha256: a45d1aa065b796922db7b9e7e7e45f921aed17adf3a8318a1f47097e7e695566
       url: "https://pub.dev"
     source: hosted
-    version: "5.5.1"
+    version: "5.6.3"
   mocktail:
     dependency: "direct main"
     description:

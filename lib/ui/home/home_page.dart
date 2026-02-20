@@ -1,11 +1,8 @@
-import 'dart:io' show Platform;
-
 import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:in_app_update/in_app_update.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
@@ -36,7 +33,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _checkForUpdate();
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      context.read<HomeBloc>().add(const CheckForUpdate());
+    });
   }
 
   @override
@@ -294,18 +293,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Future<void> _checkForUpdate() async {
-    if (!kIsWeb && Platform.isAndroid) {
-      try {
-        final AppUpdateInfo info = await InAppUpdate.checkForUpdate();
-        if (info.updateAvailability == UpdateAvailability.updateAvailable) {
-          await InAppUpdate.performImmediateUpdate();
-        }
-      } catch (e) {
-        debugPrint('InAppUpdate error: $e');
-      }
-    }
-  }
+  // Update logic moved to `HomeBloc`.
 
   void _handlePopupMenuSelection(String result) {
     if (result == constants.kLanguageValue) {

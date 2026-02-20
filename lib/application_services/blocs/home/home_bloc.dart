@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -6,6 +7,7 @@ import 'package:feedback/feedback.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:in_app_update/in_app_update.dart';
 import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:portion_control/domain/enums/feedback_rating.dart';
@@ -59,6 +61,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeBugReportPressedEvent>(_onFeedbackRequested);
     on<HomeClosingFeedbackEvent>(_onFeedbackDialogDismissed);
     on<HomeSubmitFeedbackEvent>(_sendUserFeedback);
+    on<CheckForUpdate>(_checkForUpdate);
     on<ErrorEvent>(_handleError);
     on<UpdateDeviceHomeWidgetEvent>(_updateDeviceHomeWidget);
   }
@@ -1133,14 +1136,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       } catch (error, stackTrace) {
         debugPrint(
           'Error in $runtimeType in `onError`: $error.\n'
-          'Stacktrace: $stackTrace',
+          'Stack trace: $stackTrace',
         );
         add(ErrorEvent(translate('error.unexpectedError')));
       }
     } catch (error, stackTrace) {
       debugPrint(
         'Error in $runtimeType in `onError`: $error.\n'
-        'Stacktrace: $stackTrace',
+        'Stack trace: $stackTrace',
       );
       add(ErrorEvent(translate('error.unexpectedError')));
     }
@@ -1283,5 +1286,102 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (!kIsWeb && !Platform.isMacOS) {
       add(const UpdateDeviceHomeWidgetEvent());
     }
+  }
+
+  Future<void> _checkForUpdate(
+    CheckForUpdate _,
+    Emitter<HomeState> emit,
+  ) async {
+    if (!kIsWeb) {
+      if (Platform.isAndroid) {
+        await _checkAndroidUpdate();
+      } else if (Platform.isIOS) {
+        await _checkIosUpdate();
+      }
+    }
+  }
+
+  Future<void> _checkAndroidUpdate() async {
+    try {
+      final AppUpdateInfo info = await InAppUpdate.checkForUpdate();
+      if (info.updateAvailability == UpdateAvailability.updateAvailable) {
+        await InAppUpdate.performImmediateUpdate();
+      }
+    } catch (e) {
+      debugPrint('Error checking for Android update: $e');
+    }
+  }
+
+  Future<void> _checkIosUpdate() async {
+    try {
+      final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      final String bundleId = packageInfo.packageName;
+      final String currentVersion = packageInfo.version;
+
+      final Uri url = Uri.parse('${constants.kITunesLookupUrl}$bundleId');
+
+      final HttpClient client = HttpClient();
+      final HttpClientRequest request = await client.getUrl(url);
+      final HttpClientResponse response = await request.close();
+      final String body = await response.transform(utf8.decoder).join();
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Object? decodedData = json.decode(body);
+        if (decodedData is Map<String, Object?>) {
+          final Object? results = decodedData['results'];
+
+          if (results is List<Object?> && results.isNotEmpty) {
+            final Object? firstResult = results.first;
+
+            if (firstResult is Map<String, Object?>) {
+              final Object? storeVersion = firstResult['version'];
+              final Object? trackViewUrl = firstResult['trackViewUrl'];
+
+              if (storeVersion is String && trackViewUrl is String) {
+                if (_isUpdateAvailable(currentVersion, storeVersion)) {
+                  final Uri appStoreUri = Uri.parse(trackViewUrl);
+                  final bool canLaunchAppStoreUrl = await canLaunchUrl(
+                    appStoreUri,
+                  );
+                  if (canLaunchAppStoreUrl) {
+                    await launchUrl(
+                      appStoreUri,
+                      mode: LaunchMode.externalApplication,
+                    );
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error checking for iOS update: $e');
+    }
+  }
+
+  bool _isUpdateAvailable(String currentVersion, String storeVersion) {
+    try {
+      final List<int> currentParts = currentVersion
+          .split('.')
+          .map(int.parse)
+          .toList();
+      final List<int> storeParts = storeVersion
+          .split('.')
+          .map(int.parse)
+          .toList();
+
+      for (int i = 0; i < storeParts.length; i++) {
+        final int current = i < currentParts.length ? currentParts[i] : 0;
+        final int store = storeParts[i];
+
+        if (store > current) return true;
+        if (store < current) return false;
+      }
+    } catch (e) {
+      debugPrint('Error checking for update: $e');
+      return false;
+    }
+    return false;
   }
 }

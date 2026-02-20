@@ -59,6 +59,9 @@ Future<void> main() async {
   // `SharedPreferences` dependencies initialization.
   WidgetsFlutterBinding.ensureInitialized();
 
+  //TODO: make `injectDependencies` to return Dependencies class, move
+  // `await SharedPreferences.getInstance();` inside the `injectDependencies`
+  // and get an instance of "SharedPreferences" out of it.
   await di.injectDependencies();
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
