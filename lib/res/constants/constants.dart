@@ -13,6 +13,9 @@ const String appStoreUrl = 'https://apps.apple.com/app/id6743641654';
 const String macOsUrl =
     'https://apps.apple.com/ca/app/portion-control/id6743641654';
 
+// Lookup URL used to query App Store metadata by bundle id.
+const String kITunesLookupUrl = 'https://itunes.apple.com/lookup?bundleId=';
+
 const String imagePath = 'assets/images/';
 
 /// Blur intensity constant.
