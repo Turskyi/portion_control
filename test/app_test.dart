@@ -36,6 +36,7 @@ void main() {
     late MockUserDetailsRepository mockUserDetailsRepository;
     late MockClearTrackingDataUseCase mockClearTrackingDataUseCase;
     late LocalDataSource localDataSource;
+    late SharedPreferences preferences;
     late LocalizationDelegate localizationDelegate;
     late SettingsRepository settingsRepository;
     late SettingsBloc settingsBloc;
@@ -55,8 +56,7 @@ void main() {
       mockHomeWidgetService = MockHomeWidgetService();
 
       // Set up SharedPreferences
-      final SharedPreferences preferences =
-          await SharedPreferences.getInstance();
+      preferences = await SharedPreferences.getInstance();
 
       // Initialize database and data source
       localDataSource = LocalDataSource(preferences, database);
@@ -144,7 +144,11 @@ void main() {
                   ),
                 ],
                 child: DependenciesScope(
-                  dependencies: Dependencies(localDataSource),
+                  dependencies: Dependencies(
+                    localDataSource,
+                    preferences,
+                    localizationDelegate,
+                  ),
                   child: App(routeMap: testRoutes),
                 ),
               ),
