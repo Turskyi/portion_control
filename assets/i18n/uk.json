@@ -182,7 +182,9 @@
     "must_eat_at_least_prefix": "❗Ви повинні з'їсти ще принаймні ",
     "can_eat_prefix": "Ви можете з'їсти ще ",
     "more_today_suffix": " сьогодні",
-    "you_did_not_put_any_food_entries_yesterday": "Ви не записали жодної страви вчора.\nНе забувайте відстежувати свою їжу! ⏳"
+    "you_did_not_put_any_food_entries_yesterday": "Ви не записали жодної страви вчора.\nНе забувайте відстежувати свою їжу! ⏳",
+    "are_you_sure_title": "Ви впевнені?",
+    "weight_increase_warning": "Минулого разу, коли ви з'їли понад {portion} г, ваша вага збільшилася."
   },
   "healthy_weight": {
     "your_bmi_prefix": "Ваш індекс маси тіла (ІМТ): ",

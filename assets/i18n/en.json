@@ -180,7 +180,9 @@
     "must_eat_at_least_prefix": "❗You must eat at least ",
     "can_eat_prefix": "You can eat ",
     "more_today_suffix": " more today",
-    "you_did_not_put_any_food_entries_yesterday": "You did not put any food entries yesterday."
+    "you_did_not_put_any_food_entries_yesterday": "You did not put any food entries yesterday.",
+    "are_you_sure_title": "Are you sure?",
+    "weight_increase_warning": "Last time you ate more than {portion} g your body weight increased."
   },
   "healthy_weight": {
     "your_bmi_prefix": "Your Body Mass Index (BMI): ",

@@ -180,7 +180,9 @@
     "must_eat_at_least_prefix": "❗Vous devez manger au moins ",
     "can_eat_prefix": "Vous pouvez manger ",
     "more_today_suffix": " de plus aujourd'hui",
-    "you_did_not_put_any_food_entries_yesterday": "Vous n'avez mis aucune entrée alimentaire hier."
+    "you_did_not_put_any_food_entries_yesterday": "Vous n'avez mis aucune entrée alimentaire hier.",
+    "are_you_sure_title": "Êtes-vous sûr ?",
+    "weight_increase_warning": "La dernière fois que vous avez mangé plus de {portion} g, votre poids a augmenté."
   },
   "healthy_weight": {
     "your_bmi_prefix": "Votre indice de masse corporelle (IMC) : ",
