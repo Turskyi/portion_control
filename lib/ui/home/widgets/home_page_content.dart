@@ -157,11 +157,12 @@ class _HomePageContentState extends State<HomePageContent> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    IconButton(
-                      icon: const Icon(Icons.info_outline),
-                      tooltip: translate('learn_more'),
-                      onPressed: _navigateToEducationalContentPage,
-                    ),
+                    if (state.isMealsConfirmedForToday)
+                      IconButton(
+                        icon: const Icon(Icons.info_outline),
+                        tooltip: translate('learn_more'),
+                        onPressed: _navigateToEducationalContentPage,
+                      ),
                     const Expanded(child: PortionControlMessage()),
                   ],
                 ),
