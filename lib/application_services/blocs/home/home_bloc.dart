@@ -181,21 +181,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           }
         }
 
+        // Always fetch today's food entries so we don't accidentally keep
+        // showing yesterday's entries when transitioning to a new day.
+        final List<FoodWeight> todayFoodWeightEntries =
+            await _foodWeightRepository.getTodayFoodEntries();
+
         if (todayBodyWeight == 0) {
           emit(
             DetailsSubmittedState(
               userDetails: userDetails,
               bodyWeight: todayBodyWeight,
               bodyWeightEntries: bodyWeightEntries,
-              foodEntries: state.foodEntries,
+              foodEntries: todayFoodWeightEntries,
               yesterdayConsumedTotal: totalConsumedYesterday,
               language: language,
               dataDate: now,
             ),
           );
         } else if (todayBodyWeight > constants.minBodyWeight) {
-          final List<FoodWeight> todayFoodWeightEntries =
-              await _foodWeightRepository.getTodayFoodEntries();
           final bool isMealsConfirmed =
               _userPreferencesRepository.isMealsConfirmedForToday;
           if (todayFoodWeightEntries.isNotEmpty) {
