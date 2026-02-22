@@ -51,7 +51,7 @@ class PortionControlMessage extends StatelessWidget {
               text: '$prefix$limitValue$suffix',
               style: titleMediumStyle,
             );
-          } else if (!state.isMealsConfirmedForToday) {
+          } else if (state.areMealsNotConfirmed) {
             return MealConfirmationCard(yesterdayTotal: yesterdayTotal);
           }
         } else if (isWeightDecreasing && isWeightAboveHealthy) {

@@ -64,6 +64,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<CheckForUpdate>(_checkForUpdate);
     on<ErrorEvent>(_handleError);
     on<UpdateDeviceHomeWidgetEvent>(_updateDeviceHomeWidget);
+    on<CheckDateChangeOnResume>(_checkDateChangeOnResume);
   }
 
   final IUserPreferencesRepository _userPreferencesRepository;
@@ -1383,5 +1384,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       return false;
     }
     return false;
+  }
+
+  void _checkDateChangeOnResume(
+    CheckDateChangeOnResume event,
+    Emitter<HomeState> emit,
+  ) {
+    final DateTime now = DateTime.now();
+    final DateTime lastDataDate = state.dataDate;
+
+    // If the date has changed since the app was last active, reload entries
+    if (!lastDataDate.isSameDate(now)) {
+      add(const LoadEntries());
+    }
   }
 }

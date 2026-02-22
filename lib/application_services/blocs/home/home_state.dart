@@ -172,6 +172,8 @@ sealed class HomeState {
     return false;
   }
 
+  bool get areMealsNotConfirmed => !isMealsConfirmedForToday;
+
   bool get shouldAskForMealConfirmation =>
       isWeightIncreasingOrSame &&
       isWeightAboveHealthy &&
@@ -191,6 +193,7 @@ sealed class HomeState {
   }
 
   bool get hasNoFoodEntriesYesterday => formattedTotalConsumedYesterday == '0';
+
   bool get hasFoodEntriesYesterday => formattedTotalConsumedYesterday != '0';
 
   String get formattedPortionControl {

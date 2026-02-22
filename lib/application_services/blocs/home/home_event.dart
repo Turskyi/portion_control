@@ -117,3 +117,7 @@ final class UpdateDeviceHomeWidgetEvent extends HomeEvent {
 final class CheckForUpdate extends HomeEvent {
   const CheckForUpdate();
 }
+
+final class CheckDateChangeOnResume extends HomeEvent {
+  const CheckDateChangeOnResume();
+}
