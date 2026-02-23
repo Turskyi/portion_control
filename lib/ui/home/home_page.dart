@@ -47,9 +47,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // Refresh entries when the app is brought back to the foreground.
-      // This helps in transitioning to a new day after waking up.
-      context.read<HomeBloc>().add(const LoadEntries());
+      // Check if the date has changed while the app was in the background.
+      // Only reload entries if we've transitioned to a new day.
+      context.read<HomeBloc>().add(const CheckDateChangeOnResume());
     }
   }
 

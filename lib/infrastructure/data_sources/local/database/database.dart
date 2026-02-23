@@ -172,6 +172,13 @@ class AppDatabase extends _$AppDatabase {
   /// foreign key constraints).
   Future<int> clearBodyWeightEntries() => delete(bodyWeightEntries).go();
 
+  /// Returns the amount of rows that were deleted by this statement directly
+  /// (not including additional rows that might be affected through triggers or
+  /// foreign key constraints).
+  Future<int> clearPortionControlEntries() {
+    return delete(portionControlEntries).go();
+  }
+
   Future<BodyWeightEntry?> getTodayBodyWeight() {
     final DateTime today = DateTime.now();
     final DateTime startOfDay = DateTime(today.year, today.month, today.day);

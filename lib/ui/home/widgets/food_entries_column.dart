@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
@@ -63,8 +64,14 @@ class FoodEntriesColumn extends StatelessWidget {
               // Input field for new food entry.
               FoodWeightEntryRow(
                 isEditState: true,
-                onSave: (String value) {
-                  context.read<HomeBloc>().add(AddFoodEntry(value));
+                onSave: (String value) async {
+                  await _handleFoodEntrySubmission(
+                    context: context,
+                    hasFoodEntriesYesterday: state.hasFoodEntriesYesterday,
+                    value: value,
+                    totalConsumedToday: totalConsumedToday,
+                    portionControl: portionControl,
+                  );
                 },
               )
             else if (totalConsumedToday >= constants.kMaxDailyFoodLimit)
@@ -125,6 +132,66 @@ class FoodEntriesColumn extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _handleFoodEntrySubmission({
+    required BuildContext context,
+    required bool hasFoodEntriesYesterday,
+    required String value,
+    required double totalConsumedToday,
+    required double portionControl,
+  }) async {
+    HapticFeedback.lightImpact();
+    if (hasFoodEntriesYesterday) {
+      final String normalized = value.replaceAll(',', '.');
+      final double? parsedValue = double.tryParse(normalized);
+      if (parsedValue != null) {
+        final double newTotal = totalConsumedToday + parsedValue;
+        if (portionControl < newTotal) {
+          final String formattedPortion = portionControl
+              .toStringAsFixed(1)
+              .replaceAll(RegExp(r'\.0$'), '');
+          final bool confirmed =
+              await showDialog<bool>(
+                context: context,
+                builder: (BuildContext dialogContext) {
+                  return AlertDialog(
+                    title: Text(translate('food_entry.are_you_sure_title')),
+                    content: Text(
+                      translate(
+                        'food_entry.weight_increase_warning',
+                        args: <String, String>{'portion': formattedPortion},
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => Navigator.of(
+                          dialogContext,
+                        ).pop(false),
+                        child: Text(translate('no')),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop(true);
+                        },
+                        child: Text(translate('yes')),
+                      ),
+                    ],
+                  );
+                },
+              ) ??
+              false;
+
+          if (confirmed && context.mounted) {
+            context.read<HomeBloc>().add(AddFoodEntry(value));
+          }
+        } else {
+          context.read<HomeBloc>().add(AddFoodEntry(value));
+        }
+      }
+    } else {
+      context.read<HomeBloc>().add(AddFoodEntry(value));
+    }
   }
 
   void _navigateToDailyFoodLogHistory(BuildContext context) {

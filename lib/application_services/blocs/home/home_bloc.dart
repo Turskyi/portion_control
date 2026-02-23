@@ -55,8 +55,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<EditBodyWeight>(_setBodyWeightToEditMode);
     on<EditFoodEntry>(_setFoodWeightToEditMode);
     on<DeleteFoodEntry>(_deleteFoodEntry);
-    on<ClearUserData>(_clearUserData);
-    on<ResetFoodEntries>(_clearAllFoodEntries);
+    on<ClearTrackingData>(_clearTrackingData);
+    on<ResetFoodEntries>(_clearFoodEntries);
     on<ConfirmMealsLogged>(_saveMealsConfirmation);
     on<HomeBugReportPressedEvent>(_onFeedbackRequested);
     on<HomeClosingFeedbackEvent>(_onFeedbackDialogDismissed);
@@ -64,6 +64,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<CheckForUpdate>(_checkForUpdate);
     on<ErrorEvent>(_handleError);
     on<UpdateDeviceHomeWidgetEvent>(_updateDeviceHomeWidget);
+    on<CheckDateChangeOnResume>(_checkDateChangeOnResume);
   }
 
   final IUserPreferencesRepository _userPreferencesRepository;
@@ -180,21 +181,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           }
         }
 
+        // Always fetch today's food entries so we don't accidentally keep
+        // showing yesterday's entries when transitioning to a new day.
+        final List<FoodWeight> todayFoodWeightEntries =
+            await _foodWeightRepository.getTodayFoodEntries();
+
         if (todayBodyWeight == 0) {
           emit(
             DetailsSubmittedState(
               userDetails: userDetails,
               bodyWeight: todayBodyWeight,
               bodyWeightEntries: bodyWeightEntries,
-              foodEntries: state.foodEntries,
+              foodEntries: todayFoodWeightEntries,
               yesterdayConsumedTotal: totalConsumedYesterday,
               language: language,
               dataDate: now,
             ),
           );
         } else if (todayBodyWeight > constants.minBodyWeight) {
-          final List<FoodWeight> todayFoodWeightEntries =
-              await _foodWeightRepository.getTodayFoodEntries();
           final bool isMealsConfirmed =
               _userPreferencesRepository.isMealsConfirmedForToday;
           if (todayFoodWeightEntries.isNotEmpty) {
@@ -597,7 +601,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             await _bodyWeightRepository.getAllBodyWeightEntries();
         // We have just saved one body weight entry, so we know that
         // `updatedBodyWeightEntries` is not empty.
-        final double lastSavedBodyWeight = updatedBodyWeightEntries.last.weight;
+        final double lastSavedBodyWeight =
+            updatedBodyWeightEntries.lastOrNull?.weight ?? 0.0;
 
         final double totalConsumedYesterday = state.yesterdayConsumedTotal;
 
@@ -911,8 +916,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  FutureOr<void> _clearUserData(
-    ClearUserData _,
+  FutureOr<void> _clearTrackingData(
+    ClearTrackingData _,
     Emitter<HomeState> emit,
   ) async {
     final Language language = _userPreferencesRepository.getLanguage();
@@ -945,13 +950,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _clearAllFoodEntries(
+  FutureOr<void> _clearFoodEntries(
     ResetFoodEntries _,
     Emitter<HomeState> emit,
   ) async {
     final Language language = _userPreferencesRepository.getLanguage();
     try {
-      await _foodWeightRepository.clearAllTrackingData();
+      await _foodWeightRepository.clearFoodEntries();
       emit(
         BodyWeightSubmittedState(
           bodyWeight: state.bodyWeight,
@@ -1383,5 +1388,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       return false;
     }
     return false;
+  }
+
+  void _checkDateChangeOnResume(
+    CheckDateChangeOnResume event,
+    Emitter<HomeState> emit,
+  ) {
+    final DateTime now = DateTime.now();
+    final DateTime lastDataDate = state.dataDate;
+
+    // If the date has changed since the app was last active, reload entries
+    if (!lastDataDate.isSameDate(now)) {
+      add(const LoadEntries());
+    }
   }
 }

@@ -90,7 +90,7 @@ class SubmitEditDetailsButton extends StatelessWidget {
 
     if (context.mounted && shouldResetData == true) {
       // Reset all user data (body weight, food intake, etc.)
-      context.read<HomeBloc>().add(const ClearUserData());
+      context.read<HomeBloc>().add(const ClearTrackingData());
     } else if (context.mounted) {
       context.read<HomeBloc>().add(const EditDetails());
     }

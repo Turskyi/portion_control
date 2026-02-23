@@ -75,8 +75,9 @@ class MealConfirmationCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 ElevatedButton(
-                  onPressed: () =>
-                      context.read<HomeBloc>().add(const ConfirmMealsLogged()),
+                  onPressed: () {
+                    context.read<HomeBloc>().add(const ConfirmMealsLogged());
+                  },
                   child: Text('${translate('yes')} ✅'),
                 ),
                 OutlinedButton(

@@ -35,7 +35,7 @@ abstract interface class IUserPreferencesRepository {
 
   double? getLastPortionControl();
 
-  Future<bool> savePortionControl(double height);
+  Future<bool> savePortionControl(double limit);
 
   /// Reminder settings for logging weight.
   bool isWeightReminderEnabled();

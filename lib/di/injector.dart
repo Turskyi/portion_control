@@ -1,10 +1,34 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
+import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
+import 'package:portion_control/localization/localization_delegate_getter.dart'
+    as localization;
+import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> injectDependencies() async {
+/// Initializes global dependencies and returns a ready-to-use
+/// [Dependencies] instance containing the created singletons.
+Future<Dependencies> injectDependencies() async {
   await _initializeAllDateFormatting();
+
+  // Initialize SharedPreferences early so callers get an awaited instance.
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  // Initialize local database.
+  final AppDatabase appDatabase = AppDatabase();
+
+  // Local data source depends on SharedPreferences and database.
+  final LocalDataSource localDataSource = LocalDataSource(prefs, appDatabase);
+
+  // Initialize localization delegate using the ready LocalDataSource.
+  final LocalizationDelegate localizationDelegate = await localization
+      .getLocalizationDelegate(localDataSource);
+
+  return Dependencies(localDataSource, prefs, localizationDelegate);
 }
 
 /// Initializes date formatting for all supported languages.
