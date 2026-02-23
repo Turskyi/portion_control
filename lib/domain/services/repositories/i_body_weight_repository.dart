@@ -19,7 +19,7 @@ abstract interface class IBodyWeightRepository {
     required DateTime date,
   });
 
-  Future<int> clearAllTrackingData();
+  Future<int> clearBodyWeightEntries();
 
   Future<BodyWeight> getTodayBodyWeight();
 

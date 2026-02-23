@@ -55,8 +55,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<EditBodyWeight>(_setBodyWeightToEditMode);
     on<EditFoodEntry>(_setFoodWeightToEditMode);
     on<DeleteFoodEntry>(_deleteFoodEntry);
-    on<ClearUserData>(_clearUserData);
-    on<ResetFoodEntries>(_clearAllFoodEntries);
+    on<ClearTrackingData>(_clearTrackingData);
+    on<ResetFoodEntries>(_clearFoodEntries);
     on<ConfirmMealsLogged>(_saveMealsConfirmation);
     on<HomeBugReportPressedEvent>(_onFeedbackRequested);
     on<HomeClosingFeedbackEvent>(_onFeedbackDialogDismissed);
@@ -601,7 +601,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             await _bodyWeightRepository.getAllBodyWeightEntries();
         // We have just saved one body weight entry, so we know that
         // `updatedBodyWeightEntries` is not empty.
-        final double lastSavedBodyWeight = updatedBodyWeightEntries.last.weight;
+        final double lastSavedBodyWeight =
+            updatedBodyWeightEntries.lastOrNull?.weight ?? 0.0;
 
         final double totalConsumedYesterday = state.yesterdayConsumedTotal;
 
@@ -915,8 +916,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  FutureOr<void> _clearUserData(
-    ClearUserData _,
+  FutureOr<void> _clearTrackingData(
+    ClearTrackingData _,
     Emitter<HomeState> emit,
   ) async {
     final Language language = _userPreferencesRepository.getLanguage();
@@ -949,13 +950,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> _clearAllFoodEntries(
+  FutureOr<void> _clearFoodEntries(
     ResetFoodEntries _,
     Emitter<HomeState> emit,
   ) async {
     final Language language = _userPreferencesRepository.getLanguage();
     try {
-      await _foodWeightRepository.clearAllTrackingData();
+      await _foodWeightRepository.clearFoodEntries();
       emit(
         BodyWeightSubmittedState(
           bodyWeight: state.bodyWeight,

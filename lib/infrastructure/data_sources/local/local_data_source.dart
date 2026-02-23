@@ -323,7 +323,13 @@ class LocalDataSource {
     return updatedRows > 0;
   }
 
-  Future<int> clearAllTrackingData() => _appDatabase.clearBodyWeightEntries();
+  Future<int> clearFoodEntries() {
+    return _appDatabase.clearFoodEntries();
+  }
+
+  Future<int> clearBodyWeightEntries() {
+    return _appDatabase.clearBodyWeightEntries();
+  }
 
   Future<BodyWeight> getTodayBodyWeight() async {
     final BodyWeightEntry? bodyWeightEntry = await _appDatabase
@@ -397,7 +403,11 @@ class LocalDataSource {
   Future<void> clearTrackingData() {
     return _appDatabase.transaction(() async {
       await _appDatabase.clearBodyWeightEntries();
-      await _appDatabase.clearBodyWeightEntries();
+      await _appDatabase.clearFoodEntries();
+      await _appDatabase.clearPortionControlEntries();
+      await _preferences.remove(_lastPortionControlKey);
+      await _preferences.remove(_mealsConfirmedKey);
+      await _preferences.remove(_mealsConfirmedDateKey);
     });
   }
 

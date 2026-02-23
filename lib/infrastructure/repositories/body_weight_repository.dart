@@ -50,7 +50,9 @@ class BodyWeightRepository implements IBodyWeightRepository {
   }
 
   @override
-  Future<int> clearAllTrackingData() => _localDataSource.clearAllTrackingData();
+  Future<int> clearBodyWeightEntries() {
+    return _localDataSource.clearBodyWeightEntries();
+  }
 
   @override
   Future<BodyWeight> getTodayBodyWeight() {

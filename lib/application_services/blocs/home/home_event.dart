@@ -76,9 +76,9 @@ final class DeleteFoodEntry extends HomeEvent {
   final int foodEntryId;
 }
 
-final class ClearUserData extends HomeEvent {
+final class ClearTrackingData extends HomeEvent {
   /// Reset all user data (body weight, food intake, etc.).
-  const ClearUserData();
+  const ClearTrackingData();
 }
 
 final class ConfirmMealsLogged extends HomeEvent {

@@ -86,8 +86,8 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
   }
 
   @override
-  Future<bool> savePortionControl(double portionControl) {
-    return _localDataSource.savePortionControl(portionControl);
+  Future<bool> savePortionControl(double limit) {
+    return _localDataSource.savePortionControl(limit);
   }
 
   // Reminder API.

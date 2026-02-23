@@ -58,7 +58,7 @@ class FoodWeightRepository implements IFoodWeightRepository {
   }
 
   @override
-  Future<int> clearAllTrackingData() => _localDataSource.clearAllTrackingData();
+  Future<int> clearFoodEntries() => _localDataSource.clearFoodEntries();
 
   @override
   Future<List<FoodWeight>> fetchYesterdayEntries() {
