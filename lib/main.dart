@@ -12,12 +12,10 @@ import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/di/injector.dart' as di;
-import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/router/routes.dart' as router;
 import 'package:portion_control/ui/feedback/feedback_form.dart';
 
 import 'application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
-import 'domain/services/repositories/i_settings_repository.dart';
 
 /// The [main] is the ultimate detail - the lowest-level policy.
 /// It is the initial entry point of the system.
@@ -41,9 +39,6 @@ Future<void> main() async {
   // which includes an awaited `SharedPreferences` instance.
   final Dependencies dependencies = await di.injectDependencies();
 
-  final ISettingsRepository settingsRepository =
-      dependencies.settingsRepository;
-
   final SettingsBloc settingsBloc = dependencies.settingsBloc;
 
   final YesterdayEntriesBloc yesterdayEntriesBloc =
@@ -61,10 +56,8 @@ Future<void> main() async {
 
   final StatsBloc statsBloc = dependencies.statsBloc;
 
-  final Language language = settingsRepository.getLanguage();
-
   // Resolve and apply initial app language using the dedicated use case.
-  await dependencies.initializeAppLanguageUseCase.call(fallback: language);
+  await dependencies.initializeAppLanguageUseCase.call();
 
   final LocalizationDelegate localizationDelegate =
       dependencies.localizationDelegate;

@@ -15,45 +15,32 @@ class InitializeAppLanguageUseCase {
   final LocalDataSource _localDataSource;
   final LocalizationDelegate _localizationDelegate;
 
-  /// Resolves the initial language to use for the app.
+  /// Resolves the initial language to use for the app and applies it.
   ///
-  /// - `fallback` is used when no saved or host-based language is found.
   /// The method will update `Intl.defaultLocale`, persist the detected
   /// language via the local data source, and notify the localization
   /// delegate about the change.
-  Future<Language> call({required Language fallback}) async {
-    Language initialLanguage = fallback;
+  Future<Language> call() async {
+    // Start with the language retrieved from local data source (which handles
+    // saved preferences, system locale, and basic web host detection).
+    Language initialLanguage = _localDataSource.getLanguage();
 
-    // Detect language from saved preferences or system/host.
+    // Enhanced detection for web fragments if nothing was explicitly saved.
     final String saved = _localDataSource.getLanguageIsoCode();
     final bool isSavedSupported = Language.values.any(
       (Language l) => l.isoLanguageCode == saved,
     );
 
-    if (isSavedSupported) {
-      initialLanguage = Language.fromIsoLanguageCode(saved);
-    } else {
-      // Try to detect from host when running on web.
-      if (kIsWeb) {
-        final String host = Uri.base.host;
-        final String fragment = Uri.base.fragment;
-        for (final Language language in Language.values) {
-          final String code = language.isoLanguageCode;
-          if (host.startsWith('$code.') ||
-              fragment.contains('${Uri.base.path}$code') ||
-              fragment.contains('/$code')) {
-            initialLanguage = language;
-            break;
-          }
-        }
-      } else {
-        // Use system locale when not web.
-        final String systemCode =
-            PlatformDispatcher.instance.locale.languageCode;
-        if (Language.values.any(
-          (Language l) => l.isoLanguageCode == systemCode,
-        )) {
-          initialLanguage = Language.fromIsoLanguageCode(systemCode);
+    if (!isSavedSupported && kIsWeb) {
+      final String host = Uri.base.host;
+      final String fragment = Uri.base.fragment;
+      for (final Language language in Language.values) {
+        final String code = language.isoLanguageCode;
+        if (host.startsWith('$code.') ||
+            fragment.contains('${Uri.base.path}$code') ||
+            fragment.contains('/$code')) {
+          initialLanguage = language;
+          break;
         }
       }
     }
