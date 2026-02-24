@@ -8,6 +8,7 @@ import 'package:portion_control/application_services/blocs/onboarding/onboarding
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
 import 'package:portion_control/application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
+import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/about/about_page.dart';
 import 'package:portion_control/ui/daily_food_log_history/daily_food_log_history_page.dart';
@@ -21,14 +22,18 @@ import 'package:portion_control/ui/stats/stats_page.dart';
 import 'package:portion_control/ui/support/support_page.dart';
 
 Map<String, WidgetBuilder> getRouteMap({
-  required SettingsBloc settingsBloc,
-  required HomeBloc homeBloc,
-  required YesterdayEntriesBloc yesterdayEntriesBloc,
-  required MenuBloc menuBloc,
-  required OnboardingBloc onboardingBloc,
-  required DailyFoodLogHistoryBloc dailyFoodLogHistoryBloc,
-  required StatsBloc statsBloc,
+  required Dependencies dependencies,
 }) {
+  final SettingsBloc settingsBloc = dependencies.settingsBloc;
+  final HomeBloc homeBloc = dependencies.homeBloc;
+  final YesterdayEntriesBloc yesterdayEntriesBloc =
+      dependencies.yesterdayEntriesBloc;
+  final MenuBloc menuBloc = dependencies.menuBloc;
+  final OnboardingBloc onboardingBloc = dependencies.onboardingBloc;
+  final DailyFoodLogHistoryBloc dailyFoodLogHistoryBloc =
+      dependencies.dailyFoodLogHistoryBloc;
+  final StatsBloc statsBloc = dependencies.statsBloc;
+
   return <String, WidgetBuilder>{
     AppRoute.landing.path: (BuildContext _) {
       return BlocProvider<SettingsBloc>.value(

@@ -3,19 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/app.dart';
-import 'package:portion_control/application_services/blocs/daily_food_log_history/daily_food_log_history_bloc.dart';
-import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
-import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
-import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
-import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/di/injector.dart' as di;
 import 'package:portion_control/router/routes.dart' as router;
 import 'package:portion_control/ui/feedback/feedback_form.dart';
-
-import 'application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
 
 /// The [main] is the ultimate detail - the lowest-level policy.
 /// It is the initial entry point of the system.
@@ -39,22 +32,9 @@ Future<void> main() async {
   // which includes an awaited `SharedPreferences` instance.
   final Dependencies dependencies = await di.injectDependencies();
 
-  final SettingsBloc settingsBloc = dependencies.settingsBloc;
-
-  final YesterdayEntriesBloc yesterdayEntriesBloc =
-      dependencies.yesterdayEntriesBloc;
-
-  final HomeBloc homeBloc = dependencies.homeBloc;
-
+  // Initialize the menu bloc state.
   final MenuBloc menuBloc = dependencies.menuBloc
     ..add(const LoadingInitialMenuStateEvent());
-
-  final OnboardingBloc onboardingBloc = dependencies.onboardingBloc;
-
-  final DailyFoodLogHistoryBloc dailyFoodLogHistoryBloc =
-      dependencies.dailyFoodLogHistoryBloc;
-
-  final StatsBloc statsBloc = dependencies.statsBloc;
 
   // Resolve and apply initial app language using the dedicated use case.
   await dependencies.initializeAppLanguageUseCase.call();
@@ -63,13 +43,7 @@ Future<void> main() async {
       dependencies.localizationDelegate;
 
   final Map<String, WidgetBuilder> routeMap = router.getRouteMap(
-    settingsBloc: settingsBloc,
-    homeBloc: homeBloc,
-    yesterdayEntriesBloc: yesterdayEntriesBloc,
-    menuBloc: menuBloc,
-    onboardingBloc: onboardingBloc,
-    dailyFoodLogHistoryBloc: dailyFoodLogHistoryBloc,
-    statsBloc: statsBloc,
+    dependencies: dependencies,
   );
 
   runApp(
