@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
+import 'package:portion_control/di/app_blocs.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/di/injector.dart' as di;
@@ -32,9 +33,18 @@ Future<void> main() async {
   // which includes an awaited `SharedPreferences` instance.
   final Dependencies dependencies = await di.injectDependencies();
 
-  // Initialize the menu bloc state.
-  final MenuBloc menuBloc = dependencies.menuBloc
-    ..add(const LoadingInitialMenuStateEvent());
+  // Initialize and capture BLoC instances once to ensure state consistency
+  // across the application. This is especially important for the MenuBloc,
+  // which needs an initial event.
+  final AppBlocs blocs = AppBlocs(
+    menuBloc: dependencies.menuBloc..add(const LoadingInitialMenuStateEvent()),
+    homeBloc: dependencies.homeBloc,
+    settingsBloc: dependencies.settingsBloc,
+    onboardingBloc: dependencies.onboardingBloc,
+    dailyFoodLogHistoryBloc: dependencies.dailyFoodLogHistoryBloc,
+    statsBloc: dependencies.statsBloc,
+    yesterdayEntriesBloc: dependencies.yesterdayEntriesBloc,
+  );
 
   // Resolve and apply initial app language using the dedicated use case.
   await dependencies.initializeAppLanguageUseCase.call();
@@ -43,7 +53,7 @@ Future<void> main() async {
       dependencies.localizationDelegate;
 
   final Map<String, WidgetBuilder> routeMap = router.getRouteMap(
-    dependencies: dependencies,
+    blocs: blocs,
   );
 
   runApp(
@@ -67,7 +77,7 @@ Future<void> main() async {
           // the `MenuBloc` available via context throughout the app, including
           // for the `MaterialApp`'s theme selection.
           child: BlocProvider<MenuBloc>.value(
-            value: menuBloc,
+            value: blocs.menuBloc,
             child: App(routeMap: routeMap),
           ),
         ),
