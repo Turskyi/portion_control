@@ -9,6 +9,7 @@ class DayFoodLog {
     required this.entries,
     this.bodyWeight,
     this.previousBodyWeight,
+    this.hasWeightIncreaseProof = true,
   });
 
   final DateTime date;
@@ -17,6 +18,7 @@ class DayFoodLog {
   final List<FoodWeight> entries;
   final double? bodyWeight;
   final double? previousBodyWeight;
+  final bool hasWeightIncreaseProof;
 
   bool get hasEntries => entries.isNotEmpty;
 

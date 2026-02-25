@@ -15,7 +15,10 @@ class DayLogCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
-    final bool isOverLimit = day.totalConsumed > day.dailyLimit;
+    final bool showLimit =
+        day.dailyLimit < constants.kMaxDailyFoodLimit &&
+        day.hasWeightIncreaseProof;
+    final bool isOverLimit = showLimit && day.totalConsumed > day.dailyLimit;
     final bool hasEntries = day.entries.isNotEmpty;
     final String bodyWeight =
         day.bodyWeight?.toStringAsFixed(1).replaceAll(RegExp(r'\.0$'), '') ??
@@ -69,7 +72,7 @@ class DayLogCard extends StatelessWidget {
                     ),
                 ],
               ),
-              if (hasEntries)
+              if (hasEntries && showLimit)
                 Text(
                   translate(
                     isOverLimit
@@ -96,32 +99,32 @@ class DayLogCard extends StatelessWidget {
                 args: <String, Object?>{'value': day.totalConsumed},
               ),
             ),
-            Row(
-              children: <Widget>[
-                Text(
-                  translate(
-                    'daily_food_log_history.daily_limit',
-                    args: <String, Object?>{'value': day.dailyLimit},
+            if (showLimit)
+              Row(
+                children: <Widget>[
+                  Text(
+                    translate(
+                      'daily_food_log_history.daily_limit',
+                      args: <String, Object?>{'value': day.dailyLimit},
+                    ),
                   ),
-                ),
-                if (day.dailyLimit == constants.kMaxDailyFoodLimit ||
-                    day.dailyLimit == constants.kSafeMinimumFoodIntakeG ||
-                    day.dailyLimit == constants.kAbsoluteMinimumFoodIntakeG)
-                  IconButton(
-                    icon: const Icon(Icons.info_outline, size: 16),
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) =>
-                            const SafetyLimitsDialog(),
-                      );
-                    },
-                  ),
-              ],
-            ),
+                  if (day.dailyLimit == constants.kSafeMinimumFoodIntakeG ||
+                      day.dailyLimit == constants.kAbsoluteMinimumFoodIntakeG)
+                    IconButton(
+                      icon: const Icon(Icons.info_outline, size: 16),
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) =>
+                              const SafetyLimitsDialog(),
+                        );
+                      },
+                    ),
+                ],
+              ),
             const SizedBox(height: 8),
 
             // Entries

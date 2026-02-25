@@ -11,6 +11,7 @@ sealed class HomeState {
     required this.portionControl,
     required this.language,
     required this.dataDate,
+    this.hasWeightIncreaseProof = true,
   });
 
   final UserDetails userDetails;
@@ -21,16 +22,19 @@ sealed class HomeState {
   final double portionControl;
   final Language language;
   final DateTime dataDate;
+  final bool hasWeightIncreaseProof;
 
   bool get isSafePortionControl =>
       portionControl >= constants.kAbsoluteMinimumFoodIntakeG &&
-      portionControl < constants.kMaxDailyFoodLimit;
+      portionControl < constants.kMaxDailyFoodLimit &&
+      hasWeightIncreaseProof;
 
   // Helper getter to check if yesterday's consumption is positive AND
   // would be a safe portion size if used today.
   bool get _isYesterdayConsumedTotalASafePortion =>
       yesterdayConsumedTotal >= constants.kAbsoluteMinimumFoodIntakeG &&
-      yesterdayConsumedTotal < constants.kMaxDailyFoodLimit;
+      yesterdayConsumedTotal < constants.kMaxDailyFoodLimit &&
+      hasWeightIncreaseProof;
 
   double get adjustedPortion {
     if (isSafePortionControl) {
@@ -88,7 +92,8 @@ sealed class HomeState {
     final bool isSingleTodayEntry =
         bodyWeightEntries.length == 1 && firstEntry?.date.isToday == true;
     return isSingleTodayEntry ||
-        (bodyWeightEntries.length > 1 && yesterdayConsumedTotal == 0);
+        (bodyWeightEntries.length > 1 &&
+            (yesterdayConsumedTotal == 0 || !hasWeightIncreaseProof));
   }
 
   bool get isWeightIncreasing {
@@ -271,6 +276,7 @@ class HomeLoading extends HomeState {
     super.bodyWeightEntries = const <BodyWeight>[],
     super.foodEntries = const <FoodWeight>[],
     super.portionControl = 0.0,
+    super.hasWeightIncreaseProof = true,
     DateTime? dataDate,
   }) : super(dataDate: dataDate ?? DateTime.now());
 
@@ -283,6 +289,7 @@ class HomeLoading extends HomeState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return HomeLoading(
@@ -294,6 +301,8 @@ class HomeLoading extends HomeState {
       bodyWeightEntries: bodyWeightEntries ?? this.bodyWeightEntries,
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -308,6 +317,7 @@ class HomeLoaded extends HomeState {
     required super.yesterdayConsumedTotal,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     DateTime? dataDate,
   }) : super(dataDate: dataDate ?? DateTime.now());
 
@@ -320,6 +330,7 @@ class HomeLoaded extends HomeState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return HomeLoaded(
@@ -331,6 +342,8 @@ class HomeLoaded extends HomeState {
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -344,6 +357,7 @@ class DetailsUpdateState extends HomeLoaded {
     required super.foodEntries,
     required super.language,
     required super.yesterdayConsumedTotal,
+    required super.hasWeightIncreaseProof,
     super.portionControl = 0,
     super.dataDate,
   });
@@ -358,6 +372,7 @@ class DetailsUpdateState extends HomeLoaded {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return DetailsUpdateState(
@@ -369,6 +384,8 @@ class DetailsUpdateState extends HomeLoaded {
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -381,6 +398,7 @@ class DateOfBirthUpdatedState extends HomeLoaded {
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
     super.dataDate,
@@ -396,6 +414,7 @@ class DateOfBirthUpdatedState extends HomeLoaded {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return DateOfBirthUpdatedState(
@@ -407,6 +426,8 @@ class DateOfBirthUpdatedState extends HomeLoaded {
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -419,6 +440,7 @@ class GenderUpdatedState extends HomeLoaded {
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
     super.dataDate,
@@ -434,6 +456,7 @@ class GenderUpdatedState extends HomeLoaded {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return GenderUpdatedState(
@@ -445,6 +468,8 @@ class GenderUpdatedState extends HomeLoaded {
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -457,6 +482,7 @@ class DetailsSubmittedState extends HomeLoaded {
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
     super.dataDate,
@@ -472,6 +498,7 @@ class DetailsSubmittedState extends HomeLoaded {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return DetailsSubmittedState(
@@ -483,6 +510,8 @@ class DetailsSubmittedState extends HomeLoaded {
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -496,6 +525,7 @@ class LoadingTodayBodyWeightState extends DetailsSubmittedState
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
     super.dataDate,
@@ -511,6 +541,7 @@ class LoadingTodayBodyWeightState extends DetailsSubmittedState
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return LoadingTodayBodyWeightState(
@@ -522,6 +553,8 @@ class LoadingTodayBodyWeightState extends DetailsSubmittedState
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -535,6 +568,7 @@ class LoadingConsumedYesterdayState extends DetailsSubmittedState
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
     super.dataDate,
@@ -550,6 +584,7 @@ class LoadingConsumedYesterdayState extends DetailsSubmittedState
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return LoadingConsumedYesterdayState(
@@ -561,6 +596,8 @@ class LoadingConsumedYesterdayState extends DetailsSubmittedState
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -574,6 +611,7 @@ class LoadingBodyWeightEntriesState extends DetailsSubmittedState
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.yesterdayConsumedTotal = 0,
     super.portionControl = 0,
     super.dataDate,
@@ -589,6 +627,7 @@ class LoadingBodyWeightEntriesState extends DetailsSubmittedState
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return LoadingBodyWeightEntriesState(
@@ -600,6 +639,8 @@ class LoadingBodyWeightEntriesState extends DetailsSubmittedState
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -612,6 +653,7 @@ class BodyWeightUpdatedState extends DetailsSubmittedState {
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.yesterdayConsumedTotal = 0,
     super.dataDate,
   });
@@ -626,6 +668,7 @@ class BodyWeightUpdatedState extends DetailsSubmittedState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return BodyWeightUpdatedState(
@@ -636,6 +679,8 @@ class BodyWeightUpdatedState extends DetailsSubmittedState {
       bodyWeightEntries: bodyWeightEntries ?? this.bodyWeightEntries,
       foodEntries: foodEntries ?? this.foodEntries,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -651,6 +696,7 @@ class BodyWeightSubmittedState extends DetailsSubmittedState {
     required super.yesterdayConsumedTotal,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.dataDate,
   });
 
@@ -666,6 +712,7 @@ class BodyWeightSubmittedState extends DetailsSubmittedState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     int? foodEntryId,
     DateTime? dataDate,
   }) {
@@ -680,6 +727,8 @@ class BodyWeightSubmittedState extends DetailsSubmittedState {
       language: language ?? this.language,
       isConfirmedAllMealsLogged:
           isConfirmedAllMealsLogged ?? this.isConfirmedAllMealsLogged,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -696,6 +745,7 @@ class FoodWeightUpdateState extends BodyWeightSubmittedState {
     required super.isConfirmedAllMealsLogged,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.dataDate,
   });
 
@@ -711,6 +761,7 @@ class FoodWeightUpdateState extends BodyWeightSubmittedState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     int? foodEntryId,
     DateTime? dataDate,
   }) {
@@ -725,6 +776,8 @@ class FoodWeightUpdateState extends BodyWeightSubmittedState {
       language: language ?? this.language,
       isConfirmedAllMealsLogged:
           isConfirmedAllMealsLogged ?? this.isConfirmedAllMealsLogged,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       foodEntryId: foodEntryId ?? this.foodEntryId,
       dataDate: dataDate ?? this.dataDate,
     );
@@ -741,6 +794,7 @@ class FoodWeightSubmittedState extends BodyWeightSubmittedState {
     required super.isConfirmedAllMealsLogged,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.dataDate,
   });
 
@@ -754,6 +808,7 @@ class FoodWeightSubmittedState extends BodyWeightSubmittedState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     int? foodEntryId,
     DateTime? dataDate,
   }) {
@@ -768,6 +823,8 @@ class FoodWeightSubmittedState extends BodyWeightSubmittedState {
       language: language ?? this.language,
       isConfirmedAllMealsLogged:
           isConfirmedAllMealsLogged ?? this.isConfirmedAllMealsLogged,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -784,6 +841,7 @@ class FoodWeightUpdatedState extends BodyWeightSubmittedState {
     required super.isConfirmedAllMealsLogged,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     super.dataDate,
   });
 
@@ -799,6 +857,7 @@ class FoodWeightUpdatedState extends BodyWeightSubmittedState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     int? foodEntryId,
     DateTime? dataDate,
   }) {
@@ -813,6 +872,8 @@ class FoodWeightUpdatedState extends BodyWeightSubmittedState {
       language: language ?? this.language,
       isConfirmedAllMealsLogged:
           isConfirmedAllMealsLogged ?? this.isConfirmedAllMealsLogged,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       foodEntryId: foodEntryId ?? this.foodEntryId,
       dataDate: dataDate ?? this.dataDate,
     );
@@ -828,6 +889,7 @@ class LoadingError extends HomeState {
     required super.yesterdayConsumedTotal,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     required this.errorMessage,
     required super.dataDate,
   });
@@ -843,6 +905,7 @@ class LoadingError extends HomeState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     String? errorMessage,
     DateTime? dataDate,
   }) {
@@ -855,6 +918,8 @@ class LoadingError extends HomeState {
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       errorMessage: errorMessage ?? this.errorMessage,
       dataDate: dataDate ?? this.dataDate,
     );
@@ -871,6 +936,7 @@ abstract class ErrorState extends HomeState {
     required super.yesterdayConsumedTotal,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     required super.dataDate,
   });
 
@@ -884,6 +950,7 @@ class DetailsError extends ErrorState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     required super.dataDate,
     super.foodEntries = const <FoodWeight>[],
     super.yesterdayConsumedTotal = 0,
@@ -899,6 +966,7 @@ class DetailsError extends ErrorState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     String? errorMessage,
     DateTime? dataDate,
   }) {
@@ -911,6 +979,8 @@ class DetailsError extends ErrorState {
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       errorMessage: errorMessage ?? this.errorMessage,
       dataDate: dataDate ?? this.dataDate,
     );
@@ -924,6 +994,7 @@ class DateOfBirthError extends ErrorState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     required super.dataDate,
     super.foodEntries = const <FoodWeight>[],
     super.yesterdayConsumedTotal = 0,
@@ -939,6 +1010,7 @@ class DateOfBirthError extends ErrorState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     String? errorMessage,
     DateTime? dataDate,
   }) {
@@ -951,6 +1023,8 @@ class DateOfBirthError extends ErrorState {
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       errorMessage: errorMessage ?? this.errorMessage,
       dataDate: dataDate ?? this.dataDate,
     );
@@ -964,6 +1038,7 @@ class GenderError extends ErrorState {
     required super.bodyWeight,
     required super.bodyWeightEntries,
     required super.language,
+    required super.hasWeightIncreaseProof,
     required super.dataDate,
     super.foodEntries = const <FoodWeight>[],
     super.yesterdayConsumedTotal = 0,
@@ -979,6 +1054,7 @@ class GenderError extends ErrorState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     String? errorMessage,
     DateTime? dataDate,
   }) {
@@ -991,6 +1067,8 @@ class GenderError extends ErrorState {
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       errorMessage: errorMessage ?? this.errorMessage,
       dataDate: dataDate ?? this.dataDate,
     );
@@ -1005,6 +1083,7 @@ class BodyWeightError extends DetailsSubmittedState implements ErrorState {
     required super.foodEntries,
     required super.yesterdayConsumedTotal,
     required super.language,
+    required super.hasWeightIncreaseProof,
     required this.errorMessage,
     super.dataDate,
   });
@@ -1022,6 +1101,7 @@ class BodyWeightError extends DetailsSubmittedState implements ErrorState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     String? errorMessage,
     DateTime? dataDate,
   }) {
@@ -1033,6 +1113,8 @@ class BodyWeightError extends DetailsSubmittedState implements ErrorState {
       bodyWeightEntries: bodyWeightEntries ?? this.bodyWeightEntries,
       foodEntries: foodEntries ?? this.foodEntries,
       language: language ?? this.language,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       errorMessage: errorMessage ?? this.errorMessage,
       dataDate: dataDate ?? this.dataDate,
     );
@@ -1049,6 +1131,7 @@ class FoodWeightError extends BodyWeightSubmittedState implements ErrorState {
     required super.isConfirmedAllMealsLogged,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     required this.errorMessage,
     super.dataDate,
   });
@@ -1066,6 +1149,7 @@ final class HomeFeedbackState extends HomeState {
     required super.foodEntries,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     required super.dataDate,
   });
 
@@ -1078,6 +1162,7 @@ final class HomeFeedbackState extends HomeState {
     List<FoodWeight>? foodEntries,
     double? portionControl,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return HomeFeedbackState(
@@ -1089,6 +1174,8 @@ final class HomeFeedbackState extends HomeState {
       bodyWeightEntries: bodyWeightEntries ?? this.bodyWeightEntries,
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -1103,6 +1190,7 @@ final class HomeFeedbackSent extends HomeState {
     required super.foodEntries,
     required super.portionControl,
     required super.language,
+    required super.hasWeightIncreaseProof,
     required super.dataDate,
   });
 
@@ -1115,6 +1203,7 @@ final class HomeFeedbackSent extends HomeState {
     List<FoodWeight>? foodEntries,
     double? portionControl,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return HomeFeedbackSent(
@@ -1126,6 +1215,8 @@ final class HomeFeedbackSent extends HomeState {
       bodyWeightEntries: bodyWeightEntries ?? this.bodyWeightEntries,
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }
@@ -1140,6 +1231,7 @@ class FeedbackHomeLoading extends HomeState {
     required super.bodyWeightEntries,
     required super.foodEntries,
     required super.portionControl,
+    required super.hasWeightIncreaseProof,
     required super.dataDate,
   });
 
@@ -1152,6 +1244,7 @@ class FeedbackHomeLoading extends HomeState {
     double? portionControl,
     Language? language,
     bool? isConfirmedAllMealsLogged,
+    bool? hasWeightIncreaseProof,
     DateTime? dataDate,
   }) {
     return FeedbackHomeLoading(
@@ -1163,6 +1256,8 @@ class FeedbackHomeLoading extends HomeState {
       bodyWeightEntries: bodyWeightEntries ?? this.bodyWeightEntries,
       foodEntries: foodEntries ?? this.foodEntries,
       portionControl: portionControl ?? this.portionControl,
+      hasWeightIncreaseProof:
+          hasWeightIncreaseProof ?? this.hasWeightIncreaseProof,
       dataDate: dataDate ?? this.dataDate,
     );
   }

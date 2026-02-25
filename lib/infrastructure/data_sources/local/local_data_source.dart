@@ -15,6 +15,7 @@ import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/data_mappers/body_weight_entries_mapper.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/data_mappers/food_entries_mapper.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/enums/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -513,9 +514,14 @@ class LocalDataSource {
           previous.weight;
     }
 
+    final double minConsumptionIfWeightIncreased = await _appDatabase
+        .getMinConsumptionWhenWeightIncreased();
+
+    final bool hasWeightIncreaseProof =
+        minConsumptionIfWeightIncreased < constants.kMaxDailyFoodLimit;
+
     final double defaultLimit =
-        getLastPortionControl() ??
-        await _appDatabase.getMinConsumptionWhenWeightIncreased();
+        getLastPortionControl() ?? minConsumptionIfWeightIncreased;
 
     final List<PortionControlEntry> portionControls = await _appDatabase
         .getAllPortionControls();
@@ -549,6 +555,7 @@ class LocalDataSource {
         dailyLimit: dailyLimit,
         bodyWeight: bodyWeightByDay[day],
         previousBodyWeight: previousBodyWeightByDay[day],
+        hasWeightIncreaseProof: hasWeightIncreaseProof,
         entries: mapEntry.value.map((FoodEntry entry) {
           return FoodWeight(
             id: entry.id,
