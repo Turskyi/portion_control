@@ -37,6 +37,12 @@ sealed class HomeState {
       hasWeightIncreaseProof;
 
   double get adjustedPortion {
+    // If we don't have enough data to prove a limit yet, we fallback to the
+    // technical max value (effectively "no limit").
+    if (!hasWeightIncreaseProof) {
+      return constants.kMaxDailyFoodLimit;
+    }
+
     if (isSafePortionControl) {
       return portionControl;
     } else if (_isYesterdayConsumedTotalASafePortion) {

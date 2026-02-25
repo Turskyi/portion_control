@@ -71,9 +71,10 @@ class StatsBloc extends Bloc<StatsEvent, StatsState> {
       // 3. How often limit was exceeded.
       int limitExceededCount = 0;
       for (final DayFoodLog log in foodLogs) {
-        // Assuming dailyLimit 0 means no limit or not set, so we skip it.
-        // Also skipping if consumption is 0 (empty day).
-        if (log.dailyLimit > 0 &&
+        // We only count exceedances if a definitive limit ("proof") was
+        // established.
+        if (log.hasWeightIncreaseProof &&
+            log.dailyLimit > 0 &&
             log.totalConsumed > 0 &&
             log.totalConsumed > log.dailyLimit &&
             log.dailyLimit < constants.kMaxDailyFoodLimit) {
