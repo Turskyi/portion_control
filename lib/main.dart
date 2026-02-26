@@ -3,21 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/app.dart';
-import 'package:portion_control/application_services/blocs/daily_food_log_history/daily_food_log_history_bloc.dart';
-import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
-import 'package:portion_control/application_services/blocs/onboarding/onboarding_bloc.dart';
-import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
-import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
+import 'package:portion_control/di/app_blocs.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
 import 'package:portion_control/di/injector.dart' as di;
-import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/router/routes.dart' as router;
 import 'package:portion_control/ui/feedback/feedback_form.dart';
-
-import 'application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
-import 'domain/services/repositories/i_settings_repository.dart';
 
 /// The [main] is the ultimate detail - the lowest-level policy.
 /// It is the initial entry point of the system.
@@ -41,42 +33,27 @@ Future<void> main() async {
   // which includes an awaited `SharedPreferences` instance.
   final Dependencies dependencies = await di.injectDependencies();
 
-  final ISettingsRepository settingsRepository =
-      dependencies.settingsRepository;
-
-  final SettingsBloc settingsBloc = dependencies.settingsBloc;
-
-  final YesterdayEntriesBloc yesterdayEntriesBloc =
-      dependencies.yesterdayEntriesBloc;
-
-  final HomeBloc homeBloc = dependencies.homeBloc;
-
-  final MenuBloc menuBloc = dependencies.menuBloc
-    ..add(const LoadingInitialMenuStateEvent());
-
-  final OnboardingBloc onboardingBloc = dependencies.onboardingBloc;
-
-  final DailyFoodLogHistoryBloc dailyFoodLogHistoryBloc =
-      dependencies.dailyFoodLogHistoryBloc;
-
-  final StatsBloc statsBloc = dependencies.statsBloc;
-
-  final Language language = settingsRepository.getLanguage();
+  // Initialize and capture BLoC instances once to ensure state consistency
+  // across the application. This is especially important for the MenuBloc,
+  // which needs an initial event.
+  final AppBlocs blocs = AppBlocs(
+    menuBloc: dependencies.menuBloc..add(const LoadingInitialMenuStateEvent()),
+    homeBloc: dependencies.homeBloc,
+    settingsBloc: dependencies.settingsBloc,
+    onboardingBloc: dependencies.onboardingBloc,
+    dailyFoodLogHistoryBloc: dependencies.dailyFoodLogHistoryBloc,
+    statsBloc: dependencies.statsBloc,
+    yesterdayEntriesBloc: dependencies.yesterdayEntriesBloc,
+  );
 
   // Resolve and apply initial app language using the dedicated use case.
-  await dependencies.initializeAppLanguageUseCase.call(fallback: language);
+  await dependencies.initializeAppLanguageUseCase.call();
 
   final LocalizationDelegate localizationDelegate =
       dependencies.localizationDelegate;
 
   final Map<String, WidgetBuilder> routeMap = router.getRouteMap(
-    settingsBloc: settingsBloc,
-    homeBloc: homeBloc,
-    yesterdayEntriesBloc: yesterdayEntriesBloc,
-    menuBloc: menuBloc,
-    onboardingBloc: onboardingBloc,
-    dailyFoodLogHistoryBloc: dailyFoodLogHistoryBloc,
-    statsBloc: statsBloc,
+    blocs: blocs,
   );
 
   runApp(
@@ -100,7 +77,7 @@ Future<void> main() async {
           // the `MenuBloc` available via context throughout the app, including
           // for the `MaterialApp`'s theme selection.
           child: BlocProvider<MenuBloc>.value(
-            value: menuBloc,
+            value: blocs.menuBloc,
             child: App(routeMap: routeMap),
           ),
         ),

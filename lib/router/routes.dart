@@ -8,6 +8,7 @@ import 'package:portion_control/application_services/blocs/onboarding/onboarding
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
 import 'package:portion_control/application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
+import 'package:portion_control/di/app_blocs.dart';
 import 'package:portion_control/router/app_route.dart';
 import 'package:portion_control/ui/about/about_page.dart';
 import 'package:portion_control/ui/daily_food_log_history/daily_food_log_history_page.dart';
@@ -21,36 +22,30 @@ import 'package:portion_control/ui/stats/stats_page.dart';
 import 'package:portion_control/ui/support/support_page.dart';
 
 Map<String, WidgetBuilder> getRouteMap({
-  required SettingsBloc settingsBloc,
-  required HomeBloc homeBloc,
-  required YesterdayEntriesBloc yesterdayEntriesBloc,
-  required MenuBloc menuBloc,
-  required OnboardingBloc onboardingBloc,
-  required DailyFoodLogHistoryBloc dailyFoodLogHistoryBloc,
-  required StatsBloc statsBloc,
+  required AppBlocs blocs,
 }) {
   return <String, WidgetBuilder>{
     AppRoute.landing.path: (BuildContext _) {
       return BlocProvider<SettingsBloc>.value(
-        value: settingsBloc,
+        value: blocs.settingsBloc,
         child: const LandingPage(),
       );
     },
     AppRoute.home.path: (BuildContext _) {
-      homeBloc.add(const LoadEntries());
+      blocs.homeBloc.add(const LoadEntries());
       return MultiBlocProvider(
         providers: <SingleChildWidget>[
           BlocProvider<HomeBloc>.value(
-            value: homeBloc,
+            value: blocs.homeBloc,
           ),
           BlocProvider<YesterdayEntriesBloc>.value(
-            value: yesterdayEntriesBloc,
+            value: blocs.yesterdayEntriesBloc,
           ),
           BlocProvider<MenuBloc>.value(
-            value: menuBloc,
+            value: blocs.menuBloc,
           ),
           BlocProvider<SettingsBloc>.value(
-            value: settingsBloc,
+            value: blocs.settingsBloc,
           ),
         ],
         child: const HomePage(),
@@ -58,7 +53,7 @@ Map<String, WidgetBuilder> getRouteMap({
     },
     AppRoute.onboarding.path: (BuildContext _) {
       return BlocProvider<OnboardingBloc>.value(
-        value: onboardingBloc,
+        value: blocs.onboardingBloc,
         child: const OnboardingScreen(),
       );
     },
@@ -71,17 +66,17 @@ Map<String, WidgetBuilder> getRouteMap({
     },
     AppRoute.dailyFoodLogHistory.path: (BuildContext _) {
       // Reset the bloc state by adding a load event
-      dailyFoodLogHistoryBloc.add(LoadDailyFoodLogHistoryEvent());
+      blocs.dailyFoodLogHistoryBloc.add(LoadDailyFoodLogHistoryEvent());
       return BlocProvider<DailyFoodLogHistoryBloc>.value(
-        value: dailyFoodLogHistoryBloc,
+        value: blocs.dailyFoodLogHistoryBloc,
         child: const DailyFoodLogHistoryPage(),
       );
     },
     AppRoute.stats.path: (BuildContext _) {
       // Reset the bloc state by adding a load event
-      statsBloc.add(const LoadStatsEvent());
+      blocs.statsBloc.add(const LoadStatsEvent());
       return BlocProvider<StatsBloc>.value(
-        value: statsBloc,
+        value: blocs.statsBloc,
         child: const StatsPage(),
       );
     },

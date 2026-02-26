@@ -56,25 +56,20 @@ class FoodEntriesColumn extends StatelessWidget {
                 },
               );
             }),
-            if ((totalConsumedToday < constants.kMaxDailyFoodLimit &&
-                    (!shouldAskForMealConfirmation ||
-                        state.hasNoPortionControl) &&
-                    totalConsumedToday < portionControl) ||
-                (isWeightBelowHealthy && isWeightDecreasingOrSame))
-              // Input field for new food entry.
-              FoodWeightEntryRow(
-                isEditState: true,
-                onSave: (String value) async {
-                  await _handleFoodEntrySubmission(
-                    context: context,
-                    hasFoodEntriesYesterday: state.hasFoodEntriesYesterday,
-                    value: value,
-                    totalConsumedToday: totalConsumedToday,
-                    portionControl: portionControl,
-                  );
-                },
-              )
-            else if (totalConsumedToday >= constants.kMaxDailyFoodLimit)
+            // Input field for new food entry.
+            FoodWeightEntryRow(
+              isEditState: true,
+              onSave: (String value) async {
+                await _handleFoodEntrySubmission(
+                  context: context,
+                  hasFoodEntriesYesterday: state.hasFoodEntriesYesterday,
+                  value: value,
+                  totalConsumedToday: totalConsumedToday,
+                  portionControl: portionControl,
+                );
+              },
+            ),
+            if (totalConsumedToday >= constants.kMaxDailyFoodLimit)
               Text(translate('food_entry.challenge_warning')),
 
             if (!shouldAskForMealConfirmation ||
