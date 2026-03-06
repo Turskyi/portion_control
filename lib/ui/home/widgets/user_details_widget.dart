@@ -149,8 +149,8 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
       initialDate: dateOfBirthText.isNotEmpty
           ? dateOfBirthDateTime
           : DateTime(1987, 1, 13),
-      firstDate: date_constants.maxAllowedBirthDate,
-      lastDate: date_constants.minAllowedBirthDate,
+      firstDate: date_constants.kMaxAllowedBirthDate,
+      lastDate: date_constants.kMinAllowedBirthDate,
     );
 
     if (mounted && pickedDate != null) {

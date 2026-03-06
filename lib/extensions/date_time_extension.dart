@@ -1,14 +1,14 @@
 import 'package:flutter_translate/flutter_translate.dart';
-import 'package:portion_control/res/constants/date_constants.dart';
+import 'package:portion_control/res/constants/date_constants.dart' as constants;
 
 extension DateTimeExtension on DateTime {
   bool isSameDate(DateTime other) {
     return year == other.year && month == other.month && day == other.day;
   }
 
-  bool get isOlderThanMinimumAge => isBefore(minAllowedBirthDate);
+  bool get isOlderThanMinimumAge => isBefore(constants.kMinAllowedBirthDate);
 
-  bool get isYoungerThanMinimumAge => isAfter(minAllowedBirthDate);
+  bool get isYoungerThanMinimumAge => isAfter(constants.kMinAllowedBirthDate);
 
   /// This method converts the [DateTime] to a [String] without the time part.
   String? toIso8601Date() {

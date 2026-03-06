@@ -11,7 +11,7 @@ class DateHeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (BuildContext context, HomeState state) {
-        final DateTime date = state.dataDate;
+        final DateTime date = state.date;
         final bool isToday = date.isToday;
 
         return Column(
