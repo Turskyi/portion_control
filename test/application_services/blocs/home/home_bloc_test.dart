@@ -8,6 +8,7 @@ import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 
+import '../../../helpers/translate_test_helper.dart' as helper;
 import '../../../mock_interactors.dart';
 import '../../../mock_repositories.dart';
 import '../../../mocks/mock_services.dart';
@@ -20,12 +21,15 @@ void main() {
   late MockClearTrackingDataUseCase mockClearTrackingDataUseCase;
   late MockHomeWidgetService mockHomeWidgetService;
 
-  setUp(() {
+  setUp(() async {
     mockUserPreferencesRepository = MockUserDetailsRepository();
     mockBodyWeightRepository = MockBodyWeightRepository();
     mockFoodWeightRepository = MockFoodWeightRepository();
     mockClearTrackingDataUseCase = MockClearTrackingDataUseCase();
     mockHomeWidgetService = MockHomeWidgetService();
+
+    // Initialize localization for tests.
+    await helper.setUpFlutterTranslateForTests();
 
     // Default mock behaviors.
     when(
@@ -75,8 +79,10 @@ void main() {
           ],
         );
         when(
-          () => mockUserPreferencesRepository
-              .getMinConsumptionWhenWeightIncreased(),
+          () {
+            return mockUserPreferencesRepository
+                .getMinConsumptionWhenWeightIncreased();
+          },
         ).thenAnswer((_) async => constants.kMaxDailyFoodLimit);
         when(
           () => mockUserPreferencesRepository
@@ -142,8 +148,10 @@ void main() {
           ],
         );
         when(
-          () => mockUserPreferencesRepository
-              .getMinConsumptionWhenWeightIncreased(),
+          () {
+            return mockUserPreferencesRepository
+                .getMinConsumptionWhenWeightIncreased();
+          },
         ).thenAnswer((_) async => 1500.0);
         when(
           () => mockUserPreferencesRepository.getLastPortionControl(),
