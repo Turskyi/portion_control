@@ -1053,40 +1053,81 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ConfirmMealsLogged _,
     Emitter<HomeState> emit,
   ) async {
+    final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
     final Language language = _userPreferencesRepository.getLanguage();
-    final bool isSaved = await _userPreferencesRepository.saveMealsConfirmed();
-    if (isSaved) {
-      emit(
-        BodyWeightSubmittedState(
-          bodyWeight: state.bodyWeight,
-          userDetails: state.userDetails,
-          bodyWeightEntries: state.bodyWeightEntries,
-          foodEntries: state.foodEntries,
-          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
-          isConfirmedAllMealsLogged: isSaved,
-          portionControl: state.portionControl,
-          language: language,
-          date: state.date,
-          hasWeightIncreaseProof: state.hasWeightIncreaseProof,
-        ),
-      );
-    } else {
-      // We should never get here.
-      emit(
-        BodyWeightSubmittedState(
-          bodyWeight: state.bodyWeight,
-          userDetails: state.userDetails,
-          bodyWeightEntries: state.bodyWeightEntries,
-          foodEntries: state.foodEntries,
-          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
-          isConfirmedAllMealsLogged: false,
-          portionControl: state.portionControl,
-          language: language,
-          date: state.date,
-          hasWeightIncreaseProof: state.hasWeightIncreaseProof,
-        ),
-      );
+    final DateTime now = DateTime.now();
+
+    final BodyWeight todayBodyWeightEntry = await _bodyWeightRepository
+        .getTodayBodyWeight();
+
+    final double todayBodyWeight = todayBodyWeightEntry.weight;
+
+    final double totalConsumedYesterday = await _foodWeightRepository
+        .getTotalConsumedYesterday();
+
+    final List<BodyWeight> bodyWeightEntries = await _bodyWeightRepository
+        .getAllBodyWeightEntries();
+
+    final double minConsumptionIfWeightIncreased =
+        await _userPreferencesRepository.getMinConsumptionWhenWeightIncreased();
+
+    final bool hasWeightIncreaseProof =
+        minConsumptionIfWeightIncreased < constants.kMaxDailyFoodLimit;
+
+    double portionControl = constants.kMaxDailyFoodLimit;
+
+    if (bodyWeightEntries.isNotEmpty) {
+      final BodyWeight? lastSavedBodyWeightEntry = bodyWeightEntries.lastOrNull;
+
+      if (lastSavedBodyWeightEntry != null) {
+        final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
+          lastSavedBodyWeightEntry.weight,
+        );
+
+        final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
+          lastSavedBodyWeightEntry.weight,
+        );
+
+        if (isWeightAboveHealthy) {
+          portionControl = minConsumptionIfWeightIncreased;
+        } else if (isWeightBelowHealthy) {
+          portionControl = await _userPreferencesRepository
+              .getMaxConsumptionWhenWeightDecreased();
+        }
+
+        final bool isNoProofFound =
+            portionControl == constants.kMaxDailyFoodLimit ||
+            (isWeightBelowHealthy &&
+                portionControl == constants.kSafeMinimumFoodIntakeG);
+
+        if (isNoProofFound) {
+          final double savedPortionControl = _userPreferencesRepository
+              .getLastPortionControl();
+          if (savedPortionControl != constants.kMaxDailyFoodLimit &&
+              savedPortionControl != constants.kSafeMinimumFoodIntakeG &&
+              savedPortionControl != constants.kAbsoluteMinimumFoodIntakeG) {
+            portionControl = savedPortionControl;
+          }
+        }
+      }
     }
+
+    final bool isSaved = await _userPreferencesRepository.saveMealsConfirmed();
+
+    emit(
+      BodyWeightSubmittedState(
+        bodyWeight: todayBodyWeight,
+        userDetails: userDetails,
+        bodyWeightEntries: bodyWeightEntries,
+        foodEntries: state.foodEntries,
+        yesterdayConsumedTotal: totalConsumedYesterday,
+        isConfirmedAllMealsLogged: isSaved,
+        portionControl: portionControl,
+        language: language,
+        date: now,
+        hasWeightIncreaseProof: hasWeightIncreaseProof,
+      ),
+    );
   }
 
   FutureOr<void> _onFeedbackRequested(
