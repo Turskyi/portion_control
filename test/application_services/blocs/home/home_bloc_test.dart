@@ -35,6 +35,9 @@ void main() {
     when(
       () => mockUserPreferencesRepository.getLanguage(),
     ).thenReturn(Language.en);
+    when(
+      () => mockUserPreferencesRepository.getLanguageIsoCode(),
+    ).thenReturn(Language.en.isoLanguageCode);
     when(() => mockUserPreferencesRepository.getUserDetails()).thenReturn(
       const UserDetails(
         heightInCm: 180,
