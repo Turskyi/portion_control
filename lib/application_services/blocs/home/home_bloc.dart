@@ -147,8 +147,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             await _userPreferencesRepository
                 .getMinConsumptionWhenWeightIncreased();
 
-        final bool hasWeightIncreaseProof =
-            minConsumptionIfWeightIncreased < constants.kMaxDailyFoodLimit;
+        final bool hasWeightIncreaseProof = await _bodyWeightRepository
+            .hasWeightIncreaseProof();
 
         if (bodyWeightEntries.isNotEmpty) {
           final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
@@ -666,8 +666,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             await _userPreferencesRepository
                 .getMinConsumptionWhenWeightIncreased();
 
-        final bool hasWeightIncreaseProof =
-            minConsumptionIfWeightIncreased < constants.kMaxDailyFoodLimit;
+        final bool hasWeightIncreaseProof = await _bodyWeightRepository
+            .hasWeightIncreaseProof();
 
         if (isWeightAboveHealthy) {
           portionControl = minConsumptionIfWeightIncreased;
@@ -1071,8 +1071,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final double minConsumptionIfWeightIncreased =
         await _userPreferencesRepository.getMinConsumptionWhenWeightIncreased();
 
-    final bool hasWeightIncreaseProof =
-        minConsumptionIfWeightIncreased < constants.kMaxDailyFoodLimit;
+    final bool hasWeightIncreaseProof = await _bodyWeightRepository
+        .hasWeightIncreaseProof();
 
     double portionControl = constants.kMaxDailyFoodLimit;
 

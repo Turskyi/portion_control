@@ -11,7 +11,7 @@ sealed class HomeState {
     required this.portionControl,
     required this.language,
     required this.date,
-    this.hasWeightIncreaseProof = false,
+    required this.hasWeightIncreaseProof,
   });
 
   final UserDetails userDetails;

@@ -68,4 +68,9 @@ class BodyWeightRepository implements IBodyWeightRepository {
   Future<int> getBodyWeightStreak() {
     return _localDataSource.getBodyWeightStreak();
   }
+
+  @override
+  Future<bool> hasWeightIncreaseProof() {
+    return _localDataSource.hasWeightIncreaseProof();
+  }
 }

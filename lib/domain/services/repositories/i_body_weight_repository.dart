@@ -26,4 +26,6 @@ abstract interface class IBodyWeightRepository {
   Future<BodyWeight> getLastBodyWeight();
 
   Future<int> getBodyWeightStreak();
+
+  Future<bool> hasWeightIncreaseProof();
 }
