@@ -38,6 +38,7 @@ class FoodEntriesColumn extends StatelessWidget {
             // Existing food entries.
             ...foodEntries.map((FoodWeight entry) {
               return FoodWeightEntryRow(
+                key: ValueKey<int>(entry.id),
                 value: '${entry.weight}',
                 time: entry.time,
                 isEditState:
@@ -57,7 +58,11 @@ class FoodEntriesColumn extends StatelessWidget {
               );
             }),
             // Input field for new food entry.
+            // Using a unique key that changes based on the number of entries
+            // ensures that the row is recreated (clearing focus and text)
+            // after a new entry is successfully saved.
             FoodWeightEntryRow(
+              key: ValueKey<String>('new_food_entry_${foodEntries.length}'),
               isEditState: true,
               onSave: (String value) async {
                 await _handleFoodEntrySubmission(
