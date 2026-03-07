@@ -45,6 +45,9 @@ void main() {
         dateOfBirth: null,
       ),
     );
+    when(
+      () => mockUserPreferencesRepository.getLastPortionControl(),
+    ).thenReturn(constants.kMaxDailyFoodLimit);
 
     homeBloc = HomeBloc(
       mockUserPreferencesRepository,
@@ -60,7 +63,8 @@ void main() {
     final DateTime yesterday = today.subtract(const Duration(days: 1));
 
     test(
-      'should fallback to max limit when no weight increase proof exists',
+      'should fallback to max limit (constants.kMaxDailyFoodLimit) when no '
+      'weight increase proof exists',
       () async {
         // Data from the screenshot:
         // Yesterday: 75.6kg, Total: 1263g

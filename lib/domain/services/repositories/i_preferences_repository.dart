@@ -33,7 +33,7 @@ abstract interface class IUserPreferencesRepository {
 
   bool get isMealsConfirmedForToday;
 
-  double? getLastPortionControl();
+  double getLastPortionControl();
 
   Future<bool> savePortionControl(double limit);
 

@@ -41,7 +41,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     this._foodWeightRepository,
     this._clearTrackingDataUseCase,
     this._homeWidgetService,
-  ) : super(HomeLoading(language: _userPreferencesRepository.getLanguage())) {
+  ) : super(
+        HomeLoading(
+          language: _userPreferencesRepository.getLanguage(),
+          portionControl: _userPreferencesRepository.getLastPortionControl(),
+          date: DateTime.now(),
+          userDetails: _userPreferencesRepository.getUserDetails(),
+        ),
+      ) {
     on<LoadEntries>(_loadEntries);
     on<UpdateHeight>(_updateHeight);
     on<UpdateDateOfBirth>(_updateDateOfBirth);
@@ -95,6 +102,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           language: language,
           date: now,
           hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+          portionControl: state.portionControl,
         ),
       );
       final BodyWeight todayBodyWeightEntry = await _bodyWeightRepository
@@ -110,6 +118,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           language: language,
           date: now,
           hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+          portionControl: state.portionControl,
         ),
       );
       final double totalConsumedYesterday = await _foodWeightRepository
@@ -125,6 +134,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           language: language,
           date: now,
           hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+          portionControl: state.portionControl,
         ),
       );
       try {
@@ -171,9 +181,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                   portionControl == constants.kSafeMinimumFoodIntakeG);
 
           if (isNoProofFound) {
-            final double? savedPortionControl = _userPreferencesRepository
+            final double savedPortionControl = _userPreferencesRepository
                 .getLastPortionControl();
-            if (savedPortionControl != null) {
+            if (savedPortionControl != constants.kMaxDailyFoodLimit) {
               portionControl = savedPortionControl;
             }
           }
@@ -195,6 +205,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               language: language,
               date: now,
               hasWeightIncreaseProof: hasWeightIncreaseProof,
+              portionControl: portionControl,
             ),
           );
         } else if (todayBodyWeight > constants.minBodyWeight) {
@@ -302,6 +313,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           language: language,
           date: state.date,
           hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+          portionControl: state.portionControl,
         ),
       );
     } else {
@@ -338,6 +350,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           language: language,
           date: state.date,
           hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+          portionControl: state.portionControl,
         ),
       );
     } else {
@@ -370,6 +383,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         language: language,
         date: state.date,
         hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+        portionControl: state.portionControl,
       ),
     );
   }
@@ -391,6 +405,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           language: language,
           date: state.date,
           hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+          portionControl: state.portionControl,
         ),
       );
     } else {
@@ -405,6 +420,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           language: language,
           date: state.date,
           hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+          portionControl: state.portionControl,
         ),
       );
     }
@@ -538,6 +554,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 language: language,
                 date: state.date,
                 hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+                portionControl: state.portionControl,
               ),
             );
           }
@@ -652,18 +669,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
 
         // Synchronize with manually adjusted portion or latest calculation.
-        final double? savedPortionControl = _userPreferencesRepository
+        final double savedPortionControl = _userPreferencesRepository
             .getLastPortionControl();
 
         if (isWeightAboveHealthy) {
           if (portionControl == constants.kMaxDailyFoodLimit) {
-            if (savedPortionControl != null) {
+            if (savedPortionControl != constants.kMaxDailyFoodLimit) {
               portionControl = savedPortionControl;
             }
           } else {
             // We have a historical proof (min consumption when weight
             // increased).
-            if (savedPortionControl != null &&
+            if (savedPortionControl != constants.kMaxDailyFoodLimit &&
                 savedPortionControl < portionControl) {
               portionControl = savedPortionControl;
             } else {
@@ -674,13 +691,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           }
         } else if (isWeightBelowHealthy) {
           if (portionControl == constants.kSafeMinimumFoodIntakeG) {
-            if (savedPortionControl != null) {
+            if (savedPortionControl != constants.kMaxDailyFoodLimit) {
               portionControl = savedPortionControl;
             }
           } else {
             // We have a historical proof (max consumption when weight
             // decreased).
-            if (savedPortionControl != null &&
+            if (savedPortionControl != constants.kMaxDailyFoodLimit &&
                 savedPortionControl > portionControl) {
               portionControl = savedPortionControl;
             } else {
@@ -723,6 +740,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             language: language,
             date: state.date,
             hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+            portionControl: state.portionControl,
           ),
         );
       }
@@ -746,6 +764,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           language: language,
           date: state.date,
           hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+          portionControl: state.portionControl,
         ),
       );
     }
@@ -896,6 +915,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         yesterdayConsumedTotal: yesterdayConsumedTotal,
         date: state.date,
         hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+        portionControl: state.portionControl,
       ),
     );
   }
@@ -914,6 +934,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         language: language,
         date: state.date,
         hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+        portionControl: state.portionControl,
       ),
     );
   }
@@ -959,6 +980,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           yesterdayConsumedTotal: 0,
           date: state.date,
           hasWeightIncreaseProof: false,
+          portionControl: 0,
         ),
       );
     } catch (error) {
@@ -1011,6 +1033,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           language: language,
           date: state.date,
           hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+          portionControl: state.portionControl,
         ),
       );
     }

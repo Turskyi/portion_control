@@ -4,6 +4,7 @@ import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
+import 'package:portion_control/res/constants/constants.dart' as constants;
 
 /// Implementation of user details repository using SharedPreferences
 class UserPreferencesRepository implements IUserPreferencesRepository {
@@ -81,8 +82,9 @@ class UserPreferencesRepository implements IUserPreferencesRepository {
   }
 
   @override
-  double? getLastPortionControl() {
-    return _localDataSource.getLastPortionControl();
+  double getLastPortionControl() {
+    return _localDataSource.getLastPortionControl() ??
+        constants.kMaxDailyFoodLimit;
   }
 
   @override
