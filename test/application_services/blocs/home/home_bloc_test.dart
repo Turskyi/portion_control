@@ -220,6 +220,123 @@ void main() {
     );
 
     test(
+      'should set portionControl to yesterday\'s consumption when weight '
+      'increases for the first time and is above healthy',
+      () async {
+        // GIVEN:
+        // Yesterday weight was 73.9.
+        when(
+          () => mockBodyWeightRepository.getAllBodyWeightEntries(),
+        ).thenAnswer(
+          (_) async => <BodyWeight>[
+            BodyWeight(
+              id: 1,
+              weight: dummy.dummyWeightYesterday,
+              date: yesterday,
+            ),
+          ],
+        );
+        when(
+          () => mockBodyWeightRepository.getTodayBodyWeight(),
+        ).thenAnswer((_) async => BodyWeight.empty());
+
+        // Yesterday consumption was 1241.0.
+        when(
+          () => mockFoodWeightRepository.getTotalConsumedYesterday(),
+        ).thenAnswer((_) async => dummy.dummyConsumedYesterday);
+
+        // When we submit today's weight (74.0 kg).
+        // With height 171 cm, BMI is ~25.3 (> 24.9 healthy limit).
+        when(
+          () => mockBodyWeightRepository.addOrUpdateBodyWeightEntry(
+            weight: any(named: 'weight'),
+            date: any(named: 'date'),
+          ),
+        ).thenAnswer((_) async => 2);
+
+        // After update, repository returns both entries.
+        when(
+          () => mockBodyWeightRepository.getAllBodyWeightEntries(),
+        ).thenAnswer(
+          (_) async => <BodyWeight>[
+            BodyWeight(
+              id: 1,
+              weight: dummy.dummyWeightYesterday,
+              date: yesterday,
+            ),
+            BodyWeight(id: 2, weight: dummy.dummyWeightToday, date: today),
+          ],
+        );
+
+        when(() => mockBodyWeightRepository.getTodayBodyWeight()).thenAnswer(
+          (_) async =>
+              BodyWeight(id: 2, weight: dummy.dummyWeightToday, date: today),
+        );
+
+        // Repository now reflects the new "min consumption when weight
+        // increased" proof.
+        when(
+          () => mockUserPreferencesRepository
+              .getMinConsumptionWhenWeightIncreased(),
+        ).thenAnswer((_) async => dummy.dummyConsumedYesterday);
+
+        when(
+          () => mockUserPreferencesRepository.getLastPortionControl(),
+        ).thenReturn(constants.kMaxDailyFoodLimit);
+
+        when(
+          () => mockFoodWeightRepository.getTodayFoodEntries(),
+        ).thenAnswer((_) async => <FoodWeight>[]);
+
+        when(
+          () => mockUserPreferencesRepository.isMealsConfirmedForToday,
+        ).thenReturn(false);
+
+        // WHEN:
+        // User submits weight (74.0) for today.
+        homeBloc.add(const SubmitBodyWeight(dummy.dummyWeightToday));
+
+        // THEN:
+        // The resulting state should have the portion control adjusted to
+        // yesterday's consumption (1241.0) because weight increased and BMI is
+        // overweight.
+        await expectLater(
+          homeBloc.stream,
+          emitsThrough(
+            isA<BodyWeightSubmittedState>()
+                .having(
+                  (BodyWeightSubmittedState s) => s.bodyWeight,
+                  'bodyWeight',
+                  dummy.dummyWeightToday,
+                )
+                .having(
+                  (BodyWeightSubmittedState s) => s.portionControl,
+                  'portionControl',
+                  dummy.dummyConsumedYesterday,
+                )
+                .having(
+                  (BodyWeightSubmittedState s) => s.isWeightAboveHealthy,
+                  'isWeightAboveHealthy',
+                  true,
+                )
+                .having(
+                  (BodyWeightSubmittedState s) => s.isWeightIncreasing,
+                  'isWeightIncreasing',
+                  true,
+                ),
+          ),
+        );
+
+        // Also verify it was saved to preferences.
+        verify(
+          () => mockUserPreferencesRepository.savePortionControl(
+            dummy.dummyConsumedYesterday,
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
       'should set correct portionControl even if submitted quickly after '
       'launch (race condition fix verification)',
       () async {
