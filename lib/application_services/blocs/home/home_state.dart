@@ -39,21 +39,21 @@ sealed class HomeState {
   double get adjustedPortion {
     // If we don't have enough data to prove a limit yet, we fallback to the
     // technical max value (effectively "no limit").
-    if (!hasWeightIncreaseProof) {
-      return constants.kMaxDailyFoodLimit;
-    }
-
-    if (isSafePortionControl) {
-      return portionControl;
-    } else if (_isYesterdayConsumedTotalASafePortion) {
-      return yesterdayConsumedTotal;
-    } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
-      return constants.kSafeMinimumFoodIntakeG;
-    } else if (isWeightAboveHealthy || isWeightIncreasing) {
-      // If we are above healthy weight or weight is increasing, we should not
-      // default to the technical max limit (4000g).
-      // Instead, we use the safe minimum as a floor.
-      return constants.kSafeMinimumFoodIntakeG;
+    if (hasWeightIncreaseProof) {
+      if (isSafePortionControl) {
+        return portionControl;
+      } else if (_isYesterdayConsumedTotalASafePortion) {
+        return yesterdayConsumedTotal;
+      } else if (isWeightDecreasingOrSame && isWeightBelowHealthy) {
+        return constants.kSafeMinimumFoodIntakeG;
+      } else if (isWeightAboveHealthy || isWeightIncreasing) {
+        // If we are above healthy weight or weight is increasing, we should not
+        // default to the technical max limit (4000g).
+        // Instead, we use the safe minimum as a floor.
+        return constants.kSafeMinimumFoodIntakeG;
+      } else {
+        return constants.kMaxDailyFoodLimit;
+      }
     } else {
       return constants.kMaxDailyFoodLimit;
     }

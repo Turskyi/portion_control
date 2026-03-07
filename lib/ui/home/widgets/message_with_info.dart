@@ -6,11 +6,13 @@ class MessageWithInfo extends StatelessWidget {
   const MessageWithInfo({
     required this.text,
     this.style,
+    this.showInfo = true,
     super.key,
   });
 
   final String text;
   final TextStyle? style;
+  final bool showInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +21,18 @@ class MessageWithInfo extends StatelessWidget {
         text: text,
         style: style,
         children: <InlineSpan>[
-          WidgetSpan(
-            alignment: PlaceholderAlignment.middle,
-            child: IconButton(
-              icon: const Icon(Icons.info_outline, size: 20),
-              onPressed: () => _showSafetyLimitsDialog(context),
-              tooltip: translate('educational_content.safety_limits_tooltip'),
-              constraints: const BoxConstraints(),
-              padding: const EdgeInsets.only(left: 4.0),
-              visualDensity: VisualDensity.compact,
+          if (showInfo)
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: IconButton(
+                icon: const Icon(Icons.info_outline, size: 20),
+                onPressed: () => _showSafetyLimitsDialog(context),
+                tooltip: translate('educational_content.safety_limits_tooltip'),
+                constraints: const BoxConstraints(),
+                padding: const EdgeInsets.only(left: 4.0),
+                visualDensity: VisualDensity.compact,
+              ),
             ),
-          ),
         ],
       ),
     );
