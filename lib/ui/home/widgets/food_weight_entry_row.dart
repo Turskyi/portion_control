@@ -30,8 +30,14 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
   @override
   void initState() {
     super.initState();
-
     _controller = TextEditingController(text: widget.value);
+    if (widget.isEditState) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _focusNode.requestFocus();
+        }
+      });
+    }
   }
 
   @override
@@ -42,6 +48,9 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
     }
     if (widget.isEditState && !oldWidget.isEditState) {
       _focusNode.requestFocus();
+    }
+    if (!widget.isEditState && oldWidget.isEditState) {
+      _focusNode.unfocus();
     }
   }
 
@@ -108,7 +117,11 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
   }
 
   void _handleSave() {
-    widget.onSave?.call(_controller.text);
+    final String text = _controller.text;
+    if (_isValidWeightInput(text)) {
+      _focusNode.unfocus();
+      widget.onSave?.call(text);
+    }
   }
 
   bool _isValidWeightInput(String input) {

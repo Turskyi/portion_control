@@ -332,6 +332,11 @@ class LocalDataSource {
     return _appDatabase.clearBodyWeightEntries();
   }
 
+  Future<int> clearPortionControlEntries() async {
+    await _preferences.remove(_lastPortionControlKey);
+    return _appDatabase.clearPortionControlEntries();
+  }
+
   Future<BodyWeight> getTodayBodyWeight() async {
     final BodyWeightEntry? bodyWeightEntry = await _appDatabase
         .getTodayBodyWeight();
@@ -514,11 +519,10 @@ class LocalDataSource {
           previous.weight;
     }
 
+    final bool hasWeightIncreaseProof = await this.hasWeightIncreaseProof();
+
     final double minConsumptionIfWeightIncreased = await _appDatabase
         .getMinConsumptionWhenWeightIncreased();
-
-    final bool hasWeightIncreaseProof =
-        minConsumptionIfWeightIncreased < constants.kMaxDailyFoodLimit;
 
     final double defaultLimit =
         getLastPortionControl() ?? minConsumptionIfWeightIncreased;
@@ -585,5 +589,11 @@ class LocalDataSource {
 
   Future<double> getMinConsumptionWhenWeightIncreased() {
     return _appDatabase.getMinConsumptionWhenWeightIncreased();
+  }
+
+  Future<bool> hasWeightIncreaseProof() async {
+    final double minConsumptionIfWeightIncreased = await _appDatabase
+        .getMinConsumptionWhenWeightIncreased();
+    return minConsumptionIfWeightIncreased < constants.kMaxDailyFoodLimit;
   }
 }

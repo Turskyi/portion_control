@@ -316,54 +316,56 @@ class AppDatabase extends _$AppDatabase {
     final List<BodyWeightEntry> bodyWeights = await getAllBodyWeightEntries();
     if (bodyWeights.length < 2) {
       return constants.kMaxDailyFoodLimit;
-    }
+    } else {
+      final List<FoodEntry> foodEntries = await getAllFoodEntries();
+      if (foodEntries.isEmpty) {
+        return constants.kMaxDailyFoodLimit;
+      } else {
+        // Map date to total consumption.
+        final Map<DateTime, double> dailyConsumption = <DateTime, double>{};
+        for (final FoodEntry entry in foodEntries) {
+          final DateTime date = DateTime(
+            entry.date.year,
+            entry.date.month,
+            entry.date.day,
+          );
+          dailyConsumption[date] =
+              (dailyConsumption[date] ?? 0.0) + entry.weight;
+        }
 
-    final List<FoodEntry> foodEntries = await getAllFoodEntries();
-    if (foodEntries.isEmpty) {
-      return constants.kMaxDailyFoodLimit;
-    }
+        double minConsumption = constants.kMaxDailyFoodLimit;
 
-    // Map date to total consumption.
-    final Map<DateTime, double> dailyConsumption = <DateTime, double>{};
-    for (final FoodEntry entry in foodEntries) {
-      final DateTime date = DateTime(
-        entry.date.year,
-        entry.date.month,
-        entry.date.day,
-      );
-      dailyConsumption[date] = (dailyConsumption[date] ?? 0.0) + entry.weight;
-    }
+        for (int i = 1; i < bodyWeights.length; i++) {
+          final BodyWeightEntry current = bodyWeights[i];
+          final BodyWeightEntry previous = bodyWeights[i - 1];
 
-    double minConsumption = constants.kMaxDailyFoodLimit;
+          // Check if weight increased.
+          if (current.weight > previous.weight) {
+            // Find consumption for the day before the weight measurement
+            final DateTime weightDate = current.date;
+            final DateTime consumptionDate = DateTime(
+              weightDate.year,
+              weightDate.month,
+              weightDate.day,
+            ).subtract(const Duration(days: 1));
 
-    for (int i = 1; i < bodyWeights.length; i++) {
-      final BodyWeightEntry current = bodyWeights[i];
-      final BodyWeightEntry previous = bodyWeights[i - 1];
+            final double? consumption = dailyConsumption[consumptionDate];
+            if (consumption != null && consumption < minConsumption) {
+              minConsumption = consumption;
+            }
+          }
+        }
 
-      // Check if weight increased.
-      if (current.weight > previous.weight) {
-        // Find consumption for the day before the weight measurement
-        final DateTime weightDate = current.date;
-        final DateTime consumptionDate = DateTime(
-          weightDate.year,
-          weightDate.month,
-          weightDate.day,
-        ).subtract(const Duration(days: 1));
-
-        final double? consumption = dailyConsumption[consumptionDate];
-        if (consumption != null && consumption < minConsumption) {
-          minConsumption = consumption;
+        // If historical evidence suggests weight increases even at very low
+        // intake, we still don't recommend eating less than the absolute
+        // safety floor.
+        if (minConsumption < constants.kAbsoluteMinimumFoodIntakeG) {
+          return constants.kAbsoluteMinimumFoodIntakeG;
+        } else {
+          return minConsumption;
         }
       }
     }
-
-    // If historical evidence suggests weight increases even at very low intake,
-    // we still don't recommend eating less than the absolute safety floor.
-    if (minConsumption < constants.kAbsoluteMinimumFoodIntakeG) {
-      return constants.kAbsoluteMinimumFoodIntakeG;
-    }
-
-    return minConsumption;
   }
 
   Future<void> insertPortionControl({

@@ -32,7 +32,7 @@ abstract interface class IFoodWeightRepository {
 
   Future<List<FoodWeight>> getAllFoodEntries();
 
-  Future<int> clearFoodEntries();
+  Future<int> clearFoodEntriesAndPortionControl();
 
   Future<List<FoodWeight>> fetchYesterdayEntries();
 

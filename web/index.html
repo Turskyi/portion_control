@@ -2,45 +2,87 @@
 <html lang="en">
 
 <head>
-  <!--
-        If you are serving your web app in a path other than the root, change
-        the href value below to reflect the base path you are serving from.
+    <!--
+          If you are serving your web app in a path other than the root, change
+          the href value below to reflect the base path you are serving from.
 
-        The path provided below has to start and end with a slash "/" in order
-        for it to work correctly.
+          The path provided below has to start and end with a slash "/" in order
+          for it to work correctly.
 
-        For more details:
-        * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+          For more details:
+          * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
 
-        This is a placeholder for base href that will be replaced by the value
-        of the `--base-href` argument provided to `flutter build`.
-      -->
-  <base href="$FLUTTER_BASE_HREF">
+          This is a placeholder for base href that will be replaced by the value
+          of the `--base-href` argument provided to `flutter build`.
+        -->
+    <base href="$FLUTTER_BASE_HREF">
 
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="PortionControl is a minimalist weight
-  management app that helps users track food portions in grams and adjust
-  intake based on weight trends. With simple logging and dynamic
-  recommendations, it offers a stress-free alternative to calorie counting,
-  focusing on sustainable, healthy eating habits.">
+    <meta charset="UTF-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta content="Dmytro Turskyi" name="author">
+    <meta content="Portion Control is a simple food portion tracking app that helps you manage weight by logging meals in grams and adjusting intake based on weight trends. A minimalist alternative to calorie counting."
+          name="description">
+    <meta content="portion control, portion tracking, food portion app, weight management app, track food grams, calorie counting alternative, healthy eating app"
+          name="keywords">
+    <meta content="index, follow" name="robots">
+    <link href="https://portioncontrol.ca/" rel="canonical">
 
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="portion_control">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+    <!-- Open Graph for social sharing -->
+    <meta content="Portion Control – Simple Food Portion Tracking App"
+          property="og:title">
+    <meta content="Track food portions in grams and monitor weight trends without counting calories. A simple and data-driven approach to portion control."
+          property="og:description">
+    <meta content="website" property="og:type">
+    <meta content="https://portioncontrol.ca/" property="og:url">
+    <meta content="https://portioncontrol.ca/portion_control-feature_graphic.png"
+          property="og:image">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png" />
+    <!-- Twitter card -->
+    <meta content="summary_large_image" name="twitter:card">
+    <meta content="Portion Control – Simple Food Portion Tracking App"
+          name="twitter:title">
+    <meta content="Track food portions and weight trends without counting calories."
+          name="twitter:description">
+    <meta content="https://portioncontrol.ca/portion_control-feature_graphic.png"
+          name="twitter:image">
 
-  <title>PortionControl</title>
-  <link rel="manifest" href="manifest.json">
+    <!-- iOS meta tags & icons -->
+    <meta content="yes" name="mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="Portion Control" name="apple-mobile-web-app-title">
+    <link href="icons/Icon-192.png" rel="apple-touch-icon">
+
+    <!-- Favicon -->
+    <link href="favicon.png" rel="icon" type="image/png"/>
+
+    <title>Portion Control – Simple Food Portion Tracking App</title>
+    <link href="manifest.json" rel="manifest">
 </head>
 
 <body>
-  <!--suppress HtmlUnknownTarget -->
-  <script src="flutter_bootstrap.js" async></script>
+<!-- SEO text for search engines (not visible to users) -->
+<div style="display:none">
+    <h1>Portion Control App</h1>
+    <p>
+        Portion Control is a simple food tracking app focused on portion sizes
+        rather than calories.
+        Users log meals in grams, monitor body weight trends, and adjust their
+        food intake over time.
+        The app provides a minimalist and data-driven alternative to traditional
+        calorie counting apps.
+    </p>
+    <p>
+        Designed for people who want a lightweight weight management tool,
+        Portion
+        Control helps
+        visualize daily food intake, long-term weight trends, and eating
+        patterns
+        without complex
+        nutrition databases.
+    </p>
+</div>
+<!--suppress HtmlUnknownTarget -->
+<script async src="flutter_bootstrap.js"></script>
 </body>
 
 </html>

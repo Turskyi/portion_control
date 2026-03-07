@@ -519,12 +519,12 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
             .getMaxConsumptionWhenWeightDecreased();
       }
 
-      final double? savedPortionControl = _userPreferencesRepository
+      final double savedPortionControl = _userPreferencesRepository
           .getLastPortionControl();
 
       if (isWeightAboveHealthy) {
         if (portionControl == constants.kMaxDailyFoodLimit) {
-          if (savedPortionControl != null) {
+          if (savedPortionControl != constants.kMaxDailyFoodLimit) {
             portionControl = savedPortionControl;
           } else {
             final double yesterdayTotal = await _foodWeightRepository
@@ -533,20 +533,20 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
               portionControl = yesterdayTotal;
             }
           }
-        } else if (savedPortionControl != null &&
+        } else if (savedPortionControl != constants.kMaxDailyFoodLimit &&
             savedPortionControl < portionControl) {
           portionControl = savedPortionControl;
         }
       } else if (isWeightBelowHealthy) {
         if (portionControl == constants.kSafeMinimumFoodIntakeG) {
-          if (savedPortionControl != null) {
+          if (savedPortionControl != constants.kMaxDailyFoodLimit) {
             portionControl = savedPortionControl;
           }
-        } else if (savedPortionControl != null &&
+        } else if (savedPortionControl != constants.kMaxDailyFoodLimit &&
             savedPortionControl > portionControl) {
           portionControl = savedPortionControl;
         }
-      } else if (savedPortionControl != null) {
+      } else if (savedPortionControl != constants.kMaxDailyFoodLimit) {
         portionControl = savedPortionControl;
       }
     }
