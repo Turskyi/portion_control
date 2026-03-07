@@ -1016,7 +1016,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     final Language language = _userPreferencesRepository.getLanguage();
     try {
-      await _foodWeightRepository.clearFoodEntries();
+      await _foodWeightRepository.clearFoodEntriesAndPortionControl();
       emit(
         BodyWeightSubmittedState(
           bodyWeight: state.bodyWeight,

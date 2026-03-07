@@ -332,6 +332,11 @@ class LocalDataSource {
     return _appDatabase.clearBodyWeightEntries();
   }
 
+  Future<int> clearPortionControlEntries() async {
+    await _preferences.remove(_lastPortionControlKey);
+    return _appDatabase.clearPortionControlEntries();
+  }
+
   Future<BodyWeight> getTodayBodyWeight() async {
     final BodyWeightEntry? bodyWeightEntry = await _appDatabase
         .getTodayBodyWeight();
