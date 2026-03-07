@@ -64,6 +64,10 @@ void main() {
     ).thenAnswer((_) async => true);
 
     when(
+      () => mockBodyWeightRepository.hasWeightIncreaseProof(),
+    ).thenAnswer((_) async => false);
+
+    when(
       () => mockHomeWidgetService.setAppGroupId(any()),
     ).thenAnswer((_) async {});
     when(
@@ -163,6 +167,9 @@ void main() {
         // Day 1: 75.0kg, ate 1500g
         // Day 2: 75.2kg (Increase!) -> Proof found.
 
+        when(
+          () => mockBodyWeightRepository.hasWeightIncreaseProof(),
+        ).thenAnswer((_) async => true);
         when(
           () => mockBodyWeightRepository.getTodayBodyWeight(),
         ).thenAnswer((_) async => BodyWeight(id: 1, weight: 75.3, date: today));
@@ -292,6 +299,11 @@ void main() {
           () => mockUserPreferencesRepository.isMealsConfirmedForToday,
         ).thenReturn(false);
 
+        // Mock proof appearing after submission
+        when(
+          () => mockBodyWeightRepository.hasWeightIncreaseProof(),
+        ).thenAnswer((_) async => true);
+
         // WHEN:
         // User submits weight (74.0) for today.
         homeBloc.add(const SubmitBodyWeight(dummy.dummyWeightToday));
@@ -419,6 +431,10 @@ void main() {
           () => mockUserPreferencesRepository
               .getMinConsumptionWhenWeightIncreased(),
         ).thenAnswer((_) async => dummy.dummyConsumedYesterday);
+
+        when(
+          () => mockBodyWeightRepository.hasWeightIncreaseProof(),
+        ).thenAnswer((_) async => true);
 
         homeBloc.add(const SubmitBodyWeight(dummy.dummyWeightToday));
 
