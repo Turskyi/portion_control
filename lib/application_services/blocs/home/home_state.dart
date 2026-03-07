@@ -117,7 +117,9 @@ sealed class HomeState {
 
   bool isWeightIncreasingOrSameFor(List<BodyWeight> bodyWeightEntries) {
     if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.isEmpty) {
-      return false;
+      // No entries, means it is not decreasing, so it is kind of
+      // "same weight as yesterday", no entries.
+      return true;
     } else if (bodyWeightEntries.length == 1) {
       // Only one entry, so it is kind of "same as yesterday".
       return true;
@@ -125,8 +127,13 @@ sealed class HomeState {
       return (bodyWeightEntries.lastOrNull?.weight ?? 0) >=
           bodyWeightEntries[bodyWeightEntries.length - 2].weight;
     } else {
-      debugPrint('We should not be here');
-      // We assume it is same, even though technically we should not be here.
+      debugPrint(
+        'isWeightIncreasingOrSameFor: Unexpected state. '
+        'Length: ${bodyWeightEntries.length}, '
+        'yesterdayTotal: $yesterdayConsumedTotal',
+      );
+      // We assume it is same, because we definitely cannot assume that it is
+      // decreasing, even though technically we should not be here.
       return true;
     }
   }
@@ -134,9 +141,10 @@ sealed class HomeState {
   bool get isWeightDecreasing {
     if (yesterdayConsumedTotal <= 0 || bodyWeightEntries.length < 2) {
       return false;
+    } else {
+      return bodyWeightEntries.last.weight <
+          bodyWeightEntries[bodyWeightEntries.length - 2].weight;
     }
-    return bodyWeightEntries.last.weight <
-        bodyWeightEntries[bodyWeightEntries.length - 2].weight;
   }
 
   bool get isWeightDecreasingOrSame {
@@ -407,7 +415,7 @@ class DateOfBirthUpdatedState extends HomeLoaded {
     required super.hasWeightIncreaseProof,
     required super.date,
     required super.portionControl,
-    super.yesterdayConsumedTotal = 0,
+    required super.yesterdayConsumedTotal,
   });
 
   @override
@@ -449,7 +457,7 @@ class GenderUpdatedState extends HomeLoaded {
     required super.hasWeightIncreaseProof,
     required super.date,
     required super.portionControl,
-    super.yesterdayConsumedTotal = 0,
+    required super.yesterdayConsumedTotal,
   });
 
   @override
@@ -491,7 +499,7 @@ class DetailsSubmittedState extends HomeLoaded {
     required super.hasWeightIncreaseProof,
     required super.date,
     required super.portionControl,
-    super.yesterdayConsumedTotal = 0,
+    required super.yesterdayConsumedTotal,
   });
 
   @override
@@ -534,7 +542,7 @@ class LoadingTodayBodyWeightState extends DetailsSubmittedState
     required super.hasWeightIncreaseProof,
     required super.portionControl,
     required super.date,
-    super.yesterdayConsumedTotal = 0,
+    required super.yesterdayConsumedTotal,
   });
 
   @override
@@ -577,7 +585,7 @@ class LoadingConsumedYesterdayState extends DetailsSubmittedState
     required super.hasWeightIncreaseProof,
     required super.date,
     required super.portionControl,
-    super.yesterdayConsumedTotal = 0,
+    required super.yesterdayConsumedTotal,
   });
 
   @override
@@ -620,7 +628,7 @@ class LoadingBodyWeightEntriesState extends DetailsSubmittedState
     required super.hasWeightIncreaseProof,
     required super.date,
     required super.portionControl,
-    super.yesterdayConsumedTotal = 0,
+    required super.yesterdayConsumedTotal,
   });
 
   @override
@@ -662,7 +670,7 @@ class BodyWeightUpdatedState extends DetailsSubmittedState {
     required super.hasWeightIncreaseProof,
     required super.date,
     required super.portionControl,
-    super.yesterdayConsumedTotal = 0,
+    required super.yesterdayConsumedTotal,
   });
 
   @override
@@ -960,9 +968,9 @@ class DetailsError extends ErrorState {
     required super.language,
     required super.hasWeightIncreaseProof,
     required super.date,
+    required super.yesterdayConsumedTotal,
+    required super.portionControl,
     super.foodEntries = const <FoodWeight>[],
-    super.yesterdayConsumedTotal = 0,
-    super.portionControl = 0,
   });
 
   DetailsError copyWith({
@@ -1004,9 +1012,9 @@ class DateOfBirthError extends ErrorState {
     required super.language,
     required super.hasWeightIncreaseProof,
     required super.date,
+    required super.yesterdayConsumedTotal,
+    required super.portionControl,
     super.foodEntries = const <FoodWeight>[],
-    super.yesterdayConsumedTotal = 0,
-    super.portionControl = 0,
   });
 
   DateOfBirthError copyWith({
@@ -1048,9 +1056,9 @@ class GenderError extends ErrorState {
     required super.language,
     required super.hasWeightIncreaseProof,
     required super.date,
+    required super.yesterdayConsumedTotal,
+    required super.portionControl,
     super.foodEntries = const <FoodWeight>[],
-    super.yesterdayConsumedTotal = 0,
-    super.portionControl = 0,
   });
 
   GenderError copyWith({
