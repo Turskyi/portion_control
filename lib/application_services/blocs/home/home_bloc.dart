@@ -628,6 +628,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     final Language language = _userPreferencesRepository.getLanguage();
     if (event.bodyWeight > constants.minBodyWeight) {
+      // `event.bodyWeight` and `state.bodyWeight` should be the same,
+      // because we send it like this `SubmitBodyWeight(state.bodyWeight)`.
       final double bodyWeight = state.bodyWeight;
 
       try {
@@ -647,89 +649,105 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final double lastSavedBodyWeight =
             updatedBodyWeightEntries.lastOrNull?.weight ?? 0.0;
 
-        final double totalConsumedYesterday = await _foodWeightRepository
-            .getTotalConsumedYesterday();
+        if (lastSavedBodyWeight == 0.0) {
+          emit(
+            DetailsSubmittedState(
+              userDetails: state.userDetails,
+              bodyWeight: lastSavedBodyWeight,
+              bodyWeightEntries: state.bodyWeightEntries,
+              foodEntries: state.foodEntries,
+              yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+              language: language,
+              date: now,
+              hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+              portionControl: state.portionControl,
+            ),
+          );
+        } else {
+          final double totalConsumedYesterday = await _foodWeightRepository
+              .getTotalConsumedYesterday();
 
-        final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
-          lastSavedBodyWeight,
-        );
+          final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
+            lastSavedBodyWeight,
+          );
 
-        final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
-          lastSavedBodyWeight,
-        );
-        final bool isMealsConfirmed =
-            _userPreferencesRepository.isMealsConfirmedForToday;
+          final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
+            lastSavedBodyWeight,
+          );
+          final bool isMealsConfirmed =
+              _userPreferencesRepository.isMealsConfirmedForToday;
 
-        double portionControl = constants.kMaxDailyFoodLimit;
+          double portionControl = constants.kMaxDailyFoodLimit;
 
-        final double minConsumptionIfWeightIncreased =
-            await _userPreferencesRepository
-                .getMinConsumptionWhenWeightIncreased();
+          final double minConsumptionIfWeightIncreased =
+              await _userPreferencesRepository
+                  .getMinConsumptionWhenWeightIncreased();
 
-        final bool hasWeightIncreaseProof = await _bodyWeightRepository
-            .hasWeightIncreaseProof();
+          final bool hasWeightIncreaseProof = await _bodyWeightRepository
+              .hasWeightIncreaseProof();
 
-        if (isWeightAboveHealthy) {
-          portionControl = minConsumptionIfWeightIncreased;
-        } else if (isWeightBelowHealthy) {
-          portionControl = await _userPreferencesRepository
-              .getMaxConsumptionWhenWeightDecreased();
-        }
+          if (isWeightAboveHealthy) {
+            portionControl = minConsumptionIfWeightIncreased;
+          } else if (isWeightBelowHealthy) {
+            portionControl = await _userPreferencesRepository
+                .getMaxConsumptionWhenWeightDecreased();
+          }
 
-        // Synchronize with manually adjusted portion or latest calculation.
-        final double savedPortionControl = _userPreferencesRepository
-            .getLastPortionControl();
+          // Synchronize with manually adjusted portion or latest calculation.
+          final double savedPortionControl = _userPreferencesRepository
+              .getLastPortionControl();
 
-        if (isWeightAboveHealthy) {
-          if (portionControl == constants.kMaxDailyFoodLimit) {
-            if (savedPortionControl != constants.kMaxDailyFoodLimit) {
-              portionControl = savedPortionControl;
-            }
-          } else {
-            // We have a historical proof (min consumption when weight
-            // increased).
-            if (savedPortionControl != constants.kMaxDailyFoodLimit &&
-                savedPortionControl < portionControl) {
-              portionControl = savedPortionControl;
+          if (isWeightAboveHealthy) {
+            if (portionControl == constants.kMaxDailyFoodLimit) {
+              if (savedPortionControl != constants.kMaxDailyFoodLimit) {
+                portionControl = savedPortionControl;
+              }
             } else {
-              await _userPreferencesRepository.savePortionControl(
-                portionControl,
-              );
+              // We have a historical proof (min consumption when weight
+              // increased).
+              if (savedPortionControl != constants.kMaxDailyFoodLimit &&
+                  savedPortionControl < portionControl) {
+                portionControl = savedPortionControl;
+              } else {
+                await _userPreferencesRepository.savePortionControl(
+                  portionControl,
+                );
+              }
+            }
+          } else if (isWeightBelowHealthy) {
+            if (portionControl == constants.kSafeMinimumFoodIntakeG) {
+              if (savedPortionControl != constants.kMaxDailyFoodLimit) {
+                portionControl = savedPortionControl;
+              }
+            } else {
+              // We have a historical proof (max consumption when weight
+              // decreased).
+              if (savedPortionControl != constants.kMaxDailyFoodLimit &&
+                  savedPortionControl > portionControl) {
+                portionControl = savedPortionControl;
+              } else {
+                await _userPreferencesRepository.savePortionControl(
+                  portionControl,
+                );
+              }
             }
           }
-        } else if (isWeightBelowHealthy) {
-          if (portionControl == constants.kSafeMinimumFoodIntakeG) {
-            if (savedPortionControl != constants.kMaxDailyFoodLimit) {
-              portionControl = savedPortionControl;
-            }
-          } else {
-            // We have a historical proof (max consumption when weight
-            // decreased).
-            if (savedPortionControl != constants.kMaxDailyFoodLimit &&
-                savedPortionControl > portionControl) {
-              portionControl = savedPortionControl;
-            } else {
-              await _userPreferencesRepository.savePortionControl(
-                portionControl,
-              );
-            }
-          }
-        }
 
-        emit(
-          BodyWeightSubmittedState(
-            bodyWeight: lastSavedBodyWeight,
-            userDetails: state.userDetails,
-            bodyWeightEntries: updatedBodyWeightEntries,
-            foodEntries: state.foodEntries,
-            yesterdayConsumedTotal: totalConsumedYesterday,
-            isConfirmedAllMealsLogged: isMealsConfirmed,
-            portionControl: portionControl,
-            language: language,
-            date: state.date,
-            hasWeightIncreaseProof: hasWeightIncreaseProof,
-          ),
-        );
+          emit(
+            BodyWeightSubmittedState(
+              bodyWeight: lastSavedBodyWeight,
+              userDetails: state.userDetails,
+              bodyWeightEntries: updatedBodyWeightEntries,
+              foodEntries: state.foodEntries,
+              yesterdayConsumedTotal: totalConsumedYesterday,
+              isConfirmedAllMealsLogged: isMealsConfirmed,
+              portionControl: portionControl,
+              language: language,
+              date: state.date,
+              hasWeightIncreaseProof: hasWeightIncreaseProof,
+            ),
+          );
+        }
       } catch (error, stackTrace) {
         // Handle errors (e.g. database issues).
         debugPrint('Error while submitting body weight: $error');
