@@ -2,6 +2,7 @@ import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:nested/nested.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
@@ -77,7 +78,7 @@ Future<void> main() async {
           // We wrap the `App` with `MultiBlocProvider` here to make
           // the global BLoCs available via context throughout the app.
           child: MultiBlocProvider(
-            providers: [
+            providers: <SingleChildWidget>[
               BlocProvider<MenuBloc>.value(value: blocs.menuBloc),
               BlocProvider<SettingsBloc>.value(value: blocs.settingsBloc),
             ],
