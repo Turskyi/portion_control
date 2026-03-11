@@ -6,11 +6,13 @@ sealed class SettingsState {
     required this.language,
     required this.themeMode,
     required this.isOnboardingCompleted,
+    this.version = '',
   });
 
   final Language language;
   final ThemeMode themeMode;
   final bool isOnboardingCompleted;
+  final String version;
 
   bool get isEnglish => language == Language.en;
 
@@ -26,18 +28,21 @@ final class SettingsInitial extends SettingsState {
     required super.language,
     required super.themeMode,
     required super.isOnboardingCompleted,
+    super.version,
   });
 
   SettingsInitial copyWith({
     Language? language,
     ThemeMode? themeMode,
     bool? isOnboardingCompleted,
+    String? version,
   }) {
     return SettingsInitial(
       language: language ?? this.language,
       themeMode: themeMode ?? this.themeMode,
       isOnboardingCompleted:
           isOnboardingCompleted ?? this.isOnboardingCompleted,
+      version: version ?? this.version,
     );
   }
 
@@ -47,6 +52,7 @@ final class SettingsInitial extends SettingsState {
         '  language: $language,'
         '  themeMode: $themeMode,'
         '  isOnboardingCompleted: $isOnboardingCompleted,'
+        '  version: $version,'
         '}';
   }
 }
@@ -57,6 +63,7 @@ final class FeedbackState extends SettingsState {
     required super.language,
     required super.themeMode,
     required super.isOnboardingCompleted,
+    super.version,
   });
 
   final String errorMessage;
@@ -69,6 +76,7 @@ final class FeedbackState extends SettingsState {
     Language? language,
     ThemeMode? themeMode,
     bool? isOnboardingCompleted,
+    String? version,
   }) {
     return FeedbackState(
       errorMessage: errorMessage ?? this.errorMessage,
@@ -76,6 +84,7 @@ final class FeedbackState extends SettingsState {
       themeMode: themeMode ?? this.themeMode,
       isOnboardingCompleted:
           isOnboardingCompleted ?? this.isOnboardingCompleted,
+      version: version ?? this.version,
     );
   }
 }
@@ -85,18 +94,21 @@ final class SettingsFeedbackSent extends SettingsState {
     required super.language,
     required super.themeMode,
     required super.isOnboardingCompleted,
+    super.version,
   });
 
   SettingsFeedbackSent copyWith({
     Language? language,
     ThemeMode? themeMode,
     bool? isOnboardingCompleted,
+    String? version,
   }) {
     return SettingsFeedbackSent(
       language: language ?? this.language,
       themeMode: themeMode ?? this.themeMode,
       isOnboardingCompleted:
           isOnboardingCompleted ?? this.isOnboardingCompleted,
+      version: version ?? this.version,
     );
   }
 
@@ -109,6 +121,7 @@ final class LoadingSettingsState extends SettingsState {
     required super.language,
     required super.themeMode,
     required super.isOnboardingCompleted,
+    super.version,
   });
 
   @override
@@ -121,6 +134,7 @@ final class SettingsError extends SettingsState {
     required super.language,
     required super.themeMode,
     required super.isOnboardingCompleted,
+    super.version,
   });
 
   final String errorMessage;
@@ -130,6 +144,7 @@ final class SettingsError extends SettingsState {
     Language? language,
     ThemeMode? themeMode,
     bool? isOnboardingCompleted,
+    String? version,
   }) {
     return SettingsError(
       errorMessage: errorMessage ?? this.errorMessage,
@@ -137,6 +152,7 @@ final class SettingsError extends SettingsState {
       themeMode: themeMode ?? this.themeMode,
       isOnboardingCompleted:
           isOnboardingCompleted ?? this.isOnboardingCompleted,
+      version: version ?? this.version,
     );
   }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/res/constants/constants.dart' as res;
 import 'package:portion_control/ui/widgets/responsive_content.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -110,6 +112,25 @@ class AboutPageContent extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 48),
+            BlocBuilder<SettingsBloc, SettingsState>(
+              builder: (BuildContext context, SettingsState state) {
+                return Center(
+                  child: Opacity(
+                    opacity: 0.5,
+                    child: Text(
+                      translate(
+                        'landing_page.version',
+                        args: <String, Object?>{
+                          'version': state.version,
+                        },
+                      ),
+                      style: textTheme.bodySmall,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
