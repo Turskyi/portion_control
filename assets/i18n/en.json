@@ -270,7 +270,8 @@
     "menu_item_support": "Support",
     "semantics_label_google_play": "Google Play Store",
     "semantics_label_testflight": "TestFlight",
-    "semantics_label_macos": "MacOS"
+    "semantics_label_macos": "MacOS",
+    "version": "Version {version}"
   },
   "reminders": {
     "title": "Reminders",

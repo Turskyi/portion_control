@@ -197,10 +197,11 @@ sealed class HomeState {
 
   bool get areMealsNotConfirmed => !isMealsConfirmedForToday;
 
-  bool get shouldAskForMealConfirmation =>
-      isWeightIncreasingOrSame &&
-      isWeightAboveHealthy &&
-      !isMealsConfirmedForToday;
+  bool get shouldAskForMealConfirmation {
+    return isWeightIncreasing &&
+        isWeightAboveHealthy &&
+        !isMealsConfirmedForToday;
+  }
 
   String get formattedRemainingFood => (adjustedPortion - totalConsumedToday)
       .toStringAsFixed(1)

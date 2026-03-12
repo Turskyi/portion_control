@@ -176,6 +176,28 @@ class LandingPage extends StatelessWidget {
                           ),
                         ),
                       ),
+                    const PopupMenuDivider(),
+                    PopupMenuItem<String>(
+                      enabled: false,
+                      child: BlocBuilder<SettingsBloc, SettingsState>(
+                        builder: (BuildContext context, SettingsState state) {
+                          return Center(
+                            child: Opacity(
+                              opacity: 0.5,
+                              child: Text(
+                                translate(
+                                  'landing_page.version',
+                                  args: <String, Object?>{
+                                    'version': state.version,
+                                  },
+                                ),
+                                style: textTheme.bodySmall,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ];
                 },
               ),
@@ -268,6 +290,25 @@ class LandingPage extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              BlocBuilder<SettingsBloc, SettingsState>(
+                builder: (BuildContext context, SettingsState state) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Opacity(
+                      opacity: 0.5,
+                      child: Text(
+                        translate(
+                          'landing_page.version',
+                          args: <String, Object?>{
+                            'version': state.version,
+                          },
+                        ),
+                        style: textTheme.bodySmall,
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
     );

@@ -1,5 +1,5 @@
 name: portion_control
-description: "PortionControl is a minimalist weight management app that helps 
+description: "Portion Control is a minimalist weight management app that helps 
 users track food portions in grams and adjust intake based on weight trends. 
 With simple logging and dynamic recommendations, it offers a stress-free 
 alternative to calorie counting, focusing on sustainable, healthy eating 
@@ -7,7 +7,7 @@ habits."
 
 publish_to: 'none'
 
-version: 1.1.8+18
+version: 1.1.9+19
 
 environment:
   sdk: '>=3.9.2 <4.0.0'

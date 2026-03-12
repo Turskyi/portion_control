@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.turskyi.portion_control",
+      "sha256_cert_fingerprints": [
+        "E6:86:91:98:A1:D0:3C:F2:92:2D:9B:FE:14:61:D9:09:DD:4F:A0:C8:9A:35:33:92:AD:5F:B0:15:14:51:75:78"
+      ]
+    }
+  }
+]

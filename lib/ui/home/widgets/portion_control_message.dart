@@ -32,7 +32,7 @@ class PortionControlMessage extends StatelessWidget {
             translate('portion_control_status.no_portion_control_today'),
             style: titleMediumStyle,
           );
-        } else if (state.isWeightIncreasingOrSame && isWeightAboveHealthy) {
+        } else if (state.isWeightIncreasing && isWeightAboveHealthy) {
           if (state.isMealsConfirmedForToday) {
             final String limitValue =
                 portionControl == constants.kSafeMinimumFoodIntakeG

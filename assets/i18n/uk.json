@@ -272,7 +272,8 @@
     "menu_item_support": "Підтримка",
     "semantics_label_google_play": "Гугл Плей Стор",
     "semantics_label_testflight": "ТестФлайт",
-    "semantics_label_macos": "Макось"
+    "semantics_label_macos": "Макось",
+    "version": "Версія {version}"
   },
   "reminders": {
     "title": "Сповіщення",

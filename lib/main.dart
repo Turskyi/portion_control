@@ -2,8 +2,10 @@ import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:nested/nested.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
+import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/di/app_blocs.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
@@ -73,11 +75,13 @@ Future<void> main() async {
             },
         child: DependenciesScope(
           dependencies: dependencies,
-          // We wrap the `App` with `BlocProvider<MenuBloc>.value` here to make
-          // the `MenuBloc` available via context throughout the app, including
-          // for the `MaterialApp`'s theme selection.
-          child: BlocProvider<MenuBloc>.value(
-            value: blocs.menuBloc,
+          // We wrap the `App` with `MultiBlocProvider` here to make
+          // the global BLoCs available via context throughout the app.
+          child: MultiBlocProvider(
+            providers: <SingleChildWidget>[
+              BlocProvider<MenuBloc>.value(value: blocs.menuBloc),
+              BlocProvider<SettingsBloc>.value(value: blocs.settingsBloc),
+            ],
             child: App(routeMap: routeMap),
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:nested/nested.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
@@ -11,6 +12,8 @@ import 'package:portion_control/application_services/blocs/onboarding/onboarding
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/di/dependencies.dart';
 import 'package:portion_control/di/dependencies_scope.dart';
+import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/domain/models/user_details.dart';
 import 'package:portion_control/infrastructure/data_sources/local/database/database.dart';
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
@@ -54,6 +57,17 @@ void main() {
       mockUserDetailsRepository = MockUserDetailsRepository();
       mockClearTrackingDataUseCase = MockClearTrackingDataUseCase();
       mockHomeWidgetService = MockHomeWidgetService();
+
+      // Set up default mock behavior
+      when(
+        () => mockUserDetailsRepository.getLanguage(),
+      ).thenReturn(Language.en);
+      when(
+        () => mockUserDetailsRepository.getLastPortionControl(),
+      ).thenReturn(2000.0);
+      when(
+        () => mockUserDetailsRepository.getUserDetails(),
+      ).thenReturn(const UserDetails.empty());
 
       // Set up SharedPreferences
       preferences = await SharedPreferences.getInstance();
@@ -184,5 +198,19 @@ void main() {
         expect(indicator.count, 4);
       },
     );
+    group('MenuBloc Tests', () {
+      test('MenuBloc initializes with correct state', () {
+        final MenuBloc menuBloc = MenuBloc(
+          settingsRepository,
+          mockHomeWidgetService,
+          mockBodyWeightRepository,
+          mockFoodWeightRepository,
+          mockUserDetailsRepository,
+        );
+
+        expect(menuBloc.state, isA<LoadingMenuState>());
+        expect(menuBloc.state.language, Language.en);
+      });
+    });
   });
 }

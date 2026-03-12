@@ -31,6 +31,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           isOnboardingCompleted: _settingsRepository.isOnboardingCompleted(),
         ),
       ) {
+    on<SettingsInitializeEvent>(_onInitialize);
+
     on<ClosingFeedbackEvent>(_onFeedbackDialogDismissed);
 
     on<BugReportPressedEvent>(_onFeedbackRequested);
@@ -42,9 +44,30 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsChangeLanguageEvent>(_changeLanguage);
 
     on<SettingsChangeThemeEvent>(_changeTheme);
+
+    add(const SettingsInitializeEvent());
   }
 
   final ISettingsRepository _settingsRepository;
+
+  FutureOr<void> _onInitialize(
+    SettingsInitializeEvent event,
+    Emitter<SettingsState> emit,
+  ) async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final String versionText =
+        '${packageInfo.version} (${packageInfo.buildNumber})';
+
+    if (state is SettingsInitial) {
+      emit((state as SettingsInitial).copyWith(version: versionText));
+    } else if (state is FeedbackState) {
+      emit((state as FeedbackState).copyWith(version: versionText));
+    } else if (state is SettingsFeedbackSent) {
+      emit((state as SettingsFeedbackSent).copyWith(version: versionText));
+    } else if (state is SettingsError) {
+      emit((state as SettingsError).copyWith(version: versionText));
+    }
+  }
 
   FutureOr<void> _handleError(
     SettingsErrorEvent event,
@@ -56,6 +79,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         language: state.language,
         themeMode: state.themeMode,
         isOnboardingCompleted: state.isOnboardingCompleted,
+        version: state.version,
       ),
     );
   }
@@ -70,6 +94,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           language: state.language,
           themeMode: state.themeMode,
           isOnboardingCompleted: state.isOnboardingCompleted,
+          version: state.version,
         ),
       );
       final UserFeedback feedback = event.feedback;
@@ -170,6 +195,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
                 language: state.language,
                 themeMode: state.themeMode,
                 isOnboardingCompleted: state.isOnboardingCompleted,
+                version: state.version,
               ),
             );
           }
@@ -199,6 +225,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
             language: state.language,
             themeMode: state.themeMode,
             isOnboardingCompleted: state.isOnboardingCompleted,
+            version: state.version,
           ),
         );
       } catch (e, stackTrace) {
@@ -209,6 +236,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
             language: state.language,
             themeMode: state.themeMode,
             isOnboardingCompleted: state.isOnboardingCompleted,
+            version: state.version,
           ),
         );
       }
@@ -233,6 +261,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         themeMode: state.themeMode,
         errorMessage: errorMessage,
         isOnboardingCompleted: state.isOnboardingCompleted,
+        version: state.version,
       ),
     );
   }
@@ -246,6 +275,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         language: state.language,
         themeMode: state.themeMode,
         isOnboardingCompleted: state.isOnboardingCompleted,
+        version: state.version,
       ),
     );
   }
@@ -271,6 +301,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
               language: language,
               themeMode: state.themeMode,
               isOnboardingCompleted: state.isOnboardingCompleted,
+              version: state.version,
             ),
           );
         }
@@ -298,6 +329,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
               language: state.language,
               themeMode: themeMode,
               isOnboardingCompleted: state.isOnboardingCompleted,
+              version: state.version,
             ),
           );
         }

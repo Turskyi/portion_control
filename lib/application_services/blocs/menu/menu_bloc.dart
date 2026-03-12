@@ -43,7 +43,12 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     this._bodyWeightRepository,
     this._foodWeightRepository,
     this._userPreferencesRepository,
-  ) : super(const LoadingMenuState(streakDays: 0)) {
+  ) : super(
+        LoadingMenuState(
+          streakDays: 0,
+          language: _userPreferencesRepository.getLanguage(),
+        ),
+      ) {
     on<LoadingInitialMenuStateEvent>(_loadInitialMenuState);
     on<BugReportPressedEvent>(_onFeedbackRequested);
     on<MenuClosingFeedbackEvent>(_onFeedbackDialogDismissed);

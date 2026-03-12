@@ -264,6 +264,7 @@ class AppDatabase extends _$AppDatabase {
     return streak;
   }
 
+  /// This is for people who are trying to gain body weight.
   Future<double> getMaxConsumptionWhenWeightDecreased() async {
     final List<BodyWeightEntry> bodyWeights = await getAllBodyWeightEntries();
     if (bodyWeights.length < 2) {
@@ -312,6 +313,7 @@ class AppDatabase extends _$AppDatabase {
     return maxConsumption;
   }
 
+  /// This is for people who are trying to loos weight.
   Future<double> getMinConsumptionWhenWeightIncreased() async {
     final List<BodyWeightEntry> bodyWeights = await getAllBodyWeightEntries();
     if (bodyWeights.length < 2) {

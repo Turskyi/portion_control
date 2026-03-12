@@ -17,6 +17,8 @@ track their food intake and weight straightforwardly. The app allows users to
 record their body weight and food portions, making it easier to monitor the
 relationship between food consumption and weight changes.
 
+**Official Website:** [portioncontrol.ca](https://portioncontrol.ca)
+
 ## Table of Contents
 
 - [Features](#features)
@@ -106,9 +108,7 @@ production.SIGNING_KEY_RELEASE_PATH=../keystore/portion_control_release.keystore
 production.SIGNING_KEY_RELEASE_PASSWORD=
 production.SIGNING_KEY_RELEASE_KEY=portion_control_release
 production.SIGNING_KEY_RELEASE_KEY_PASSWORD=
-
 FIREBASE_ANDROID_APP_ID=
-
 FIREBASE_TOKEN=
 CODECOV_TOKEN=
 GOOGLE_SERVICES=
@@ -117,14 +117,17 @@ DEBUG_KEYSTORE=
 KEY_PROPERTIES=
 ```
 
-2. `android/keystore/portion_control_debug.keystore` (create or obtain the debug keystore)
-3. `android/keystore/portion_control_release.keystore` (create or obtain the release keystore)
+2. `android/keystore/portion_control_debug.keystore` (create or obtain the debug
+   keystore)
+3. `android/keystore/portion_control_release.keystore` (create or obtain the
+   release keystore)
 4. `android/app/google-services.json` (Firebase Android configuration file)
 
 **Notes:**
 
 - Keep these files out of version control.
-- Fill in passwords and IDs (e.g., Firebase App ID, tokens) in `android/key.properties` as appropriate.
+- Fill in passwords and IDs (e.g., Firebase App ID, tokens) in
+  `android/key.properties` as appropriate.
 
 ### Running the App
 
@@ -469,8 +472,8 @@ more expression and flexibility.
 
 ## Contact
 
-For any inquiries, please contact
-[support@portioncontrol.ca](mailto:support@portioncontrol.ca).
+For any inquiries, please visit [portioncontrol.ca](https://portioncontrol.ca)
+or contact [support@portioncontrol.ca](mailto:support@portioncontrol.ca).
 
 ## Screenshot
 

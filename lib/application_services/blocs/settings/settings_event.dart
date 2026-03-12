@@ -5,6 +5,10 @@ sealed class SettingsEvent {
   const SettingsEvent();
 }
 
+final class SettingsInitializeEvent extends SettingsEvent {
+  const SettingsInitializeEvent();
+}
+
 final class BugReportPressedEvent extends SettingsEvent {
   const BugReportPressedEvent(this.errorText);
 
