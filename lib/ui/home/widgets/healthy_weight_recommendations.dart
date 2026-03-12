@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:portion_control/domain/models/bmi_category.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HealthyWeightRecommendations extends StatelessWidget {
@@ -27,6 +28,9 @@ class HealthyWeightRecommendations extends StatelessWidget {
 
     final TextTheme textTheme = Theme.of(context).textTheme;
     final String kgSuffix = translate('healthy_weight.kg_suffix');
+
+    final BmiCategory category = BmiCategory.fromBmi(bmi);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -38,13 +42,14 @@ class HealthyWeightRecommendations extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
                 children: <Widget>[
                   Row(
                     children: <Widget>[
                       Expanded(
                         child: Text(
                           '${translate("healthy_weight.your_bmi_prefix")}'
-                          '${bmi.toStringAsFixed(1)}',
+                          '${BmiCategory.roundBmi(bmi)}',
                           style: textTheme.titleMedium,
                         ),
                       ),
@@ -59,7 +64,6 @@ class HealthyWeightRecommendations extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
                   Text(
                     '${translate('healthy_weight.range_prefix')}'
                     '${minHealthyWeight.toStringAsFixed(1)}'
@@ -67,11 +71,10 @@ class HealthyWeightRecommendations extends StatelessWidget {
                     '${maxHealthyWeight.toStringAsFixed(1)}$kgSuffix',
                     style: textTheme.titleMedium,
                   ),
-                  const SizedBox(height: 8),
                   Text(
-                    _getBmiMessage(bmi),
+                    category.message,
                     style: textTheme.titleLarge?.copyWith(
-                      color: _getBmiMessageColor(bmi, context),
+                      color: category.color(context),
                     ),
                   ),
                 ],
@@ -94,17 +97,19 @@ class HealthyWeightRecommendations extends StatelessWidget {
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 8,
               children: <Widget>[
-                Text(
-                  translate('app.medical_disclaimer_full'),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4.0),
+                  child: Text(
+                    translate('app.medical_disclaimer_full'),
+                  ),
                 ),
-                const SizedBox(height: 12),
                 Text(
                   translate(
                     'healthy_weight.bmi_sources_description',
                   ),
                 ),
-                const SizedBox(height: 8),
                 TextButton(
                   onPressed: _launchWhoUrl,
                   child: Text(translate('healthy_weight.bmi_source_who')),
@@ -151,34 +156,5 @@ class HealthyWeightRecommendations extends StatelessWidget {
       ),
       mode: LaunchMode.externalApplication,
     );
-  }
-
-  String _getBmiMessage(double bmi) {
-    if (bmi < 18.5) {
-      return translate('healthy_weight.underweight_message');
-    } else if (bmi >= 18.5 && bmi <= 24.9) {
-      return translate('healthy_weight.healthy_message');
-    } else if (bmi >= 25.0 && bmi <= 29.9) {
-      return translate('healthy_weight.overweight_message');
-    } else {
-      return translate('healthy_weight.obese_message');
-    }
-  }
-
-  Color _getBmiMessageColor(double bmi, BuildContext context) {
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    if (bmi < 18.5) {
-      // Underweight.
-      return colorScheme.primaryContainer;
-    } else if (bmi >= 18.5 && bmi <= 24.9) {
-      // Healthy weight.
-      return colorScheme.tertiary;
-    } else if (bmi >= 25.0 && bmi <= 29.9) {
-      // Overweight.
-      return colorScheme.secondaryContainer;
-    } else {
-      // Obese.
-      return colorScheme.error;
-    }
   }
 }

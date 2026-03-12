@@ -4,7 +4,7 @@ part of 'menu_bloc.dart';
 sealed class MenuState {
   const MenuState({
     required this.streakDays,
-    this.language = Language.en,
+    required this.language,
     this.themeMode = ThemeMode.light,
     this.appVersion = '',
     this.isWeightReminderEnabled = false,
@@ -63,7 +63,7 @@ sealed class MenuState {
 final class MenuInitial extends MenuState {
   const MenuInitial({
     required super.streakDays,
-    super.language,
+    required super.language,
     super.themeMode,
     super.appVersion,
     super.isWeightReminderEnabled,
@@ -189,7 +189,7 @@ final class MenuFeedbackSent extends MenuState {
 final class LoadingMenuState extends MenuState {
   const LoadingMenuState({
     required super.streakDays,
-    super.language,
+    required super.language,
     super.themeMode,
     super.appVersion,
     super.isWeightReminderEnabled,
