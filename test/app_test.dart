@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:nested/nested.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
@@ -48,6 +49,16 @@ void main() {
 
     setUp(() async {
       TestWidgetsFlutterBinding.ensureInitialized();
+
+      // Mock PackageInfo
+      PackageInfo.setMockInitialValues(
+        appName: 'Portion Control',
+        packageName: 'com.example.portion_control',
+        version: '1.1.9',
+        buildNumber: '19',
+        buildSignature: '',
+      );
+
       database = await test_database.init();
       SharedPreferences.setMockInitialValues(<String, Object>{});
 
@@ -84,6 +95,7 @@ void main() {
     });
 
     tearDown(() async {
+      await settingsBloc.close();
       await database.close();
     });
 
@@ -187,7 +199,7 @@ void main() {
         expect(
           find.byType(OnboardingScreen),
           findsOneWidget,
-          reason: 'HomePage should be present',
+          reason: 'OnboardingScreen should be present',
         );
 
         // Confirm that onboarding now has 4 pages
