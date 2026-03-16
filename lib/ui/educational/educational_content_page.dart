@@ -113,6 +113,16 @@ class EducationalContentPage extends StatelessWidget {
                 ),
               ),
               Text(translate('educational_content.how_to_weigh_content')),
+              const SizedBox(height: 12),
+              Text(
+                translate('educational_content.five_meals_title'),
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                translate('educational_content.five_meals_content'),
+              ),
               const SizedBox(height: 16),
               Text(
                 translate('educational_content.note_title'),

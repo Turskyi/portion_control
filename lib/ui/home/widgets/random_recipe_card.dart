@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:portion_control/domain/enums/meal_type.dart';
 
 class RandomRecipeCard extends StatefulWidget {
   const RandomRecipeCard({super.key});
@@ -25,17 +26,12 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
     final int hour = now.hour;
 
     // Determine meal type based on time of day.
-    if (hour <= 10 && hour > 3) {
-      _mealType = 'breakfast';
-    } else if (hour < 12 && hour >= 10) {
-      _mealType = 'second_breakfast';
-    } else if (hour < 15 && hour >= 12) {
-      _mealType = 'lunch';
-    } else if (hour < 18) {
-      _mealType = 'snack';
-    } else {
-      _mealType = 'dinner';
-    }
+    final MealType type = MealType.values.firstWhere(
+      (MealType m) => m.matchesHour(hour),
+      orElse: () => MealType.dinner, // fallback
+    );
+
+    _mealType = type.translationKey;
 
     // List of days in the meal plan, from 1 to 154, taken from
     // assets/i18n/en.json.
