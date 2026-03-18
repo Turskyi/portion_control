@@ -1431,7 +1431,9 @@
     "safe_min_limit_content": "Une protection pour éviter de suggérer une consommation alimentaire dangereusement basse, basée sur les directives de santé générales pour la perte de poids.",
     "absolute_min_limit_title": "Seuil de sécurité absolu (1000 g)",
     "absolute_min_limit_content": "Le seuil ultime pour l'algorithme adaptatif. Une consommation inférieure à ce niveau peut mettre la vie en danger si elle est prolongée.",
-    "safety_limits_tooltip": "Afficher les informations sur les limites de sécurité"
+    "safety_limits_tooltip": "Afficher les informations sur les limites de sécurité",
+    "five_meals_title": "Manger 5 fois par jour",
+    "five_meals_content": "De nombreux experts en nutrition recommandent de répartir l’alimentation tout au long de la journée plutôt que de consommer de gros repas peu fréquents. Un schéma courant comprend trois repas principaux et deux petites collations. Par exemple : petit-déjeuner vers 7–9 h, une petite collation vers 10–11 h, déjeuner vers 12–14 h, une autre collation vers 15–16 h, et dîner vers 18–20 h. Cette organisation aide à maintenir un niveau d’énergie plus stable, à éviter une faim excessive et facilite le contrôle des portions, car il est moins probable de trop manger lors d’un seul repas."
   },
   "streak": {
     "zero": "Commencez votre premier jour aujourd’hui",

@@ -1431,7 +1431,9 @@
     "safe_min_limit_content": "A safeguard to prevent suggesting dangerously low food intake, based on general health guidelines for weight loss.",
     "absolute_min_limit_title": "Absolute Safety Floor (1000g)",
     "absolute_min_limit_content": "The ultimate floor for the adaptive algorithm. Intake below this level can be life-threatening if sustained.",
-    "safety_limits_tooltip": "View safety limits information"
+    "safety_limits_tooltip": "View safety limits information",
+    "five_meals_title": "Eating 5 times per day",
+    "five_meals_content": "Many nutrition experts recommend spreading food intake across the day instead of eating large meals infrequently. A common pattern is three main meals and two smaller snacks. For example: breakfast around 7–9 AM, a small snack around 10–11 AM, lunch around 12–2 PM, another snack around 3–4 PM, and dinner around 6–8 PM. This pattern helps maintain steady energy levels, prevents excessive hunger, and makes portion control easier because you are less likely to overeat at any single meal."
   },
   "streak": {
     "zero": "Start your first day today",

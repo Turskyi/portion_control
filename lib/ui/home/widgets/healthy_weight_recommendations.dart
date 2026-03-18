@@ -23,13 +23,16 @@ class HealthyWeightRecommendations extends StatelessWidget {
     final double bmi = weight / (heightInMeters * heightInMeters);
 
     // Calculate healthy weight range (BMI 18.5–24.9).
-    final double minHealthyWeight = 18.5 * (heightInMeters * heightInMeters);
-    final double maxHealthyWeight = 24.9 * (heightInMeters * heightInMeters);
+    final (double minHealthyWeight, double maxHealthyWeight) =
+        BmiCategory.healthyWeightRange(height);
 
     final TextTheme textTheme = Theme.of(context).textTheme;
     final String kgSuffix = translate('healthy_weight.kg_suffix');
 
-    final BmiCategory category = BmiCategory.fromBmi(bmi);
+    final BmiCategory category = BmiCategory.fromWeightAndHeight(
+      weightKg: weight,
+      heightCm: height,
+    );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

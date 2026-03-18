@@ -115,13 +115,7 @@ class DayLogCard extends StatelessWidget {
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) =>
-                              const SafetyLimitsDialog(),
-                        );
-                      },
+                      onPressed: () => _showSafetyLimitsDialog(context),
                     ),
                 ],
               ),
@@ -158,6 +152,15 @@ class DayLogCard extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+
+  Future<void> _showSafetyLimitsDialog(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext _) {
+        return const SafetyLimitsDialog();
+      },
     );
   }
 
@@ -198,7 +201,9 @@ class DayLogCard extends StatelessWidget {
 
       // The remaining meal is Snack or Second Breakfast based on time.
       final int hour = entries[index].dateTime.hour;
-      return hour < 12 ? t(MealType.secondBreakfast) : t(MealType.snack);
+      return hour < MealType.secondBreakfast.range.$2
+          ? t(MealType.secondBreakfast)
+          : t(MealType.snack);
     } else if (entries.length == 3) {
       if (index == 0) {
         return t(MealType.breakfast);
@@ -235,9 +240,9 @@ class DayLogCard extends StatelessWidget {
     } else {
       // Fallback based on time of day.
       MealType getType(int hour) {
-        if (hour < 12) {
+        if (hour < MealType.lunch.range.$1) {
           return MealType.breakfast;
-        } else if (hour < 17) {
+        } else if (hour < MealType.dinner.range.$1) {
           return MealType.lunch;
         } else {
           return MealType.dinner;

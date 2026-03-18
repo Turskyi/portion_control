@@ -61,23 +61,21 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
         Expanded(
           child: ValueListenableBuilder<TextEditingValue>(
             valueListenable: _controller,
-            builder: (BuildContext _, TextEditingValue value, Widget? _) {
-              final String input = value.text;
-
+            builder: (BuildContext _, TextEditingValue _, Widget? _) {
               return TextFormField(
                 focusNode: _focusNode,
                 controller: _controller,
                 readOnly: !widget.isEditState,
                 onTap: !widget.isEditState ? widget.onEdit : null,
                 keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.done,
+                onTapOutside: (PointerDownEvent _) => _focusNode.unfocus(),
                 decoration: InputDecoration(
                   hintText: translate('hint.enter_food_weight'),
                   suffixText: translate('unit.gram'),
                   border: const OutlineInputBorder(),
                 ),
-                onFieldSubmitted: _isValidWeightInput(input)
-                    ? (String _) => _handleSave()
-                    : null,
+                onFieldSubmitted: (String _) => _handleSave(),
               );
             },
           ),
@@ -121,6 +119,8 @@ class _FoodWeightEntryRowState extends State<FoodWeightEntryRow> {
     if (_isValidWeightInput(text)) {
       _focusNode.unfocus();
       widget.onSave?.call(text);
+    } else {
+      _focusNode.unfocus();
     }
   }
 
