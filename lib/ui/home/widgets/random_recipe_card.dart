@@ -12,6 +12,10 @@ class RandomRecipeCard extends StatefulWidget {
 }
 
 class _RandomRecipeCardState extends State<RandomRecipeCard> {
+  static const int _daysInMealPlan = 154;
+  static const int _maxSelectionAttempts = 10;
+
+  final Random _random = Random();
   late String _mealType;
   late String _recipeKey;
 
@@ -32,12 +36,27 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
     );
 
     _mealType = type.translationKey;
-
-    // List of days in the meal plan, from 1 to 154, taken from
-    // assets/i18n/en.json.
-    final int day = Random().nextInt(154) + 1;
-    _recipeKey = 'recipes_page.day_${day}_$_mealType';
+    _recipeKey = _selectRecipeKeyForMealType(_mealType);
   }
+
+  String _selectRecipeKeyForMealType(String mealType) {
+    String recipeKey = _buildRandomRecipeKey(mealType);
+    int attempts = 0;
+
+    while (!_hasTranslation(recipeKey) && attempts < _maxSelectionAttempts) {
+      recipeKey = _buildRandomRecipeKey(mealType);
+      attempts++;
+    }
+
+    return recipeKey;
+  }
+
+  String _buildRandomRecipeKey(String mealType) {
+    final int day = _random.nextInt(_daysInMealPlan) + 1;
+    return 'recipes_page.day_${day}_$mealType';
+  }
+
+  bool _hasTranslation(String key) => translate(key) != key;
 
   @override
   Widget build(BuildContext context) {
@@ -45,28 +64,9 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
     final TextTheme textTheme = theme.textTheme;
     final ColorScheme colorScheme = theme.colorScheme;
 
-    // Check if translation exists, otherwise find another one.
-    String translation = translate(_recipeKey);
+    final String translation = translate(_recipeKey);
     if (translation == _recipeKey) {
-      // Fallback or retry logic could go here.
-      // For now, if a specific meal doesn't exist for a day (e.g. some days
-      // might have different structure),
-      // we can hide the card or show a generic message.
-      // However, looking at the JSON, most days have these keys.
-      // Day 3, 9, 23, 31 have special diets and might not have standard keys.
-      // Let's handle special days simply by picking another random day if the
-      // key is missing.
-      int attempts = 0;
-      while (translation == _recipeKey && attempts < 10) {
-        final int day = Random().nextInt(35) + 1;
-        _recipeKey = 'recipes_page.day_${day}_$_mealType';
-        translation = translate(_recipeKey);
-        attempts++;
-      }
-
-      if (translation == _recipeKey) {
-        return const SizedBox.shrink();
-      }
+      return const SizedBox.shrink();
     }
 
     return Container(
@@ -106,12 +106,11 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
                   size: 20,
                   color: colorScheme.onSurfaceVariant,
                 ),
-                onPressed: () {
-                  //TODO: use HomeBloc
-                  setState(() {
-                    _selectRandomRecipe();
-                  });
-                },
+                // Keep this local: recipe rotation is ephemeral UI state for
+                // this card only, so routing it through HomeBloc would widen
+                // shared state and rebuild more of the home screen for no
+                // domain or persistence benefit.
+                onPressed: () => setState(_selectRandomRecipe),
                 tooltip: translate('home_page.next_recipe'),
               ),
             ],
