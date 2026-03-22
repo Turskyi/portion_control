@@ -303,7 +303,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           );
         }
       } else {
-        //TODO: no sure what to do.
+        debugPrint(
+          'Failed to save language preference: ${language.isoLanguageCode}.',
+        );
+        add(SettingsErrorEvent(translate('error.unexpected_error')));
       }
     }
   }
