@@ -373,7 +373,10 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           );
         }
       } else {
-        //TODO: not sure what to do.
+        debugPrint(
+          'Failed to save language preference: ${language.isoLanguageCode}.',
+        );
+        add(MenuErrorEvent(translate('error.unexpectedError')));
       }
     }
   }
