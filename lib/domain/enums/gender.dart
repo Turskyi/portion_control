@@ -17,21 +17,37 @@ enum Gender {
   /// Getter to check if [Gender] is [male] or [female].
   bool get isMaleOrFemale => this == Gender.male || this == Gender.female;
 
-  //FIXME: I do not remember how this method should work. Needs a better
-  // dartdoc and example of use.
+  /// Parses a persisted gender value into a [Gender].
+  ///
+  /// This is intended for deserializing values stored in preferences or maps.
+  /// It accepts the stable identifiers used by the app, such as enum names and
+  /// translation keys, and also supports legacy English labels with spaces.
+  ///
+  /// Unknown or empty values fall back to [Gender.preferNotToSay].
+  ///
+  /// Example:
+  /// ```dart
+  /// final Gender gender = Gender.fromString('prefer not to say');
+  /// assert(gender == Gender.preferNotToSay);
+  /// ```
   static Gender fromString(String value) {
-    switch (value.toLowerCase()) {
-      case 'male':
-        return Gender.male;
-      case 'female':
-        return Gender.female;
-      case 'other':
-        return Gender.other;
-      case 'prefer not to say':
-      case 'prefer_not_to_say':
-        return Gender.preferNotToSay;
-      default:
-        return Gender.preferNotToSay;
+    final String normalizedValue = _normalizePersistedValue(value);
+
+    if (normalizedValue.isEmpty) {
+      return Gender.preferNotToSay;
     }
+
+    for (final Gender gender in Gender.values) {
+      if (_normalizePersistedValue(gender.name) == normalizedValue ||
+          _normalizePersistedValue(gender.translationKey) == normalizedValue) {
+        return gender;
+      }
+    }
+
+    return Gender.preferNotToSay;
+  }
+
+  static String _normalizePersistedValue(String value) {
+    return value.trim().toLowerCase().replaceAll(RegExp(r'[-\s]+'), '_');
   }
 }
