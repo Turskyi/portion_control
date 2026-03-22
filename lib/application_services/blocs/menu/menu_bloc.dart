@@ -322,7 +322,17 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   FutureOr<void> _handleError(MenuErrorEvent event, Emitter<MenuState> emit) {
     debugPrint('MenuErrorEvent: ${event.error}');
-    //TODO: add ErrorMenuState and use it instead.
+    emit(
+      MenuErrorState(
+        error: event.error,
+        streakDays: state.streakDays,
+        appVersion: state.appVersion,
+        language: state.language,
+        themeMode: state.themeMode,
+        isWeightReminderEnabled: state.isWeightReminderEnabled,
+        weightReminderTime: state.weightReminderTime,
+      ),
+    );
     emit(
       MenuInitial(
         streakDays: state.streakDays,
