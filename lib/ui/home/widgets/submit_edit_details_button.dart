@@ -36,7 +36,7 @@ class SubmitEditDetailsButton extends StatelessWidget {
                   label: isDetailsSubmitted
                       ? translate('button.edit_details')
                       : translate('button.submit_details'),
-                  onPressed: state.heightInCm < constants.minUserHeight
+                  onPressed: state.heightInCm < constants.kMinUserHeight
                       ? null
                       : isDetailsSubmitted
                       ? () async {

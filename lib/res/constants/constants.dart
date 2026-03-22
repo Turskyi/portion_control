@@ -23,7 +23,7 @@ const String imagePath = 'assets/images/';
 const double blurSigma = 12.0;
 
 // in centimeters
-final double minUserHeight = 100.0;
+final double kMinUserHeight = 100.0;
 // in centimeters
 final double maxUserHeight = 250.0;
 
@@ -126,6 +126,8 @@ const double bmiOverweightUpperThreshold = 29.9;
 
 /// Marks start of obese.
 const double bmiObeseLowerThreshold = 30.0;
+
+const double kMidpointBuffer = 0.5;
 
 const String doNotReplySenderName = 'Do Not Reply';
 const String feedbackEmailSender =

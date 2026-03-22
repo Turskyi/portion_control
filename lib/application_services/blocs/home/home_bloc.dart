@@ -492,14 +492,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final DateTime? dateOfBirth = state.dateOfBirth;
       final Gender gender = state.gender;
 
-      if (height < constants.minUserHeight ||
+      if (height < constants.kMinUserHeight ||
           height > constants.maxUserHeight) {
         emit(
           DetailsError(
             errorMessage: translate(
               'error.height_range',
               args: <String, Object?>{
-                'minHeight': constants.minUserHeight,
+                'minHeight': constants.kMinUserHeight,
                 'maxHeight': constants.maxUserHeight,
               },
             ),

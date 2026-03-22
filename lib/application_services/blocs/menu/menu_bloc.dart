@@ -15,6 +15,7 @@ import 'package:portion_control/domain/enums/feedback_rating.dart';
 import 'package:portion_control/domain/enums/feedback_submission_type.dart';
 import 'package:portion_control/domain/enums/feedback_type.dart';
 import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/domain/models/bmi_category.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/exceptions/email_launch_exception.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
@@ -513,13 +514,24 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
     if (bodyWeightEntry.weight > 0) {
       final double bodyWeight = bodyWeightEntry.weight;
-      final bool isWeightAboveHealthy = _isWeightAboveHealthyFor(bodyWeight);
-      final bool isWeightBelowHealthy = _isWeightBelowHealthyFor(bodyWeight);
+      final UserDetails userDetails = _userPreferencesRepository
+          .getUserDetails();
+      final bool hasValidHeight =
+          userDetails.heightInCm > constants.kMinUserHeight;
+      final double midpointWeight = hasValidHeight
+          ? BmiCategory.midpointWeight(userDetails.heightInCm)
+          : bodyWeight;
+      final bool isWeightAboveMidpoint =
+          hasValidHeight &&
+          bodyWeight > midpointWeight + constants.kMidpointBuffer;
+      final bool isWeightBelowMidpoint =
+          hasValidHeight &&
+          bodyWeight < midpointWeight - constants.kMidpointBuffer;
 
-      if (isWeightAboveHealthy) {
+      if (isWeightAboveMidpoint) {
         portionControl = await _userPreferencesRepository
             .getMinConsumptionWhenWeightIncreased();
-      } else if (isWeightBelowHealthy) {
+      } else if (isWeightBelowMidpoint) {
         portionControl = await _userPreferencesRepository
             .getMaxConsumptionWhenWeightDecreased();
       }
@@ -527,7 +539,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       final double savedPortionControl = _userPreferencesRepository
           .getLastPortionControl();
 
-      if (isWeightAboveHealthy) {
+      if (isWeightAboveMidpoint) {
         if (portionControl == constants.kMaxDailyFoodLimit) {
           if (savedPortionControl != constants.kMaxDailyFoodLimit) {
             portionControl = savedPortionControl;
@@ -542,7 +554,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
             savedPortionControl < portionControl) {
           portionControl = savedPortionControl;
         }
-      } else if (isWeightBelowHealthy) {
+      } else if (isWeightBelowMidpoint) {
         if (portionControl == constants.kSafeMinimumFoodIntakeG) {
           if (savedPortionControl != constants.kMaxDailyFoodLimit) {
             portionControl = savedPortionControl;
@@ -613,22 +625,6 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       final DateFormat formatter = DateFormat('MMM dd, EEEE \'at\' hh:mm a');
       return formatter.format(lastUpdatedDateTime);
     }
-  }
-
-  bool _isWeightAboveHealthyFor(double bodyWeight) {
-    final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
-    final double heightInMeters = userDetails.heightInCm / 100;
-    if (heightInMeters == 0) return false;
-    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
-    return bmi > constants.maxHealthyBmi;
-  }
-
-  bool _isWeightBelowHealthyFor(double bodyWeight) {
-    final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
-    final double heightInMeters = userDetails.heightInCm / 100;
-    if (heightInMeters == 0) return false;
-    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
-    return bmi < constants.minHealthyBmi;
   }
 
   Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {
