@@ -1525,6 +1525,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     // If the date has changed since the app was last active, reload entries
     if (!lastDataDate.isSameDate(now)) {
+      emit(
+        HomeLoading(
+          bodyWeight: 0,
+          date: DateTime.now(),
+          language: state.language,
+          portionControl: state.portionControl,
+          userDetails: state.userDetails,
+          yesterdayConsumedTotal: state.yesterdayConsumedTotal,
+          bodyWeightEntries: state.bodyWeightEntries,
+          foodEntries: state.foodEntries,
+          hasWeightIncreaseProof: state.hasWeightIncreaseProof,
+        ),
+      );
       add(const LoadEntries());
     }
   }
