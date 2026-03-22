@@ -19,6 +19,7 @@ import 'package:portion_control/infrastructure/data_sources/local/database/datab
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/services/feedback_email_service.dart';
 import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
 import 'package:portion_control/ui/home/home_page.dart';
@@ -38,6 +39,7 @@ void main() {
     late MockBodyWeightRepository mockBodyWeightRepository;
     late MockFoodWeightRepository mockFoodWeightRepository;
     late MockUserDetailsRepository mockUserDetailsRepository;
+    late MockCalculatePortionControlUseCase mockCalculatePortionControlUseCase;
     late MockClearTrackingDataUseCase mockClearTrackingDataUseCase;
     late LocalDataSource localDataSource;
     late SharedPreferences preferences;
@@ -45,6 +47,7 @@ void main() {
     late SettingsRepository settingsRepository;
     late SettingsBloc settingsBloc;
     late HomeWidgetService mockHomeWidgetService;
+    late FeedbackEmailService mockFeedbackEmailService;
     late AppDatabase database;
 
     setUp(() async {
@@ -66,8 +69,10 @@ void main() {
       mockBodyWeightRepository = MockBodyWeightRepository();
       mockFoodWeightRepository = MockFoodWeightRepository();
       mockUserDetailsRepository = MockUserDetailsRepository();
+      mockCalculatePortionControlUseCase = MockCalculatePortionControlUseCase();
       mockClearTrackingDataUseCase = MockClearTrackingDataUseCase();
       mockHomeWidgetService = MockHomeWidgetService();
+      mockFeedbackEmailService = MockFeedbackEmailService();
 
       // Set up default mock behavior
       when(
@@ -79,6 +84,9 @@ void main() {
       when(
         () => mockUserDetailsRepository.getUserDetails(),
       ).thenReturn(const UserDetails.empty());
+      when(
+        () => mockCalculatePortionControlUseCase.call(),
+      ).thenAnswer((_) async => 2000.0);
 
       // Set up SharedPreferences
       preferences = await SharedPreferences.getInstance();
@@ -91,7 +99,7 @@ void main() {
 
       // Initialize repositories
       settingsRepository = SettingsRepository(localDataSource);
-      settingsBloc = SettingsBloc(settingsRepository);
+      settingsBloc = SettingsBloc(settingsRepository, mockFeedbackEmailService);
     });
 
     tearDown(() async {
@@ -121,7 +129,10 @@ void main() {
           },
           AppRoute.landing.path: (_) {
             return BlocProvider<SettingsBloc>(
-              create: (_) => SettingsBloc(settingsRepository),
+              create: (_) => SettingsBloc(
+                settingsRepository,
+                mockFeedbackEmailService,
+              ),
               child: const LandingPage(),
             );
           },
@@ -154,6 +165,7 @@ void main() {
                         mockFoodWeightRepository,
                         mockClearTrackingDataUseCase,
                         mockHomeWidgetService,
+                        mockFeedbackEmailService,
                       );
                     },
                   ),
@@ -165,6 +177,8 @@ void main() {
                         mockBodyWeightRepository,
                         mockFoodWeightRepository,
                         mockUserDetailsRepository,
+                        mockFeedbackEmailService,
+                        mockCalculatePortionControlUseCase,
                       );
                     },
                   ),
@@ -218,6 +232,8 @@ void main() {
           mockBodyWeightRepository,
           mockFoodWeightRepository,
           mockUserDetailsRepository,
+          mockFeedbackEmailService,
+          mockCalculatePortionControlUseCase,
         );
 
         expect(menuBloc.state, isA<LoadingMenuState>());

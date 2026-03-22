@@ -227,3 +227,62 @@ final class LoadingMenuState extends MenuState {
         ')';
   }
 }
+
+final class MenuErrorState extends MenuState {
+  const MenuErrorState({
+    required this.error,
+    required super.streakDays,
+    required super.language,
+    super.themeMode,
+    super.appVersion,
+    super.isWeightReminderEnabled,
+    super.weightReminderTime,
+  });
+
+  final String error;
+
+  MenuErrorState copyWith({
+    String? error,
+    Language? language,
+    ThemeMode? themeMode,
+    int? streakDays,
+    String? appVersion,
+    bool? isWeightReminderEnabled,
+    TimeOfDay? weightReminderTime,
+  }) {
+    return MenuErrorState(
+      error: error ?? this.error,
+      language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
+      streakDays: streakDays ?? this.streakDays,
+      appVersion: appVersion ?? this.appVersion,
+      isWeightReminderEnabled:
+          isWeightReminderEnabled ?? this.isWeightReminderEnabled,
+      weightReminderTime: weightReminderTime ?? this.weightReminderTime,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MenuErrorState &&
+          super == other &&
+          runtimeType == other.runtimeType &&
+          error == other.error;
+
+  @override
+  int get hashCode => super.hashCode ^ error.hashCode;
+
+  @override
+  String toString() {
+    return 'MenuErrorState('
+        'error: $error,'
+        'language: $language,'
+        'themeMode: $themeMode,'
+        'streakDays: $streakDays,'
+        'appVersion: $appVersion,'
+        'isWeightReminderEnabled: $isWeightReminderEnabled,'
+        'weightReminderTime: $weightReminderTime'
+        ')';
+  }
+}

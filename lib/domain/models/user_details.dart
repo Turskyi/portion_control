@@ -62,7 +62,7 @@ class UserDetails {
     return <String, Object?>{
       'height': heightInCm,
       'dateOfBirth': dateOfBirth?.toIso8601String(),
-      'gender': gender.displayName,
+      'gender': gender.translationKey,
     };
   }
 

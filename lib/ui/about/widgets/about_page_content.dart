@@ -52,7 +52,7 @@ class AboutPageContent extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.bold),
                 children: <InlineSpan>[
                   TextSpan(
-                    text: '${res.supportEmailPrefix}${res.companyDomain}',
+                    text: '${res.kSupportEmailPrefix}${res.kCompanyDomain}',
                     style: TextStyle(
                       color: linkColor,
                       decoration: TextDecoration.underline,
@@ -141,7 +141,7 @@ class AboutPageContent extends StatelessWidget {
   void _launchEmailClient() {
     final Uri emailLaunchUri = Uri(
       scheme: res.kMailToScheme,
-      path: '${res.supportEmailPrefix}${res.companyDomain}',
+      path: '${res.kSupportEmailPrefix}${res.kCompanyDomain}',
     );
     launchUrl(emailLaunchUri);
   }

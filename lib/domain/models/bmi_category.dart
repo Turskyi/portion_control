@@ -67,6 +67,15 @@ enum BmiCategory {
     );
   }
 
+  /// Returns midpoint of healthy weight range for a given height in cm,
+  /// rounded to 1 decimal place.
+  static double midpointWeight(double heightCm) {
+    final (double minHealthyWeight, double maxHealthyWeight) =
+        healthyWeightRange(heightCm);
+    return ((minHealthyWeight + maxHealthyWeight) / 2 * 10).roundToDouble() /
+        10;
+  }
+
   static double roundBmi(double bmi) {
     // Round to 1 decimal place to match the displayed value and standard
     // thresholds.

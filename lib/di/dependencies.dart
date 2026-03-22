@@ -7,8 +7,10 @@ import 'package:portion_control/application_services/blocs/onboarding/onboarding
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
 import 'package:portion_control/application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
+import 'package:portion_control/application_services/interactors/calculate_portion_control_use_case.dart';
 import 'package:portion_control/application_services/interactors/clear_tracking_data_use_case.dart';
 import 'package:portion_control/application_services/interactors/initialize_app_language_use_case.dart';
+import 'package:portion_control/domain/services/interactors/i_calculate_portion_control_use_case.dart';
 import 'package:portion_control/domain/services/interactors/i_clear_tracking_data_use_case.dart';
 import 'package:portion_control/domain/services/interactors/save_language_use_case.dart';
 import 'package:portion_control/domain/services/interactors/use_case.dart';
@@ -24,6 +26,7 @@ import 'package:portion_control/infrastructure/repositories/settings_repository.
 import 'package:portion_control/infrastructure/repositories/tracking_repository.dart';
 import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/services/feedback_email_service.dart';
 import 'package:portion_control/services/home_widget_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -70,12 +73,24 @@ class Dependencies {
     return ClearTrackingDataUseCase(trackingRepository);
   }
 
+  ICalculatePortionControlUseCase get calculatePortionControlUseCase {
+    return CalculatePortionControlUseCase(
+      bodyWeightRepository,
+      foodWeightRepository,
+      userPreferencesRepository,
+    );
+  }
+
   HomeWidgetService get homeWidgetService {
     return const HomeWidgetServiceImpl();
   }
 
+  FeedbackEmailService get feedbackEmailService {
+    return const FeedbackEmailServiceImpl();
+  }
+
   SettingsBloc get settingsBloc {
-    return SettingsBloc(settingsRepository);
+    return SettingsBloc(settingsRepository, feedbackEmailService);
   }
 
   YesterdayEntriesBloc get yesterdayEntriesBloc {
@@ -89,6 +104,7 @@ class Dependencies {
       foodWeightRepository,
       clearTrackingDataUseCase,
       homeWidgetService,
+      feedbackEmailService,
     );
   }
 
@@ -99,6 +115,8 @@ class Dependencies {
       bodyWeightRepository,
       foodWeightRepository,
       userPreferencesRepository,
+      feedbackEmailService,
+      calculatePortionControlUseCase,
     );
   }
 

@@ -20,6 +20,7 @@ import 'package:portion_control/domain/models/exceptions/email_launch_exception.
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/models/portion_control_summary.dart';
 import 'package:portion_control/domain/models/user_details.dart';
+import 'package:portion_control/domain/services/interactors/i_calculate_portion_control_use_case.dart';
 import 'package:portion_control/domain/services/repositories/i_body_weight_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
@@ -27,10 +28,10 @@ import 'package:portion_control/domain/services/repositories/i_settings_reposito
 import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/enums/home_widget_keys.dart';
+import 'package:portion_control/services/feedback_email_service.dart';
 import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/services/reminder_service.dart';
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
-import 'package:resend/resend.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'menu_event.dart';
@@ -43,6 +44,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     this._bodyWeightRepository,
     this._foodWeightRepository,
     this._userPreferencesRepository,
+    this._feedbackEmailService,
+    this._calculatePortionControlUseCase,
   ) : super(
         LoadingMenuState(
           streakDays: 0,
@@ -68,6 +71,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   final IBodyWeightRepository _bodyWeightRepository;
   final IFoodWeightRepository _foodWeightRepository;
   final IUserPreferencesRepository _userPreferencesRepository;
+  final FeedbackEmailService _feedbackEmailService;
+  final ICalculatePortionControlUseCase _calculatePortionControlUseCase;
 
   FutureOr<void> _onFeedbackRequested(
     BugReportPressedEvent _,
@@ -171,11 +176,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
       try {
         if (event.submissionType.isAutomatic) {
-          // TODO: move this thing to "data".
-          final Resend resend = Resend.instance;
-          await resend.sendEmail(
-            from: constants.feedbackEmailSender,
-            to: <String>[constants.supportEmail],
+          await _feedbackEmailService.sendFeedbackEmail(
             subject:
                 '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
             text: feedbackBody.toString(),
@@ -307,7 +308,17 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   FutureOr<void> _handleError(MenuErrorEvent event, Emitter<MenuState> emit) {
     debugPrint('MenuErrorEvent: ${event.error}');
-    //TODO: add ErrorMenuState and use it instead.
+    emit(
+      MenuErrorState(
+        error: event.error,
+        streakDays: state.streakDays,
+        appVersion: state.appVersion,
+        language: state.language,
+        themeMode: state.themeMode,
+        isWeightReminderEnabled: state.isWeightReminderEnabled,
+        weightReminderTime: state.weightReminderTime,
+      ),
+    );
     emit(
       MenuInitial(
         streakDays: state.streakDays,
@@ -348,7 +359,10 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           );
         }
       } else {
-        //TODO: not sure what to do.
+        debugPrint(
+          'Failed to save language preference: ${language.isoLanguageCode}.',
+        );
+        add(MenuErrorEvent(translate('error.unexpectedError')));
       }
     }
   }
@@ -417,7 +431,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         (double sum, FoodWeight entry) => sum + entry.weight,
       );
 
-      final double portionControl = await _calculatePortionControl();
+      final double portionControl = await _calculatePortionControlUseCase
+          .call();
 
       final PortionControlSummary portionControlSummary = PortionControlSummary(
         weight: todayBodyWeight.weight,
@@ -505,59 +520,6 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     }
   }
 
-  //TODO: move this to a UseCase
-  Future<double> _calculatePortionControl() async {
-    final BodyWeight bodyWeightEntry = await _bodyWeightRepository
-        .getLastBodyWeight();
-    double portionControl = constants.kMaxDailyFoodLimit;
-
-    if (bodyWeightEntry.weight > 0) {
-      final double bodyWeight = bodyWeightEntry.weight;
-      final bool isWeightAboveHealthy = _isWeightAboveHealthyFor(bodyWeight);
-      final bool isWeightBelowHealthy = _isWeightBelowHealthyFor(bodyWeight);
-
-      if (isWeightAboveHealthy) {
-        portionControl = await _userPreferencesRepository
-            .getMinConsumptionWhenWeightIncreased();
-      } else if (isWeightBelowHealthy) {
-        portionControl = await _userPreferencesRepository
-            .getMaxConsumptionWhenWeightDecreased();
-      }
-
-      final double savedPortionControl = _userPreferencesRepository
-          .getLastPortionControl();
-
-      if (isWeightAboveHealthy) {
-        if (portionControl == constants.kMaxDailyFoodLimit) {
-          if (savedPortionControl != constants.kMaxDailyFoodLimit) {
-            portionControl = savedPortionControl;
-          } else {
-            final double yesterdayTotal = await _foodWeightRepository
-                .getTotalConsumedYesterday();
-            if (yesterdayTotal > constants.kSafeMinimumFoodIntakeG) {
-              portionControl = yesterdayTotal;
-            }
-          }
-        } else if (savedPortionControl != constants.kMaxDailyFoodLimit &&
-            savedPortionControl < portionControl) {
-          portionControl = savedPortionControl;
-        }
-      } else if (isWeightBelowHealthy) {
-        if (portionControl == constants.kSafeMinimumFoodIntakeG) {
-          if (savedPortionControl != constants.kMaxDailyFoodLimit) {
-            portionControl = savedPortionControl;
-          }
-        } else if (savedPortionControl != constants.kMaxDailyFoodLimit &&
-            savedPortionControl > portionControl) {
-          portionControl = savedPortionControl;
-        }
-      } else if (savedPortionControl != constants.kMaxDailyFoodLimit) {
-        portionControl = savedPortionControl;
-      }
-    }
-    return portionControl;
-  }
-
   Future<String> _getBmiMessage() async {
     final double bmi = await _getBmi();
     if (bmi < constants.bmiUnderweightThreshold) {
@@ -613,22 +575,6 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       final DateFormat formatter = DateFormat('MMM dd, EEEE \'at\' hh:mm a');
       return formatter.format(lastUpdatedDateTime);
     }
-  }
-
-  bool _isWeightAboveHealthyFor(double bodyWeight) {
-    final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
-    final double heightInMeters = userDetails.heightInCm / 100;
-    if (heightInMeters == 0) return false;
-    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
-    return bmi > constants.maxHealthyBmi;
-  }
-
-  bool _isWeightBelowHealthyFor(double bodyWeight) {
-    final UserDetails userDetails = _userPreferencesRepository.getUserDetails();
-    final double heightInMeters = userDetails.heightInCm / 100;
-    if (heightInMeters == 0) return false;
-    final double bmi = bodyWeight / (heightInMeters * heightInMeters);
-    return bmi < constants.minHealthyBmi;
   }
 
   Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {

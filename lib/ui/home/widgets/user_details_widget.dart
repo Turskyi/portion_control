@@ -97,7 +97,7 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
                             context.read<HomeBloc>().add(const SubmitDetails());
                           }
                         : null,
-                    isSaveEnabled: height >= constants.minUserHeight,
+                    isSaveEnabled: height >= constants.kMinUserHeight,
                   ),
                 ),
               ],

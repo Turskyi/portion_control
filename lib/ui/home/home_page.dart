@@ -326,6 +326,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       _showFeedbackUi();
     } else if (state is MenuFeedbackSent) {
       _notifyFeedbackSent();
+    } else if (state is MenuErrorState) {
+      _notifyMenuError(state.error);
     }
   }
 
@@ -346,6 +348,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(translate('feedback.sent')),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _notifyMenuError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
         duration: const Duration(seconds: 2),
       ),
     );

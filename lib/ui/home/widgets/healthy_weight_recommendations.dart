@@ -25,6 +25,7 @@ class HealthyWeightRecommendations extends StatelessWidget {
     // Calculate healthy weight range (BMI 18.5–24.9).
     final (double minHealthyWeight, double maxHealthyWeight) =
         BmiCategory.healthyWeightRange(height);
+    final double midpointWeight = BmiCategory.midpointWeight(height);
 
     final TextTheme textTheme = Theme.of(context).textTheme;
     final String kgSuffix = translate('healthy_weight.kg_suffix');
@@ -72,6 +73,12 @@ class HealthyWeightRecommendations extends StatelessWidget {
                     '${minHealthyWeight.toStringAsFixed(1)}'
                     '${translate('healthy_weight.range_separator')}'
                     '${maxHealthyWeight.toStringAsFixed(1)}$kgSuffix',
+                    style: textTheme.titleMedium,
+                  ),
+
+                  Text(
+                    '${translate('healthy_weight.midpoint_prefix')}'
+                    '${midpointWeight.toStringAsFixed(1)}$kgSuffix',
                     style: textTheme.titleMedium,
                   ),
                   Text(
