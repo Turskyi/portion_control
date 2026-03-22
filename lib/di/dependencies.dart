@@ -24,6 +24,7 @@ import 'package:portion_control/infrastructure/repositories/settings_repository.
 import 'package:portion_control/infrastructure/repositories/tracking_repository.dart';
 import 'package:portion_control/infrastructure/repositories/user_preferences_repository.dart';
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/services/feedback_email_service.dart';
 import 'package:portion_control/services/home_widget_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,6 +75,10 @@ class Dependencies {
     return const HomeWidgetServiceImpl();
   }
 
+  FeedbackEmailService get feedbackEmailService {
+    return const FeedbackEmailServiceImpl();
+  }
+
   SettingsBloc get settingsBloc {
     return SettingsBloc(settingsRepository);
   }
@@ -89,6 +94,7 @@ class Dependencies {
       foodWeightRepository,
       clearTrackingDataUseCase,
       homeWidgetService,
+      feedbackEmailService,
     );
   }
 
@@ -99,6 +105,7 @@ class Dependencies {
       bodyWeightRepository,
       foodWeightRepository,
       userPreferencesRepository,
+      feedbackEmailService,
     );
   }
 

@@ -19,6 +19,7 @@ import 'package:portion_control/infrastructure/data_sources/local/database/datab
 import 'package:portion_control/infrastructure/data_sources/local/local_data_source.dart';
 import 'package:portion_control/infrastructure/repositories/settings_repository.dart';
 import 'package:portion_control/router/app_route.dart';
+import 'package:portion_control/services/feedback_email_service.dart';
 import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/feedback/feedback_form.dart';
 import 'package:portion_control/ui/home/home_page.dart';
@@ -45,6 +46,7 @@ void main() {
     late SettingsRepository settingsRepository;
     late SettingsBloc settingsBloc;
     late HomeWidgetService mockHomeWidgetService;
+    late FeedbackEmailService mockFeedbackEmailService;
     late AppDatabase database;
 
     setUp(() async {
@@ -68,6 +70,7 @@ void main() {
       mockUserDetailsRepository = MockUserDetailsRepository();
       mockClearTrackingDataUseCase = MockClearTrackingDataUseCase();
       mockHomeWidgetService = MockHomeWidgetService();
+      mockFeedbackEmailService = MockFeedbackEmailService();
 
       // Set up default mock behavior
       when(
@@ -154,6 +157,7 @@ void main() {
                         mockFoodWeightRepository,
                         mockClearTrackingDataUseCase,
                         mockHomeWidgetService,
+                        mockFeedbackEmailService,
                       );
                     },
                   ),
@@ -165,6 +169,7 @@ void main() {
                         mockBodyWeightRepository,
                         mockFoodWeightRepository,
                         mockUserDetailsRepository,
+                        mockFeedbackEmailService,
                       );
                     },
                   ),
@@ -218,6 +223,7 @@ void main() {
           mockBodyWeightRepository,
           mockFoodWeightRepository,
           mockUserDetailsRepository,
+          mockFeedbackEmailService,
         );
 
         expect(menuBloc.state, isA<LoadingMenuState>());

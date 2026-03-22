@@ -22,6 +22,7 @@ void main() {
   late MockFoodWeightRepository mockFoodWeightRepository;
   late MockClearTrackingDataUseCase mockClearTrackingDataUseCase;
   late MockHomeWidgetService mockHomeWidgetService;
+  late MockFeedbackEmailService mockFeedbackEmailService;
 
   setUpAll(() async {
     registerFallbackValue(DateTime.now());
@@ -35,6 +36,7 @@ void main() {
     mockFoodWeightRepository = MockFoodWeightRepository();
     mockClearTrackingDataUseCase = MockClearTrackingDataUseCase();
     mockHomeWidgetService = MockHomeWidgetService();
+    mockFeedbackEmailService = MockFeedbackEmailService();
 
     // Initialize localization for tests.
     await helper.setUpFlutterTranslateForTests();
@@ -80,6 +82,12 @@ void main() {
         androidName: any(named: 'androidName'),
       ),
     ).thenAnswer((_) async => null);
+    when(
+      () => mockFeedbackEmailService.sendFeedbackEmail(
+        subject: any(named: 'subject'),
+        text: any(named: 'text'),
+      ),
+    ).thenAnswer((_) async {});
 
     homeBloc = HomeBloc(
       mockUserPreferencesRepository,
@@ -87,6 +95,7 @@ void main() {
       mockFoodWeightRepository,
       mockClearTrackingDataUseCase,
       mockHomeWidgetService,
+      mockFeedbackEmailService,
     );
   });
 

@@ -26,9 +26,9 @@ import 'package:portion_control/extensions/date_time_extension.dart';
 import 'package:portion_control/extensions/list_extension.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/res/enums/home_widget_keys.dart';
+import 'package:portion_control/services/feedback_email_service.dart';
 import 'package:portion_control/services/home_widget_service.dart';
 import 'package:portion_control/ui/home/widgets/body_weight_line_chart.dart';
-import 'package:resend/resend.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'home_event.dart';
@@ -41,6 +41,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     this._foodWeightRepository,
     this._clearTrackingDataUseCase,
     this._homeWidgetService,
+    this._feedbackEmailService,
   ) : super(
         HomeLoading(
           language: _userPreferencesRepository.getLanguage(),
@@ -79,6 +80,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final IFoodWeightRepository _foodWeightRepository;
   final IClearTrackingDataUseCase _clearTrackingDataUseCase;
   final HomeWidgetService _homeWidgetService;
+  final FeedbackEmailService _feedbackEmailService;
 
   // Store the previous state.
   HomeState? _previousState;
@@ -1254,11 +1256,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             add(ErrorEvent(translate('error.unexpectedError')));
           }
         } else {
-          // TODO: move this thing to "data".
-          final Resend resend = Resend.instance;
-          await resend.sendEmail(
-            from: constants.feedbackEmailSender,
-            to: <String>[constants.supportEmail],
+          await _feedbackEmailService.sendFeedbackEmail(
             subject:
                 '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
             text: feedbackBody.toString(),
