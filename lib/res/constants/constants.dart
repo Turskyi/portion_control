@@ -1,9 +1,10 @@
 const String baseUrl = 'https://portioncontrol.ca';
 const String ukrainianWebVersion = 'https://uk.portioncontrol.ca';
 const String frenchWebVersion = 'https://fr.portioncontrol.ca';
-const String companyDomain = 'portioncontrol.ca';
-const String supportEmailPrefix = 'support@';
-const String supportEmail = '$supportEmailPrefix$companyDomain';
+const String kCompanyDomain = 'portioncontrol.ca';
+const String kResendEmailDomain = kCompanyDomain;
+const String kSupportEmailPrefix = 'support@';
+const String supportEmail = '$kSupportEmailPrefix$kCompanyDomain';
 const String appName = 'Portion Control';
 const String googlePlayUrl =
     'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
@@ -91,9 +92,6 @@ const String feedbackTextProperty = 'feedback_text';
 const String ratingProperty = 'rating';
 const String screenSizeProperty = 'screenSize';
 
-// Expires Mar 13, 2026.
-const String resendEmailDomain = 'kima.website';
-
 const String kSubjectParameter = 'subject';
 
 const String kBodyParameter = 'body';
@@ -131,7 +129,7 @@ const double bmiObeseLowerThreshold = 30.0;
 
 const String doNotReplySenderName = 'Do Not Reply';
 const String feedbackEmailSender =
-    '$doNotReplySenderName $appName <no-reply@$resendEmailDomain>';
+    '$doNotReplySenderName $appName <no-reply@$kResendEmailDomain>';
 const String feedbackScreenshotFileName = 'feedback.png';
 const double kHorizontalIndent = 12.0;
 

@@ -85,10 +85,10 @@ packages:
     dependency: "direct main"
     description:
       name: build
-      sha256: "275bf6bb2a00a9852c28d4e0b410da1d833a734d57d39d44f94bfc895a484ec3"
+      sha256: aadd943f4f8cc946882c954c187e6115a84c98c81ad1d9c6cbf0895a8c85da9c
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.4"
+    version: "4.0.5"
   build_config:
     dependency: transitive
     description:
@@ -117,18 +117,18 @@ packages:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: "3552e5c2874ed47cf9ed9d6813ac71b2276ee07622f48530468b8013f1767e3f"
+      sha256: "521daf8d189deb79ba474e43a696b41c49fb3987818dbacf3308f1e03673a75e"
       url: "https://pub.dev"
     source: hosted
-    version: "2.13.0"
+    version: "2.13.1"
   build_web_compilers:
     dependency: "direct dev"
     description:
       name: build_web_compilers
-      sha256: f7020628ddf67db7619025ff64b1d3e890419410c4356a28757907db6e61a1f8
+      sha256: "81687ae36e798fc36ac7d52f664ad7dc252b0ac979d100872e3eb0f284df69b3"
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.15"
+    version: "4.4.16"
   built_collection:
     dependency: transitive
     description:
