@@ -39,6 +39,7 @@ void main() {
     late MockBodyWeightRepository mockBodyWeightRepository;
     late MockFoodWeightRepository mockFoodWeightRepository;
     late MockUserDetailsRepository mockUserDetailsRepository;
+    late MockCalculatePortionControlUseCase mockCalculatePortionControlUseCase;
     late MockClearTrackingDataUseCase mockClearTrackingDataUseCase;
     late LocalDataSource localDataSource;
     late SharedPreferences preferences;
@@ -68,6 +69,7 @@ void main() {
       mockBodyWeightRepository = MockBodyWeightRepository();
       mockFoodWeightRepository = MockFoodWeightRepository();
       mockUserDetailsRepository = MockUserDetailsRepository();
+      mockCalculatePortionControlUseCase = MockCalculatePortionControlUseCase();
       mockClearTrackingDataUseCase = MockClearTrackingDataUseCase();
       mockHomeWidgetService = MockHomeWidgetService();
       mockFeedbackEmailService = MockFeedbackEmailService();
@@ -82,6 +84,9 @@ void main() {
       when(
         () => mockUserDetailsRepository.getUserDetails(),
       ).thenReturn(const UserDetails.empty());
+      when(
+        () => mockCalculatePortionControlUseCase.call(),
+      ).thenAnswer((_) async => 2000.0);
 
       // Set up SharedPreferences
       preferences = await SharedPreferences.getInstance();
@@ -170,6 +175,7 @@ void main() {
                         mockFoodWeightRepository,
                         mockUserDetailsRepository,
                         mockFeedbackEmailService,
+                        mockCalculatePortionControlUseCase,
                       );
                     },
                   ),
@@ -224,6 +230,7 @@ void main() {
           mockFoodWeightRepository,
           mockUserDetailsRepository,
           mockFeedbackEmailService,
+          mockCalculatePortionControlUseCase,
         );
 
         expect(menuBloc.state, isA<LoadingMenuState>());

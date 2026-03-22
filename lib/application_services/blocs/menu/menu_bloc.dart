@@ -15,13 +15,12 @@ import 'package:portion_control/domain/enums/feedback_rating.dart';
 import 'package:portion_control/domain/enums/feedback_submission_type.dart';
 import 'package:portion_control/domain/enums/feedback_type.dart';
 import 'package:portion_control/domain/enums/language.dart';
-import 'package:portion_control/domain/enums/midpoint_portion_control_action.dart';
-import 'package:portion_control/domain/models/bmi_category.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/exceptions/email_launch_exception.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/models/portion_control_summary.dart';
 import 'package:portion_control/domain/models/user_details.dart';
+import 'package:portion_control/domain/services/interactors/i_calculate_portion_control_use_case.dart';
 import 'package:portion_control/domain/services/repositories/i_body_weight_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_food_weight_repository.dart';
 import 'package:portion_control/domain/services/repositories/i_preferences_repository.dart';
@@ -46,6 +45,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
     this._foodWeightRepository,
     this._userPreferencesRepository,
     this._feedbackEmailService,
+    this._calculatePortionControlUseCase,
   ) : super(
         LoadingMenuState(
           streakDays: 0,
@@ -72,21 +72,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   final IFoodWeightRepository _foodWeightRepository;
   final IUserPreferencesRepository _userPreferencesRepository;
   final FeedbackEmailService _feedbackEmailService;
-
-  @visibleForTesting
-  static MidpointPortionControlAction resolveMidpointPortionControlAction({
-    required double bodyWeight,
-    required double midpointWeight,
-    required double buffer,
-  }) {
-    if (bodyWeight > midpointWeight + buffer) {
-      return MidpointPortionControlAction.decrease;
-    }
-    if (bodyWeight < midpointWeight - buffer) {
-      return MidpointPortionControlAction.increase;
-    }
-    return MidpointPortionControlAction.maintain;
-  }
+  final ICalculatePortionControlUseCase _calculatePortionControlUseCase;
 
   FutureOr<void> _onFeedbackRequested(
     BugReportPressedEvent _,
@@ -445,7 +431,8 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         (double sum, FoodWeight entry) => sum + entry.weight,
       );
 
-      final double portionControl = await _calculatePortionControl();
+      final double portionControl = await _calculatePortionControlUseCase
+          .call();
 
       final PortionControlSummary portionControlSummary = PortionControlSummary(
         weight: todayBodyWeight.weight,
@@ -531,75 +518,6 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
         'because it is not supported on this platform.',
       );
     }
-  }
-
-  //TODO: move this to a UseCase
-  Future<double> _calculatePortionControl() async {
-    final BodyWeight bodyWeightEntry = await _bodyWeightRepository
-        .getLastBodyWeight();
-    double portionControl = constants.kMaxDailyFoodLimit;
-
-    if (bodyWeightEntry.weight > 0) {
-      final double bodyWeight = bodyWeightEntry.weight;
-      final UserDetails userDetails = _userPreferencesRepository
-          .getUserDetails();
-      final bool hasValidHeight =
-          userDetails.heightInCm > constants.kMinUserHeight;
-      final double midpointWeight = hasValidHeight
-          ? BmiCategory.midpointWeight(userDetails.heightInCm)
-          : bodyWeight;
-      final MidpointPortionControlAction midpointAction = hasValidHeight
-          ? resolveMidpointPortionControlAction(
-              bodyWeight: bodyWeight,
-              midpointWeight: midpointWeight,
-              buffer: constants.kMidpointBuffer,
-            )
-          : MidpointPortionControlAction.maintain;
-      final bool isWeightAboveMidpoint =
-          midpointAction == MidpointPortionControlAction.decrease;
-      final bool isWeightBelowMidpoint =
-          midpointAction == MidpointPortionControlAction.increase;
-
-      if (isWeightAboveMidpoint) {
-        portionControl = await _userPreferencesRepository
-            .getMinConsumptionWhenWeightIncreased();
-      } else if (isWeightBelowMidpoint) {
-        portionControl = await _userPreferencesRepository
-            .getMaxConsumptionWhenWeightDecreased();
-      }
-
-      final double savedPortionControl = _userPreferencesRepository
-          .getLastPortionControl();
-
-      if (isWeightAboveMidpoint) {
-        if (portionControl == constants.kMaxDailyFoodLimit) {
-          if (savedPortionControl != constants.kMaxDailyFoodLimit) {
-            portionControl = savedPortionControl;
-          } else {
-            final double yesterdayTotal = await _foodWeightRepository
-                .getTotalConsumedYesterday();
-            if (yesterdayTotal > constants.kSafeMinimumFoodIntakeG) {
-              portionControl = yesterdayTotal;
-            }
-          }
-        } else if (savedPortionControl != constants.kMaxDailyFoodLimit &&
-            savedPortionControl < portionControl) {
-          portionControl = savedPortionControl;
-        }
-      } else if (isWeightBelowMidpoint) {
-        if (portionControl == constants.kSafeMinimumFoodIntakeG) {
-          if (savedPortionControl != constants.kMaxDailyFoodLimit) {
-            portionControl = savedPortionControl;
-          }
-        } else if (savedPortionControl != constants.kMaxDailyFoodLimit &&
-            savedPortionControl > portionControl) {
-          portionControl = savedPortionControl;
-        }
-      } else if (savedPortionControl != constants.kMaxDailyFoodLimit) {
-        portionControl = savedPortionControl;
-      }
-    }
-    return portionControl;
   }
 
   Future<String> _getBmiMessage() async {

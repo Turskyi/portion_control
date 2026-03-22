@@ -7,8 +7,10 @@ import 'package:portion_control/application_services/blocs/onboarding/onboarding
 import 'package:portion_control/application_services/blocs/settings/settings_bloc.dart';
 import 'package:portion_control/application_services/blocs/stats/stats_bloc.dart';
 import 'package:portion_control/application_services/blocs/yesterday_entries_bloc/yesterday_entries_bloc.dart';
+import 'package:portion_control/application_services/interactors/calculate_portion_control_use_case.dart';
 import 'package:portion_control/application_services/interactors/clear_tracking_data_use_case.dart';
 import 'package:portion_control/application_services/interactors/initialize_app_language_use_case.dart';
+import 'package:portion_control/domain/services/interactors/i_calculate_portion_control_use_case.dart';
 import 'package:portion_control/domain/services/interactors/i_clear_tracking_data_use_case.dart';
 import 'package:portion_control/domain/services/interactors/save_language_use_case.dart';
 import 'package:portion_control/domain/services/interactors/use_case.dart';
@@ -71,6 +73,14 @@ class Dependencies {
     return ClearTrackingDataUseCase(trackingRepository);
   }
 
+  ICalculatePortionControlUseCase get calculatePortionControlUseCase {
+    return CalculatePortionControlUseCase(
+      bodyWeightRepository,
+      foodWeightRepository,
+      userPreferencesRepository,
+    );
+  }
+
   HomeWidgetService get homeWidgetService {
     return const HomeWidgetServiceImpl();
   }
@@ -106,6 +116,7 @@ class Dependencies {
       foodWeightRepository,
       userPreferencesRepository,
       feedbackEmailService,
+      calculatePortionControlUseCase,
     );
   }
 
