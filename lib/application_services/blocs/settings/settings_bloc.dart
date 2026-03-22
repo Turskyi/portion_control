@@ -16,14 +16,14 @@ import 'package:portion_control/domain/enums/language.dart';
 import 'package:portion_control/domain/models/exceptions/email_launch_exception.dart';
 import 'package:portion_control/domain/services/repositories/i_settings_repository.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
-import 'package:resend/resend.dart';
+import 'package:portion_control/services/feedback_email_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'settings_event.dart';
 part 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
-  SettingsBloc(this._settingsRepository)
+  SettingsBloc(this._settingsRepository, this._feedbackEmailService)
     : super(
         SettingsInitial(
           language: _settingsRepository.getLanguage(),
@@ -49,6 +49,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   }
 
   final ISettingsRepository _settingsRepository;
+  final FeedbackEmailService _feedbackEmailService;
 
   FutureOr<void> _onInitialize(
     SettingsInitializeEvent event,
@@ -151,11 +152,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           ..writeln();
 
         if (event.submissionType.isAutomatic) {
-          // TODO: move this thing to "data".
-          final Resend resend = Resend.instance;
-          await resend.sendEmail(
-            from: constants.feedbackEmailSender,
-            to: <String>[constants.supportEmail],
+          await _feedbackEmailService.sendFeedbackEmail(
             subject:
                 '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
             text: feedbackBody.toString(),

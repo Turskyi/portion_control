@@ -99,7 +99,7 @@ void main() {
 
       // Initialize repositories
       settingsRepository = SettingsRepository(localDataSource);
-      settingsBloc = SettingsBloc(settingsRepository);
+      settingsBloc = SettingsBloc(settingsRepository, mockFeedbackEmailService);
     });
 
     tearDown(() async {
@@ -129,7 +129,10 @@ void main() {
           },
           AppRoute.landing.path: (_) {
             return BlocProvider<SettingsBloc>(
-              create: (_) => SettingsBloc(settingsRepository),
+              create: (_) => SettingsBloc(
+                settingsRepository,
+                mockFeedbackEmailService,
+              ),
               child: const LandingPage(),
             );
           },

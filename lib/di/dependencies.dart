@@ -90,7 +90,7 @@ class Dependencies {
   }
 
   SettingsBloc get settingsBloc {
-    return SettingsBloc(settingsRepository);
+    return SettingsBloc(settingsRepository, feedbackEmailService);
   }
 
   YesterdayEntriesBloc get yesterdayEntriesBloc {
