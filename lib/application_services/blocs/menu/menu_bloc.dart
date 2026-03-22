@@ -15,6 +15,7 @@ import 'package:portion_control/domain/enums/feedback_rating.dart';
 import 'package:portion_control/domain/enums/feedback_submission_type.dart';
 import 'package:portion_control/domain/enums/feedback_type.dart';
 import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/domain/enums/midpoint_portion_control_action.dart';
 import 'package:portion_control/domain/models/bmi_category.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/exceptions/email_launch_exception.dart';
@@ -69,6 +70,21 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   final IBodyWeightRepository _bodyWeightRepository;
   final IFoodWeightRepository _foodWeightRepository;
   final IUserPreferencesRepository _userPreferencesRepository;
+
+  @visibleForTesting
+  static MidpointPortionControlAction resolveMidpointPortionControlAction({
+    required double bodyWeight,
+    required double midpointWeight,
+    required double buffer,
+  }) {
+    if (bodyWeight > midpointWeight + buffer) {
+      return MidpointPortionControlAction.decrease;
+    }
+    if (bodyWeight < midpointWeight - buffer) {
+      return MidpointPortionControlAction.increase;
+    }
+    return MidpointPortionControlAction.maintain;
+  }
 
   FutureOr<void> _onFeedbackRequested(
     BugReportPressedEvent _,
@@ -521,12 +537,17 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       final double midpointWeight = hasValidHeight
           ? BmiCategory.midpointWeight(userDetails.heightInCm)
           : bodyWeight;
+      final MidpointPortionControlAction midpointAction = hasValidHeight
+          ? resolveMidpointPortionControlAction(
+              bodyWeight: bodyWeight,
+              midpointWeight: midpointWeight,
+              buffer: constants.kMidpointBuffer,
+            )
+          : MidpointPortionControlAction.maintain;
       final bool isWeightAboveMidpoint =
-          hasValidHeight &&
-          bodyWeight > midpointWeight + constants.kMidpointBuffer;
+          midpointAction == MidpointPortionControlAction.decrease;
       final bool isWeightBelowMidpoint =
-          hasValidHeight &&
-          bodyWeight < midpointWeight - constants.kMidpointBuffer;
+          midpointAction == MidpointPortionControlAction.increase;
 
       if (isWeightAboveMidpoint) {
         portionControl = await _userPreferencesRepository
