@@ -199,7 +199,8 @@
     "bmi_source_who": "OMS - Obésité et surpoids",
     "bmi_source_who_url": "https://www.who.int/fr/news-room/fact-sheets/detail/obesity-and-overweight",
     "bmi_source_cdc": "CDC - À propos de l'IMC adulte",
-    "bmi_source_cdc_url": "https://www.cdc.gov/bmi/about/index.html"
+    "bmi_source_cdc_url": "https://www.cdc.gov/bmi/about/index.html",
+    "midpoint_prefix": "Point médian : "
   },
   "home_page": {
     "enter_weight_instruction": "👉 Entrez le poids avant votre premier repas.",

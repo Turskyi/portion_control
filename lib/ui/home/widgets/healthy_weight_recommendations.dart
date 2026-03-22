@@ -75,9 +75,10 @@ class HealthyWeightRecommendations extends StatelessWidget {
                     '${maxHealthyWeight.toStringAsFixed(1)}$kgSuffix',
                     style: textTheme.titleMedium,
                   ),
-                  // TODO: add localization
+
                   Text(
-                    'Midpoint: ${midpointWeight.toStringAsFixed(1)}$kgSuffix',
+                    '${translate('healthy_weight.midpoint_prefix')}'
+                    '${midpointWeight.toStringAsFixed(1)}$kgSuffix',
                     style: textTheme.titleMedium,
                   ),
                   Text(

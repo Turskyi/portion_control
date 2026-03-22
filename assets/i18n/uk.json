@@ -201,7 +201,8 @@
     "bmi_source_who": "ВООЗ - Ожиріння та надмірна вага",
     "bmi_source_who_url": "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
     "bmi_source_cdc": "CDC - Про ІМТ дорослих",
-    "bmi_source_cdc_url": "https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/index.html"
+    "bmi_source_cdc_url": "https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/index.html",
+    "midpoint_prefix": "Середина діапазону: "
   },
   "home_page": {
     "enter_weight_instruction": "👉 Введіть вагу перед першим прийомом їжі.",
