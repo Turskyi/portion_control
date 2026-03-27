@@ -26,6 +26,7 @@ class LandingPage extends StatelessWidget {
     );
     // Helper for translation.
     String t(String key) => translate(key);
+    final bool isWebNarrowScreen = kIsWeb && context.isNarrowScreen;
     return GradientBackgroundScaffold(
       body: Center(
         child: Padding(
@@ -96,6 +97,60 @@ class LandingPage extends StatelessWidget {
                     color: colorScheme.onBackground.withOpacity(0.7),
                   ),
                   textAlign: TextAlign.center,
+                ),
+              if (isWebNarrowScreen)
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: <Widget>[
+                    Semantics(
+                      label: t('landing_page.semantics_label_google_play'),
+                      button: true,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Material(
+                          // Ensures the background remains unchanged.
+                          color: Colors.transparent,
+                          child: InkWell(
+                            splashColor: splashColor,
+                            onTap: _launchGooglePlayUrl,
+                            child: Ink.image(
+                              image: const AssetImage(
+                                '${constants.imagePath}play_store_badge.png',
+                              ),
+                              height: 56,
+                              width: 122,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Semantics(
+                      label: t('landing_page.semantics_label_macos'),
+                      button: true,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Material(
+                          // Ensures the background remains unchanged.
+                          color: Colors.transparent,
+                          child: InkWell(
+                            splashColor: splashColor,
+                            onTap: _launchMacOsUrl,
+                            child: Ink.image(
+                              image: const AssetImage(
+                                '${constants.imagePath}mac_os_badge.png',
+                              ),
+                              height: 56,
+                              width: 122,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
             ],
           ),
