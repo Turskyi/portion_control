@@ -164,6 +164,29 @@ sealed class HomeState {
 
   bool get isWeightAboveHealthy => isWeightAboveHealthyFor(bodyWeight);
 
+  bool get hasValidHeightForMidpoint => heightInCm > constants.kMinUserHeight;
+
+  double get midpointWeight => hasValidHeightForMidpoint
+      ? BmiCategory.midpointWeight(heightInCm)
+      : bodyWeight;
+
+  bool get isWeightAboveMidpoint => isWeightAboveMidpointFor(bodyWeight);
+
+  bool isWeightAboveMidpointFor(double bodyWeight) {
+    if (!hasValidHeightForMidpoint) return false;
+    return bodyWeight > midpointWeight + constants.kMidpointBuffer;
+  }
+
+  bool get isWeightBelowMidpoint => isWeightBelowMidpointFor(bodyWeight);
+
+  bool isWeightBelowMidpointFor(double bodyWeight) {
+    if (!hasValidHeightForMidpoint) return false;
+    return bodyWeight < midpointWeight - constants.kMidpointBuffer;
+  }
+
+  bool get isMidpointAdjustmentNeeded =>
+      isWeightAboveMidpoint || isWeightBelowMidpoint;
+
   bool isWeightAboveHealthyFor(double bodyWeight) {
     final double heightInMeters = heightInCm / 100;
     if (heightInMeters == 0) return false;
@@ -198,9 +221,7 @@ sealed class HomeState {
   bool get areMealsNotConfirmed => !isMealsConfirmedForToday;
 
   bool get shouldAskForMealConfirmation {
-    return isWeightIncreasing &&
-        isWeightAboveHealthy &&
-        !isMealsConfirmedForToday;
+    return isMidpointAdjustmentNeeded && !isMealsConfirmedForToday;
   }
 
   String get formattedRemainingFood => (adjustedPortion - totalConsumedToday)

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/domain/models/bmi_category.dart';
+import 'package:portion_control/ui/home/widgets/midpoint_shimmer_text.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HealthyWeightRecommendations extends StatelessWidget {
@@ -29,6 +30,10 @@ class HealthyWeightRecommendations extends StatelessWidget {
 
     final TextTheme textTheme = Theme.of(context).textTheme;
     final String kgSuffix = translate('healthy_weight.kg_suffix');
+
+    final String midpointText =
+        '${translate('healthy_weight.midpoint_prefix')}'
+        '${midpointWeight.toStringAsFixed(1)}$kgSuffix';
 
     final BmiCategory category = BmiCategory.fromWeightAndHeight(
       weightKg: weight,
@@ -76,10 +81,11 @@ class HealthyWeightRecommendations extends StatelessWidget {
                     style: textTheme.titleMedium,
                   ),
 
-                  Text(
-                    '${translate('healthy_weight.midpoint_prefix')}'
-                    '${midpointWeight.toStringAsFixed(1)}$kgSuffix',
+                  MidpointShimmerText(
+                    text: midpointText,
                     style: textTheme.titleMedium,
+                    cycleDuration: const Duration(seconds: 10),
+                    shimmerDuration: const Duration(milliseconds: 4400),
                   ),
                   Text(
                     category.message,
