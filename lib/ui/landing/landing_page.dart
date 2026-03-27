@@ -83,8 +83,20 @@ class LandingPage extends StatelessWidget {
               const SizedBox(height: 8),
               ElevatedButton(
                 onPressed: () => _navigateToNextScreen(context),
-                child: Text(t('landing_page.get_started_button')),
+                child: Text(
+                  kIsWeb
+                      ? t('landing_page.try_on_web')
+                      : t('landing_page.get_started_button'),
+                ),
               ),
+              if (kIsWeb)
+                Text(
+                  t('landing_page.web_storage_warning'),
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onBackground.withOpacity(0.7),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
             ],
           ),
         ),

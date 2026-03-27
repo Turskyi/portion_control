@@ -274,7 +274,9 @@
     "semantics_label_google_play": "Гугл Плей Стор",
     "semantics_label_testflight": "ТестФлайт",
     "semantics_label_macos": "Макось",
-    "version": "Версія {version}"
+    "version": "Версія {version}",
+    "try_on_web": "Спробувати у веб-версії",
+    "web_storage_warning": "Дані зберігаються локально у вашому браузері (можуть бути видалені)"
   },
   "reminders": {
     "title": "Сповіщення",
