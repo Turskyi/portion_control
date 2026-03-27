@@ -26,12 +26,16 @@ class PortionControlMessage extends StatelessWidget {
         final bool isWeightIncreasing = state.isWeightIncreasing;
         final double portionControl = state.adjustedPortion;
         final double yesterdayTotal = state.yesterdayConsumedTotal;
+        final bool shouldAskForMealConfirmation =
+            state.shouldAskForMealConfirmation;
 
         if (state.hasNoPortionControl) {
           return Text(
             translate('portion_control_status.no_portion_control_today'),
             style: titleMediumStyle,
           );
+        } else if (shouldAskForMealConfirmation) {
+          return MealConfirmationCard(yesterdayTotal: yesterdayTotal);
         } else if (state.isWeightIncreasing && isWeightAboveHealthy) {
           if (state.isMealsConfirmedForToday) {
             final String limitValue =
@@ -54,8 +58,6 @@ class PortionControlMessage extends StatelessWidget {
                   portionControl == constants.kMaxDailyFoodLimit ||
                   portionControl == constants.kSafeMinimumFoodIntakeG,
             );
-          } else if (state.areMealsNotConfirmed) {
-            return MealConfirmationCard(yesterdayTotal: yesterdayTotal);
           }
         } else if (isWeightDecreasing && isWeightAboveHealthy) {
           return Column(
@@ -109,8 +111,6 @@ class PortionControlMessage extends StatelessWidget {
                     portionControl == constants.kSafeMinimumFoodIntakeG,
               );
             }
-          } else if (!state.isMealsConfirmedForToday) {
-            return MealConfirmationCard(yesterdayTotal: yesterdayTotal);
           } else {
             return Text(
               translate(

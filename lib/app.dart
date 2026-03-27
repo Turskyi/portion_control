@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -85,7 +86,12 @@ class App extends StatelessWidget {
                   secondaryContainer: Colors.orangeAccent,
                 ),
               ),
-              initialRoute: initialRoute,
+              // On web, pass null so `MaterialApp` reads the browser URL as the
+              // initial route (together with `usePathUrlStrategy` in
+              // `main.dart` this enables Google to crawl deep-linked pages
+              // individually).
+              // On mobile, use the computed initial route (onboarding or home).
+              initialRoute: kIsWeb ? null : initialRoute,
               routes: routeMap,
             );
           },

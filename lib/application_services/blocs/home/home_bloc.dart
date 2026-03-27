@@ -14,6 +14,7 @@ import 'package:portion_control/domain/enums/feedback_rating.dart';
 import 'package:portion_control/domain/enums/feedback_type.dart';
 import 'package:portion_control/domain/enums/gender.dart';
 import 'package:portion_control/domain/enums/language.dart';
+import 'package:portion_control/domain/models/bmi_category.dart';
 import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/domain/models/portion_control_summary.dart';
@@ -161,16 +162,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               ? lastSavedBodyWeightEntry.weight
               : 0;
 
-          final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
+          final bool isWeightAboveMidpoint = state.isWeightAboveMidpointFor(
             lastSavedBodyWeightEntry.weight,
           );
-          final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
+          final bool isWeightBelowMidpoint = state.isWeightBelowMidpointFor(
             lastSavedBodyWeightEntry.weight,
           );
 
-          if (isWeightAboveHealthy) {
+          if (isWeightAboveMidpoint) {
             portionControl = minConsumptionIfWeightIncreased;
-          } else if (isWeightBelowHealthy) {
+          } else if (isWeightBelowMidpoint) {
             portionControl = await _userPreferencesRepository
                 .getMaxConsumptionWhenWeightDecreased();
           }
@@ -179,7 +180,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           // portion.
           final bool isNoProofFound =
               portionControl == constants.kMaxDailyFoodLimit ||
-              (isWeightBelowHealthy &&
+              (isWeightBelowMidpoint &&
                   portionControl == constants.kSafeMinimumFoodIntakeG);
 
           if (isNoProofFound) {
@@ -669,11 +670,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           final double totalConsumedYesterday = await _foodWeightRepository
               .getTotalConsumedYesterday();
 
-          final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
+          final bool isWeightBelowMidpoint = state.isWeightBelowMidpointFor(
             lastSavedBodyWeight,
           );
 
-          final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
+          final bool isWeightAboveMidpoint = state.isWeightAboveMidpointFor(
             lastSavedBodyWeight,
           );
           final bool isMealsConfirmed =
@@ -688,9 +689,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           final bool hasWeightIncreaseProof = await _bodyWeightRepository
               .hasWeightIncreaseProof();
 
-          if (isWeightAboveHealthy) {
+          if (isWeightAboveMidpoint) {
             portionControl = minConsumptionIfWeightIncreased;
-          } else if (isWeightBelowHealthy) {
+          } else if (isWeightBelowMidpoint) {
             portionControl = await _userPreferencesRepository
                 .getMaxConsumptionWhenWeightDecreased();
           }
@@ -699,7 +700,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           final double savedPortionControl = _userPreferencesRepository
               .getLastPortionControl();
 
-          if (isWeightAboveHealthy) {
+          if (isWeightAboveMidpoint) {
             if (portionControl == constants.kMaxDailyFoodLimit) {
               if (savedPortionControl != constants.kMaxDailyFoodLimit) {
                 portionControl = savedPortionControl;
@@ -716,7 +717,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 );
               }
             }
-          } else if (isWeightBelowHealthy) {
+          } else if (isWeightBelowMidpoint) {
             if (portionControl == constants.kSafeMinimumFoodIntakeG) {
               if (savedPortionControl != constants.kMaxDailyFoodLimit) {
                 portionControl = savedPortionControl;
@@ -1100,24 +1101,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final BodyWeight? lastSavedBodyWeightEntry = bodyWeightEntries.lastOrNull;
 
       if (lastSavedBodyWeightEntry != null) {
-        final bool isWeightAboveHealthy = state.isWeightAboveHealthyFor(
+        final bool isWeightAboveMidpoint = state.isWeightAboveMidpointFor(
           lastSavedBodyWeightEntry.weight,
         );
 
-        final bool isWeightBelowHealthy = state.isWeightBelowHealthyFor(
+        final bool isWeightBelowMidpoint = state.isWeightBelowMidpointFor(
           lastSavedBodyWeightEntry.weight,
         );
 
-        if (isWeightAboveHealthy) {
+        if (isWeightAboveMidpoint) {
           portionControl = minConsumptionIfWeightIncreased;
-        } else if (isWeightBelowHealthy) {
+        } else if (isWeightBelowMidpoint) {
           portionControl = await _userPreferencesRepository
               .getMaxConsumptionWhenWeightDecreased();
         }
 
         final bool isNoProofFound =
             portionControl == constants.kMaxDailyFoodLimit ||
-            (isWeightBelowHealthy &&
+            (isWeightBelowMidpoint &&
                 portionControl == constants.kSafeMinimumFoodIntakeG);
 
         if (isNoProofFound) {

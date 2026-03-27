@@ -272,7 +272,9 @@
     "semantics_label_google_play": "Google Play Store",
     "semantics_label_testflight": "TestFlight",
     "semantics_label_macos": "MacOS",
-    "version": "Version {version}"
+    "version": "Version {version}",
+    "try_on_web": "Essayer sur le web",
+    "web_storage_warning": "Les données sont stockées localement dans votre navigateur (peuvent être effacées)"
   },
   "reminders": {
     "title": "Rappels",

@@ -1,7 +1,9 @@
 import 'package:feedback/feedback.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:nested/nested.dart';
 import 'package:portion_control/app.dart';
 import 'package:portion_control/application_services/blocs/menu/menu_bloc.dart';
@@ -27,6 +29,12 @@ import 'package:portion_control/ui/feedback/feedback_form.dart';
 /// components in the system. They don’t know about [main], and they don’t care
 /// when it changes.
 Future<void> main() async {
+  // Use path-based URLs on web (removes the # fragment) so that Google
+  // can index each route as a distinct, crawlable URL.
+  if (kIsWeb) {
+    usePathUrlStrategy();
+  }
+
   // Ensure that the Flutter engine is initialized, to avoid errors with
   // `SharedPreferences` dependencies initialization.
   WidgetsFlutterBinding.ensureInitialized();
