@@ -66,21 +66,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   key: UniqueKey(),
                   titleKey: 'onboarding.page1.title',
                   contentKey: 'onboarding.page1.content',
-                  imageAsset: '${constants.imagePath}onboarding_plate.png',
+                  imageAsset: '${constants.kImagePath}onboarding_plate.png',
                   isAnimated: true,
                 ),
                 OnboardingPage(
                   titleKey: 'onboarding.page2.title',
                   contentKey: 'onboarding.page2.content',
                   imageAsset:
-                      '${constants.imagePath}${translate(
+                      '${constants.kImagePath}${translate(
                         'onboarding.page2.onboarding_chart',
                       )}',
                 ),
                 const OnboardingPage(
                   titleKey: 'onboarding.page3.title',
                   contentKey: 'onboarding.page3.content',
-                  imageAsset: '${constants.imagePath}onboarding_journey.png',
+                  imageAsset: '${constants.kImagePath}onboarding_journey.png',
                 ),
                 // Explain local-only storage so users are not
                 // surprised when their data is cleared

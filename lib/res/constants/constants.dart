@@ -17,7 +17,7 @@ const String macOsUrl =
 // Lookup URL used to query App Store metadata by bundle id.
 const String kITunesLookupUrl = 'https://itunes.apple.com/lookup?bundleId=';
 
-const String imagePath = 'assets/images/';
+const String kImagePath = 'assets/images/';
 
 /// Blur intensity constant.
 const double blurSigma = 12.0;

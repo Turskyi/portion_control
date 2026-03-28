@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     onTap: _launchGooglePlayUrl,
                                     child: Ink.image(
                                       image: const AssetImage(
-                                        '${constants.imagePath}'
+                                        '${constants.kImagePath}'
                                         'play_store_badge.png',
                                       ),
                                       height: badgeHeight,
@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     onTap: _launchMacOsUrl,
                                     child: Ink.image(
                                       image: const AssetImage(
-                                        '${constants.imagePath}'
+                                        '${constants.kImagePath}'
                                         'mac_os_badge.png',
                                       ),
                                       height: badgeHeight,

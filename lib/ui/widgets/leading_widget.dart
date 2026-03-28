@@ -20,7 +20,7 @@ class LeadingWidget extends StatelessWidget {
               kIsWeb ? AppRoute.landing.path : AppRoute.home.path,
             ),
             child: Ink.image(
-              image: const AssetImage('${constants.imagePath}logo.png'),
+              image: const AssetImage('${constants.kImagePath}logo.png'),
               fit: BoxFit.cover,
             ),
           ),

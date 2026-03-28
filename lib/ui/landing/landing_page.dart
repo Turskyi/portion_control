@@ -28,132 +28,142 @@ class LandingPage extends StatelessWidget {
     String t(String key) => translate(key);
     final bool isWebNarrowScreen = kIsWeb && context.isNarrowScreen;
     return GradientBackgroundScaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            spacing: 16,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              GlowingAnimatedBox(
-                onTap: () => Navigator.of(
-                  context,
-                ).pushReplacementNamed(AppRoute.home.path),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                constants.appName,
-                style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.primary,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              SizedBox(
-                height: 50,
-                child: DefaultTextStyle(
-                  style: textTheme.bodyLarge ?? const TextStyle(),
-                  child: AnimatedTextKit(
-                    repeatForever: true,
-                    animatedTexts: <AnimatedText>[
-                      TypewriterAnimatedText(
-                        t('landing_page.animated_text_1'),
-                        textStyle: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onBackground,
-                        ),
-                        speed: const Duration(milliseconds: 100),
-                      ),
-                      TypewriterAnimatedText(
-                        t('landing_page.animated_text_2'),
-                        textStyle: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onBackground,
-                        ),
-                        speed: const Duration(milliseconds: 100),
-                      ),
-                      TypewriterAnimatedText(
-                        t('landing_page.animated_text_3'),
-                        textStyle: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onBackground,
-                        ),
-                        speed: const Duration(milliseconds: 100),
-                      ),
-                    ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            Center(
+              child: Column(
+                spacing: 16,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  GlowingAnimatedBox(
+                    onTap: () => Navigator.of(
+                      context,
+                    ).pushReplacementNamed(AppRoute.home.path),
                   ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => _navigateToNextScreen(context),
-                child: Text(
-                  kIsWeb
-                      ? t('landing_page.try_on_web')
-                      : t('landing_page.get_started_button'),
-                ),
-              ),
-              if (kIsWeb)
-                Text(
-                  t('landing_page.web_storage_warning'),
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onBackground.withOpacity(0.7),
+                  const SizedBox(height: 4),
+                  Text(
+                    constants.appName,
+                    style: textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                      letterSpacing: 0.5,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              if (isWebNarrowScreen)
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 8,
-                  alignment: WrapAlignment.center,
-                  children: <Widget>[
-                    Semantics(
-                      label: t('landing_page.semantics_label_google_play'),
-                      button: true,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Material(
-                          // Ensures the background remains unchanged.
-                          color: Colors.transparent,
-                          child: InkWell(
-                            splashColor: splashColor,
-                            onTap: _launchGooglePlayUrl,
-                            child: Ink.image(
-                              image: const AssetImage(
-                                '${constants.imagePath}play_store_badge.png',
+                  SizedBox(
+                    height: 50,
+                    child: DefaultTextStyle(
+                      style: textTheme.bodyLarge ?? const TextStyle(),
+                      child: AnimatedTextKit(
+                        repeatForever: true,
+                        animatedTexts: <AnimatedText>[
+                          TypewriterAnimatedText(
+                            t('landing_page.animated_text_1'),
+                            textStyle: textTheme.bodyLarge?.copyWith(
+                              color: colorScheme.onBackground,
+                            ),
+                            speed: const Duration(milliseconds: 100),
+                          ),
+                          TypewriterAnimatedText(
+                            t('landing_page.animated_text_2'),
+                            textStyle: textTheme.bodyLarge?.copyWith(
+                              color: colorScheme.onBackground,
+                            ),
+                            speed: const Duration(milliseconds: 100),
+                          ),
+                          TypewriterAnimatedText(
+                            t('landing_page.animated_text_3'),
+                            textStyle: textTheme.bodyLarge?.copyWith(
+                              color: colorScheme.onBackground,
+                            ),
+                            speed: const Duration(milliseconds: 100),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () => _onPrimaryCtaPressed(context),
+                    child: Text(
+                      kIsWeb
+                          ? t('landing_page.try_on_web')
+                          : t('landing_page.get_started_button'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isWebNarrowScreen)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 52.0),
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.end,
+                      children: <Widget>[
+                        Semantics(
+                          label: t('landing_page.semantics_label_google_play'),
+                          button: true,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Material(
+                              // Ensures the background remains unchanged.
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: splashColor,
+                                onTap: _launchGooglePlayUrl,
+                                child: Ink.image(
+                                  image: const AssetImage(
+                                    '${constants.kImagePath}'
+                                    'play_store_badge.png',
+                                  ),
+                                  height: 56,
+                                  width: 122,
+                                  alignment: Alignment.bottomCenter,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
-                              height: 56,
-                              width: 122,
-                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    Semantics(
-                      label: t('landing_page.semantics_label_macos'),
-                      button: true,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Material(
-                          // Ensures the background remains unchanged.
-                          color: Colors.transparent,
-                          child: InkWell(
-                            splashColor: splashColor,
-                            onTap: _launchMacOsUrl,
-                            child: Ink.image(
-                              image: const AssetImage(
-                                '${constants.imagePath}mac_os_badge.png',
+                        Semantics(
+                          label: t('landing_page.semantics_label_macos'),
+                          button: true,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Material(
+                              // Ensures the background remains unchanged.
+                              color: Colors.transparent,
+                              child: InkWell(
+                                splashColor: splashColor,
+                                onTap: _launchMacOsUrl,
+                                child: Ink.image(
+                                  image: const AssetImage(
+                                    '${constants.kImagePath}mac_os_badge.png',
+                                  ),
+                                  height: 56,
+                                  width: 122,
+                                  alignment: Alignment.bottomCenter,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
-                              height: 56,
-                              width: 122,
-                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-            ],
-          ),
+              ),
+          ],
         ),
       ),
       persistentFooterAlignment: AlignmentDirectional.center,
@@ -205,7 +215,7 @@ class LandingPage extends StatelessWidget {
                                 onTap: _launchGooglePlayUrl,
                                 child: Ink.image(
                                   image: const AssetImage(
-                                    '${constants.imagePath}'
+                                    '${constants.kImagePath}'
                                     'play_store_badge.png',
                                   ),
                                   height: badgeHeight,
@@ -234,7 +244,7 @@ class LandingPage extends StatelessWidget {
                                 onTap: _launchMacOsUrl,
                                 child: Ink.image(
                                   image: const AssetImage(
-                                    '${constants.imagePath}mac_os_badge.png',
+                                    '${constants.kImagePath}mac_os_badge.png',
                                   ),
                                   height: badgeHeight,
                                 ),
@@ -325,7 +335,7 @@ class LandingPage extends StatelessWidget {
                       onTap: _launchGooglePlayUrl,
                       child: Ink.image(
                         image: const AssetImage(
-                          '${constants.imagePath}play_store_badge.png',
+                          '${constants.kImagePath}play_store_badge.png',
                         ),
                         height: 72,
                         width: 156,
@@ -348,7 +358,7 @@ class LandingPage extends StatelessWidget {
                       onTap: _launchMacOsUrl,
                       child: Ink.image(
                         image: const AssetImage(
-                          '${constants.imagePath}mac_os_badge.png',
+                          '${constants.kImagePath}mac_os_badge.png',
                         ),
                         height: 72,
                         width: 156,
@@ -390,6 +400,40 @@ class LandingPage extends StatelessWidget {
         ? AppRoute.home.path
         : AppRoute.onboarding.path;
     return Navigator.of(context).pushNamed<void>(routeName);
+  }
+
+  Future<void> _onPrimaryCtaPressed(BuildContext context) async {
+    if (kIsWeb) {
+      final MaterialLocalizations localizations = MaterialLocalizations.of(
+        context,
+      );
+      final bool shouldContinue =
+          await showDialog<bool>(
+            context: context,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                content: Text(translate('landing_page.web_storage_warning')),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    child: Text(localizations.cancelButtonLabel),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    child: Text(localizations.continueButtonLabel),
+                  ),
+                ],
+              );
+            },
+          ) ??
+          false;
+
+      if (!shouldContinue || !context.mounted) {
+        return;
+      }
+    }
+
+    await _navigateToNextScreen(context);
   }
 
   void _onMenuItemSelected({

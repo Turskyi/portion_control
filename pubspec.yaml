@@ -7,7 +7,7 @@ habits."
 
 publish_to: 'none'
 
-version: 1.2.2+22
+version: 1.2.3+23
 
 environment:
   sdk: '>=3.9.2 <4.0.0'
