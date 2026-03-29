@@ -18,6 +18,8 @@ void main() {
       double bodyWeight = 70.0,
       double heightInCm = kValidHeight,
       bool isConfirmedAllMealsLogged = false,
+      List<BodyWeight> bodyWeightEntries = const <BodyWeight>[],
+      double yesterdayConsumedTotal = 0.0,
     }) {
       final UserDetails userDetails = UserDetails(
         heightInCm: heightInCm,
@@ -28,15 +30,27 @@ void main() {
       return BodyWeightSubmittedState(
         userDetails: userDetails,
         bodyWeight: bodyWeight,
-        bodyWeightEntries: const <BodyWeight>[],
+        bodyWeightEntries: bodyWeightEntries,
         foodEntries: const <FoodWeight>[],
         language: Language.en,
         hasWeightIncreaseProof: false,
         date: DateTime.now(),
         portionControl: 2000.0,
-        yesterdayConsumedTotal: 0.0,
+        yesterdayConsumedTotal: yesterdayConsumedTotal,
         isConfirmedAllMealsLogged: isConfirmedAllMealsLogged,
       );
+    }
+
+    List<BodyWeight> trendEntries({
+      required double previous,
+      required double current,
+    }) {
+      final DateTime yesterday = DateTime(2026, 3, 28);
+      final DateTime today = DateTime(2026, 3, 29);
+      return <BodyWeight>[
+        BodyWeight(id: 1, weight: previous, date: yesterday),
+        BodyWeight(id: 2, weight: current, date: today),
+      ];
     }
 
     group('hasValidHeightForMidpoint', () {
@@ -186,7 +200,7 @@ void main() {
       });
     });
 
-    group('isMidpointAdjustmentNeeded', () {
+    group('midpoint out-of-buffer detection', () {
       test('returns true when weight is above midpoint', () {
         final BodyWeightSubmittedState baseState = createState(
           heightInCm: kValidHeight,
@@ -196,7 +210,10 @@ void main() {
           heightInCm: kValidHeight,
           bodyWeight: midpoint + kBuffer + 0.1,
         );
-        expect(state.isMidpointAdjustmentNeeded, isTrue);
+        expect(
+          state.isWeightAboveMidpoint || state.isWeightBelowMidpoint,
+          isTrue,
+        );
       });
 
       test('returns true when weight is below midpoint', () {
@@ -208,7 +225,10 @@ void main() {
           heightInCm: kValidHeight,
           bodyWeight: midpoint - kBuffer - 0.1,
         );
-        expect(state.isMidpointAdjustmentNeeded, isTrue);
+        expect(
+          state.isWeightAboveMidpoint || state.isWeightBelowMidpoint,
+          isTrue,
+        );
       });
 
       test('returns false when weight is within midpoint buffer zone', () {
@@ -220,7 +240,10 @@ void main() {
           heightInCm: kValidHeight,
           bodyWeight: midpoint,
         );
-        expect(state.isMidpointAdjustmentNeeded, isFalse);
+        expect(
+          state.isWeightAboveMidpoint || state.isWeightBelowMidpoint,
+          isFalse,
+        );
       });
 
       test('returns false when height is invalid', () {
@@ -228,13 +251,17 @@ void main() {
           heightInCm: kMinUserHeight - 1,
           bodyWeight: 100.0,
         );
-        expect(state.isMidpointAdjustmentNeeded, isFalse);
+        expect(
+          state.isWeightAboveMidpoint || state.isWeightBelowMidpoint,
+          isFalse,
+        );
       });
     });
 
     group('shouldAskForMealConfirmation', () {
       test(
-        'returns true when adjustment is needed and meals not confirmed',
+        'returns true when weight is increasing above midpoint '
+        'and meals are not confirmed',
         () {
           final BodyWeightSubmittedState baseState = createState(
             heightInCm: kValidHeight,
@@ -244,13 +271,79 @@ void main() {
             heightInCm: kValidHeight,
             bodyWeight: midpoint + kBuffer + 0.1,
             isConfirmedAllMealsLogged: false,
+            yesterdayConsumedTotal: 1800,
+            bodyWeightEntries: trendEntries(
+              previous: midpoint + kBuffer,
+              current: midpoint + kBuffer + 0.3,
+            ),
           );
           expect(state.shouldAskForMealConfirmation, isTrue);
         },
       );
 
       test(
-        'returns false when adjustment is needed but meals already confirmed',
+        'returns false when weight is above midpoint but decreasing',
+        () {
+          final BodyWeightSubmittedState baseState = createState(
+            heightInCm: kValidHeight,
+          );
+          final double midpoint = baseState.midpointWeight;
+          final BodyWeightSubmittedState state = createState(
+            heightInCm: kValidHeight,
+            bodyWeight: midpoint + kBuffer + 0.1,
+            isConfirmedAllMealsLogged: false,
+            yesterdayConsumedTotal: 1800,
+            bodyWeightEntries: trendEntries(
+              previous: midpoint + kBuffer + 0.4,
+              current: midpoint + kBuffer + 0.1,
+            ),
+          );
+          expect(state.shouldAskForMealConfirmation, isFalse);
+        },
+      );
+
+      test(
+        'returns true when weight is decreasing below midpoint '
+        'and meals are not confirmed',
+        () {
+          final BodyWeightSubmittedState baseState = createState(
+            heightInCm: kValidHeight,
+          );
+          final double midpoint = baseState.midpointWeight;
+          final BodyWeightSubmittedState state = createState(
+            heightInCm: kValidHeight,
+            bodyWeight: midpoint - kBuffer - 0.1,
+            isConfirmedAllMealsLogged: false,
+            yesterdayConsumedTotal: 1800,
+            bodyWeightEntries: trendEntries(
+              previous: midpoint - kBuffer,
+              current: midpoint - kBuffer - 0.3,
+            ),
+          );
+          expect(state.shouldAskForMealConfirmation, isTrue);
+        },
+      );
+
+      test('returns false when weight is below midpoint but increasing', () {
+        final BodyWeightSubmittedState baseState = createState(
+          heightInCm: kValidHeight,
+        );
+        final double midpoint = baseState.midpointWeight;
+        final BodyWeightSubmittedState state = createState(
+          heightInCm: kValidHeight,
+          bodyWeight: midpoint - kBuffer - 0.1,
+          isConfirmedAllMealsLogged: false,
+          yesterdayConsumedTotal: 1800,
+          bodyWeightEntries: trendEntries(
+            previous: midpoint - kBuffer - 0.4,
+            current: midpoint - kBuffer - 0.1,
+          ),
+        );
+        expect(state.shouldAskForMealConfirmation, isFalse);
+      });
+
+      test(
+        'returns false when trend qualifies but meals are already confirmed',
         () {
           final BodyWeightSubmittedState baseState = createState(
             heightInCm: kValidHeight,
@@ -260,32 +353,27 @@ void main() {
             heightInCm: kValidHeight,
             bodyWeight: midpoint + kBuffer + 0.1,
             isConfirmedAllMealsLogged: true,
+            yesterdayConsumedTotal: 1800,
+            bodyWeightEntries: trendEntries(
+              previous: midpoint + kBuffer,
+              current: midpoint + kBuffer + 0.3,
+            ),
           );
           expect(state.shouldAskForMealConfirmation, isFalse);
         },
       );
 
-      test(
-        'returns false when no adjustment needed regardless of confirmation',
-        () {
-          final BodyWeightSubmittedState baseState = createState(
-            heightInCm: kValidHeight,
-          );
-          final double midpoint = baseState.midpointWeight;
-          final BodyWeightSubmittedState state = createState(
-            heightInCm: kValidHeight,
-            bodyWeight: midpoint,
-            isConfirmedAllMealsLogged: false,
-          );
-          expect(state.shouldAskForMealConfirmation, isFalse);
-        },
-      );
-
-      test('returns false when height is invalid', () {
+      test('returns false when no trend data is available', () {
+        final BodyWeightSubmittedState baseState = createState(
+          heightInCm: kValidHeight,
+        );
+        final double midpoint = baseState.midpointWeight;
         final BodyWeightSubmittedState state = createState(
-          heightInCm: kMinUserHeight - 1,
-          bodyWeight: 100.0,
+          heightInCm: kValidHeight,
+          bodyWeight: midpoint + kBuffer + 0.1,
           isConfirmedAllMealsLogged: false,
+          yesterdayConsumedTotal: 0,
+          bodyWeightEntries: const <BodyWeight>[],
         );
         expect(state.shouldAskForMealConfirmation, isFalse);
       });
@@ -302,7 +390,10 @@ void main() {
           bodyWeight: midpoint + kBuffer,
         );
         // At the boundary, > is false, so no adjustment needed
-        expect(state.isMidpointAdjustmentNeeded, isFalse);
+        expect(
+          state.isWeightAboveMidpoint || state.isWeightBelowMidpoint,
+          isFalse,
+        );
       });
 
       test('weight at exactly midpoint - buffer is NOT below threshold', () {
@@ -315,7 +406,10 @@ void main() {
           bodyWeight: midpoint - kBuffer,
         );
         // At the boundary, < is false, so no adjustment needed
-        expect(state.isMidpointAdjustmentNeeded, isFalse);
+        expect(
+          state.isWeightAboveMidpoint || state.isWeightBelowMidpoint,
+          isFalse,
+        );
       });
 
       test('weight just above buffer zone needs adjustment', () {
@@ -327,7 +421,10 @@ void main() {
           heightInCm: kValidHeight,
           bodyWeight: midpoint + kBuffer + 0.01,
         );
-        expect(state.isMidpointAdjustmentNeeded, isTrue);
+        expect(
+          state.isWeightAboveMidpoint || state.isWeightBelowMidpoint,
+          isTrue,
+        );
       });
 
       test('weight just below buffer zone needs adjustment', () {
@@ -339,7 +436,10 @@ void main() {
           heightInCm: kValidHeight,
           bodyWeight: midpoint - kBuffer - 0.01,
         );
-        expect(state.isMidpointAdjustmentNeeded, isTrue);
+        expect(
+          state.isWeightAboveMidpoint || state.isWeightBelowMidpoint,
+          isTrue,
+        );
       });
     });
   });

@@ -21,6 +21,8 @@ class PortionControlMessage extends StatelessWidget {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (BuildContext context, HomeState state) {
         final bool isWeightAboveHealthy = state.isWeightAboveHealthy;
+        final bool isWeightAboveMidpoint = state.isWeightAboveMidpoint;
+
         final bool isWeightBelowHealthy = state.isWeightBelowHealthy;
         final bool isWeightDecreasing = state.isWeightDecreasing;
         final bool isWeightIncreasing = state.isWeightIncreasing;
@@ -59,6 +61,9 @@ class PortionControlMessage extends StatelessWidget {
                   portionControl == constants.kSafeMinimumFoodIntakeG,
             );
           }
+        } else if (isWeightIncreasing && isWeightAboveMidpoint) {
+          //TODO: what to show here?
+          return const SizedBox();
         } else if (isWeightDecreasing && isWeightAboveHealthy) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,6 +90,9 @@ class PortionControlMessage extends StatelessWidget {
                 ),
             ],
           );
+        } else if (isWeightDecreasing && isWeightAboveMidpoint) {
+          //TODO: what to show here?
+          return const SizedBox();
         } else if (isWeightIncreasing && isWeightBelowHealthy) {
           return Text(
             translate('portion_control_status.weight_increasing_good'),
