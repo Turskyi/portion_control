@@ -443,7 +443,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       );
 
       try {
-        await _homeWidgetService.setAppGroupId(constants.appleAppGroupId);
+        _homeWidgetService.setAppGroupId(constants.appleAppGroupId);
 
         _homeWidgetService.saveWidgetData<String>(
           HomeWidgetKey.locale.stringValue,
