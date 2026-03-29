@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:feedback/feedback.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:portion_control/application_services/blocs/home/home_bloc.dart';
+import 'package:portion_control/domain/models/body_weight.dart';
 import 'package:portion_control/domain/models/food_weight.dart';
 import 'package:portion_control/res/constants/constants.dart' as constants;
 import 'package:portion_control/router/app_route.dart';
@@ -17,6 +19,7 @@ import 'package:portion_control/ui/home/widgets/portion_control_message.dart';
 import 'package:portion_control/ui/home/widgets/random_recipe_card.dart';
 import 'package:portion_control/ui/home/widgets/submit_edit_body_weight_button.dart';
 import 'package:portion_control/ui/home/widgets/user_details_widget.dart';
+import 'package:portion_control/ui/widgets/confetti_overlay.dart';
 import 'package:portion_control/ui/widgets/fancy_loading_indicator.dart';
 import 'package:portion_control/ui/widgets/input_row.dart';
 
@@ -30,6 +33,10 @@ class HomePageContent extends StatefulWidget {
 class _HomePageContentState extends State<HomePageContent> {
   final ScrollController _scrollController = ScrollController();
   FeedbackController? _feedbackController;
+  HomeState? _previousState;
+  bool _showConfetti = false;
+  int _confettiBurstId = 0;
+  Timer? _confettiHideTimer;
 
   @override
   void didChangeDependencies() {
@@ -173,38 +180,48 @@ class _HomePageContentState extends State<HomePageContent> {
             ],
           ),
         );
-        return RefreshIndicator(
-          onRefresh: () async {
-            context.read<HomeBloc>().add(const LoadEntries());
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(
-              constants.kHorizontalIndent,
-              MediaQuery.paddingOf(context).top,
-              constants.kHorizontalIndent,
-              80.0,
-            ),
-            controller: _scrollController,
-            child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                final double maxWidthAvailable = constraints.maxWidth;
-                final double width = math.min(
-                  constants.kWideScreenContentWidth,
-                  maxWidthAvailable.isFinite
-                      ? maxWidthAvailable
-                      : constants.kWideScreenContentWidth,
-                );
-
-                return Center(
-                  child: SizedBox(
-                    width: width,
-                    child: contentColumn,
-                  ),
-                );
+        return Stack(
+          children: <Widget>[
+            RefreshIndicator(
+              onRefresh: () async {
+                context.read<HomeBloc>().add(const LoadEntries());
               },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(
+                  constants.kHorizontalIndent,
+                  MediaQuery.paddingOf(context).top,
+                  constants.kHorizontalIndent,
+                  80.0,
+                ),
+                controller: _scrollController,
+                child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    final double maxWidthAvailable = constraints.maxWidth;
+                    final double width = math.min(
+                      constants.kWideScreenContentWidth,
+                      maxWidthAvailable.isFinite
+                          ? maxWidthAvailable
+                          : constants.kWideScreenContentWidth,
+                    );
+
+                    return Center(
+                      child: SizedBox(
+                        width: width,
+                        child: contentColumn,
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
-          ),
+            if (_showConfetti)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: ConfettiOverlay(key: ValueKey<int>(_confettiBurstId)),
+                ),
+              ),
+          ],
         );
       },
     );
@@ -212,6 +229,7 @@ class _HomePageContentState extends State<HomePageContent> {
 
   @override
   void dispose() {
+    _confettiHideTimer?.cancel();
     _scrollController.dispose();
     _feedbackController?.removeListener(_onFeedbackChanged);
     _feedbackController = null;
@@ -245,10 +263,19 @@ class _HomePageContentState extends State<HomePageContent> {
   }
 
   void _homeStateListener(BuildContext context, HomeState state) {
+    final HomeState? previousState = _previousState;
+
     if (state is BodyWeightSubmittedState) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
+
+      if (_shouldTriggerConfettiAfterBodyWeightSubmit(
+        previousState: previousState,
+        currentState: state,
+      )) {
+        _triggerConfettiBurst();
+      }
     } else if (state is ErrorState) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -265,6 +292,74 @@ class _HomePageContentState extends State<HomePageContent> {
     } else if (state is HomeFeedbackSent) {
       _notifyFeedbackSent();
     }
+
+    _previousState = state;
+  }
+
+  bool _shouldTriggerConfettiAfterBodyWeightSubmit({
+    required HomeState? previousState,
+    required BodyWeightSubmittedState currentState,
+  }) {
+    late final DetailsSubmittedState previousSubmittedState;
+
+    if (previousState is BodyWeightUpdatedState) {
+      previousSubmittedState = previousState;
+    } else if (previousState is DetailsSubmittedState) {
+      previousSubmittedState = previousState;
+    } else {
+      return false;
+    }
+
+    final double currentWeight = currentState.bodyWeight;
+
+    final bool isCurrentWeightHealthy =
+        !currentState.isWeightAboveHealthyFor(currentWeight) &&
+        !currentState.isWeightBelowHealthyFor(currentWeight);
+
+    // Celebrate first-ever valid submission when user starts in healthy range.
+    if (previousSubmittedState.bodyWeightEntries.isEmpty) {
+      return isCurrentWeightHealthy;
+    }
+
+    final double previousLoggedWeight =
+        previousSubmittedState.bodyWeightEntries.last.weight;
+
+    final bool wasAboveHealthy = currentState.isWeightAboveHealthyFor(
+      previousLoggedWeight,
+    );
+
+    final bool recoveredToHealthyFromAbove =
+        wasAboveHealthy && isCurrentWeightHealthy;
+
+    final double midpoint = currentState.midpointWeight;
+    final bool wasAboveMidpoint = previousLoggedWeight > midpoint;
+    final bool isNowBelowMidpoint = currentWeight < midpoint;
+    final bool wasBelowMidpointBefore = previousSubmittedState.bodyWeightEntries
+        .any(
+          (BodyWeight entry) => entry.weight < midpoint,
+        );
+
+    final bool firstMidpointCrossingFromAbove =
+        wasAboveMidpoint && isNowBelowMidpoint && !wasBelowMidpointBefore;
+
+    return recoveredToHealthyFromAbove || firstMidpointCrossingFromAbove;
+  }
+
+  void _triggerConfettiBurst() {
+    _confettiHideTimer?.cancel();
+    if (mounted) {
+      setState(() {
+        _showConfetti = true;
+        _confettiBurstId++;
+      });
+    }
+
+    _confettiHideTimer = Timer(const Duration(milliseconds: 1800), () {
+      if (!mounted) return;
+      setState(() {
+        _showConfetti = false;
+      });
+    });
   }
 
   void _scrollToBottom() {
