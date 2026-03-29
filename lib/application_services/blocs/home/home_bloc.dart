@@ -1303,7 +1303,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
 
       try {
-        _homeWidgetService.setAppGroupId(constants.appleAppGroupId);
+        await _homeWidgetService.setAppGroupId(constants.appleAppGroupId);
 
         _homeWidgetService.saveWidgetData<String>(
           HomeWidgetKey.locale.stringValue,
