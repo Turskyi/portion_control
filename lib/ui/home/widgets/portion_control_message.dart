@@ -62,8 +62,27 @@ class PortionControlMessage extends StatelessWidget {
             );
           }
         } else if (isWeightIncreasing && isWeightAboveMidpoint) {
-          //TODO: what to show here?
-          return const SizedBox();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: <Widget>[
+              Text(
+                translate(
+                  'portion_control_status.midpoint_above_increasing_title',
+                ),
+                style: titleMediumStyle,
+              ),
+              Text(
+                translate(
+                  'portion_control_status.midpoint_above_increasing_details',
+                  args: <String, Object?>{
+                    'portionControl': state.formattedPortionControl,
+                  },
+                ),
+                style: textTheme.bodyMedium,
+              ),
+            ],
+          );
         } else if (isWeightDecreasing && isWeightAboveHealthy) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,8 +110,27 @@ class PortionControlMessage extends StatelessWidget {
             ],
           );
         } else if (isWeightDecreasing && isWeightAboveMidpoint) {
-          //TODO: what to show here?
-          return const SizedBox();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: <Widget>[
+              Text(
+                translate(
+                  'portion_control_status.midpoint_above_decreasing_title',
+                ),
+                style: titleMediumStyle,
+              ),
+              Text(
+                translate(
+                  'portion_control_status.midpoint_above_decreasing_details',
+                  args: <String, Object?>{
+                    'portionControl': state.formattedPortionControl,
+                  },
+                ),
+                style: textTheme.bodyMedium,
+              ),
+            ],
+          );
         } else if (isWeightIncreasing && isWeightBelowHealthy) {
           return Text(
             translate('portion_control_status.weight_increasing_good'),
