@@ -124,7 +124,7 @@ class BodyWeight {
 ## Persistence
 
 | Use case                                                              | Package                                   |
-|-----------------------------------------------------------------------|-------------------------------------------|
+| --------------------------------------------------------------------- | ----------------------------------------- |
 | User prefs / settings / flags                                         | `SharedPreferences` via `LocalDataSource` |
 | Structured data (food entries, body weights, portion control history) | Drift (`AppDatabase`)                     |
 
@@ -135,6 +135,7 @@ class BodyWeight {
 ## Code Generation
 
 Run `dart run build_runner build --delete-conflicting-outputs` after any change to:
+
 - `lib/infrastructure/data_sources/local/database/database.dart` (Drift → `database.g.dart`)
 - `lib/env/env.dart` + `.env` file (envied → `env.g.dart`)
 
@@ -154,7 +155,7 @@ Run `dart run build_runner build --delete-conflicting-outputs` after any change 
 ## Naming Conventions
 
 | Concept                   | Pattern                                    | Example                             |
-|---------------------------|--------------------------------------------|-------------------------------------|
+| ------------------------- | ------------------------------------------ | ----------------------------------- |
 | Repository interface      | `I{Name}Repository`                        | `IBodyWeightRepository`             |
 | Repository implementation | `{Name}Repository`                         | `BodyWeightRepository`              |
 | Use case interface        | `I{Name}UseCase`                           | `ICalculatePortionControlUseCase`   |
@@ -199,3 +200,12 @@ flutter test --name "emits HomeLoaded when entries load successfully"
 - Secrets go in `.env` (not committed). Copy `.env.example` and fill in the values.
 - Accessed via the generated `Env` class: `Env.resendApiKey`.
 - CI injects the `.env` file from a base64-encoded GitHub secret (`ENV`).
+
+---
+
+## iOS Warning Policy (Important)
+
+- Flutter may show this warning on device launch: `UIScene lifecycle support will soon be required`.
+- For this project, do not modify `ios/Runner/AppDelegate.swift` or `ios/Runner/Info.plist` only to silence that warning unless the user explicitly requests a migration.
+- Reason: in this repository, CLI debug launch on physical iPhone has shown unstable behavior (`EXC_BAD_ACCESS`) while Xcode launch works, and warning-only migrations can create churn without solving runtime stability.
+- Preferred workflow when warning appears: keep current stable lifecycle setup, continue using Xcode for reliable on-device runs, and treat UIScene migration as a separate, explicitly requested task with rollback and device validation.

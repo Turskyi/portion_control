@@ -65,3 +65,10 @@ Portion Control is a Flutter fitness app using Onion Architecture with:
 ### 7. Localization
 
 - Keep translations in `assets/i18n/`
+
+## 8. iOS Warning Policy
+
+- Flutter may show this warning on device launch: `UIScene lifecycle support will soon be required`.
+- Do not modify `ios/Runner/AppDelegate.swift` or `ios/Runner/Info.plist` only to silence that warning unless the user explicitly requests UIScene migration.
+- Reason: in this repository, Flutter CLI debug launch on physical iPhone has shown `EXC_BAD_ACCESS` while Xcode launch is stable, so warning-only migration attempts can introduce churn without improving runtime stability.
+- Preferred default: keep the stable setup, continue using Xcode for reliable on-device runs, and treat UIScene migration as a separate, explicitly requested task with rollback and device validation.
