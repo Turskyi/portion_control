@@ -4,6 +4,13 @@
 <dict>
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:portioncontrol.ca</string>
+		<string>applinks:en.portioncontrol.ca</string>
+		<string>applinks:fr.portioncontrol.ca</string>
+		<string>applinks:uk.portioncontrol.ca</string>
+	</array>
 	<key>com.apple.security.cs.allow-jit</key>
 	<true/>
 	<key>com.apple.security.network.server</key>

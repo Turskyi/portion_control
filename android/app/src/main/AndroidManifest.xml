@@ -63,6 +63,26 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="portioncontrol.ca"
+                    android:scheme="https" />
+                <data
+                    android:host="en.portioncontrol.ca"
+                    android:scheme="https" />
+                <data
+                    android:host="fr.portioncontrol.ca"
+                    android:scheme="https" />
+                <data
+                    android:host="uk.portioncontrol.ca"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
 
         <!--suppress AndroidDomInspection -->

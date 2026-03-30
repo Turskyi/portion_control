@@ -6,12 +6,12 @@ const String kResendEmailDomain = kCompanyDomain;
 const String kSupportEmailPrefix = 'support@';
 const String supportEmail = '$kSupportEmailPrefix$kCompanyDomain';
 const String appName = 'Portion Control';
-const String googlePlayUrl =
+const String kGooglePlayUrl =
     'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
 
-const String appStoreUrl = 'https://apps.apple.com/app/id6743641654';
+const String kAppStoreUrl = 'https://apps.apple.com/app/id6743641654';
 
-const String macOsUrl =
+const String kMacOsUrl =
     'https://apps.apple.com/ca/app/portion-control/id6743641654';
 
 // Lookup URL used to query App Store metadata by bundle id.

@@ -6,6 +6,7 @@
       <base href="$FLUTTER_BASE_HREF">
 
       <meta charset="UTF-8">
+      <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
       <!-- Google tag (gtag.js) -->
       <script async
@@ -26,7 +27,13 @@
             name="keywords">
       <meta content="Portion Control" name="application-name">
       <meta content="index, follow" name="robots">
+      <meta content="#0175C2" name="theme-color">
       <link href="https://portioncontrol.ca/" rel="canonical">
+      <link href="https://portioncontrol.ca/" hreflang="x-default"
+            rel="alternate">
+      <link href="https://en.portioncontrol.ca/" hreflang="en" rel="alternate">
+      <link href="https://fr.portioncontrol.ca/" hreflang="fr" rel="alternate">
+      <link href="https://uk.portioncontrol.ca/" hreflang="uk" rel="alternate">
 
       <!-- Open Graph for social sharing -->
       <meta content="Portion Control" property="og:title">
@@ -43,8 +50,11 @@
       <meta content="Portion Control" name="twitter:title">
       <meta content="Track food portions and weight trends without counting calories with Portion Control."
             name="twitter:description">
+      <meta content="https://portioncontrol.ca/" name="twitter:url">
       <meta content="https://portioncontrol.ca/portion_control-feature_graphic.png"
             name="twitter:image">
+      <meta content="app-id=6743641654, app-argument=https://portioncontrol.ca"
+            name="apple-itunes-app">
 
       <!-- iOS meta tags & icons -->
       <meta content="yes" name="mobile-web-app-capable">
@@ -68,6 +78,10 @@
         "operatingSystem": "iOS, Android, Web",
         "description": "Portion Control is a simple food portion tracking app that helps you manage weight without counting calories.",
         "url": "https://portioncontrol.ca",
+                        "sameAs": [
+                              "https://apps.apple.com/app/id6743641654",
+                              "https://play.google.com/store/apps/details?id=com.turskyi.portion_control"
+                        ],
         "author": {
           "@type": "Person",
           "name": "Dmytro Turskyi"
@@ -87,8 +101,163 @@
                         "@type": "WebSite",
                         "name": "Portion Control",
                         "alternateName": "PortionControl",
-                        "url": "https://portioncontrol.ca/"
+                        "url": "https://portioncontrol.ca/",
+                        "potentialAction": {
+                          "@type": "SearchAction",
+                          "target": "https://portioncontrol.ca/?q={search_term_string}",
+                          "query-input": "required name=search_term_string"
+                        }
                   }
+      </script>
+
+      <script type="application/ld+json">
+                  {
+                        "@context": "https://schema.org",
+                        "@type": "Organization",
+                        "name": "Portion Control",
+                        "url": "https://portioncontrol.ca/",
+                        "logo": "https://portioncontrol.ca/icons/Icon-512.png",
+                        "sameAs": [
+                          "https://apps.apple.com/app/id6743641654",
+                          "https://play.google.com/store/apps/details?id=com.turskyi.portion_control"
+                        ]
+                  }
+      </script>
+
+      <script>
+            (function () {
+                  const kBaseDomain = 'portioncontrol.ca';
+                  const kDefaultTitle = 'Portion Control | portioncontrol.ca';
+                  const kDefaultDescription =
+                        'Portion Control helps you manage food portions and weight without counting calories. Track meals in grams and build healthier habits.';
+
+                  const routeMeta = {
+                        '/': {
+                              title: kDefaultTitle,
+                              description: kDefaultDescription,
+                        },
+                        '/about': {
+                              title: 'About Portion Control | portioncontrol.ca',
+                              description:
+                                    'Learn how Portion Control helps you build healthier habits by tracking food portions in grams and following long-term weight trends.',
+                        },
+                        '/support': {
+                              title: 'Support | Portion Control',
+                              description:
+                                    'Get help with Portion Control, troubleshooting, and common app questions for iOS, Android, and web.',
+                        },
+                        '/privacy-policy': {
+                              title: 'Privacy Policy | Portion Control',
+                              description:
+                                    'Read the Portion Control privacy policy to understand data handling and user privacy practices.',
+                        },
+                        '/recipes': {
+                              title: 'Weight Loss Recipes | Portion Control',
+                              description:
+                                    'Discover practical weight-loss recipes and portion-friendly meal ideas to support your nutrition goals.',
+                        },
+                        '/educational-content': {
+                              title: 'Educational Content | Portion Control',
+                              description:
+                                    'Explore educational content about nutrition habits, portion sizing, and sustainable weight management.',
+                        },
+                  };
+
+                  function normalizePath(pathname) {
+                        if (!pathname || pathname === '/') {
+                              return '/';
+                        }
+
+                        return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+                  }
+
+                  function getCurrentPath() {
+                        const hash = window.location.hash;
+                        if (hash && hash.startsWith('#/')) {
+                              return normalizePath(hash.slice(1));
+                        }
+                        return normalizePath(window.location.pathname);
+                  }
+
+                  function upsertMeta(selector, attr, value) {
+                        if (!value) {
+                              return;
+                        }
+
+                        let meta = document.head.querySelector(selector);
+                        if (!meta) {
+                              meta = document.createElement('meta');
+                              meta.setAttribute(attr, selector.includes('property=')
+                                    ? selector.match(/property=\"([^\"]+)\"/)[1]
+                                    : selector.match(/name=\"([^\"]+)\"/)[1]);
+                              document.head.appendChild(meta);
+                        }
+                        meta.setAttribute('content', value);
+                  }
+
+                  function updateAlternateLinks(path) {
+                        const alternates = [
+                              { hreflang: 'x-default', host: kBaseDomain },
+                              { hreflang: 'en', host: `en.${kBaseDomain}` },
+                              { hreflang: 'fr', host: `fr.${kBaseDomain}` },
+                              { hreflang: 'uk', host: `uk.${kBaseDomain}` },
+                        ];
+
+                        alternates.forEach(function (item) {
+                              const href = `https://${item.host}${path}`;
+                              const selector = `link[rel=\"alternate\"][hreflang=\"${item.hreflang}\"]`;
+                              let link = document.head.querySelector(selector);
+                              if (!link) {
+                                    link = document.createElement('link');
+                                    link.setAttribute('rel', 'alternate');
+                                    link.setAttribute('hreflang', item.hreflang);
+                                    document.head.appendChild(link);
+                              }
+                              link.setAttribute('href', href);
+                        });
+                  }
+
+                  function updateRouteMetadata() {
+                        const path = getCurrentPath();
+                        const current = routeMeta[path] || routeMeta['/'];
+                        const canonicalUrl = `https://${kBaseDomain}${path}`;
+
+                        document.title = current.title;
+
+                        const canonical = document.head.querySelector('link[rel="canonical"]');
+                        if (canonical) {
+                              canonical.setAttribute('href', canonicalUrl);
+                        }
+
+                        upsertMeta('meta[name="description"]', 'name', current.description);
+                        upsertMeta('meta[property="og:title"]', 'property', current.title);
+                        upsertMeta('meta[property="og:description"]', 'property', current.description);
+                        upsertMeta('meta[property="og:url"]', 'property', canonicalUrl);
+                        upsertMeta('meta[name="twitter:title"]', 'name', current.title);
+                        upsertMeta('meta[name="twitter:description"]', 'name', current.description);
+                        upsertMeta('meta[name="twitter:url"]', 'name', canonicalUrl);
+                        updateAlternateLinks(path);
+                  }
+
+                  const originalPushState = history.pushState;
+                  const originalReplaceState = history.replaceState;
+
+                  history.pushState = function () {
+                        const result = originalPushState.apply(this, arguments);
+                        updateRouteMetadata();
+                        return result;
+                  };
+
+                  history.replaceState = function () {
+                        const result = originalReplaceState.apply(this, arguments);
+                        updateRouteMetadata();
+                        return result;
+                  };
+
+                  window.addEventListener('popstate', updateRouteMetadata);
+                  window.addEventListener('hashchange', updateRouteMetadata);
+                  document.addEventListener('DOMContentLoaded', updateRouteMetadata);
+            })();
       </script>
 
       <style>
@@ -122,7 +291,7 @@
                   font-family: "Avenir Next", "Avenir", "Trebuchet MS", sans-serif;
                   text-align: center;
                   z-index: 2147483647;
-                  transition: opacity 280ms ease;
+                  transition: opacity 140ms ease;
             }
 
             .boot-card {
@@ -165,8 +334,8 @@
 </head>
 
 <body>
-      <div aria-label="Loading Portion Control application" aria-live="polite" id="boot-splash"
-            role="status">
+      <div aria-label="Loading Portion Control application" aria-live="polite"
+            id="boot-splash" role="status">
             <section class="boot-card">
                   <h1 class="boot-title">Portion Control</h1>
                   <p class="boot-subtitle">Getting things ready...</p>
@@ -226,7 +395,7 @@
                   splash.style.opacity = '0';
                   window.setTimeout(function () {
                         splash.remove();
-                  }, 300);
+                  }, 150);
             });
       </script>
       <!--suppress HtmlUnknownTarget -->

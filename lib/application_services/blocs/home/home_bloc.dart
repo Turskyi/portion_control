@@ -1461,7 +1461,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           final Object? results = decodedData['results'];
 
           if (results is List<Object?> && results.isNotEmpty) {
-            final Object? firstResult = results.first;
+            final Object? firstResult = results.firstOrNull;
 
             if (firstResult is Map<String, Object?>) {
               final Object? storeVersion = firstResult['version'];

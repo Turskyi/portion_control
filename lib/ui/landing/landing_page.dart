@@ -201,7 +201,7 @@ class LandingPage extends StatelessWidget {
                     const PopupMenuDivider(),
                     if (showGooglePlayLink)
                       PopupMenuItem<String>(
-                        value: constants.googlePlayUrl,
+                        value: constants.kGooglePlayUrl,
                         child: Semantics(
                           label: t('landing_page.semantics_label_google_play'),
                           button: true,
@@ -230,7 +230,7 @@ class LandingPage extends StatelessWidget {
                         defaultTargetPlatform == TargetPlatform.macOS ||
                         defaultTargetPlatform == TargetPlatform.iOS)
                       PopupMenuItem<String>(
-                        value: constants.macOsUrl,
+                        value: constants.kMacOsUrl,
                         child: Semantics(
                           label: t('landing_page.semantics_label_macos'),
                           button: true,
@@ -448,14 +448,14 @@ class LandingPage extends StatelessWidget {
       Navigator.pushNamed(context, AppRoute.about.path);
     } else if (result == AppRoute.support.name) {
       Navigator.pushNamed(context, AppRoute.support.path);
-    } else if (result == constants.googlePlayUrl) {
+    } else if (result == constants.kGooglePlayUrl) {
       launchUrl(
-        Uri.parse(constants.googlePlayUrl),
+        Uri.parse(constants.kGooglePlayUrl),
         mode: LaunchMode.externalApplication,
       );
-    } else if (result == constants.macOsUrl) {
+    } else if (result == constants.kMacOsUrl) {
       launchUrl(
-        Uri.parse(constants.macOsUrl),
+        Uri.parse(constants.kMacOsUrl),
         mode: LaunchMode.externalApplication,
       );
     }
@@ -463,14 +463,14 @@ class LandingPage extends StatelessWidget {
 
   Future<bool> _launchMacOsUrl() {
     return launchUrl(
-      Uri.parse(constants.macOsUrl),
+      Uri.parse(constants.kMacOsUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
   Future<bool> _launchGooglePlayUrl() {
     return launchUrl(
-      Uri.parse(constants.googlePlayUrl),
+      Uri.parse(constants.kGooglePlayUrl),
       mode: LaunchMode.externalApplication,
     );
   }
