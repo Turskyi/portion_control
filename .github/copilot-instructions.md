@@ -1,5 +1,12 @@
 # Portion Control – Copilot Instructions
 
+## Function Ordering (Clean Code)
+
+- If one function calls another, they should be vertically close in the file.
+- The caller should appear above the callee whenever possible.
+- This applies to all Dart/Flutter files in the project.
+- Rationale: Improves readability and traceability, following clean code best practices.
+
 ## Commands
 
 ```bash
