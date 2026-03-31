@@ -21,6 +21,8 @@ class PortionControlMessage extends StatelessWidget {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (BuildContext context, HomeState state) {
         final bool isWeightAboveHealthy = state.isWeightAboveHealthy;
+        final bool isWeightAboveMidpoint = state.isWeightAboveMidpoint;
+
         final bool isWeightBelowHealthy = state.isWeightBelowHealthy;
         final bool isWeightDecreasing = state.isWeightDecreasing;
         final bool isWeightIncreasing = state.isWeightIncreasing;
@@ -59,6 +61,28 @@ class PortionControlMessage extends StatelessWidget {
                   portionControl == constants.kSafeMinimumFoodIntakeG,
             );
           }
+        } else if (isWeightIncreasing && isWeightAboveMidpoint) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: <Widget>[
+              Text(
+                translate(
+                  'portion_control_status.midpoint_above_increasing_title',
+                ),
+                style: titleMediumStyle,
+              ),
+              Text(
+                translate(
+                  'portion_control_status.midpoint_above_increasing_details',
+                  args: <String, Object?>{
+                    'portionControl': state.formattedPortionControl,
+                  },
+                ),
+                style: textTheme.bodyMedium,
+              ),
+            ],
+          );
         } else if (isWeightDecreasing && isWeightAboveHealthy) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,6 +107,28 @@ class PortionControlMessage extends StatelessWidget {
                   '$useAsReferenceSuffix',
                   style: textTheme.bodyMedium,
                 ),
+            ],
+          );
+        } else if (isWeightDecreasing && isWeightAboveMidpoint) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 12,
+            children: <Widget>[
+              Text(
+                translate(
+                  'portion_control_status.midpoint_above_decreasing_title',
+                ),
+                style: titleMediumStyle,
+              ),
+              Text(
+                translate(
+                  'portion_control_status.midpoint_above_decreasing_details',
+                  args: <String, Object?>{
+                    'portionControl': state.formattedPortionControl,
+                  },
+                ),
+                style: textTheme.bodyMedium,
+              ),
             ],
           );
         } else if (isWeightIncreasing && isWeightBelowHealthy) {

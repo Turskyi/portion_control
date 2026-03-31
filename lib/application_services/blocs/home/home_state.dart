@@ -105,10 +105,14 @@ sealed class HomeState {
   bool get isWeightIncreasing {
     if (bodyWeightEntries.length < 2 || yesterdayConsumedTotal <= 0) {
       return false;
+    } else {
+      final BodyWeight last = bodyWeightEntries.last;
+
+      final BodyWeight previous =
+          bodyWeightEntries[bodyWeightEntries.length - 2];
+
+      return last.weight > previous.weight;
     }
-    final BodyWeight last = bodyWeightEntries.last;
-    final BodyWeight previous = bodyWeightEntries[bodyWeightEntries.length - 2];
-    return last.weight > previous.weight;
   }
 
   bool get isWeightIncreasingOrSame {
@@ -184,9 +188,6 @@ sealed class HomeState {
     return bodyWeight < midpointWeight - constants.kMidpointBuffer;
   }
 
-  bool get isMidpointAdjustmentNeeded =>
-      isWeightAboveMidpoint || isWeightBelowMidpoint;
-
   bool isWeightAboveHealthyFor(double bodyWeight) {
     final double heightInMeters = heightInCm / 100;
     if (heightInMeters == 0) return false;
@@ -220,8 +221,20 @@ sealed class HomeState {
 
   bool get areMealsNotConfirmed => !isMealsConfirmedForToday;
 
+  /// Shows meal confirmation only when today's trend and direction imply we
+  /// may tighten the limit based on yesterday's logged intake.
+  ///
+  /// Rationale:
+  /// - If weight is above midpoint and still increasing, we may need to lower
+  ///   the limit, but only if yesterday's intake is complete.
+  /// - If weight is below midpoint and still decreasing, we may need to raise
+  ///   the limit, but only if yesterday's intake is complete.
+  /// - In opposite trend cases (above+decreasing, below+increasing), current
+  ///   limit direction is working, so confirmation is unnecessary.
   bool get shouldAskForMealConfirmation {
-    return isMidpointAdjustmentNeeded && !isMealsConfirmedForToday;
+    return ((isWeightIncreasing && isWeightAboveMidpoint) ||
+            (isWeightDecreasing && isWeightBelowMidpoint)) &&
+        !isMealsConfirmedForToday;
   }
 
   String get formattedRemainingFood => (adjustedPortion - totalConsumedToday)

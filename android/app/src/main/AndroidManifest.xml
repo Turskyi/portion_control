@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.turskyi.portion_control"
-    android:versionCode="22"
-    android:versionName="1.2.2">
+    android:versionCode="23"
+    android:versionName="1.2.3">
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
@@ -62,6 +62,26 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="portioncontrol.ca"
+                    android:scheme="https" />
+                <data
+                    android:host="en.portioncontrol.ca"
+                    android:scheme="https" />
+                <data
+                    android:host="fr.portioncontrol.ca"
+                    android:scheme="https" />
+                <data
+                    android:host="uk.portioncontrol.ca"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
 

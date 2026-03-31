@@ -1,0 +1,27 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appID": "26QZ8BPZFL.com.turskyi.portionControl",
+                "paths": [
+                    "/",
+                    "/about",
+                    "/support",
+                    "/privacy-policy",
+                    "/recipes",
+                    "/educational-content",
+                    "/*"
+                ]
+            }
+        ]
+    },
+    "webcredentials": {
+        "apps": [
+            "26QZ8BPZFL.com.turskyi.portionControl"
+        ]
+    },
+    "appclips": {
+        "apps": []
+    }
+}

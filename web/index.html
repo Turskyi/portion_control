@@ -6,6 +6,7 @@
       <base href="$FLUTTER_BASE_HREF">
 
       <meta charset="UTF-8">
+      <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
       <!-- Google tag (gtag.js) -->
       <script async
@@ -20,17 +21,24 @@
 
       <meta content="IE=Edge" http-equiv="X-UA-Compatible">
       <meta content="Dmytro Turskyi" name="author">
-      <meta content="Portion Control app helps you manage food portions and weight without counting calories. Track meals in grams and build healthier habits."
+      <meta content="Portion Control helps you manage food portions and weight without counting calories. Track meals in grams and build healthier habits."
             name="description">
       <meta content="portion control, Portion Control, PortionControl, portion control app, portion tracking app, food portion control, weight management app, track food grams, no calorie counting app"
             name="keywords">
+      <meta content="Portion Control" name="application-name">
       <meta content="index, follow" name="robots">
+      <meta content="#0175C2" name="theme-color">
       <link href="https://portioncontrol.ca/" rel="canonical">
+      <link href="https://portioncontrol.ca/" hreflang="x-default"
+            rel="alternate">
+      <link href="https://en.portioncontrol.ca/" hreflang="en" rel="alternate">
+      <link href="https://fr.portioncontrol.ca/" hreflang="fr" rel="alternate">
+      <link href="https://uk.portioncontrol.ca/" hreflang="uk" rel="alternate">
 
       <!-- Open Graph for social sharing -->
-      <meta content="Portion Control – Simple Food Portion Tracking App"
-            property="og:title">
-      <meta content="Track food portions in grams and monitor weight trends without counting calories. A simple and data-driven approach to portion control."
+      <meta content="Portion Control" property="og:title">
+      <meta content="Portion Control" property="og:site_name">
+      <meta content="Track food portions in grams and monitor weight trends without counting calories with Portion Control."
             property="og:description">
       <meta content="website" property="og:type">
       <meta content="https://portioncontrol.ca/" property="og:url">
@@ -39,12 +47,14 @@
 
       <!-- Twitter card -->
       <meta content="summary_large_image" name="twitter:card">
-      <meta content="Portion Control – Simple Food Portion Tracking App"
-            name="twitter:title">
-      <meta content="Track food portions and weight trends without counting calories."
+      <meta content="Portion Control" name="twitter:title">
+      <meta content="Track food portions and weight trends without counting calories with Portion Control."
             name="twitter:description">
+      <meta content="https://portioncontrol.ca/" name="twitter:url">
       <meta content="https://portioncontrol.ca/portion_control-feature_graphic.png"
             name="twitter:image">
+      <meta content="app-id=6743641654, app-argument=https://portioncontrol.ca"
+            name="apple-itunes-app">
 
       <!-- iOS meta tags & icons -->
       <meta content="yes" name="mobile-web-app-capable">
@@ -55,7 +65,7 @@
       <!-- Favicon -->
       <link href="favicon.png" rel="icon" type="image/png" />
 
-      <title>Portion Control – Simple Food Portion Tracking App</title>
+      <title>Portion Control | portioncontrol.ca</title>
       <link href="manifest.json" rel="manifest">
 
       <script type="application/ld+json">
@@ -63,10 +73,15 @@
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
         "name": "Portion Control",
+                        "alternateName": "PortionControl",
         "applicationCategory": "HealthApplication",
         "operatingSystem": "iOS, Android, Web",
         "description": "Portion Control is a simple food portion tracking app that helps you manage weight without counting calories.",
         "url": "https://portioncontrol.ca",
+                        "sameAs": [
+                              "https://apps.apple.com/app/id6743641654",
+                              "https://play.google.com/store/apps/details?id=com.turskyi.portion_control"
+                        ],
         "author": {
           "@type": "Person",
           "name": "Dmytro Turskyi"
@@ -76,46 +91,313 @@
           "price": "0",
           "priceCurrency": "CAD"
         },
-        "featureList": "Food portion tracking in grams, Body weight monitoring, Weight trend analysis, No calorie counting required, Dark and light theme"
-      }
+                        "featureList": "Food portion tracking in grams, Body weight monitoring, Weight trend analysis, No calorie counting required, Dark and light theme"
+                  }
+                  </script>
+
+      <script type="application/ld+json">
+                  {
+                        "@context": "https://schema.org",
+                        "@type": "WebSite",
+                        "name": "Portion Control",
+                        "alternateName": "PortionControl",
+                        "url": "https://portioncontrol.ca/",
+                        "potentialAction": {
+                          "@type": "SearchAction",
+                          "target": "https://portioncontrol.ca/?q={search_term_string}",
+                          "query-input": "required name=search_term_string"
+                        }
+                  }
       </script>
+
+      <script type="application/ld+json">
+                  {
+                        "@context": "https://schema.org",
+                        "@type": "Organization",
+                        "name": "Portion Control",
+                        "url": "https://portioncontrol.ca/",
+                        "logo": "https://portioncontrol.ca/icons/Icon-512.png",
+                        "sameAs": [
+                          "https://apps.apple.com/app/id6743641654",
+                          "https://play.google.com/store/apps/details?id=com.turskyi.portion_control"
+                        ]
+                  }
+      </script>
+
+      <script>
+            (function () {
+                  const kBaseDomain = 'portioncontrol.ca';
+                  const kDefaultTitle = 'Portion Control | portioncontrol.ca';
+                  const kDefaultDescription =
+                        'Portion Control helps you manage food portions and weight without counting calories. Track meals in grams and build healthier habits.';
+
+                  const routeMeta = {
+                        '/': {
+                              title: kDefaultTitle,
+                              description: kDefaultDescription,
+                        },
+                        '/about': {
+                              title: 'About Portion Control | portioncontrol.ca',
+                              description:
+                                    'Learn how Portion Control helps you build healthier habits by tracking food portions in grams and following long-term weight trends.',
+                        },
+                        '/support': {
+                              title: 'Support | Portion Control',
+                              description:
+                                    'Get help with Portion Control, troubleshooting, and common app questions for iOS, Android, and web.',
+                        },
+                        '/privacy-policy': {
+                              title: 'Privacy Policy | Portion Control',
+                              description:
+                                    'Read the Portion Control privacy policy to understand data handling and user privacy practices.',
+                        },
+                        '/recipes': {
+                              title: 'Weight Loss Recipes | Portion Control',
+                              description:
+                                    'Discover practical weight-loss recipes and portion-friendly meal ideas to support your nutrition goals.',
+                        },
+                        '/educational-content': {
+                              title: 'Educational Content | Portion Control',
+                              description:
+                                    'Explore educational content about nutrition habits, portion sizing, and sustainable weight management.',
+                        },
+                  };
+
+                  function normalizePath(pathname) {
+                        if (!pathname || pathname === '/') {
+                              return '/';
+                        }
+
+                        return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+                  }
+
+                  function getCurrentPath() {
+                        const hash = window.location.hash;
+                        if (hash && hash.startsWith('#/')) {
+                              return normalizePath(hash.slice(1));
+                        }
+                        return normalizePath(window.location.pathname);
+                  }
+
+                  function upsertMeta(selector, attr, value) {
+                        if (!value) {
+                              return;
+                        }
+
+                        let meta = document.head.querySelector(selector);
+                        if (!meta) {
+                              meta = document.createElement('meta');
+                              meta.setAttribute(attr, selector.includes('property=')
+                                    ? selector.match(/property=\"([^\"]+)\"/)[1]
+                                    : selector.match(/name=\"([^\"]+)\"/)[1]);
+                              document.head.appendChild(meta);
+                        }
+                        meta.setAttribute('content', value);
+                  }
+
+                  function updateAlternateLinks(path) {
+                        const alternates = [
+                              { hreflang: 'x-default', host: kBaseDomain },
+                              { hreflang: 'en', host: `en.${kBaseDomain}` },
+                              { hreflang: 'fr', host: `fr.${kBaseDomain}` },
+                              { hreflang: 'uk', host: `uk.${kBaseDomain}` },
+                        ];
+
+                        alternates.forEach(function (item) {
+                              const href = `https://${item.host}${path}`;
+                              const selector = `link[rel=\"alternate\"][hreflang=\"${item.hreflang}\"]`;
+                              let link = document.head.querySelector(selector);
+                              if (!link) {
+                                    link = document.createElement('link');
+                                    link.setAttribute('rel', 'alternate');
+                                    link.setAttribute('hreflang', item.hreflang);
+                                    document.head.appendChild(link);
+                              }
+                              link.setAttribute('href', href);
+                        });
+                  }
+
+                  function updateRouteMetadata() {
+                        const path = getCurrentPath();
+                        const current = routeMeta[path] || routeMeta['/'];
+                        const canonicalUrl = `https://${kBaseDomain}${path}`;
+
+                        document.title = current.title;
+
+                        const canonical = document.head.querySelector('link[rel="canonical"]');
+                        if (canonical) {
+                              canonical.setAttribute('href', canonicalUrl);
+                        }
+
+                        upsertMeta('meta[name="description"]', 'name', current.description);
+                        upsertMeta('meta[property="og:title"]', 'property', current.title);
+                        upsertMeta('meta[property="og:description"]', 'property', current.description);
+                        upsertMeta('meta[property="og:url"]', 'property', canonicalUrl);
+                        upsertMeta('meta[name="twitter:title"]', 'name', current.title);
+                        upsertMeta('meta[name="twitter:description"]', 'name', current.description);
+                        upsertMeta('meta[name="twitter:url"]', 'name', canonicalUrl);
+                        updateAlternateLinks(path);
+                  }
+
+                  const originalPushState = history.pushState;
+                  const originalReplaceState = history.replaceState;
+
+                  history.pushState = function () {
+                        const result = originalPushState.apply(this, arguments);
+                        updateRouteMetadata();
+                        return result;
+                  };
+
+                  history.replaceState = function () {
+                        const result = originalReplaceState.apply(this, arguments);
+                        updateRouteMetadata();
+                        return result;
+                  };
+
+                  window.addEventListener('popstate', updateRouteMetadata);
+                  window.addEventListener('hashchange', updateRouteMetadata);
+                  document.addEventListener('DOMContentLoaded', updateRouteMetadata);
+            })();
+      </script>
+
+      <style>
+            :root {
+                  --splash-bg-start: #fff0f5;
+                  --splash-bg-end: #d47a9b;
+                  --splash-text: #3f1d2a;
+                  --splash-card-bg: rgba(255, 255, 255, 0.78);
+                  --splash-shadow: rgba(63, 29, 42, 0.18);
+            }
+
+            html,
+            body {
+                  height: 100%;
+            }
+
+            body {
+                  margin: 0;
+                  min-height: 100vh;
+                  background: radial-gradient(circle at center, var(--splash-bg-start) 0%, var(--splash-bg-end) 100%);
+            }
+
+            #boot-splash {
+                  position: fixed;
+                  inset: 0;
+                  display: grid;
+                  place-items: center;
+                  padding: 24px;
+                  background: radial-gradient(circle at center, var(--splash-bg-start) 0%, var(--splash-bg-end) 100%);
+                  color: var(--splash-text);
+                  font-family: "Avenir Next", "Avenir", "Trebuchet MS", sans-serif;
+                  text-align: center;
+                  z-index: 2147483647;
+                  transition: opacity 140ms ease;
+            }
+
+            .boot-card {
+                  width: min(420px, 100%);
+                  border-radius: 20px;
+                  padding: 28px 24px;
+                  background: var(--splash-card-bg);
+                  box-shadow: 0 18px 40px var(--splash-shadow);
+                  backdrop-filter: blur(6px);
+            }
+
+            .boot-title {
+                  margin: 0;
+                  font-size: clamp(1.5rem, 5vw, 2rem);
+                  letter-spacing: 0.02em;
+            }
+
+            .boot-subtitle {
+                  margin: 8px 0 20px;
+                  font-size: clamp(0.95rem, 3.2vw, 1.05rem);
+                  opacity: 0.88;
+            }
+
+            .boot-loader {
+                  width: 46px;
+                  height: 46px;
+                  margin: 0 auto;
+                  border-radius: 999px;
+                  border: 4px solid rgba(63, 29, 42, 0.2);
+                  border-top-color: rgba(63, 29, 42, 0.9);
+                  animation: spin 900ms linear infinite;
+            }
+
+            @keyframes spin {
+                  to {
+                        transform: rotate(360deg);
+                  }
+            }
+      </style>
 </head>
 
-<body style="margin: 0; background-color: #fff0f5;">
-      <main
-            style="max-width: 900px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; line-height: 1.6;">
-            <h1>Portion Control App</h1>
-            <p>
-                  Portion Control is a simple app that helps you manage your
-                  food portions and track your daily intake.
-                  Instead of counting calories, you log meals in grams and
-                  adjust your portions based on weight trends.
-            </p>
+<body>
+      <div aria-label="Loading Portion Control application" aria-live="polite"
+            id="boot-splash" role="status">
+            <section class="boot-card">
+                  <h1 class="boot-title">Portion Control</h1>
+                  <p class="boot-subtitle">Getting things ready...</p>
+                  <div aria-hidden="true" class="boot-loader"></div>
+            </section>
+      </div>
 
-            <h2>How Portion Control Works</h2>
-            <p>
-                  Track what you eat, monitor your weight, and gradually find
-                  the right portion sizes for your body.
-                  This approach focuses on consistency and long-term habits
-                  rather than strict calorie tracking.
-            </p>
+      <noscript>
+            <main
+                  style="max-width: 900px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; line-height: 1.6;">
+                  <h1>Portion Control</h1>
+                  <p>
+                        Portion Control is a simple app that helps you manage
+                        your
+                        food portions and track your daily intake.
+                        Instead of counting calories, you log meals in grams and
+                        adjust your portions based on weight trends.
+                  </p>
 
-            <h2>Key Features</h2>
-            <ul>
-                  <li>Track food portions in grams</li>
-                  <li>Monitor body weight trends</li>
-                  <li>Simple and distraction-free interface</li>
-                  <li>No calorie counting required</li>
-            </ul>
+                  <h2>How Portion Control Works</h2>
+                  <p>
+                        Track what you eat, monitor your weight, and gradually
+                        find
+                        the right portion sizes for your body.
+                        This approach focuses on consistency and long-term
+                        habits
+                        rather than strict calorie tracking.
+                  </p>
 
-            <h2>Portion Control for Weight Management</h2>
-            <p>
-                  Portion control is a proven method to support healthy weight
-                  management.
-                  By adjusting how much you eat instead of what you eat, you can
-                  build sustainable habits over time.
-            </p>
-      </main>
+                  <h2>Key Features</h2>
+                  <ul>
+                        <li>Track food portions in grams</li>
+                        <li>Monitor body weight trends</li>
+                        <li>Simple and distraction-free interface</li>
+                        <li>No calorie counting required</li>
+                  </ul>
+
+                  <h2>Portion Control for Weight Management</h2>
+                  <p>
+                        Portion control is a proven method to support healthy
+                        weight
+                        management.
+                        By adjusting how much you eat instead of what you eat,
+                        you can
+                        build sustainable habits over time.
+                  </p>
+            </main>
+      </noscript>
+
+      <script>
+            window.addEventListener('flutter-first-frame', function () {
+                  const splash = document.getElementById('boot-splash');
+                  if (!splash) {
+                        return;
+                  }
+
+                  splash.style.opacity = '0';
+                  window.setTimeout(function () {
+                        splash.remove();
+                  }, 150);
+            });
+      </script>
       <!--suppress HtmlUnknownTarget -->
       <script async src="flutter_bootstrap.js"></script>
 </body>

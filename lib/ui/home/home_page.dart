@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           ),
                           const PopupMenuDivider(),
                           PopupMenuItem<String>(
-                            value: constants.googlePlayUrl,
+                            value: constants.kGooglePlayUrl,
                             child: Semantics(
                               label: t(
                                 'landing_page.semantics_label_google_play',
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     onTap: _launchGooglePlayUrl,
                                     child: Ink.image(
                                       image: const AssetImage(
-                                        '${constants.imagePath}'
+                                        '${constants.kImagePath}'
                                         'play_store_badge.png',
                                       ),
                                       height: badgeHeight,
@@ -152,7 +152,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             ),
                           ),
                           PopupMenuItem<String>(
-                            value: constants.macOsUrl,
+                            value: constants.kMacOsUrl,
                             child: Semantics(
                               label: t('landing_page.semantics_label_macos'),
                               button: true,
@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                     onTap: _launchMacOsUrl,
                                     child: Ink.image(
                                       image: const AssetImage(
-                                        '${constants.imagePath}'
+                                        '${constants.kImagePath}'
                                         'mac_os_badge.png',
                                       ),
                                       height: badgeHeight,
@@ -308,14 +308,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       Navigator.pushNamed(context, AppRoute.support.path);
     } else if (result == AppRoute.recipes.name) {
       Navigator.pushNamed(context, AppRoute.recipes.path);
-    } else if (result == constants.googlePlayUrl) {
+    } else if (result == constants.kGooglePlayUrl) {
       launchUrl(
-        Uri.parse(constants.googlePlayUrl),
+        Uri.parse(constants.kGooglePlayUrl),
         mode: LaunchMode.externalApplication,
       );
-    } else if (result == constants.macOsUrl) {
+    } else if (result == constants.kMacOsUrl) {
       launchUrl(
-        Uri.parse(constants.macOsUrl),
+        Uri.parse(constants.kMacOsUrl),
         mode: LaunchMode.externalApplication,
       );
     }
@@ -428,14 +428,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   Future<bool> _launchMacOsUrl() {
     return launchUrl(
-      Uri.parse(constants.macOsUrl),
+      Uri.parse(constants.kMacOsUrl),
       mode: LaunchMode.externalApplication,
     );
   }
 
   Future<bool> _launchGooglePlayUrl() {
     return launchUrl(
-      Uri.parse(constants.googlePlayUrl),
+      Uri.parse(constants.kGooglePlayUrl),
       mode: LaunchMode.externalApplication,
     );
   }

@@ -1,38 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://portioncontrol.ca/</loc>
-    <lastmod>2026-03-27</lastmod>
+    <xhtml:link href="https://portioncontrol.ca/" hreflang="x-default" rel="alternate" />
+    <xhtml:link href="https://en.portioncontrol.ca/" hreflang="en" rel="alternate" />
+    <xhtml:link href="https://fr.portioncontrol.ca/" hreflang="fr" rel="alternate" />
+    <xhtml:link href="https://uk.portioncontrol.ca/" hreflang="uk" rel="alternate" />
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://portioncontrol.ca/recipes</loc>
-    <lastmod>2026-03-27</lastmod>
+    <xhtml:link href="https://portioncontrol.ca/recipes" hreflang="x-default" rel="alternate" />
+    <xhtml:link href="https://en.portioncontrol.ca/recipes" hreflang="en" rel="alternate" />
+    <xhtml:link href="https://fr.portioncontrol.ca/recipes" hreflang="fr" rel="alternate" />
+    <xhtml:link href="https://uk.portioncontrol.ca/recipes" hreflang="uk" rel="alternate" />
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://portioncontrol.ca/educational-content</loc>
-    <lastmod>2026-03-27</lastmod>
+    <xhtml:link href="https://portioncontrol.ca/educational-content" hreflang="x-default" rel="alternate" />
+    <xhtml:link href="https://en.portioncontrol.ca/educational-content" hreflang="en" rel="alternate" />
+    <xhtml:link href="https://fr.portioncontrol.ca/educational-content" hreflang="fr" rel="alternate" />
+    <xhtml:link href="https://uk.portioncontrol.ca/educational-content" hreflang="uk" rel="alternate" />
+    <lastmod>2026-03-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://portioncontrol.ca/about</loc>
-    <lastmod>2026-03-27</lastmod>
+    <xhtml:link href="https://portioncontrol.ca/about" hreflang="x-default" rel="alternate" />
+    <xhtml:link href="https://en.portioncontrol.ca/about" hreflang="en" rel="alternate" />
+    <xhtml:link href="https://fr.portioncontrol.ca/about" hreflang="fr" rel="alternate" />
+    <xhtml:link href="https://uk.portioncontrol.ca/about" hreflang="uk" rel="alternate" />
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://portioncontrol.ca/support</loc>
-    <lastmod>2026-03-27</lastmod>
+    <xhtml:link href="https://portioncontrol.ca/support" hreflang="x-default" rel="alternate" />
+    <xhtml:link href="https://en.portioncontrol.ca/support" hreflang="en" rel="alternate" />
+    <xhtml:link href="https://fr.portioncontrol.ca/support" hreflang="fr" rel="alternate" />
+    <xhtml:link href="https://uk.portioncontrol.ca/support" hreflang="uk" rel="alternate" />
+    <lastmod>2026-03-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://portioncontrol.ca/privacy-policy</loc>
-    <lastmod>2026-03-27</lastmod>
+    <xhtml:link href="https://portioncontrol.ca/privacy-policy" hreflang="x-default" rel="alternate" />
+    <xhtml:link href="https://en.portioncontrol.ca/privacy-policy" hreflang="en" rel="alternate" />
+    <xhtml:link href="https://fr.portioncontrol.ca/privacy-policy" hreflang="fr" rel="alternate" />
+    <xhtml:link href="https://uk.portioncontrol.ca/privacy-policy" hreflang="uk" rel="alternate" />
+    <lastmod>2026-03-30</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

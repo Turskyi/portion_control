@@ -81,7 +81,7 @@ class _GlowingAnimatedBoxState extends State<GlowingAnimatedBox>
             child: InkWell(
               onTap: widget.onTap,
               child: Ink.image(
-                image: const AssetImage('${constants.imagePath}logo.png'),
+                image: const AssetImage('${constants.kImagePath}logo.png'),
                 width: 100,
                 height: 100,
                 fit: BoxFit.cover,

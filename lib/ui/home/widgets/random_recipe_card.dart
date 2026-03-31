@@ -14,10 +14,13 @@ class RandomRecipeCard extends StatefulWidget {
 class _RandomRecipeCardState extends State<RandomRecipeCard> {
   static const int _daysInMealPlan = 154;
   static const int _maxSelectionAttempts = 10;
+  static const Duration _switchDuration = Duration(milliseconds: 320);
+  static const Duration _iconRotationDuration = Duration(milliseconds: 420);
 
   final Random _random = Random();
   late String _mealType;
   late String _recipeKey;
+  int _refreshTurns = 0;
 
   @override
   void initState() {
@@ -25,44 +28,19 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
     _selectRandomRecipe();
   }
 
-  void _selectRandomRecipe() {
-    final DateTime now = DateTime.now();
-    final int hour = now.hour;
-
-    // Determine meal type based on time of day.
-    final MealType type = MealType.values.firstWhere(
-      (MealType m) => m.matchesHour(hour),
-      orElse: () => MealType.dinner, // fallback
-    );
-
-    _mealType = type.translationKey;
-    _recipeKey = _selectRecipeKeyForMealType(_mealType);
-  }
-
-  String _selectRecipeKeyForMealType(String mealType) {
-    String recipeKey = _buildRandomRecipeKey(mealType);
-    int attempts = 0;
-
-    while (!_hasTranslation(recipeKey) && attempts < _maxSelectionAttempts) {
-      recipeKey = _buildRandomRecipeKey(mealType);
-      attempts++;
-    }
-
-    return recipeKey;
-  }
-
-  String _buildRandomRecipeKey(String mealType) {
-    final int day = _random.nextInt(_daysInMealPlan) + 1;
-    return 'recipes_page.day_${day}_$mealType';
-  }
-
-  bool _hasTranslation(String key) => translate(key) != key;
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
     final ColorScheme colorScheme = theme.colorScheme;
+    final bool disableAnimations =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final Duration switchDuration = disableAnimations
+        ? Duration.zero
+        : _switchDuration;
+    final Duration iconRotationDuration = disableAnimations
+        ? Duration.zero
+        : _iconRotationDuration;
 
     final String translation = translate(_recipeKey);
     if (translation == _recipeKey) {
@@ -101,24 +79,73 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
               ),
               const Spacer(),
               IconButton(
-                icon: Icon(
-                  Icons.refresh,
-                  size: 20,
-                  color: colorScheme.onSurfaceVariant,
+                icon: AnimatedRotation(
+                  turns: _refreshTurns.toDouble(),
+                  duration: iconRotationDuration,
+                  curve: Curves.easeOutCubic,
+                  child: Icon(
+                    Icons.refresh,
+                    size: 20,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 // Keep this local: recipe rotation is ephemeral UI state for
-                // this card only, so routing it through HomeBloc would widen
+                // this card only, so routing it through `HomeBloc` would widen
                 // shared state and rebuild more of the home screen for no
                 // domain or persistence benefit.
-                onPressed: () => setState(_selectRandomRecipe),
+                onPressed: _onRefreshPressed,
                 tooltip: translate('home_page.next_recipe'),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            translation,
-            style: textTheme.bodyMedium,
+          AnimatedSwitcher(
+            duration: switchDuration,
+            reverseDuration: switchDuration,
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              final Animation<double> fade = CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOut,
+              );
+              final Animation<double> scale =
+                  Tween<double>(
+                    begin: 0.96,
+                    end: 1,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutBack,
+                    ),
+                  );
+              final Animation<Offset> slide =
+                  Tween<Offset>(
+                    begin: const Offset(0, 0.08),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutCubic,
+                    ),
+                  );
+
+              return FadeTransition(
+                opacity: fade,
+                child: ScaleTransition(
+                  scale: scale,
+                  child: SlideTransition(
+                    position: slide,
+                    child: child,
+                  ),
+                ),
+              );
+            },
+            child: Text(
+              translation,
+              key: ValueKey<String>(_recipeKey),
+              style: textTheme.bodyMedium,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -131,5 +158,45 @@ class _RandomRecipeCardState extends State<RandomRecipeCard> {
         ],
       ),
     );
+  }
+
+  String _buildRandomRecipeKey(String mealType) {
+    final int day = _random.nextInt(_daysInMealPlan) + 1;
+    return 'recipes_page.day_${day}_$mealType';
+  }
+
+  bool _hasTranslation(String key) => translate(key) != key;
+
+  void _onRefreshPressed() {
+    setState(() {
+      _refreshTurns++;
+      _selectRandomRecipe();
+    });
+  }
+
+  void _selectRandomRecipe() {
+    final DateTime now = DateTime.now();
+    final int hour = now.hour;
+
+    // Determine meal type based on time of day.
+    final MealType type = MealType.values.firstWhere(
+      (MealType m) => m.matchesHour(hour),
+      orElse: () => MealType.dinner, // fallback
+    );
+
+    _mealType = type.translationKey;
+    _recipeKey = _selectRecipeKeyForMealType(_mealType);
+  }
+
+  String _selectRecipeKeyForMealType(String mealType) {
+    String recipeKey = _buildRandomRecipeKey(mealType);
+    int attempts = 0;
+
+    while (!_hasTranslation(recipeKey) && attempts < _maxSelectionAttempts) {
+      recipeKey = _buildRandomRecipeKey(mealType);
+      attempts++;
+    }
+
+    return recipeKey;
   }
 }
