@@ -34,7 +34,7 @@ class DailyFoodLogHistoryPage extends StatelessWidget {
             }
 
             final double screenWidth = MediaQuery.widthOf(context);
-            final bool isWide = screenWidth > constants.wideScreenThreshold;
+            final bool isWide = screenWidth > constants.kWideScreenThreshold;
 
             // Ensure padding is never negative using math.max
             final double horizontalPadding = isWide

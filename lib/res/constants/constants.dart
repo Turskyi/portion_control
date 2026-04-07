@@ -1,11 +1,11 @@
-const String baseUrl = 'https://portioncontrol.ca';
-const String ukrainianWebVersion = 'https://uk.portioncontrol.ca';
-const String frenchWebVersion = 'https://fr.portioncontrol.ca';
 const String kCompanyDomain = 'portioncontrol.ca';
+const String kBaseUrl = 'https://$kCompanyDomain';
+const String kUkrainianWebVersion = 'https://uk.$kCompanyDomain';
+const String kFrenchWebVersion = 'https://fr.$kCompanyDomain';
 const String kResendEmailDomain = kCompanyDomain;
 const String kSupportEmailPrefix = 'support@';
-const String supportEmail = '$kSupportEmailPrefix$kCompanyDomain';
-const String appName = 'Portion Control';
+const String kSupportEmail = '$kSupportEmailPrefix$kCompanyDomain';
+const String kAppName = 'Portion Control';
 const String kGooglePlayUrl =
     'https://play.google.com/store/apps/details?id=com.turskyi.portion_control';
 
@@ -20,20 +20,20 @@ const String kITunesLookupUrl = 'https://itunes.apple.com/lookup?bundleId=';
 const String kImagePath = 'assets/images/';
 
 /// Blur intensity constant.
-const double blurSigma = 12.0;
+const double kBlurSigma = 12.0;
 
 // in centimeters
 final double kMinUserHeight = 100.0;
 // in centimeters
-final double maxUserHeight = 250.0;
+final double kMaxUserHeight = 250.0;
 
-const double maxHealthyBmi = 24.9;
+const double kMaxHealthyBmi = 24.9;
 
-const double minHealthyBmi = 18.5;
+const double kMinHealthyBmi = 18.5;
 
-const double minBodyWeight = 20.0;
+const double kMinBodyWeight = 20.0;
 
-const int minAge = 18;
+const int kMinAge = 18;
 
 /// Absolute upper bound for daily food intake, in grams.
 ///
@@ -78,26 +78,26 @@ const double kSafeMinimumFoodIntakeG = 1200.0;
 const double kAbsoluteMinimumFoodIntakeG = 1000.0;
 
 /// When to switch to wide layout.
-const double wideScreenThreshold = 600.0;
+const double kWideScreenThreshold = 600.0;
 
 // Max content width for wide layout.
 const double kWideScreenContentWidth = 800.0;
 
 const String kMailToScheme = 'mailto';
 
-const String telegramUrl = 'https://t.me/+Zmd6QYP3iXc2MjZi';
+const String kTelegramUrl = 'https://t.me/+Zmd6QYP3iXc2MjZi';
 
-const String feedbackTypeProperty = 'feedback_type';
-const String feedbackTextProperty = 'feedback_text';
-const String ratingProperty = 'rating';
-const String screenSizeProperty = 'screenSize';
+const String kFeedbackTypeProperty = 'feedback_type';
+const String kFeedbackTextProperty = 'feedback_text';
+const String kRatingProperty = 'rating';
+const String kScreenSizeProperty = 'screenSize';
 
 const String kSubjectParameter = 'subject';
 
 const String kBodyParameter = 'body';
 
-const String appleAppGroupId = 'group.dmytrowidget';
-const String iOSWidgetName = 'PortionControlWidgets';
+const String kAppleAppGroupId = 'group.dmytrowidget';
+const String kIosWidgetName = 'PortionControlWidgets';
 const String kAndroidWidgetName = 'PortionControlWidget';
 
 /// The minimum BMI value considered valid for display and classification.
@@ -113,26 +113,26 @@ const double kMinValidBmi = 10.0;
 /// BMI classification thresholds (kg/m²).
 /// Source: https://www.who.int/data/gho/data/themes/topics/topic-details/GHO/body-mass-index
 /// Marks end of underweight / start of healthy.
-const double bmiUnderweightThreshold = 18.5;
+const double kBmiUnderweightThreshold = 18.5;
 
 /// Marks end of healthy.
-const double bmiHealthyUpperThreshold = 24.9;
+const double kBmiHealthyUpperThreshold = 24.9;
 
 /// Marks start of overweight.
-const double bmiOverweightLowerThreshold = 25.0;
+const double kBmiOverweightLowerThreshold = 25.0;
 
 /// Marks end of overweight.
-const double bmiOverweightUpperThreshold = 29.9;
+const double kBmiOverweightUpperThreshold = 29.9;
 
 /// Marks start of obese.
-const double bmiObeseLowerThreshold = 30.0;
+const double kBmiObeseLowerThreshold = 30.0;
 
 const double kMidpointBuffer = 0.5;
 
-const String doNotReplySenderName = 'Do Not Reply';
-const String feedbackEmailSender =
-    '$doNotReplySenderName $appName <no-reply@$kResendEmailDomain>';
-const String feedbackScreenshotFileName = 'feedback.png';
+const String kDoNotReplySenderName = 'Do Not Reply';
+const String kFeedbackEmailSender =
+    '$kDoNotReplySenderName $kAppName <no-reply@$kResendEmailDomain>';
+const String kFeedbackScreenshotFileName = 'feedback.png';
 const double kHorizontalIndent = 12.0;
 
 const String kLanguageValue = 'language';

@@ -57,9 +57,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<UpdateGender>(_updateGender);
     on<SubmitDetails>(_submitDetails);
     on<EditDetails>(_setDetailsToEditMode);
+    on<SubmitBodyWeight>(_submitBodyWeight);
     on<UpdateBodyWeight>(_updateBodyWeightState);
     on<UpdateFoodWeight>(_updateFoodWeightState);
-    on<SubmitBodyWeight>(_submitBodyWeight);
     on<AddFoodEntry>(_submitFoodWeight);
     on<EditBodyWeight>(_setBodyWeightToEditMode);
     on<EditFoodEntry>(_setFoodWeightToEditMode);
@@ -211,7 +211,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               portionControl: portionControl,
             ),
           );
-        } else if (todayBodyWeight > constants.minBodyWeight) {
+        } else if (todayBodyWeight > constants.kMinBodyWeight) {
           final bool isMealsConfirmed =
               _userPreferencesRepository.isMealsConfirmedForToday;
           if (todayFoodWeightEntries.isNotEmpty) {
@@ -496,14 +496,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final Gender gender = state.gender;
 
       if (height < constants.kMinUserHeight ||
-          height > constants.maxUserHeight) {
+          height > constants.kMaxUserHeight) {
         emit(
           DetailsError(
             errorMessage: translate(
               'error.height_range',
               args: <String, Object?>{
                 'minHeight': constants.kMinUserHeight,
-                'maxHeight': constants.maxUserHeight,
+                'maxHeight': constants.kMaxUserHeight,
               },
             ),
             bodyWeight: state.bodyWeight,
@@ -533,7 +533,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             );
 
         if (isDetailsSaved) {
-          if (state.bodyWeight > constants.minBodyWeight) {
+          if (state.bodyWeight > constants.kMinBodyWeight) {
             final bool isMealsConfirmed =
                 _userPreferencesRepository.isMealsConfirmedForToday;
             emit(
@@ -630,7 +630,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     final Language language = _userPreferencesRepository.getLanguage();
-    if (event.bodyWeight > constants.minBodyWeight) {
+    if (event.bodyWeight > constants.kMinBodyWeight) {
       // `event.bodyWeight` and `state.bodyWeight` should be the same,
       // because we send it like this `SubmitBodyWeight(state.bodyWeight)`.
       final double bodyWeight = state.bodyWeight;
@@ -783,7 +783,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         BodyWeightError(
           errorMessage: translate(
             'error.body_weight_too_low',
-            args: <String, Object?>{'minBodyWeight': constants.minBodyWeight},
+            args: <String, Object?>{'minBodyWeight': constants.kMinBodyWeight},
           ),
           bodyWeight: state.bodyWeight,
           userDetails: state.userDetails,
@@ -1242,7 +1242,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           // Handle email sending on the web using a `mailto` link.
           final Uri emailLaunchUri = Uri(
             scheme: constants.kMailToScheme,
-            path: constants.supportEmail,
+            path: constants.kSupportEmail,
             queryParameters: <String, String>{
               constants.kSubjectParameter:
                   '${translate('feedback.appFeedback')}: '
@@ -1303,7 +1303,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
 
       try {
-        _homeWidgetService.setAppGroupId(constants.appleAppGroupId);
+        _homeWidgetService.setAppGroupId(constants.kAppleAppGroupId);
 
         _homeWidgetService.saveWidgetData<String>(
           HomeWidgetKey.locale.stringValue,
@@ -1356,7 +1356,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         _homeWidgetService.updateWidget(
           name: 'PortionControlWidget',
-          iOSName: constants.iOSWidgetName,
+          iOSName: constants.kIosWidgetName,
           androidName: constants.kAndroidWidgetName,
         );
         if (Platform.isAndroid) {

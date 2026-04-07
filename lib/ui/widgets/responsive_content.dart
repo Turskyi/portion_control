@@ -10,7 +10,7 @@ class ResponsiveContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints constraints) {
-        if (constraints.maxWidth > constants.wideScreenThreshold) {
+        if (constraints.maxWidth > constants.kWideScreenThreshold) {
           return Center(
             child: SizedBox(
               width: constants.kWideScreenContentWidth,

@@ -36,7 +36,7 @@ class App extends StatelessWidget {
           builder: (BuildContext _, MenuState state) {
             return MaterialApp(
               navigatorKey: navigatorKey,
-              title: constants.appName,
+              title: constants.kAppName,
               localizationsDelegates: <LocalizationsDelegate<Object>>[
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,

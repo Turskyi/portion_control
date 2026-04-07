@@ -72,7 +72,7 @@ sealed class HomeState {
 
   bool get isEmptyDetails =>
       userDetails.heightInCm < constants.kMinUserHeight &&
-      userDetails.age < constants.minAge &&
+      userDetails.age < constants.kMinAge &&
       userDetails.gender == Gender.preferNotToSay &&
       userDetails.dateOfBirth == null;
 
@@ -192,7 +192,7 @@ sealed class HomeState {
     final double heightInMeters = heightInCm / 100;
     if (heightInMeters == 0) return false;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
-    return bmi > constants.maxHealthyBmi;
+    return bmi > constants.kMaxHealthyBmi;
   }
 
   bool get isWeightBelowHealthy => isWeightBelowHealthyFor(bodyWeight);
@@ -201,7 +201,7 @@ sealed class HomeState {
     final double heightInMeters = heightInCm / 100;
     if (heightInMeters == 0) return false;
     final double bmi = bodyWeight / (heightInMeters * heightInMeters);
-    return bmi < constants.minHealthyBmi;
+    return bmi < constants.kMinHealthyBmi;
   }
 
   bool get isWeightNotSubmitted {
@@ -298,13 +298,13 @@ sealed class HomeState {
   String get bmiMessage {
     if (bmi < constants.kMinValidBmi) {
       return '';
-    } else if (bmi < constants.bmiUnderweightThreshold) {
+    } else if (bmi < constants.kBmiUnderweightThreshold) {
       return translate('healthy_weight.underweight_message');
-    } else if (bmi >= constants.bmiUnderweightThreshold &&
-        bmi <= constants.bmiHealthyUpperThreshold) {
+    } else if (bmi >= constants.kBmiUnderweightThreshold &&
+        bmi <= constants.kBmiHealthyUpperThreshold) {
       return translate('healthy_weight.healthy_message');
-    } else if (bmi >= constants.bmiOverweightLowerThreshold &&
-        bmi <= constants.bmiOverweightUpperThreshold) {
+    } else if (bmi >= constants.kBmiOverweightLowerThreshold &&
+        bmi <= constants.kBmiOverweightUpperThreshold) {
       return translate('healthy_weight.overweight_message');
     } else {
       return translate('healthy_weight.obese_message');

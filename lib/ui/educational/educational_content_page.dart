@@ -133,7 +133,7 @@ class EducationalContentPage extends StatelessWidget {
               SelectableText(
                 translate(
                   'educational_content.note_content',
-                  args: <String, Object?>{'appName': res.appName},
+                  args: <String, Object?>{'appName': res.kAppName},
                 ),
                 style: textTheme.bodyMedium,
               ),

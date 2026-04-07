@@ -120,7 +120,7 @@ class _HomePageContentState extends State<HomePageContent> {
                   label: translate('home_page.body_weight_label'),
                   unit: translate('home_page.kg_unit'),
                   initialValue:
-                      '${weight > constants.minBodyWeight ? weight : ''}',
+                      '${weight > constants.kMinBodyWeight ? weight : ''}',
                   value: state is BodyWeightSubmittedState ? '$weight' : null,
                   onChanged: _updateBodyWeight,
                   onSave: state is! BodyWeightSubmittedState
@@ -130,12 +130,12 @@ class _HomePageContentState extends State<HomePageContent> {
                           );
                         }
                       : null,
-                  isSaveEnabled: weight >= constants.minBodyWeight,
+                  isSaveEnabled: weight >= constants.kMinBodyWeight,
                 ),
               if (state is DetailsSubmittedState &&
                   (state is BodyWeightSubmittedState ||
                       MediaQuery.sizeOf(context).width >=
-                          constants.wideScreenThreshold))
+                          constants.kWideScreenThreshold))
                 const SubmitEditBodyWeightButton(),
               const SizedBox(height: 4),
               if (state.bodyWeightEntries.length > 1)

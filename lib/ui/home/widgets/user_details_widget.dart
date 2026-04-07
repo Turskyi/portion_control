@@ -104,7 +104,7 @@ class _UserDetailsWidgetState extends State<UserDetailsWidget> {
             ),
             if (isDetailsSubmitted ||
                 MediaQuery.sizeOf(context).width >=
-                    constants.wideScreenThreshold)
+                    constants.kWideScreenThreshold)
               const SubmitEditDetailsButton(),
           ],
         );

@@ -32,8 +32,8 @@ class BlurredAppBar extends StatelessWidget implements PreferredSizeWidget {
       flexibleSpace: ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(
-            sigmaX: constant.blurSigma,
-            sigmaY: constant.blurSigma,
+            sigmaX: constant.kBlurSigma,
+            sigmaY: constant.kBlurSigma,
           ),
           child: Container(color: Colors.transparent),
         ),

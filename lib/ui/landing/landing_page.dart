@@ -45,7 +45,7 @@ class LandingPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    constants.appName,
+                    constants.kAppName,
                     style: textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: colorScheme.primary,

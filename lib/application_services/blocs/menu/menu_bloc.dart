@@ -136,15 +136,15 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
             };
 
       final Map<String, Object?>? extra = feedback.extra;
-      final Object? rating = extra?[constants.ratingProperty];
-      final Object? type = extra?[constants.feedbackTypeProperty];
-      final Object? screenSize = extra?[constants.screenSizeProperty];
+      final Object? rating = extra?[constants.kRatingProperty];
+      final Object? type = extra?[constants.kFeedbackTypeProperty];
+      final Object? screenSize = extra?[constants.kScreenSizeProperty];
       final String feedbackText = feedback.text;
 
       // `extra?[constants.feedbackTextProperty]` is usually same as
       // `feedback.text`.
       final Object feedbackExtraText =
-          extra?[constants.feedbackTextProperty] ?? feedbackText;
+          extra?[constants.kFeedbackTextProperty] ?? feedbackText;
 
       final bool isFeedbackType = type is FeedbackType;
       final bool isFeedbackRating = rating is FeedbackRating;
@@ -185,7 +185,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
           // Handle email sending on the web and MacOS using a `mailto` link.
           final Uri emailLaunchUri = Uri(
             scheme: constants.kMailToScheme,
-            path: constants.supportEmail,
+            path: constants.kSupportEmail,
             queryParameters: <String, String>{
               constants.kSubjectParameter:
                   '${translate('feedback.app_feedback')}: '
@@ -222,7 +222,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
             subject:
                 '${translate('feedback.app_feedback')}: ${packageInfo.appName}',
             body: feedbackBody.toString(),
-            recipients: <String>[constants.supportEmail],
+            recipients: <String>[constants.kSupportEmail],
             attachmentPaths: <String>[screenshotFilePath],
           );
           try {
@@ -396,11 +396,11 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   }
 
   FutureOr<void> _openWebPage(OpenWebVersionEvent _, Emitter<MenuState> _) {
-    String url = constants.baseUrl;
+    String url = constants.kBaseUrl;
     if (state.isUkrainian) {
-      url = constants.ukrainianWebVersion;
+      url = constants.kUkrainianWebVersion;
     } else if (state.isFrench) {
-      url = constants.frenchWebVersion;
+      url = constants.kFrenchWebVersion;
     }
     if (url.isNotEmpty) launchUrl(Uri.parse(url));
   }
@@ -443,7 +443,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
       );
 
       try {
-        _homeWidgetService.setAppGroupId(constants.appleAppGroupId);
+        _homeWidgetService.setAppGroupId(constants.kAppleAppGroupId);
 
         _homeWidgetService.saveWidgetData<String>(
           HomeWidgetKey.locale.stringValue,
@@ -500,7 +500,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
         _homeWidgetService.updateWidget(
           name: 'PortionControlWidget',
-          iOSName: constants.iOSWidgetName,
+          iOSName: constants.kIosWidgetName,
           androidName: constants.kAndroidWidgetName,
         );
         if (Platform.isAndroid) {
@@ -522,13 +522,13 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
 
   Future<String> _getBmiMessage() async {
     final double bmi = await _getBmi();
-    if (bmi < constants.bmiUnderweightThreshold) {
+    if (bmi < constants.kBmiUnderweightThreshold) {
       return translate('healthy_weight.underweight_message');
-    } else if (bmi >= constants.bmiUnderweightThreshold &&
-        bmi <= constants.bmiHealthyUpperThreshold) {
+    } else if (bmi >= constants.kBmiUnderweightThreshold &&
+        bmi <= constants.kBmiHealthyUpperThreshold) {
       return translate('healthy_weight.healthy_message');
-    } else if (bmi >= constants.bmiOverweightLowerThreshold &&
-        bmi <= constants.bmiOverweightUpperThreshold) {
+    } else if (bmi >= constants.kBmiOverweightLowerThreshold &&
+        bmi <= constants.kBmiOverweightUpperThreshold) {
       return translate('healthy_weight.overweight_message');
     } else {
       return translate('healthy_weight.obese_message');
@@ -580,7 +580,7 @@ class MenuBloc extends Bloc<MenuEvent, MenuState> {
   Future<String> _writeImageToStorage(Uint8List feedbackScreenshot) async {
     final Directory output = await path.getTemporaryDirectory();
     final String screenshotFilePath =
-        '${output.path}/${constants.feedbackScreenshotFileName}';
+        '${output.path}/${constants.kFeedbackScreenshotFileName}';
     final File screenshotFile = File(screenshotFilePath);
     await screenshotFile.writeAsBytes(feedbackScreenshot);
     return screenshotFilePath;

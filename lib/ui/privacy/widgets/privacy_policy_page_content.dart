@@ -39,7 +39,7 @@ class PrivacyPolicyPageContent extends StatelessWidget {
               child: Html(
                 data: translate(
                   'privacy_policy.content_html',
-                  args: <String, Object?>{'appName': constants.appName},
+                  args: <String, Object?>{'appName': constants.kAppName},
                 ),
                 style: htmlStyles,
               ),

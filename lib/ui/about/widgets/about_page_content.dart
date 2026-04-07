@@ -32,7 +32,7 @@ class AboutPageContent extends StatelessWidget {
             SelectableText(
               translate(
                 'about_us.story',
-                args: <String, Object?>{'appName': res.appName},
+                args: <String, Object?>{'appName': res.kAppName},
               ),
               style: TextStyle(fontSize: titleMediumFontSize),
             ),

@@ -39,7 +39,7 @@ class SubmitEditBodyWeightButton extends StatelessWidget {
                   label: state is BodyWeightSubmittedState
                       ? t('submit_edit_body_weight_button.edit_body_weight')
                       : t('submit_edit_body_weight_button.submit_body_weight'),
-                  onPressed: state.bodyWeight < constants.minBodyWeight
+                  onPressed: state.bodyWeight < constants.kMinBodyWeight
                       ? null
                       : state is BodyWeightSubmittedState
                       ? () =>

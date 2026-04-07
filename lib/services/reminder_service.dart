@@ -108,7 +108,7 @@ class ReminderService {
 
   Future<void> scheduleDailyWeightReminder({
     required TimeOfDay time,
-    String title = constants.appName,
+    String title = constants.kAppName,
     String body = "Don't forget to log your weight today!",
   }) async {
     await _init();
