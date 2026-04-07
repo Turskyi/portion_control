@@ -272,12 +272,19 @@
             html,
             body {
                   height: 100%;
+                  /* Ensures overscroll/safe-area uses the outer radial color instead of white on mobile browsers */
+                  background-color: var(--splash-bg-end);
+                  background-image: radial-gradient(circle at center, var(--splash-bg-start) 0%, var(--splash-bg-end) 100%);
+                  background-repeat: no-repeat;
             }
 
             body {
                   margin: 0;
                   min-height: 100vh;
-                  background: radial-gradient(circle at center, var(--splash-bg-start) 0%, var(--splash-bg-end) 100%);
+                  background-color: var(--splash-bg-end);
+                  background-image: radial-gradient(circle at center, var(--splash-bg-start) 0%, var(--splash-bg-end) 100%);
+                  background-repeat: no-repeat;
+                  overscroll-behavior: none;
             }
 
             #boot-splash {
@@ -286,7 +293,9 @@
                   display: grid;
                   place-items: center;
                   padding: 24px;
-                  background: radial-gradient(circle at center, var(--splash-bg-start) 0%, var(--splash-bg-end) 100%);
+                  background-color: var(--splash-bg-end);
+                  background-image: radial-gradient(circle at center, var(--splash-bg-start) 0%, var(--splash-bg-end) 100%);
+                  background-repeat: no-repeat;
                   color: var(--splash-text);
                   font-family: "Avenir Next", "Avenir", "Trebuchet MS", sans-serif;
                   text-align: center;
@@ -329,6 +338,10 @@
                   to {
                         transform: rotate(360deg);
                   }
+            }
+
+            html {
+                  background: radial-gradient(circle at center, var(--splash-bg-start) 0%, var(--splash-bg-end) 100%);
             }
       </style>
 </head>

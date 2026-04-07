@@ -1,5 +1,6 @@
 import 'package:feedback/feedback.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -33,6 +34,99 @@ import 'helpers/translate_test_helper.dart';
 import 'mock_interactors.dart';
 import 'mock_repositories.dart';
 import 'mocks/mock_services.dart';
+
+class _LandingTestAssetBundle extends CachingAssetBundle {
+  _LandingTestAssetBundle();
+
+  static final ByteData _transparentImage = ByteData.sublistView(
+    Uint8List.fromList(<int>[
+      137,
+      80,
+      78,
+      71,
+      13,
+      10,
+      26,
+      10,
+      0,
+      0,
+      0,
+      13,
+      73,
+      72,
+      68,
+      82,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      8,
+      6,
+      0,
+      0,
+      0,
+      31,
+      21,
+      196,
+      137,
+      0,
+      0,
+      0,
+      13,
+      73,
+      68,
+      65,
+      84,
+      120,
+      156,
+      99,
+      248,
+      255,
+      255,
+      63,
+      0,
+      5,
+      254,
+      2,
+      254,
+      65,
+      173,
+      37,
+      131,
+      0,
+      0,
+      0,
+      0,
+      73,
+      69,
+      78,
+      68,
+      174,
+      66,
+      96,
+      130,
+    ]),
+  );
+
+  static const Set<String> _mockedAssetKeys = <String>{
+    'assets/images/logo.png',
+    'assets/images/play_store_badge.png',
+    'assets/images/mac_os_badge.png',
+  };
+
+  @override
+  Future<ByteData> load(String key) {
+    if (_mockedAssetKeys.contains(key)) {
+      return Future<ByteData>.value(_transparentImage);
+    }
+
+    return rootBundle.load(key);
+  }
+}
 
 void main() {
   group('App Tests', () {
@@ -224,6 +318,98 @@ void main() {
         expect(indicator.count, 4);
       },
     );
+
+    testWidgets(
+      'Landing page wide footer contains Recipes and Educational Content links',
+      (WidgetTester tester) async {
+        tester.view.devicePixelRatio = 1.0;
+        tester.view.physicalSize = const Size(1200, 900);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.view.resetPhysicalSize);
+
+        await tester.pumpWidget(
+          LocalizedApp(
+            localizationDelegate,
+            BlocProvider<SettingsBloc>(
+              create: (_) {
+                return SettingsBloc(
+                  settingsRepository,
+                  mockFeedbackEmailService,
+                );
+              },
+              child: MaterialApp(
+                home: DefaultAssetBundle(
+                  bundle: _LandingTestAssetBundle(),
+                  child: const LandingPage(),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pump(const Duration(milliseconds: 200));
+
+        expect(find.text(translate('recipes_page.title')), findsOneWidget);
+        expect(
+          find.text(translate('educational_content.title')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'Landing page narrow menu contains Recipes and Educational Content '
+      'entries',
+      (WidgetTester tester) async {
+        tester.view.devicePixelRatio = 1.0;
+        tester.view.physicalSize = const Size(390, 844);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.view.resetPhysicalSize);
+
+        await tester.pumpWidget(
+          LocalizedApp(
+            localizationDelegate,
+            BlocProvider<SettingsBloc>(
+              create: (_) {
+                return SettingsBloc(
+                  settingsRepository,
+                  mockFeedbackEmailService,
+                );
+              },
+              child: MaterialApp(
+                home: DefaultAssetBundle(
+                  bundle: _LandingTestAssetBundle(),
+                  child: const LandingPage(),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pump(const Duration(milliseconds: 200));
+
+        final Finder menuButtonFinder = find.byType(PopupMenuButton<String>);
+        expect(menuButtonFinder, findsOneWidget);
+
+        final BuildContext menuContext = tester.element(menuButtonFinder);
+        final PopupMenuButton<String> menuButton = tester.widget(
+          menuButtonFinder,
+        );
+        final List<PopupMenuEntry<String>> entries = menuButton
+            .itemBuilder(menuContext)
+            .toList();
+
+        final Iterable<PopupMenuItem<String>> items = entries
+            .whereType<PopupMenuItem<String>>();
+        final Iterable<String?> values = items.map(
+          (PopupMenuItem<String> item) => item.value,
+        );
+
+        expect(values, contains(AppRoute.recipes.name));
+        expect(values, contains(AppRoute.educationalContent.name));
+      },
+    );
+
     group('MenuBloc Tests', () {
       test('MenuBloc initializes with correct state', () {
         final MenuBloc menuBloc = MenuBloc(

@@ -198,6 +198,14 @@ class LandingPage extends StatelessWidget {
                       value: AppRoute.support.name,
                       child: Text(t('landing_page.menu_item_support')),
                     ),
+                    PopupMenuItem<String>(
+                      value: AppRoute.recipes.name,
+                      child: Text(t('recipes_page.title')),
+                    ),
+                    PopupMenuItem<String>(
+                      value: AppRoute.educationalContent.name,
+                      child: Text(t('educational_content.title')),
+                    ),
                     const PopupMenuDivider(),
                     if (showGooglePlayLink)
                       PopupMenuItem<String>(
@@ -320,6 +328,31 @@ class LandingPage extends StatelessWidget {
                   },
                   icon: Icon(Icons.support_agent, size: titleMediumSize),
                   label: Text(t('landing_page.menu_item_support')),
+                ),
+              ),
+              Semantics(
+                label: t('recipes_page.title'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoute.recipes.path);
+                  },
+                  icon: Icon(Icons.restaurant_menu, size: titleMediumSize),
+                  label: Text(t('recipes_page.title')),
+                ),
+              ),
+              Semantics(
+                label: t('educational_content.title'),
+                button: true,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoute.educationalContent.path,
+                    );
+                  },
+                  icon: Icon(Icons.school, size: titleMediumSize),
+                  label: Text(t('educational_content.title')),
                 ),
               ),
               Semantics(
@@ -448,6 +481,10 @@ class LandingPage extends StatelessWidget {
       Navigator.pushNamed(context, AppRoute.about.path);
     } else if (result == AppRoute.support.name) {
       Navigator.pushNamed(context, AppRoute.support.path);
+    } else if (result == AppRoute.recipes.name) {
+      Navigator.pushNamed(context, AppRoute.recipes.path);
+    } else if (result == AppRoute.educationalContent.name) {
+      Navigator.pushNamed(context, AppRoute.educationalContent.path);
     } else if (result == constants.kGooglePlayUrl) {
       launchUrl(
         Uri.parse(constants.kGooglePlayUrl),
