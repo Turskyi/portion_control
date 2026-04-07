@@ -146,12 +146,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         double portionControl = constants.kMaxDailyFoodLimit;
 
-        final double minConsumptionIfWeightIncreased =
-            await _userPreferencesRepository
-                .getMinConsumptionWhenWeightIncreased();
-
         final bool hasWeightIncreaseProof = await _bodyWeightRepository
             .hasWeightIncreaseProof();
+        final bool hasWeightDecreaseProof = await _bodyWeightRepository
+            .hasWeightDecreaseProof();
 
         if (bodyWeightEntries.isNotEmpty) {
           final BodyWeight lastSavedBodyWeightEntry = bodyWeightEntries.last;
@@ -169,9 +167,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             lastSavedBodyWeightEntry.weight,
           );
 
-          if (isWeightAboveMidpoint) {
-            portionControl = minConsumptionIfWeightIncreased;
-          } else if (isWeightBelowMidpoint) {
+          if (isWeightAboveMidpoint && hasWeightIncreaseProof) {
+            portionControl = await _userPreferencesRepository
+                .getMinConsumptionWhenWeightIncreased();
+          } else if (isWeightBelowMidpoint && hasWeightDecreaseProof) {
             portionControl = await _userPreferencesRepository
                 .getMaxConsumptionWhenWeightDecreased();
           }
@@ -682,16 +681,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
           double portionControl = constants.kMaxDailyFoodLimit;
 
-          final double minConsumptionIfWeightIncreased =
-              await _userPreferencesRepository
-                  .getMinConsumptionWhenWeightIncreased();
-
           final bool hasWeightIncreaseProof = await _bodyWeightRepository
               .hasWeightIncreaseProof();
+          final bool hasWeightDecreaseProof = await _bodyWeightRepository
+              .hasWeightDecreaseProof();
 
-          if (isWeightAboveMidpoint) {
-            portionControl = minConsumptionIfWeightIncreased;
-          } else if (isWeightBelowMidpoint) {
+          if (isWeightAboveMidpoint && hasWeightIncreaseProof) {
+            portionControl = await _userPreferencesRepository
+                .getMinConsumptionWhenWeightIncreased();
+          } else if (isWeightBelowMidpoint && hasWeightDecreaseProof) {
             portionControl = await _userPreferencesRepository
                 .getMaxConsumptionWhenWeightDecreased();
           }
@@ -1089,11 +1087,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final List<BodyWeight> bodyWeightEntries = await _bodyWeightRepository
         .getAllBodyWeightEntries();
 
-    final double minConsumptionIfWeightIncreased =
-        await _userPreferencesRepository.getMinConsumptionWhenWeightIncreased();
-
     final bool hasWeightIncreaseProof = await _bodyWeightRepository
         .hasWeightIncreaseProof();
+    final bool hasWeightDecreaseProof = await _bodyWeightRepository
+        .hasWeightDecreaseProof();
 
     double portionControl = constants.kMaxDailyFoodLimit;
 
@@ -1109,9 +1106,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           lastSavedBodyWeightEntry.weight,
         );
 
-        if (isWeightAboveMidpoint) {
-          portionControl = minConsumptionIfWeightIncreased;
-        } else if (isWeightBelowMidpoint) {
+        if (isWeightAboveMidpoint && hasWeightIncreaseProof) {
+          portionControl = await _userPreferencesRepository
+              .getMinConsumptionWhenWeightIncreased();
+        } else if (isWeightBelowMidpoint && hasWeightDecreaseProof) {
           portionControl = await _userPreferencesRepository
               .getMaxConsumptionWhenWeightDecreased();
         }

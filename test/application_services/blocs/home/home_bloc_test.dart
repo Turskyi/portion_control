@@ -68,6 +68,9 @@ void main() {
     when(
       () => mockBodyWeightRepository.hasWeightIncreaseProof(),
     ).thenAnswer((_) async => false);
+    when(
+      () => mockBodyWeightRepository.hasWeightDecreaseProof(),
+    ).thenAnswer((_) async => false);
 
     when(
       () => mockHomeWidgetService.setAppGroupId(any()),
@@ -179,6 +182,9 @@ void main() {
         when(
           () => mockBodyWeightRepository.hasWeightIncreaseProof(),
         ).thenAnswer((_) async => true);
+        when(
+          () => mockBodyWeightRepository.hasWeightDecreaseProof(),
+        ).thenAnswer((_) async => false);
         when(
           () => mockBodyWeightRepository.getTodayBodyWeight(),
         ).thenAnswer((_) async => BodyWeight(id: 1, weight: 75.3, date: today));
@@ -312,6 +318,9 @@ void main() {
         when(
           () => mockBodyWeightRepository.hasWeightIncreaseProof(),
         ).thenAnswer((_) async => true);
+        when(
+          () => mockBodyWeightRepository.hasWeightDecreaseProof(),
+        ).thenAnswer((_) async => false);
 
         // WHEN:
         // User submits weight (74.0) for today.
@@ -444,6 +453,9 @@ void main() {
         when(
           () => mockBodyWeightRepository.hasWeightIncreaseProof(),
         ).thenAnswer((_) async => true);
+        when(
+          () => mockBodyWeightRepository.hasWeightDecreaseProof(),
+        ).thenAnswer((_) async => false);
 
         homeBloc.add(const SubmitBodyWeight(dummy.dummyWeightToday));
 

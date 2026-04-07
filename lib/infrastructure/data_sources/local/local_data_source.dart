@@ -596,4 +596,11 @@ class LocalDataSource {
         .getMinConsumptionWhenWeightIncreased();
     return minConsumptionIfWeightIncreased < constants.kMaxDailyFoodLimit;
   }
+
+  Future<bool> hasWeightDecreaseProof() async {
+    final double maxConsumptionWhenWeightDecreased = await _appDatabase
+        .getMaxConsumptionWhenWeightDecreased();
+    return maxConsumptionWhenWeightDecreased >
+        constants.kSafeMinimumFoodIntakeG;
+  }
 }
